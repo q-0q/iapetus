@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,7 @@ public abstract class Fsm : MonoBehaviour
         public static int Any;
     }
 
-    public class Trigger : InheritableEnum
+    public class FsmTrigger : InheritableEnum
     {
         public static int Timeout;
     }
@@ -20,30 +21,45 @@ public abstract class Fsm : MonoBehaviour
     public StateMapConfig StateMapConfig;
     
     private float _timeInCurrentState;
-    private int _initState;
+    protected int InitState;
+    protected Animator Animator;
 
 
-    void Awake()
+    private void Awake()
     {
-        Machine = new Machine<int, int>(_initState);
+        InheritableEnum.Initialize();
+    }
+
+    protected virtual void OnStart()
+    {
+        SetupMachine();
+        SetupStateMaps();
         _timeInCurrentState = 0;
+        
+        TryGetComponent(out Animator);
     }
     
-    public void Update()
+    public virtual void OnUpdate()
     {
         IncrementClockByAmount(Time.deltaTime);
     }
     
-    public void SetupStateMaps()
+    public virtual void SetupStateMaps()
     {
         StateMapConfig = new StateMapConfig();
         StateMapConfig.Name = new StateMap<string>("No state name provided");
         StateMapConfig.Animation = new StateMap<Animation>(null);
     }
 
-    public void SetupMachine()
+    public virtual void SetupMachine()
     {
+        Machine = new Machine<int, int>(InitState);
         Machine.OnTransitioned(OnStateChanged);
+    }
+
+    public virtual void FireTriggers()
+    {
+        
     }
 
     public float TimeInCurrentState()

@@ -72,7 +72,7 @@ public abstract class InheritableEnum
     public static void Initialize()
     {
         // This will force the static constructor of BaseState to run
-        var _ = Fsm.FsmState.Any;  // Trigger initialization by accessing a static member
+        var _ = Fsm.FsmState.Any;  // InputFsmTrigger initialization by accessing a static member
     }
 
     // Method to retrieve the name of the field for a specific value
