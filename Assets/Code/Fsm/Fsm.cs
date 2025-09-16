@@ -76,4 +76,14 @@ public abstract class Fsm : MonoBehaviour
     {
         _timeInCurrentState += amount;
     }
+
+    protected void ReplaceAnimatorTrigger(string trigger)
+    {
+        foreach (var t in Animator.parameters)
+        {
+            if (t.type != AnimatorControllerParameterType.Trigger) continue;
+            if (t.name == trigger) Animator.SetTrigger(t.name);
+            else Animator.ResetTrigger(t.name);
+        }
+    }
 }
