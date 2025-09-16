@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Wasp;
 
 public abstract class Fsm : MonoBehaviour
 {
@@ -12,24 +13,51 @@ public abstract class Fsm : MonoBehaviour
 
     public class Trigger : InheritableEnum
     {
-        public static int Finish;
-        public static int NoDirection;
-        public static int Direction;
-        public static int Jump;
+        public static int Timeout;
     }
     
-    public Wasp.Machine<int, int> Machine;
+    public Machine<int, int> Machine;
     public StateMapConfig StateMapConfig;
     
-    // Start is called before the first frame update
-    void Start()
+    private float _timeInCurrentState;
+    private int _initState;
+
+
+    void Awake()
     {
-        
+        Machine = new Machine<int, int>(_initState);
+        _timeInCurrentState = 0;
+    }
+    
+    public void Update()
+    {
+        IncrementClockByAmount(Time.deltaTime);
+    }
+    
+    public void SetupStateMaps()
+    {
+        StateMapConfig = new StateMapConfig();
+        StateMapConfig.Name = new StateMap<string>("No state name provided");
+        StateMapConfig.Animation = new StateMap<Animation>(null);
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetupMachine()
     {
-        
+        Machine.OnTransitioned(OnStateChanged);
+    }
+
+    public float TimeInCurrentState()
+    {
+        return _timeInCurrentState;
+    }
+    
+    private void OnStateChanged(TriggerParams? triggerParams)
+    {
+        _timeInCurrentState = 0;
+    }
+
+    private void IncrementClockByAmount(float amount)
+    {
+        _timeInCurrentState += amount;
     }
 }
