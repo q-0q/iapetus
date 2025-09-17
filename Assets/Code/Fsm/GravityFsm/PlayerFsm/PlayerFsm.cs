@@ -13,6 +13,12 @@ public class PlayerFsm : GravityFsm
         OnUpdate();
         FireTriggers();
     }
+    
+    protected override void OnStart()
+    {
+        base.OnStart();
+        TryGetComponent(out _playerInput);
+    }
 
     private void Start()
     {
@@ -27,11 +33,14 @@ public class PlayerFsm : GravityFsm
     public class PlayerFsmState : GravityFsmState
     {
         public static int GroundMove;
+        public static int Jumpsquat;
+        public static int Landsquat;
+        public static int Jump;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
     {
-
+        public static int Jump;
     }
     
     private PlayerInput _playerInput;
@@ -44,6 +53,8 @@ public class PlayerFsm : GravityFsm
     [SerializeField] private float _momentumTurnLoss = 10f; 
     public static event Action<float> OnPlayerMomentumUpdated;
     
+    [SerializeField] private float _jumpYVelocity = 10f; 
+    
     
     // --------- End of subclass Fsm data ------------- //
 
@@ -55,20 +66,56 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
+            .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("GroundMove");
+            });
+        
+        Machine.Configure(PlayerFsmState.Jumpsquat)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("Jumpsquat");
+            });
+        
+        Machine.Configure(PlayerFsmState.Landsquat)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("Landsquat");
+            });
+        
+        Machine.Configure(PlayerFsmState.Jump)
+            .SubstateOf(GravityFsmState.Aerial)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("Jump");
+            })
+            .OnEntry(_ =>
+            {
+                _yVelocity = _jumpYVelocity;
             });
     }
 
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
+        StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.15f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.1f);
     }
 
     public override void FireTriggers()
     {
         base.FireTriggers();
+        
+        if (_playerInput.actions["Jump"].WasPressedThisFrame())
+        {
+            Machine.Fire(PlayerFsmTrigger.Jump);
+        }
     }
 
 
@@ -114,15 +161,17 @@ public class PlayerFsm : GravityFsm
             print(momentumDesiredTurnAmount);
             _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime *
                                                   Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
+        }
 
+        if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat))
+        {
+            var momentumWeight = Mathf.InverseLerp(0, _maxMomentum, _momentum);
+            var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
+            transform.position += transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
         }
     }
 
-    protected override void OnStart()
-    {
-        base.OnStart();
-        TryGetComponent(out _playerInput);
-    }
+
     
     // ------------ Helper functions ------------- //
     

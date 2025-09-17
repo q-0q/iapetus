@@ -48,7 +48,7 @@ public abstract class Fsm : MonoBehaviour
     {
         StateMapConfig = new StateMapConfig();
         StateMapConfig.Name = new StateMap<string>("No state name provided");
-        StateMapConfig.Animation = new StateMap<Animation>(null);
+        StateMapConfig.Duration = new StateMap<float>(1f);
     }
 
     public virtual void SetupMachine()
@@ -59,7 +59,15 @@ public abstract class Fsm : MonoBehaviour
 
     public virtual void FireTriggers()
     {
-        
+        if (TimeInCurrentState() >= StateMapConfig.Duration.Get(this))
+        {
+            print("timeout");
+            Machine.Fire(FsmTrigger.Timeout);
+        }
+        else
+        {
+            print("no timeout");
+        }
     }
 
     public float TimeInCurrentState()
