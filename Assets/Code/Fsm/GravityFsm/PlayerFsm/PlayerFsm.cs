@@ -16,7 +16,7 @@ public class PlayerFsm : GravityFsm
 
     private void Start()
     {
-        InitState = PlayerFsmState.Walk;
+        InitState = PlayerFsmState.GroundMove;
         OnStart();
     }
     
@@ -27,7 +27,7 @@ public class PlayerFsm : GravityFsm
     public class PlayerFsmState : GravityFsmState
     {
         public static int Idle;
-        public static int Walk;
+        public static int GroundMove;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -55,19 +55,19 @@ public class PlayerFsm : GravityFsm
 
         
         Machine.Configure(PlayerFsmState.Idle)
-            .Permit(PlayerFsmTrigger.InputDirection, PlayerFsmState.Walk)
+            .Permit(PlayerFsmTrigger.InputDirection, PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("Idle");
             });
         
-        Machine.Configure(PlayerFsmState.Walk)
+        Machine.Configure(PlayerFsmState.GroundMove)
             .Permit(PlayerFsmTrigger.NoInputDirection, PlayerFsmState.Idle)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ =>
             {
-                ReplaceAnimatorTrigger("Walk");
+                ReplaceAnimatorTrigger("GroundMove");
             });
     }
 
@@ -93,18 +93,23 @@ public class PlayerFsm : GravityFsm
         
         if (Machine.IsInState(PlayerFsmState.Idle))
         {
-            _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime);
+            _momentum = 0;
         }
         
-        if (Machine.IsInState(PlayerFsmState.Walk))
+        if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             var v2 = GetInputMovementVector2();
             var v3 = new Vector3(v2.x, 0, v2.y);
-            transform.position += v3.normalized * (_moveSpeed * Time.deltaTime);
             var quaternion = Quaternion.LookRotation(v3.normalized, transform.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime);
             
             _momentum = Mathf.Min(_maxMomentum, _momentum + _momentumGainRate * Time.deltaTime);
+
+            var inverseLerp = Mathf.InverseLerp(0, _maxMomentum, _momentum);
+            Animator.SetFloat("Momentum", inverseLerp);
+            var value = Mathf.Lerp(1f, 2f, inverseLerp);
+            Animator.SetFloat("SpeedMod", value);
+            transform.position += transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
         }
     }
 
