@@ -40,9 +40,13 @@ public abstract class GravityFsm : Fsm
     {
         base.FireTriggers();
 
-        if (Physics.Raycast(transform.position, Vector3.down, 0.1f) && _yVelocity < 0)
+        if (Physics.Raycast(transform.position, Vector3.down, 0.1f))
         {
-            Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
+            if (_yVelocity < 0) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
+        }
+        else
+        {
+            Machine.Fire(GravityFsmTrigger.StartFrameAerial);
         }
     }
     

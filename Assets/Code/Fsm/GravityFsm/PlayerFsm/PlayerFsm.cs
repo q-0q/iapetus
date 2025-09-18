@@ -38,11 +38,13 @@ public class PlayerFsm : GravityFsm
         public static int Jumpsquat;
         public static int Landsquat;
         public static int Jump;
+        public static int HardTurn;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
     {
         public static int Jump;
+        public static int HardTurn;
     }
     
     private PlayerInput _playerInput;
@@ -70,7 +72,9 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
+            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
+            .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("GroundMove");
@@ -106,10 +110,24 @@ public class PlayerFsm : GravityFsm
             {
                 ReplaceAnimatorTrigger("Jump");
             })
-            .OnEntry(_ =>
+            .OnEntryFrom(FsmTrigger.Timeout,_ =>
             {
                 _yVelocity = _jumpYVelocity;
             });
+        
+        Machine.Configure(PlayerFsmState.HardTurn)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump)
+            .SubstateOf(GravityFsmState.Grounded)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("HardTurn");
+            })
+            .OnExitFrom(FsmTrigger.Timeout,_ =>
+            {
+                transform.Rotate(transform.up, 180f);
+                _momentum = 7f;
+            });;
     }
 
     public override void SetupStateMaps()
@@ -117,6 +135,7 @@ public class PlayerFsm : GravityFsm
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.HardTurn, 0.5f);
     }
 
     public override void FireTriggers()
@@ -126,6 +145,14 @@ public class PlayerFsm : GravityFsm
         if (_playerInput.actions["Jump"].WasPressedThisFrame())
         {
             Machine.Fire(PlayerFsmTrigger.Jump);
+        }
+        
+        var v2 = GetInputMovementVector2();
+        var v3 = new Vector3(v2.x, 0, v2.y);
+        var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
+        if (angle > 160f && _momentum > 10f)
+        {
+            Machine.Fire(PlayerFsmTrigger.HardTurn);
         }
     }
 
@@ -175,11 +202,21 @@ public class PlayerFsm : GravityFsm
                                                   Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
         }
 
-        if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat))
+        if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
         {
             var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             transform.position += transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+        }
+
+        if (Machine.IsInState(GravityFsmState.Aerial))
+        {
+            Animator.SetLayerWeight(1, 0);
+        }
+
+        if (Machine.IsInState(PlayerFsmState.HardTurn))
+        {
+            _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.5f);
         }
     }
 
