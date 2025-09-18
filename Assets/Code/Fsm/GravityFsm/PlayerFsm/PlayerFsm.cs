@@ -22,7 +22,9 @@ public class PlayerFsm : GravityFsm
 
     private void Start()
     {
+        // Time.timeScale = 0.1f;
         InitState = PlayerFsmState.GroundMove;
+        _movementAnimationMirror = false;
         OnStart();
     }
     
@@ -44,16 +46,18 @@ public class PlayerFsm : GravityFsm
     }
     
     private PlayerInput _playerInput;
+    private bool _movementAnimationMirror;
+    
     [SerializeField] private float _moveSpeed = 10f;
     [SerializeField] private float _rotationSpeed = 10f;
-    [SerializeField] private float _maxMomentum = 10f;
+    public const float MaxMomentum = 15f;
     private float _momentum = 0f;
     [SerializeField] private float _momentumGainRate = 10f;
     [SerializeField] private float _momentumLossRate = 10f; 
     [SerializeField] private float _momentumTurnLoss = 10f; 
     public static event Action<float> OnPlayerMomentumUpdated;
     
-    [SerializeField] private float _jumpYVelocity = 10f; 
+    [SerializeField] private float _jumpYVelocity = 10f;
     
     
     // --------- End of subclass Fsm data ------------- //
@@ -82,10 +86,17 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.Landsquat)
             .SubstateOf(GravityFsmState.Grounded)
+            .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jump)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("Landsquat");
+            })
+            .OnExit(_ =>
+            {
+                _movementAnimationMirror = !_movementAnimationMirror;
+                var flip = _movementAnimationMirror ? 0 : 1f;
+                Animator.SetFloat("Flip", flip);
             });
         
         Machine.Configure(PlayerFsmState.Jump)
@@ -104,8 +115,8 @@ public class PlayerFsm : GravityFsm
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
-        StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.15f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.1f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
     }
 
     public override void FireTriggers()
@@ -131,7 +142,7 @@ public class PlayerFsm : GravityFsm
 
             if (v2.magnitude > 0.1f)
             {
-                _momentum = Mathf.Min(_maxMomentum, _momentum + _momentumGainRate * Time.deltaTime);
+                _momentum = Mathf.Min(MaxMomentum, _momentum + _momentumGainRate * Time.deltaTime);
             }
             else
             {
@@ -139,18 +150,20 @@ public class PlayerFsm : GravityFsm
                 v3 = transform.forward;
             }
 
-            var momentumWeight = Mathf.InverseLerp(0, _maxMomentum, _momentum);
+            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
             
             var angle = Vector3.SignedAngle(v3.normalized, transform.forward.normalized, transform.up);
-            var animationDesiredTurnAmount = Mathf.InverseLerp(25f, -25f, angle);
+            var animationDesiredTurnAmount = Mathf.InverseLerp(35f, -35f, angle);
             animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
-            var turnAmount = Animator.GetFloat("TurnAmount") * momentumWeight;
-            Animator.SetFloat("TurnAmount", Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * 10f));
-            Animator.SetLayerWeight(1, Mathf.Abs(turnAmount));
+            var turnAmount = Animator.GetFloat("TurnAmount");
+            var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 2f;
+            Animator.SetFloat("TurnAmount", Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * turnLerpSpeed));
+            Animator.SetLayerWeight(1, Mathf.Abs(turnAmount) * momentumWeight);
             
 
             var quaternion = Quaternion.LookRotation(v3.normalized, transform.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * Mathf.Lerp(4, 1, momentumWeight * 5f));
+            var lowMomentumRotationMod = _momentum < 5f ? 4f : 1f;
+            transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * lowMomentumRotationMod);
             Animator.SetFloat("Momentum", momentumWeight);
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             Animator.SetFloat("SpeedMod", value);
@@ -158,14 +171,13 @@ public class PlayerFsm : GravityFsm
             
             var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
             momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-            print(momentumDesiredTurnAmount);
             _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime *
                                                   Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
         }
 
         if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat))
         {
-            var momentumWeight = Mathf.InverseLerp(0, _maxMomentum, _momentum);
+            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             transform.position += transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
         }

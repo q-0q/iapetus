@@ -16,7 +16,8 @@ public class MomentumUIValue : MonoBehaviour
 
     void UpdateText(float momentum)
     {
-        _tmp.text = momentum.ToString().Substring(0, Math.Min(4, momentum.ToString().Length));
+        int val = (int)(momentum * 10f / PlayerFsm.MaxMomentum * 10f);
+        _tmp.text = val.ToString();
     }
 
     private void OnEnable()

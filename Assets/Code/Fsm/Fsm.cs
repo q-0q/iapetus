@@ -61,12 +61,7 @@ public abstract class Fsm : MonoBehaviour
     {
         if (TimeInCurrentState() >= StateMapConfig.Duration.Get(this))
         {
-            print("timeout");
             Machine.Fire(FsmTrigger.Timeout);
-        }
-        else
-        {
-            print("no timeout");
         }
     }
 
