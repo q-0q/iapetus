@@ -3,6 +3,7 @@ using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
+using UnityEngine.Serialization;
 
 public class PlayerFsm : GravityFsm
 {
@@ -13,7 +14,6 @@ public class PlayerFsm : GravityFsm
         OnUpdate();
         FireTriggers();
         
-        print(TimeInAir);
     }
     
     protected override void OnStart()
@@ -43,6 +43,7 @@ public class PlayerFsm : GravityFsm
         public static int Landsquat;
         public static int Jump;
         public static int HardTurn;
+        public static int Vault;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -50,27 +51,30 @@ public class PlayerFsm : GravityFsm
         public static int Jump;
         public static int HardTurn;
         public static int LowMomentum;
+        public static int FaceLedge;
+        public static int FaceWall;
+        public static int FaceOpen;
     }
     
     private PlayerInput _playerInput;
     private bool _movementAnimationMirror;
     private InputBuffer _inputBuffer;
     
-    [SerializeField] private float _sphereCastRadius = 0.75f;
-    [SerializeField] private float _wallDetectionDistance = 0.1f;
+    private float _forwardRaycastDistance = 1f;
+    private float _minLedgeHeight = 0.2f;
+    private float _maxLedgeHeight = 2f;
     
-    
-    [SerializeField] private float _moveSpeed = 10f;
-    [SerializeField] private float _rotationSpeed = 10f;
+    private float _moveSpeed = 5f;
+    private float _rotationSpeed = 3f;
     public const float MaxMomentum = 15f;
     private float _momentum = 0f;
-    [SerializeField] private float _momentumGainRate = 10f;
-    [SerializeField] private float _momentumLossRate = 10f; 
-    [SerializeField] private float _momentumTurnLoss = 10f; 
+    private float _momentumGainRate = 9f;
+    private float _momentumLossRate = 20f; 
+    private float _momentumTurnLoss = 5f; 
     public static event Action<float> OnPlayerMomentumUpdated;
     
-    [SerializeField] private float _jumpYVelocity = 10f;
-    [SerializeField] private float _coyoteTime = 0.1f;
+    private float _jumpYVelocity = 22f;
+    private float _coyoteTime = 0.05f;
     
     
     // --------- End of subclass Fsm data ------------- //
@@ -98,6 +102,10 @@ public class PlayerFsm : GravityFsm
             {
                 ReplaceAnimatorTrigger("Jumpsquat");
                 _inputBuffer.ConsumeBuffer("Jump");
+            })
+            .OnExitFrom(FsmTrigger.Timeout,_ =>
+            {
+                YVelocity = _jumpYVelocity;
             });
         
         Machine.Configure(PlayerFsmState.Landsquat)
@@ -121,10 +129,6 @@ public class PlayerFsm : GravityFsm
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("Jump");
-            })
-            .OnEntryFrom(FsmTrigger.Timeout,_ =>
-            {
-                YVelocity = _jumpYVelocity;
             });
 
         Machine.Configure(PlayerFsmState.HardTurn)
@@ -137,7 +141,20 @@ public class PlayerFsm : GravityFsm
             });
 
         Machine.Configure(GravityFsmState.Aerial)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime);
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime)
+            .Permit(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault);
+
+        Machine.Configure(PlayerFsmState.Vault)
+            .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump, _ => TimeInCurrentState() >= 0.3f)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, _ => TimeInCurrentState() >= 0.3f)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("Vault");
+                YVelocity = 0;
+            });
     }
 
     public override void SetupStateMaps()
@@ -145,6 +162,7 @@ public class PlayerFsm : GravityFsm
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.35f);
     }
 
     public override void FireTriggers()
@@ -167,6 +185,20 @@ public class PlayerFsm : GravityFsm
         if (_momentum < 0.25f)
         {
             Machine.Fire(PlayerFsmTrigger.LowMomentum);
+        }
+
+        if (Physics.Raycast(transform.position + transform.up * _maxLedgeHeight, transform.forward,
+                _forwardRaycastDistance))
+        {
+            Machine.Fire(PlayerFsmTrigger.FaceWall);
+        } else if (Physics.Raycast(transform.position + transform.up * _minLedgeHeight, transform.forward, 
+                       _forwardRaycastDistance))
+        {
+            Machine.Fire(PlayerFsmTrigger.FaceLedge);
+        }
+        else
+        {
+            Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
     }
 
@@ -218,7 +250,7 @@ public class PlayerFsm : GravityFsm
                                                   Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
         }
 
-        if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
+        if (Machine.IsInState(PlayerFsmState.Vault) || Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
         {
             var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
@@ -235,8 +267,18 @@ public class PlayerFsm : GravityFsm
         {
             _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.25f);
         }
+        
+        if (Machine.IsInState(PlayerFsmState.Vault))
+        {
+            _momentum = Mathf.Max(_momentum, 6f);
+            if (Physics.Raycast(transform.position + transform.up * 3f + transform.forward * 0.2f,
+                    -transform.up, out var hit, 3.1f))
+            {
+                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 30f);
+                transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+            }
+        }
     }
-
 
     
     // ------------ Helper functions ------------- //

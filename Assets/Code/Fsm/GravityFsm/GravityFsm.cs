@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public abstract class GravityFsm : Fsm
 {
@@ -6,19 +7,21 @@ public abstract class GravityFsm : Fsm
     {
         public static int Grounded;
         public static int Aerial;
+        public static int DontApplyYVelocity;
     }
 
     public class GravityFsmTrigger : FsmTrigger
     {
         public static int StartFrameGrounded;
         public static int StartFrameAerial;
+        
     }
 
     public override void SetupMachine()
     {
         base.SetupMachine();
         Machine.Configure(GravityFsmState.Aerial)
-            .OnEntry(_ => { TimeInAir = 0;});
+            .OnEntryFrom(GravityFsmTrigger.StartFrameAerial, _ => { TimeInAir = 0;});
         Machine.Configure(GravityFsmState.Grounded);
     }
 
@@ -42,7 +45,7 @@ public abstract class GravityFsm : Fsm
     {
         base.FireTriggers();
 
-        if (Physics.Raycast(transform.position, Vector3.down, 0.1f))
+        if (Physics.Raycast(transform.position + transform.up * 0.1f, -transform.up, 0.2f))
         {
             if (YVelocity < 0) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
         }
@@ -56,7 +59,7 @@ public abstract class GravityFsm : Fsm
     {
         base.OnUpdate();
 
-        if (Machine.IsInState(GravityFsmState.Aerial))
+        if (Machine.IsInState(GravityFsmState.Aerial) && !Machine.IsInState(GravityFsmState.DontApplyYVelocity))
         {
             var v3 = new Vector3(0, YVelocity * Time.deltaTime, 0);
             transform.position += v3;
