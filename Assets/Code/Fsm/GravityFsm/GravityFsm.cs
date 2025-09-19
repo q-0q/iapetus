@@ -17,32 +17,34 @@ public abstract class GravityFsm : Fsm
     public override void SetupMachine()
     {
         base.SetupMachine();
-        Machine.Configure(GravityFsmState.Aerial);
+        Machine.Configure(GravityFsmState.Aerial)
+            .OnEntry(_ => { TimeInAir = 0;});
         Machine.Configure(GravityFsmState.Grounded);
     }
 
-    protected float _yVelocity;
-    protected float _gravityStrength;
+    protected float YVelocity;
+    protected float GravityStrength;
+    protected float TimeInAir;
     
     protected override void OnStart()
     {
         base.OnStart();
-        _yVelocity = 0;
-        _gravityStrength = 9.8f;
+        YVelocity = 0;
+        GravityStrength = 9.8f;
     }
 
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
     }
-    
+
     public override void FireTriggers()
     {
         base.FireTriggers();
 
         if (Physics.Raycast(transform.position, Vector3.down, 0.1f))
         {
-            if (_yVelocity < 0) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
+            if (YVelocity < 0) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
         }
         else
         {
@@ -56,14 +58,15 @@ public abstract class GravityFsm : Fsm
 
         if (Machine.IsInState(GravityFsmState.Aerial))
         {
-            var v3 = new Vector3(0, _yVelocity * Time.deltaTime, 0);
+            var v3 = new Vector3(0, YVelocity * Time.deltaTime, 0);
             transform.position += v3;
-            _yVelocity -= (_gravityStrength * _gravityStrength * Time.deltaTime);
+            YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime);
+            TimeInAir += Time.deltaTime;
         }
         
         if (Machine.IsInState(GravityFsmState.Grounded))
         {
-            _yVelocity = 0;
+            YVelocity = 0;
         }
     }
 }

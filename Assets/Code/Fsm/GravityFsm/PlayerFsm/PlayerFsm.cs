@@ -12,6 +12,8 @@ public class PlayerFsm : GravityFsm
     {
         OnUpdate();
         FireTriggers();
+        
+        print(TimeInAir);
     }
     
     protected override void OnStart()
@@ -54,6 +56,10 @@ public class PlayerFsm : GravityFsm
     private bool _movementAnimationMirror;
     private InputBuffer _inputBuffer;
     
+    [SerializeField] private float _sphereCastRadius = 0.75f;
+    [SerializeField] private float _wallDetectionDistance = 0.1f;
+    
+    
     [SerializeField] private float _moveSpeed = 10f;
     [SerializeField] private float _rotationSpeed = 10f;
     public const float MaxMomentum = 15f;
@@ -64,6 +70,7 @@ public class PlayerFsm : GravityFsm
     public static event Action<float> OnPlayerMomentumUpdated;
     
     [SerializeField] private float _jumpYVelocity = 10f;
+    [SerializeField] private float _coyoteTime = 0.1f;
     
     
     // --------- End of subclass Fsm data ------------- //
@@ -95,6 +102,7 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.Landsquat)
             .SubstateOf(GravityFsmState.Grounded)
+            .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
@@ -116,9 +124,9 @@ public class PlayerFsm : GravityFsm
             })
             .OnEntryFrom(FsmTrigger.Timeout,_ =>
             {
-                _yVelocity = _jumpYVelocity;
+                YVelocity = _jumpYVelocity;
             });
-        
+
         Machine.Configure(PlayerFsmState.HardTurn)
             .Permit(PlayerFsmTrigger.LowMomentum, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump)
@@ -126,12 +134,10 @@ public class PlayerFsm : GravityFsm
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("HardTurn");
-            })
-            .OnExitFrom(FsmTrigger.Timeout,_ =>
-            {
-                // transform.Rotate(transform.up, 180f);
-                // _momentum = 5f;
-            });;
+            });
+
+        Machine.Configure(GravityFsmState.Aerial)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime);
     }
 
     public override void SetupStateMaps()
@@ -227,7 +233,7 @@ public class PlayerFsm : GravityFsm
 
         if (Machine.IsInState(PlayerFsmState.HardTurn))
         {
-            _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.5f);
+            _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.25f);
         }
     }
 
