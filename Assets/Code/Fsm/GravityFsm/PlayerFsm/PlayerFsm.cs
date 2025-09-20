@@ -23,7 +23,7 @@ public class PlayerFsm : GravityFsm
 
     private void Start()
     {
-        // Time.timeScale = 0.1f;
+        _stateStartPosition = transform.position;
         InitState = PlayerFsmState.GroundMove;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
@@ -42,6 +42,7 @@ public class PlayerFsm : GravityFsm
         public static int Jumpsquat;
         public static int Landsquat;
         public static int Jump;
+        public static int Fall;
         public static int HardTurn;
         public static int Vault;
     }
@@ -54,13 +55,14 @@ public class PlayerFsm : GravityFsm
         public static int FaceLedge;
         public static int FaceWall;
         public static int FaceOpen;
+        public static int VaultDistanceTraveled;
     }
     
     private PlayerInput _playerInput;
     private bool _movementAnimationMirror;
     private InputBuffer _inputBuffer;
     
-    private float _forwardRaycastDistance = 1f;
+    private float _forwardRaycastDistance = 1.5f;
     private float _minLedgeHeight = 0.2f;
     private float _maxLedgeHeight = 2f;
     
@@ -72,9 +74,12 @@ public class PlayerFsm : GravityFsm
     private float _momentumLossRate = 20f; 
     private float _momentumTurnLoss = 5f; 
     public static event Action<float> OnPlayerMomentumUpdated;
+    public static event Action<Vector3> OnPlayerPositionUpdated;
     
     private float _jumpYVelocity = 22f;
     private float _coyoteTime = 0.05f;
+    private float _vaultDistance = 3f;
+    private Vector3 _stateStartPosition;
     
     
     // --------- End of subclass Fsm data ------------- //
@@ -84,10 +89,14 @@ public class PlayerFsm : GravityFsm
     {
         base.SetupMachine();
 
+        // Machine.OnTransitioned(_ =>
+        // {
+        //     _stateStartPosition = transform.position;
+        // });
         
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump)
+            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
             .OnEntry(_ =>
@@ -97,6 +106,7 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.Jumpsquat)
             .SubstateOf(GravityFsmState.Grounded)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
             .OnEntry(_ =>
             {
@@ -130,10 +140,19 @@ public class PlayerFsm : GravityFsm
             {
                 ReplaceAnimatorTrigger("Jump");
             });
+        
+        Machine.Configure(PlayerFsmState.Fall)
+            .SubstateOf(GravityFsmState.Aerial)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("Fall");
+            });
 
         Machine.Configure(PlayerFsmState.HardTurn)
             .Permit(PlayerFsmTrigger.LowMomentum, PlayerFsmState.GroundMove)
-            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump)
+            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ =>
             {
@@ -141,15 +160,15 @@ public class PlayerFsm : GravityFsm
             });
 
         Machine.Configure(GravityFsmState.Aerial)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime)
-            .Permit(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault);
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true);
 
         Machine.Configure(PlayerFsmState.Vault)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
-            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jump, _ => TimeInCurrentState() >= 0.3f)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, _ => TimeInCurrentState() >= 0.3f)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
+            // .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall, _ => TimeInCurrentState() >= 0.3f)
+            // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, _ => TimeInCurrentState() >= 0.3f)
+            // .Permit(PlayerFsmTrigger.VaultDistanceTraveled, PlayerFsmState.Fall)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("Vault");
@@ -200,6 +219,11 @@ public class PlayerFsm : GravityFsm
         {
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
+
+        if (Vector3.Distance(transform.position, _stateStartPosition) > _vaultDistance)
+        {
+            Machine.Fire(PlayerFsmTrigger.VaultDistanceTraveled);
+        }
     }
 
 
@@ -208,6 +232,7 @@ public class PlayerFsm : GravityFsm
         base.OnUpdate();
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
+        OnPlayerPositionUpdated?.Invoke(transform.position);
         
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
@@ -242,7 +267,8 @@ public class PlayerFsm : GravityFsm
             Animator.SetFloat("Momentum", momentumWeight);
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             Animator.SetFloat("SpeedMod", value);
-            transform.position += transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+            var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+            transform.position += GetCollisionMove(desiredMove);
             
             var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
             momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
@@ -250,12 +276,21 @@ public class PlayerFsm : GravityFsm
                                                   Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
         }
 
-        if (Machine.IsInState(PlayerFsmState.Vault) || Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
+        if (Machine.IsInState(PlayerFsmState.Vault))
         {
             var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             Animator.SetFloat("Momentum", momentumWeight);
-            transform.position += transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+            var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+            transform.position += desiredMove;
+        }
+        else if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
+        {
+            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
+            var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
+            Animator.SetFloat("Momentum", momentumWeight);
+            var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+            transform.position += GetCollisionMove(desiredMove);
         }
 
         if (Machine.IsInState(GravityFsmState.Aerial))
@@ -271,10 +306,12 @@ public class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Vault))
         {
             _momentum = Mathf.Max(_momentum, 6f);
+            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
+            Animator.SetFloat("SpeedMod", Mathf.Lerp(0.3f, 1.1f, momentumWeight));
             if (Physics.Raycast(transform.position + transform.up * 3f + transform.forward * 0.2f,
                     -transform.up, out var hit, 3.1f))
             {
-                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 30f);
+                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 50f);
                 transform.position = new Vector3(transform.position.x, newY, transform.position.z);
             }
         }
@@ -286,5 +323,49 @@ public class PlayerFsm : GravityFsm
     private Vector2 GetInputMovementVector2()
     {
         return _playerInput.actions["Move"].ReadValue<Vector2>();
+    }
+    
+    private Vector3 GetCollisionMove(Vector3 desiredMove)
+    {
+        var output = desiredMove;
+        
+        // Radius of your character (adjust as needed)
+        float radius = 0.25f;
+        float castDistance = 0.65f;
+        float pushExitPadding = 0.35f;
+
+        Vector3 position = transform.position + transform.up * 0.5f;
+        Vector3 direction = output.normalized;
+
+        // SphereCast to account for player volume
+        if (Physics.SphereCast(position, radius, direction, out RaycastHit hit, castDistance, ~0, QueryTriggerInteraction.Ignore))
+        {
+            
+            // First collision: slide along the surface
+            Vector3 firstNormal = hit.normal;
+            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, transform.up));
+
+            bool corner = false;
+
+            // Cast again in the new direction to handle corner (second surface)
+            if (Physics.SphereCast(position, radius, output.normalized, out RaycastHit secondHit, output.magnitude))
+            {
+                corner = true;
+                Vector3 secondNormal = secondHit.normal;
+
+                // Slide again
+                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, transform.up));
+                
+                if (output.magnitude < 0.01f)
+                {
+                    output = Vector3.zero;
+                }
+
+            }
+            
+            
+        }
+        
+        return output;
     }
 }
