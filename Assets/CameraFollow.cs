@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    
+
+    [SerializeField] private float YLerpRate = 1.5f;
     
     private void OnEnable()
     {
@@ -16,8 +17,9 @@ public class CameraFollow : MonoBehaviour
         PlayerFsm.OnPlayerPositionUpdated -= UpdatePosition;
     }
     
-    void UpdatePosition(Vector3 pos)
+    void UpdatePosition(Vector3 pos, bool grounded)
     {
-        transform.position = new Vector3(pos.x, transform.position.y, pos.z);
+        var newY = grounded ? Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * YLerpRate) : transform.position.y;
+        transform.position = new Vector3(pos.x, newY, pos.z);
     }
 }

@@ -73,8 +73,9 @@ public class PlayerFsm : GravityFsm
     private float _momentumGainRate = 9f;
     private float _momentumLossRate = 20f; 
     private float _momentumTurnLoss = 5f; 
+    private float _collisionMomentumLossRate = 300f;
     public static event Action<float> OnPlayerMomentumUpdated;
-    public static event Action<Vector3> OnPlayerPositionUpdated;
+    public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     
     private float _jumpYVelocity = 22f;
     private float _coyoteTime = 0.05f;
@@ -232,8 +233,9 @@ public class PlayerFsm : GravityFsm
         base.OnUpdate();
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
-        OnPlayerPositionUpdated?.Invoke(transform.position);
-        
+        OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded));
+
+
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
@@ -268,7 +270,13 @@ public class PlayerFsm : GravityFsm
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             Animator.SetFloat("SpeedMod", value);
             var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
-            transform.position += GetCollisionMove(desiredMove);
+            var collisionMove = GetCollisionMove(desiredMove);
+            transform.position += collisionMove;
+            
+            // print("Desired: " + desiredMove.magnitude + ", collision: " + collisionMove.magnitude);
+            var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
+            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
+            
             
             var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
             momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
@@ -290,7 +298,10 @@ public class PlayerFsm : GravityFsm
             var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
             Animator.SetFloat("Momentum", momentumWeight);
             var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
-            transform.position += GetCollisionMove(desiredMove);
+            var collisionMove = GetCollisionMove(desiredMove);
+            transform.position += collisionMove;
+            var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
+            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
         }
 
         if (Machine.IsInState(GravityFsmState.Aerial))
@@ -311,7 +322,7 @@ public class PlayerFsm : GravityFsm
             if (Physics.Raycast(transform.position + transform.up * 3f + transform.forward * 0.2f,
                     -transform.up, out var hit, 3.1f))
             {
-                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 50f);
+                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 60f);
                 transform.position = new Vector3(transform.position.x, newY, transform.position.z);
             }
         }
