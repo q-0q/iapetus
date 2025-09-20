@@ -234,8 +234,6 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded));
-
-
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
@@ -251,57 +249,33 @@ public class PlayerFsm : GravityFsm
                 _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime);
                 v3 = transform.forward;
             }
-
-            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
             
-            var angle = Vector3.SignedAngle(v3.normalized, transform.forward.normalized, transform.up);
-            var animationDesiredTurnAmount = Mathf.InverseLerp(35f, -35f, angle);
-            animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
-            var turnAmount = Animator.GetFloat("TurnAmount");
-            var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 2f;
-            Animator.SetFloat("TurnAmount", Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * turnLerpSpeed));
-            Animator.SetLayerWeight(1, Mathf.Abs(turnAmount) * momentumWeight);
+            HandleTurning(v3);
+            HandleCollisionMove();
             
-
-            var quaternion = Quaternion.LookRotation(v3.normalized, transform.up);
-            var lowMomentumRotationMod = _momentum < 5f ? 4f : 1f;
-            transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * lowMomentumRotationMod);
-            Animator.SetFloat("Momentum", momentumWeight);
-            var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
-            Animator.SetFloat("SpeedMod", value);
-            var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
-            var collisionMove = GetCollisionMove(desiredMove);
-            transform.position += collisionMove;
-            
-            // print("Desired: " + desiredMove.magnitude + ", collision: " + collisionMove.magnitude);
-            var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
-            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
-            
-            
-            var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
-            momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime *
-                                                  Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
+            SetAnimatorMomentum();
+            var speedMod = Mathf.Lerp(0f, 3.5f, ComputeMomentumWeight());
+            Animator.SetFloat("SpeedMod", speedMod);
         }
 
         if (Machine.IsInState(PlayerFsmState.Vault))
         {
-            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
-            var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
-            Animator.SetFloat("Momentum", momentumWeight);
-            var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
-            transform.position += desiredMove;
+            _momentum = Mathf.Max(_momentum, 6f);
+            var momentumWeight = ComputeMomentumWeight();
+            Animator.SetFloat("SpeedMod", Mathf.Lerp(0.3f, 1.1f, momentumWeight));
+            if (Physics.Raycast(transform.position + transform.up * 3f + transform.forward * 0.2f,
+                    -transform.up, out var hit, 3.1f))
+            {
+                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 60f);
+                transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+            }
+            SetAnimatorMomentum();
+            transform.position += ComputeDesiredMove();
         }
         else if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
         {
-            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
-            var value = Mathf.Lerp(0f, 3.5f, momentumWeight);
-            Animator.SetFloat("Momentum", momentumWeight);
-            var desiredMove = transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
-            var collisionMove = GetCollisionMove(desiredMove);
-            transform.position += collisionMove;
-            var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
-            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
+            SetAnimatorMomentum();
+            HandleCollisionMove();
         }
 
         if (Machine.IsInState(GravityFsmState.Aerial))
@@ -313,22 +287,30 @@ public class PlayerFsm : GravityFsm
         {
             _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.25f);
         }
-        
-        if (Machine.IsInState(PlayerFsmState.Vault))
-        {
-            _momentum = Mathf.Max(_momentum, 6f);
-            var momentumWeight = Mathf.InverseLerp(0, MaxMomentum, _momentum);
-            Animator.SetFloat("SpeedMod", Mathf.Lerp(0.3f, 1.1f, momentumWeight));
-            if (Physics.Raycast(transform.position + transform.up * 3f + transform.forward * 0.2f,
-                    -transform.up, out var hit, 3.1f))
-            {
-                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 60f);
-                transform.position = new Vector3(transform.position.x, newY, transform.position.z);
-            }
-        }
     }
 
-    
+    private void HandleTurning(Vector3 inputVector3)
+    {
+        float momentumWeight = ComputeMomentumWeight();
+        var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, transform.up);
+        var animationDesiredTurnAmount = Mathf.InverseLerp(35f, -35f, angle);
+        animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
+        var turnAmount = Animator.GetFloat("TurnAmount");
+        var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 2f;
+        Animator.SetFloat("TurnAmount", Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * turnLerpSpeed));
+        Animator.SetLayerWeight(1, Mathf.Abs(turnAmount) * momentumWeight);
+            
+        var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
+        momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
+        _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime *
+                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
+        
+        var quaternion = Quaternion.LookRotation(inputVector3.normalized, transform.up);
+        var lowMomentumRotationMod = _momentum < 5f ? 4f : 1f;
+        transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * lowMomentumRotationMod);
+    }
+
+
     // ------------ Helper functions ------------- //
     
     private Vector2 GetInputMovementVector2()
@@ -336,7 +318,7 @@ public class PlayerFsm : GravityFsm
         return _playerInput.actions["Move"].ReadValue<Vector2>();
     }
     
-    private Vector3 GetCollisionMove(Vector3 desiredMove)
+    private Vector3 ComputeCollisionMove(Vector3 desiredMove)
     {
         var output = desiredMove;
         
@@ -378,5 +360,31 @@ public class PlayerFsm : GravityFsm
         }
         
         return output;
+    }
+    
+    private float ComputeMomentumWeight()
+    {
+        return Mathf.InverseLerp(0, MaxMomentum, _momentum);
+    }
+
+    private Vector3 ComputeDesiredMove()
+    {
+        var value = Mathf.Lerp(0f, 3.5f, ComputeMomentumWeight());
+        return transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
+    }
+
+    private void SetAnimatorMomentum()
+    {
+        Animator.SetFloat("Momentum", ComputeMomentumWeight());
+    }
+
+    private void HandleCollisionMove()
+    {
+        var desiredMove = ComputeDesiredMove();
+        var collisionMove = ComputeCollisionMove(desiredMove);
+        transform.position += collisionMove;
+            
+        var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
+        _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
     }
 }
