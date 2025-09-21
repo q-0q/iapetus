@@ -85,6 +85,31 @@ AnimatorState:
   m_MirrorParameter: MovementMirror
   m_CycleOffsetParameter: MovementCycleOffset
   m_TimeParameter: 
+--- !u!1101 &-6277726408824801142
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: SlowVaultFinish
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: -3094106768633625585}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.057479825
+  m_TransitionOffset: 0
+  m_ExitTime: 1.4614199e-11
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
 --- !u!206 &-5986070820576186335
 BlendTree:
   m_ObjectHideFlags: 1
@@ -247,7 +272,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: VaultSlow
+  m_Name: SlowVaultHang
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -260,7 +285,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -6762569362082157984, guid: cb4cee4a5b1684c1c8c637f886f2104a,
+  m_Motion: {fileID: 5776316698259780604, guid: cb4cee4a5b1684c1c8c637f886f2104a,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 
@@ -326,6 +351,33 @@ AnimatorState:
   m_MirrorParameter: MovementMirror
   m_CycleOffsetParameter: MovementCycleOffset
   m_TimeParameter: 
+--- !u!1102 &-3094106768633625585
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SlowVaultFinish
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: -3834375093819138813, guid: cb4cee4a5b1684c1c8c637f886f2104a,
+    type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1107 &-3039795987406276269
 AnimatorStateMachine:
   serializedVersion: 6
@@ -365,6 +417,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -3973396748867063007}
     m_Position: {x: 750, y: 870, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -3094106768633625585}
+    m_Position: {x: 1080.2404, y: 621.6053, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -467869392498190076}
@@ -377,6 +432,7 @@ AnimatorStateMachine:
   - {fileID: -5137028306889953519}
   - {fileID: 2909995290763339518}
   - {fileID: 5188682218813953613}
+  - {fileID: -6277726408824801142}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
@@ -849,7 +905,13 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: VaultSlow
+  - m_Name: SlowVaultHang
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: SlowVaultFinish
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -1092,7 +1154,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: VaultSlow
+    m_ConditionEvent: SlowVaultHang
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -3973396748867063007}
@@ -1100,7 +1162,7 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.2500001
+  m_TransitionDuration: 0.09013259
   m_TransitionOffset: 0
   m_ExitTime: 0
   m_HasExitTime: 0
