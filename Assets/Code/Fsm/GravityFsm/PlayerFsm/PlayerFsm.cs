@@ -24,7 +24,6 @@ public class PlayerFsm : GravityFsm
 
     private void Start()
     {
-        _stateStartPosition = transform.position;
         InitState = PlayerFsmState.GroundMove;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
@@ -49,6 +48,7 @@ public class PlayerFsm : GravityFsm
         public static int Wallstep;
         public static int Wallsquat;
         public static int OnWall;
+        public static int VaultSlow;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -57,9 +57,9 @@ public class PlayerFsm : GravityFsm
         public static int HardTurn;
         public static int LowMomentum;
         public static int FaceLedge;
+        public static int FaceHighLedge;
         public static int FaceWall;
         public static int FaceOpen;
-        public static int VaultDistanceTraveled;
     }
     
     private PlayerInput _playerInput;
@@ -67,8 +67,11 @@ public class PlayerFsm : GravityFsm
     private InputBuffer _inputBuffer;
     
     private float _forwardRaycastDistance = 1f;
-    private float _minLedgeHeight = 0.75f;
-    private float _maxLedgeHeight = 2f;
+    private float _faceLedgeHeight = 0.8f;
+    private float _faceHighLedgeHeight = 2.5f;
+    private float _faceWallHeight = 3.5f;
+    private float _maxYVelocityToInteractWithWall = 7f; // the higher this number, the harder it is to get
+                                                        // optimal wall step height
     
     private float _moveSpeed = 5f;
     private float _rotationSpeed = 3f;
@@ -84,7 +87,6 @@ public class PlayerFsm : GravityFsm
     private float _jumpYVelocity = 22f;
     private float _coyoteTime = 0.05f;
     private float _vaultDistance = 3f;
-    private Vector3 _stateStartPosition;
     
     
     // --------- End of subclass Fsm data ------------- //
@@ -141,7 +143,7 @@ public class PlayerFsm : GravityFsm
         Machine.Configure(PlayerFsmState.Jump)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < 5f)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _maxYVelocityToInteractWithWall)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("Jump");
@@ -166,7 +168,8 @@ public class PlayerFsm : GravityFsm
             });
 
         Machine.Configure(GravityFsmState.Aerial)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true);
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.VaultSlow, _ => true);
 
         Machine.Configure(PlayerFsmState.Vault)
             .SubstateOf(GravityFsmState.Aerial)
@@ -178,18 +181,28 @@ public class PlayerFsm : GravityFsm
                 YVelocity = 0;
             });
         
+        Machine.Configure(PlayerFsmState.VaultSlow)
+            .SubstateOf(PlayerFsmState.OnWall)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("VaultSlow");
+                YVelocity = 0;
+            });
+        
         Machine.Configure(PlayerFsmState.Wallstep)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.OnWall)
-            // .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            // .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
+                _inputBuffer.ConsumeBuffer("Jump");
                 ReplaceAnimatorTrigger("Wallstep");
-                YVelocity = Mathf.Lerp(5f, 16f, ComputeMomentumWeight());
+                YVelocity = Mathf.Lerp(5f, 22f, ComputeMomentumWeight());
                 Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
+                _momentum = 0;
             });
         
         Machine.Configure(PlayerFsmState.Wallsquat)
@@ -197,7 +210,8 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(PlayerFsmState.OnWall)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Wallstep)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Wallstep, _ => _inputBuffer.IsBuffered("Jump"), 1)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
                 YVelocity = 0;
@@ -210,8 +224,9 @@ public class PlayerFsm : GravityFsm
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.35f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.VaultSlow, 0.3f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.225f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
     }
 
@@ -237,13 +252,17 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.LowMomentum);
         }
 
-        var distance = Mathf.Lerp(1f, 2.5f, ComputeMomentumWeight()) * _forwardRaycastDistance;
-        if (Physics.Raycast(transform.position + transform.up * _maxLedgeHeight, transform.forward,
+        var distance = ComputeDynamicForwardRaycastDistance();
+        if (Physics.Raycast(transform.position + transform.up * _faceWallHeight, transform.forward,
                 distance))
         {
             Machine.Fire(PlayerFsmTrigger.FaceWall);
-        } else if (Physics.Raycast(transform.position + transform.up * _minLedgeHeight, transform.forward, 
+        } else if (Physics.Raycast(transform.position + transform.up * _faceHighLedgeHeight, transform.forward, 
                        distance))
+        {
+            Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
+        } else if (Physics.Raycast(transform.position + transform.up * _faceLedgeHeight, transform.forward, 
+                      distance))
         {
             Machine.Fire(PlayerFsmTrigger.FaceLedge);
         }
@@ -251,11 +270,16 @@ public class PlayerFsm : GravityFsm
         {
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
+        
+        Debug.DrawRay(transform.position + transform.up * _faceWallHeight, transform.forward, Color.red);
+        Debug.DrawRay(transform.position + transform.up * _faceHighLedgeHeight, transform.forward, Color.yellow);
+        Debug.DrawRay(transform.position + transform.up * _faceLedgeHeight, transform.forward, Color.cyan);
+        
+    }
 
-        if (Vector3.Distance(transform.position, _stateStartPosition) > _vaultDistance)
-        {
-            Machine.Fire(PlayerFsmTrigger.VaultDistanceTraveled);
-        }
+    private float ComputeDynamicForwardRaycastDistance()
+    {
+        return Mathf.Lerp(1f, 2.5f, ComputeMomentumWeight()) * _forwardRaycastDistance;
     }
 
 
@@ -289,13 +313,18 @@ public class PlayerFsm : GravityFsm
             Animator.SetFloat("SpeedMod", speedMod);
         }
 
-        if (Machine.IsInState(PlayerFsmState.Vault))
+        if (Machine.IsInState(PlayerFsmState.VaultSlow))
+        {
+            var desiredMove = transform.up.normalized * (_moveSpeed * 3.5f * Time.deltaTime);
+            transform.position += desiredMove;
+        }
+        else if (Machine.IsInState(PlayerFsmState.Vault))
         {
             _momentum = Mathf.Max(_momentum, 6f);
             var momentumWeight = ComputeMomentumWeight();
             Animator.SetFloat("SpeedMod", Mathf.Lerp(0.3f, 1.1f, momentumWeight));
-            if (Physics.Raycast(transform.position + transform.up * 3f + transform.forward * 0.2f,
-                    -transform.up, out var hit, 3.1f))
+            var downwardRaycastOrigin = transform.position + (transform.up * (_faceLedgeHeight * 4.5f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
+            if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, _faceLedgeHeight * 4.5f))
             {
                 var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 60f);
                 transform.position = new Vector3(transform.position.x, newY, transform.position.z);
@@ -319,12 +348,7 @@ public class PlayerFsm : GravityFsm
             _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.25f);
         }
 
-        if (Machine.IsInState(PlayerFsmState.Wallstep))
-        {
-            var value = Mathf.Lerp(0f, 3.5f, ComputeMomentumWeight());
-            var desiredMove = transform.up.normalized * (_moveSpeed * value * Time.deltaTime);
-            transform.position += desiredMove;
-        }
+
 
         if (Machine.IsInState(PlayerFsmState.OnWall))
         {
@@ -432,6 +456,7 @@ public class PlayerFsm : GravityFsm
         transform.position += collisionMove;
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
+        if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity >_maxYVelocityToInteractWithWall) return;
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
