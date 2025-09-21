@@ -49,6 +49,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig = new StateMapConfig();
         StateMapConfig.Name = new StateMap<string>("No state name provided");
         StateMapConfig.Duration = new StateMap<float>(1f);
+        StateMapConfig.GravityStrengthMod = new StateMap<float>(1f);
     }
 
     public virtual void SetupMachine()

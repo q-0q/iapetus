@@ -4,4 +4,5 @@ public class StateMapConfig
 {
     public StateMap<string> Name;
     public StateMap<float> Duration;
+    public StateMap<float> GravityStrengthMod;
 }

@@ -14,6 +14,7 @@ public abstract class GravityFsm : Fsm
     {
         public static int StartFrameGrounded;
         public static int StartFrameAerial;
+        public static int StartFrameWithNegativeYVelocity;
         
     }
 
@@ -53,6 +54,11 @@ public abstract class GravityFsm : Fsm
         {
             Machine.Fire(GravityFsmTrigger.StartFrameAerial);
         }
+
+        if (YVelocity < 0)
+        {
+            Machine.Fire(GravityFsmTrigger.StartFrameWithNegativeYVelocity);
+        }
     }
     
     public override void OnUpdate()
@@ -63,7 +69,7 @@ public abstract class GravityFsm : Fsm
         {
             var v3 = new Vector3(0, YVelocity * Time.deltaTime, 0);
             transform.position += v3;
-            YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime);
+            YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime * StateMapConfig.GravityStrengthMod.Get(this));
             TimeInAir += Time.deltaTime;
         }
         
