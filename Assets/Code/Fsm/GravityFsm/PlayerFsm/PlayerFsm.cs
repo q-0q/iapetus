@@ -30,8 +30,8 @@ public class PlayerFsm : GravityFsm
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);
         _inputBuffer.InitInput("Jump");
         
-        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 120;
+        // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
+        // Application.targetFrameRate = 120;
         OnStart();
     }
     
@@ -71,7 +71,7 @@ public class PlayerFsm : GravityFsm
     private InputBuffer _inputBuffer;
     
     private float _forwardRaycastDistance = 1f;
-    private float _faceLedgeHeight = 0.8f;
+    private float _faceLedgeHeight = 0.2f;
     private float _faceHighLedgeHeight = 2.15f;
     private float _faceWallHeight = 2.25f;
     private float _minYVelocityToInteractWithWall = 0f; 
@@ -265,8 +265,7 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.Jump);
         }
         
-        var v2 = GetInputMovementVector2();
-        var v3 = new Vector3(v2.x, 0, v2.y);
+        var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
         if (angle > 160f && _momentum > 10f)
         {
@@ -321,7 +320,7 @@ public class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             var v2 = GetInputMovementVector2();
-            var v3 = new Vector3(v2.x, 0, v2.y);
+            var v3 = GetInputMovementVector3();
 
             if (v2.magnitude > 0.1f)
             {
@@ -399,11 +398,11 @@ public class PlayerFsm : GravityFsm
 
     private void MoveYOntoLedge(float ledgeHeight, float yTransform, float lerpStrength)
     {
-        var f = 6f;
-        var downwardRaycastOrigin = transform.position + (transform.up * (ledgeHeight * f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
-        Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (transform.up * (ledgeHeight * f)), Color.green);
+        var f = 3f;
+        var downwardRaycastOrigin = transform.position + (transform.up * (ledgeHeight + f)) + transform.forward * (ComputeDynamicForwardRaycastDistance());
+        Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (transform.up * (ledgeHeight + f)), Color.green);
         
-        if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, ledgeHeight * f * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, (ledgeHeight + f) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
         {
             var newY = lerpStrength < 0 ? hit.point.y : Mathf.Lerp(transform.position.y, hit.point.y + yTransform, Time.deltaTime * lerpStrength);
             transform.position = new Vector3(transform.position.x, newY, transform.position.z);
@@ -437,6 +436,12 @@ public class PlayerFsm : GravityFsm
     private Vector2 GetInputMovementVector2()
     {
         return _playerInput.actions["Move"].ReadValue<Vector2>();
+    }
+    
+    private Vector3 GetInputMovementVector3()
+    {
+        var v2 = GetInputMovementVector2();
+        return Quaternion.Euler(0, Camera.main.transform.rotation.eulerAngles.y, 0) * new Vector3(v2.x, 0, v2.y);
     }
     
     private Vector3 ComputeCollisionMove(Vector3 desiredMove)
