@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
-    [SerializeField] private float YLerpRate = 1.5f;
+    private float YLerpRate = 2.5f;
     
     private void OnEnable()
     {
