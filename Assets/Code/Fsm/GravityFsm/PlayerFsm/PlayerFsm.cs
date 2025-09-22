@@ -27,7 +27,7 @@ public class PlayerFsm : GravityFsm
         InitState = PlayerFsmState.GroundMove;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
-        _inputBuffer = new InputBuffer(_playerInput, 0.2f);
+        _inputBuffer = new InputBuffer(_playerInput, 0.275f);
         _inputBuffer.InitInput("Jump");
         OnStart();
     }
@@ -70,7 +70,7 @@ public class PlayerFsm : GravityFsm
     private float _forwardRaycastDistance = 1f;
     private float _faceLedgeHeight = 0.8f;
     private float _faceHighLedgeHeight = 2.15f;
-    private float _faceWallHeight = 2.5f;
+    private float _faceWallHeight = 2.25f;
     private float _minYVelocityToInteractWithWall = 3f; 
                                                         
     // private float _minYVelocityToSlowVault = 1f;
@@ -89,6 +89,9 @@ public class PlayerFsm : GravityFsm
     private float _jumpYVelocity = 22f;
     private float _coyoteTime = 0.05f;
     private float _vaultDistance = 3f;
+
+    private Vector3 _checkpointVector3;
+    private Quaternion _checkpointQuaternion;
     
     
     // --------- End of subclass Fsm data ------------- //
@@ -228,7 +231,7 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(PlayerFsmState.OnWall)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Wallstep, _ => _inputBuffer.IsBuffered("Jump"), 1)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep, _ => TimeInCurrentState() > 0.25f, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
@@ -245,7 +248,7 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.225f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
     }
 
@@ -273,15 +276,15 @@ public class PlayerFsm : GravityFsm
 
         var distance = ComputeDynamicForwardRaycastDistance();
         if (Physics.Raycast(transform.position + transform.up * _faceWallHeight, transform.forward,
-                distance))
+                distance, ~0, QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FaceWall);
         } else if (Physics.Raycast(transform.position + transform.up * _faceHighLedgeHeight, transform.forward, 
-                       distance))
+                       distance, ~0, QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
         } else if (Physics.Raycast(transform.position + transform.up * _faceLedgeHeight, transform.forward, 
-                      distance))
+                      distance, ~0, QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FaceLedge);
         }
@@ -307,7 +310,8 @@ public class PlayerFsm : GravityFsm
         base.OnUpdate();
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
-        OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) || Machine.IsInState(PlayerFsmState.Wallstep));
+        OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
+                                                            Machine.IsInState(PlayerFsmState.OnWall));
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
@@ -371,11 +375,18 @@ public class PlayerFsm : GravityFsm
 
         if (Machine.IsInState(PlayerFsmState.OnWall))
         {
-            if (Physics.Raycast(transform.position, transform.forward, out var hit, 3f))
+            if (Physics.Raycast(transform.position, transform.forward, out var hit, 3f, ~0, QueryTriggerInteraction.Ignore))
             {
                 var quaternion = Quaternion.LookRotation(-hit.normal, transform.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * 1f);
             }
+        }
+
+
+        if (_playerInput.actions["Reset"].WasPerformedThisFrame())
+        {
+            transform.position = _checkpointVector3;
+            transform.rotation = _checkpointQuaternion;
         }
     }
 
@@ -385,7 +396,7 @@ public class PlayerFsm : GravityFsm
         var downwardRaycastOrigin = transform.position + (transform.up * (ledgeHeight * f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (transform.up * (ledgeHeight * f)), Color.green);
         
-        if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, ledgeHeight * f))
+        if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, ledgeHeight * f, ~0, QueryTriggerInteraction.Ignore))
         {
             var newY = lerpStrength < 0 ? hit.point.y : Mathf.Lerp(transform.position.y, hit.point.y + yTransform, Time.deltaTime * lerpStrength);
             transform.position = new Vector3(transform.position.x, newY, transform.position.z);
@@ -493,5 +504,16 @@ public class PlayerFsm : GravityFsm
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));
+    }
+
+    public void InvokeBoost()
+    {
+        _momentum = MaxMomentum;
+    }
+    
+    public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
+    {
+        _checkpointVector3 = position;
+        _checkpointQuaternion = rotation;
     }
 }

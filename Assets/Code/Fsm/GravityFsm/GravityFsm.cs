@@ -46,7 +46,7 @@ public abstract class GravityFsm : Fsm
     {
         base.FireTriggers();
 
-        if (Physics.Raycast(transform.position + transform.up * 0.1f, -transform.up, 0.2f))
+        if (Physics.Raycast(transform.position + transform.up * 0.1f, -transform.up, 0.2f, ~0, QueryTriggerInteraction.Ignore))
         {
             if (YVelocity < 0.1f) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
         }
