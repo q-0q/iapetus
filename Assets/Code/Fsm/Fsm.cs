@@ -96,7 +96,6 @@ public abstract class Fsm : MonoBehaviour
         float baseFps = 300f; // base fps my machine typically gets during dev
         var currentFPS = (1.0f / Time.deltaTime);
         float output = Mathf.Lerp(1f, 1.5f, Mathf.InverseLerp(baseFps, 0, currentFPS));
-        print(output);
         return output;
     }
 }

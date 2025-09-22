@@ -31,7 +31,7 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Jump");
         
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 30;
+        Application.targetFrameRate = 120;
         OnStart();
     }
     
@@ -74,7 +74,7 @@ public class PlayerFsm : GravityFsm
     private float _faceLedgeHeight = 0.8f;
     private float _faceHighLedgeHeight = 2.15f;
     private float _faceWallHeight = 2.25f;
-    private float _minYVelocityToInteractWithWall = 3f; 
+    private float _minYVelocityToInteractWithWall = 0f; 
                                                         
     // private float _minYVelocityToSlowVault = 1f;
     
@@ -288,9 +288,10 @@ public class PlayerFsm : GravityFsm
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
         } else if (Physics.Raycast(transform.position + transform.up * _faceLedgeHeight, transform.forward, 
-                      distance, ~0, QueryTriggerInteraction.Ignore))
+                       out var hit, distance, ~0, QueryTriggerInteraction.Ignore))
         {
-            Machine.Fire(PlayerFsmTrigger.FaceLedge);
+            var slope = Vector3.Angle(hit.normal, transform.up);
+            if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge);
         }
         else
         {
@@ -443,11 +444,11 @@ public class PlayerFsm : GravityFsm
         var output = desiredMove;
         
         // Radius of your character (adjust as needed)
-        float radius = 0.25f;
+        float radius = 0.1f;
         float castDistance = 0.45f;
         float pushExitPadding = 0.35f;
 
-        Vector3 position = transform.position + transform.up * 0.5f;
+        Vector3 position = transform.position + transform.up * 0.75f;
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
@@ -506,7 +507,7 @@ public class PlayerFsm : GravityFsm
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;
-        if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity >_minYVelocityToInteractWithWall) return;
+        if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity >_minYVelocityToInteractWithWall - 1f) return;
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime * (collisionRatio - 1f) * _collisionMomentumLossRate));

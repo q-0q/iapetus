@@ -46,9 +46,9 @@ public abstract class GravityFsm : Fsm
     {
         base.FireTriggers();
 
-        if (Physics.Raycast(transform.position + transform.up * 0.1f, -transform.up, 0.2f * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
+        if (GetGroundedRaycastHit(out _))
         {
-            if (YVelocity < 0.1f) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
+            if (YVelocity < 0.5f) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
         }
         else
         {
@@ -76,6 +76,24 @@ public abstract class GravityFsm : Fsm
         if (Machine.IsInState(GravityFsmState.Grounded))
         {
             YVelocity = 0;
+            if (GetGroundedRaycastHit(out var hit))
+            {
+                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 20);
+                transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+            }
         }
+    }
+
+    private bool GetGroundedRaycastHit(out RaycastHit hit)
+    {
+        var raycastLength = 0.9f * GetRaycastTimeModifier();
+        Debug.DrawLine(transform.position + transform.up * raycastLength, transform.position + transform.up * raycastLength - transform.up * (raycastLength * 1.3f), Color.red);
+        if (Physics.Raycast(transform.position + transform.up * raycastLength, -transform.up, out hit,
+                raycastLength * 2f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            var slope = Vector3.Angle(hit.normal, transform.up);
+            return slope < 70f;
+        }
+        return false;
     }
 }
