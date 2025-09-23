@@ -1,11 +1,12 @@
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public abstract class PlayerWeaponFsm : Fsm
+public class PlayerWeaponFsm : Fsm
 {
     public class PlayerWeaponFsmState : FsmState
     {
-
+        public static int Idle;
     }
 
     public class PlayerWeaponFsmTrigger : FsmTrigger
@@ -42,5 +43,15 @@ public abstract class PlayerWeaponFsm : Fsm
 
 
     }
-    
+
+    private void Start()
+    {
+        InitState = PlayerWeaponFsmState.Idle;
+        OnStart();
+    }
+
+    private void Update()
+    {
+        OnUpdate();
+    }
 }

@@ -351,6 +351,31 @@ AnimatorState:
   m_MirrorParameter: MovementMirror
   m_CycleOffsetParameter: MovementCycleOffset
   m_TimeParameter: 
+--- !u!1101 &-3588218536383870620
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: LongFall
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: -730666479276703523}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.13826965
+  m_TransitionOffset: 0
+  m_ExitTime: 0.0000000051453224
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
 --- !u!1102 &-3094106768633625585
 AnimatorState:
   serializedVersion: 6
@@ -420,6 +445,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -3094106768633625585}
     m_Position: {x: 1080.2404, y: 621.6053, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -730666479276703523}
+    m_Position: {x: 1130, y: 440, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -467869392498190076}
@@ -433,6 +461,7 @@ AnimatorStateMachine:
   - {fileID: 2909995290763339518}
   - {fileID: 5188682218813953613}
   - {fileID: -6277726408824801142}
+  - {fileID: -3588218536383870620}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
@@ -612,6 +641,33 @@ BlendTree:
   m_UseAutomaticThresholds: 1
   m_NormalizedBlendValues: 0
   m_BlendType: 0
+--- !u!1102 &-730666479276703523
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LongFall
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 1092221202573069230, guid: cb4cee4a5b1684c1c8c637f886f2104a,
+    type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!206 &-703221825263324162
 BlendTree:
   m_ObjectHideFlags: 1
@@ -687,7 +743,7 @@ BlendTree:
   m_Name: Blend Tree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 314071378283028140, guid: cb4cee4a5b1684c1c8c637f886f2104a,
+    m_Motion: {fileID: -7288191682775291059, guid: cb4cee4a5b1684c1c8c637f886f2104a,
       type: 3}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
@@ -912,6 +968,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: SlowVaultFinish
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: LongFall
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
