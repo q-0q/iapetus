@@ -329,7 +329,7 @@ public class PlayerFsm : GravityFsm
         
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
-        if (angle > 160f && _momentum > 10f)
+        if (angle > 130f && _momentum > 8.5f)
         {
             Machine.Fire(PlayerFsmTrigger.HardTurn);
         }
@@ -441,7 +441,7 @@ public class PlayerFsm : GravityFsm
             if (Physics.Raycast(transform.position, transform.forward, out var hit, 3f * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
             {
                 var quaternion = Quaternion.LookRotation(-hit.normal, transform.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * 1f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * 2f);
             }
         }
 
