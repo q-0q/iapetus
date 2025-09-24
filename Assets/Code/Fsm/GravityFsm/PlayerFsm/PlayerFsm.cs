@@ -29,6 +29,7 @@ public class PlayerFsm : GravityFsm
         TryGetComponent(out _playerInput);
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);
         _inputBuffer.InitInput("Jump");
+        _inputBuffer.InitInput("Dash");
         _camera = Camera.main;
         
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
@@ -56,6 +57,8 @@ public class PlayerFsm : GravityFsm
         public static int SlowVaultFinish;
         public static int LongFall;
         public static int LongFallJump;
+        public static int Dashsquat;
+        public static int Dash;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -68,6 +71,7 @@ public class PlayerFsm : GravityFsm
         public static int FaceWall;
         public static int FaceOpen;
         public static int StartLongFall;
+        public static int Dash;
     }
     
     private PlayerInput _playerInput;
@@ -77,7 +81,7 @@ public class PlayerFsm : GravityFsm
     private float _forwardRaycastDistance = 1f;
     private float _faceLedgeHeight = 0.2f;
     private float _faceHighLedgeHeight = 2.15f;
-    private float _faceWallHeight = 2.25f;
+    private float _faceWallHeight = 2.4f;
     private float _minYVelocityToInteractWithWall = 0f; 
                                                         
     // private float _minYVelocityToSlowVault = 1f;
@@ -89,10 +93,10 @@ public class PlayerFsm : GravityFsm
     private float _momentumGainRate = 9f;
     private float _momentumLossRate = 20f; 
     private float _momentumTurnLoss = 5f; 
-    private float _lowMomentumThreshhold = 4f;
-    private float _lowMomentumRotationMod = 4f;
-    private float _lowMomentumMomentumGainMod = 1.75f;
-    private float _lowMomentumMomentumLossMod = 1f;
+    private float _lowMomentumThreshhold = 6f;
+    private float _lowMomentumRotationMod = 6f;
+    private float _lowMomentumMomentumGainMod = 1.15f;
+    private float _lowMomentumMomentumLossMod = 1.25f;
     private float _collisionMomentumLossRate = 300f;
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -124,6 +128,7 @@ public class PlayerFsm : GravityFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
+            .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("GroundMove");
@@ -273,6 +278,24 @@ public class PlayerFsm : GravityFsm
                 YVelocity = 0;
                 ReplaceAnimatorTrigger("Wallsquat");
             });
+        
+        Machine.Configure(PlayerFsmState.Dashsquat)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Dash)
+            .OnEntry(_ =>
+            {
+                _inputBuffer.ConsumeBuffer("Dash");
+                ReplaceAnimatorTrigger("Dashsquat");
+            });
+        
+        Machine.Configure(PlayerFsmState.Dash)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .OnEntry(_ =>
+            {
+                _momentum = Mathf.Min(Mathf.Max(_momentum + 5f, 10f), MaxMomentum);
+                ReplaceAnimatorTrigger("Dash");
+            });
     }
 
     public override void SetupStateMaps()
@@ -284,6 +307,9 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);
         StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.1f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.15f);
+        
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
     }
 
@@ -294,6 +320,11 @@ public class PlayerFsm : GravityFsm
         if (_inputBuffer.IsBuffered("Jump"))
         {
             Machine.Fire(PlayerFsmTrigger.Jump);
+        }
+        
+        if (_inputBuffer.IsBuffered("Dash"))
+        {
+            Machine.Fire(PlayerFsmTrigger.Dash);
         }
         
         var v3 = GetInputMovementVector3();
@@ -412,6 +443,17 @@ public class PlayerFsm : GravityFsm
                 var quaternion = Quaternion.LookRotation(-hit.normal, transform.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * 1f);
             }
+        }
+
+        if (Machine.IsInState(PlayerFsmState.Dashsquat))
+        {
+            HandleCollisionMove();
+        }
+        if (Machine.IsInState(PlayerFsmState.Dash))
+        {
+            Animator.SetLayerWeight(1, 0);
+            var collisionMove = ComputeCollisionMove(transform.forward * (20f * Time.deltaTime));
+            transform.position += collisionMove;
         }
 
 
@@ -549,11 +591,11 @@ public class PlayerFsm : GravityFsm
         Animator.SetFloat("Momentum", ComputeMomentumWeight());
     }
 
-    private void HandleCollisionMove()
+    private void HandleCollisionMove(float modifier = 1f)
     {
         var desiredMove = ComputeDesiredMove();
         var collisionMove = ComputeCollisionMove(desiredMove);
-        transform.position += collisionMove;
+        transform.position += collisionMove * modifier;
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;
