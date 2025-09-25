@@ -32,8 +32,8 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Dash");
         _camera = Camera.main;
         
-        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 30;
+        // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
+        // Application.targetFrameRate = 10;
         OnStart();
     }
     
@@ -167,7 +167,7 @@ public class PlayerFsm : GravityFsm
         Machine.Configure(PlayerFsmState.Jump)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > -2f)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _minYVelocityToInteractWithWall)
             .Permit(PlayerFsmTrigger.StartLongFall, PlayerFsmState.LongFallJump)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
@@ -225,6 +225,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
+                UpdateLedgePosition(_faceLedgeHeight);
                 ReplaceAnimatorTrigger("Vault");
                 YVelocity = 0;
             });
@@ -235,6 +236,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
+                UpdateLedgePosition(_faceHighLedgeHeight);
                 ReplaceAnimatorTrigger("SlowVaultHang");
                 YVelocity = 0;
             });
@@ -245,6 +247,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
+                UpdateLedgePosition(_faceHighLedgeHeight);
                 ReplaceAnimatorTrigger("MediumVaultHang");
                 YVelocity = 0;
             });
@@ -384,9 +387,9 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
         
-        Debug.DrawRay(transform.position + transform.up * _faceWallHeight, transform.forward, Color.red);
-        Debug.DrawRay(transform.position + transform.up * _faceHighLedgeHeight, transform.forward, Color.yellow);
-        Debug.DrawRay(transform.position + transform.up * _faceLedgeHeight, transform.forward, Color.cyan);
+        Debug.DrawRay(transform.position + transform.up * _faceWallHeight, transform.forward * distance, Color.red);
+        Debug.DrawRay(transform.position + transform.up * _faceHighLedgeHeight, transform.forward * distance, Color.yellow);
+        Debug.DrawRay(transform.position + transform.up * _faceLedgeHeight, transform.forward * distance, Color.cyan);
         
         // if (!Physics.Raycast(transform.position, -transform.up,8f, ~0, QueryTriggerInteraction.Ignore))
         // {
@@ -423,14 +426,14 @@ public class PlayerFsm : GravityFsm
 
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang))
         {
-            MoveYOntoLedge(_faceHighLedgeHeight, -2.5f, 60f);
+            MoveYOntoLedge(-2.5f, 60f);
             HandleCollisionMove();
             
         }
         if (Machine.IsInState(PlayerFsmState.SlowVaultFinish))
         {
             HandleTurning(0.75f, true);
-            MoveYOntoLedge(_faceHighLedgeHeight, 0, 25f);
+            MoveYOntoLedge(0, 25f);
             transform.position += transform.forward * (2f * Time.deltaTime);
         }
         else if (Machine.IsInState(PlayerFsmState.Vault))
@@ -438,7 +441,7 @@ public class PlayerFsm : GravityFsm
             _momentum = Mathf.Max(_momentum, 6f);
             var momentumWeight = ComputeMomentumWeight();
             Animator.SetFloat("SpeedMod", Mathf.Lerp(0.3f, 1.1f, momentumWeight));
-            MoveYOntoLedge(_faceLedgeHeight, 0f, 40f);
+            MoveYOntoLedge(0f, 40f);
             SetAnimatorMomentum();
             transform.position += ComputeDesiredMove();
             HandleTurning(0.75f, true);
@@ -492,16 +495,21 @@ public class PlayerFsm : GravityFsm
         }
     }
 
-    private void MoveYOntoLedge(float ledgeHeight, float yTransform, float lerpStrength)
+    private void MoveYOntoLedge(float yTransform, float lerpStrength)
+    {
+        var newY = lerpStrength < 0 ? _currentLedgePosition.y : Mathf.Lerp(transform.position.y, _currentLedgePosition.y + yTransform, Time.deltaTime * lerpStrength);
+        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+    }
+
+    private void UpdateLedgePosition(float ledgeHeight)
     {
         var f = 3f;
-        var downwardRaycastOrigin = transform.position + (transform.up * (ledgeHeight + f)) + transform.forward;
+        var downwardRaycastOrigin = transform.position + (transform.up * (ledgeHeight + f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (transform.up * (ledgeHeight + f)), Color.green);
         
         if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, (ledgeHeight + f) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
         {
-            var newY = lerpStrength < 0 ? hit.point.y : Mathf.Lerp(transform.position.y, hit.point.y + yTransform, Time.deltaTime * lerpStrength);
-            transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+            _currentLedgePosition = hit.point;
         }
     }
 
