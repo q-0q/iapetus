@@ -118,6 +118,13 @@ public class PlayerFsm : GravityFsm
 
     private float _mediumVaultHangMinimumYVelocity = 12f;
 
+    private float _wallstepEntryMinimumYVelocity = 12f;
+    private float _wallstepEntryMaximumYVelocity = 23.5f;
+    private float _wallstepMinimumDuration = 0.25f;
+
+    private float _dashEntryMomentumGain = 5f;
+    private float _dashEntryMinimumMomentum = 12f;
+
     private Vector3 _currentLedgePosition;
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
@@ -315,7 +322,7 @@ public class PlayerFsm : GravityFsm
             {
                 _inputBuffer.ConsumeBuffer("Jump");
                 ReplaceAnimatorTrigger("Wallstep");
-                YVelocity = Mathf.Lerp(12f, 23.5f, ComputeMomentumWeight());
+                YVelocity = Mathf.Lerp(_wallstepEntryMinimumYVelocity, _wallstepEntryMaximumYVelocity, ComputeMomentumWeight());
                 Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
                 _momentum = 0;
             });
@@ -326,7 +333,7 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             // .Permit(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep, _ => TimeInCurrentState() > 0.25f, 1)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep, _ => TimeInCurrentState() > _wallstepMinimumDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
@@ -357,7 +364,7 @@ public class PlayerFsm : GravityFsm
             .OnEntry(_ =>
             {
                 YVelocity = 0;
-                _momentum = Mathf.Min(Mathf.Max(_momentum + 5f, 12f), MaxMomentum);
+                _momentum = Mathf.Min(Mathf.Max(_momentum + _dashEntryMomentumGain, _dashEntryMinimumMomentum), MaxMomentum);
                 ReplaceAnimatorTrigger("Dash");
             });
     }
