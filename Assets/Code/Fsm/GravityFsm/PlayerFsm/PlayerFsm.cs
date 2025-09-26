@@ -103,12 +103,20 @@ public class PlayerFsm : GravityFsm
     private float _collisionMomentumLossRate = 300f;
     
     private float _hardLandAirDiff = -9;
+    private float _hardLandExitMomentum = 4f;
+    private float _hardLandRollExitMomentum = 10f;
+    private float _hardLandRollMinimumMomentum = 7f;
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     
     private float _jumpYVelocity = 22f;
     private float _coyoteTime = 0.04f;
     private float _vaultDistance = 3f;
+
+    private float _vaultMinimumYVelocity = -2f;
+    private float _wallSquatMinimumMomentum = 3f;
+
+    private float _mediumVaultHangMinimumYVelocity = 12f;
 
     private Vector3 _currentLedgePosition;
     private Vector3 _checkpointVector3;
@@ -173,7 +181,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
-                _momentum = 4f;
+                _momentum = _hardLandExitMomentum;
                 ReplaceAnimatorTrigger("HardLand");
             });
         
@@ -182,7 +190,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
-                _momentum = 10f;
+                _momentum = _hardLandRollExitMomentum;
                 ReplaceAnimatorTrigger("HardLandRoll");
             });
 
@@ -191,11 +199,11 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < _hardLandAirDiff, 1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < _hardLandAirDiff && _momentum > 7f, 2)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > -2f, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < _hardLandAirDiff && _momentum > _hardLandRollMinimumMomentum, 2)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > _vaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _minYVelocityToInteractWithWall)
-            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _minYVelocityToInteractWithWall)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > _wallSquatMinimumMomentum && YVelocity < _minYVelocityToInteractWithWall)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > _wallSquatMinimumMomentum && YVelocity < _minYVelocityToInteractWithWall)
             .Permit(PlayerFsmTrigger.StartLongFall, PlayerFsmState.LongFallJump)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
@@ -207,7 +215,7 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _minYVelocityToInteractWithWall)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > _wallSquatMinimumMomentum && YVelocity < _minYVelocityToInteractWithWall)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
             {
@@ -220,7 +228,7 @@ public class PlayerFsm : GravityFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime)
             // .Permit(PlayerFsmTrigger.StartLongFall, PlayerFsmState.LongFall)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < _hardLandAirDiff, 1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < _hardLandAirDiff && _momentum > 7f, 2)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < _hardLandAirDiff && _momentum > _hardLandRollMinimumMomentum, 2)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
             {
@@ -300,9 +308,9 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(PlayerFsmState.ForceFaceWallRotation)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
-            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.SlowVaultHang, _ => YVelocity < 12f)
-            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.MediumVaultHang, _ => YVelocity > 12f, 1)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => YVelocity > 12f, 1)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.SlowVaultHang, _ => YVelocity < _mediumVaultHangMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.MediumVaultHang, _ => YVelocity > _mediumVaultHangMinimumYVelocity, 1)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => YVelocity > _mediumVaultHangMinimumYVelocity, 1)
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Jump");
