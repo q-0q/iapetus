@@ -77,106 +77,102 @@ public class PlayerFsm : GravityFsm
         public static int Dash;
     }
     
+    // Fluid data
+    
     private PlayerInput _playerInput;
-    private bool _movementAnimationMirror;
     private InputBuffer _inputBuffer;
+    private Camera _camera;
+    private float _momentum = 0f;
+    private Vector3 _currentLedgePosition;
+    private Vector3 _checkpointVector3;
+    private Quaternion _checkpointQuaternion;
+    private bool _movementAnimationMirror;
+    
+    // Events
+    
+    public static event Action<float> OnPlayerMomentumUpdated;
+    public static event Action<Vector3, bool> OnPlayerPositionUpdated;
+    
+    // Input
+    
+    private const float InputMagnitudeThreshhold = 0.1f;
+    
+    // Raycasting
     
     private const float ForwardRaycastDistance = 1f;
+    private const float DynamicForwardRaycastMaximumModifier = 2f;
+    private const float CollisionMoveSphereCastRadius = 0.1f;
+    private const float CollisionMoveSphereCastHeight = 0.75f;
+    private const float CollisionMoveSphereCastDistance = 0.45f;
     private const float FaceLedgeHeight = 0.2f;
     private const float FaceHighLedgeHeight = 2.15f;
     private const float FaceWallHeight = 2.4f;
-    private const float MinYVelocityToInteractWithWall = 0f; 
+    private const float ForceWallRotationRaycastDistance = 3f;
     
-    private const float MoveSpeed = 5f;
-    private const float RotationSpeed = 3f;
+    // General movement
+    
     public const float MaxMomentum = 15f;
-    private float _momentum = 0f;
+    private const float MoveSpeed = 5f;
+    private const float MaximumMomentumSpeedMod = 3.5f;
+    private const float RotationSpeed = 3f;
+    private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 9f;
     private const float MomentumLossRate = 20f; 
     private const float MomentumTurnLoss = 5f; 
+    private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 4.75f;
     private const float LowMomentumRotationMod = 3f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
-    private const float CollisionMomentumLossRate = 300f;
+    private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
+    
+    // Air movement
+    
+    private const float JumpYVelocity = 22f;
+    private const float CoyoteTime = 0.04f;
+    
+    // Wall interaction
+    
+    private const float UpdateLedgePositionEpsilon = 3f;
+    private const float MinYVelocityToInteractWithWall = 0f; 
+    private const float VaultMinimumYVelocity = -2f;
+    private const float VaultMinimumMomentum = 6f;
+    private const float VaultHangLedgeYOffset = -2.5f;
+    private const float VaultHangLedgeLerpStrength = 60f;
+    private const float VaultTurningMultiplier = 0.75f;
+    private const float VaultMinimumAnimatorSpeedMod = 0.3f;
+    private const float VaultMaximumAnimatorSpeedMod = 1.1f;
+    private const float VaultLedgeLerpStrength = 40f;
+    private const float MediumVaultHangMinimumYVelocity = 12f;
+    private const float SlowVaultFinishLedgeLerpStrength = 25f;
+    private const float SlowVaultFinishForwardSpeed = 2f;
+    private const float WallSquatMinimumMomentum = 3f;
+    private const float WallstepMinimumYVelocityGain = 12f;
+    private const float WallstepMaximumYVelocityGain = 23.5f;
+    private const float WallstepMinimumDuration = 0.25f;
+    private const float ForceWallRotationSpeed = 3f;
+    
+    // Hard land
     
     private const float HardLandAirDiff = -9;
     private const float HardLandExitMomentum = 4f;
     private const float HardLandRollExitMomentum = 10f;
     private const float HardLandRollMinimumMomentum = 7f;
-    public static event Action<float> OnPlayerMomentumUpdated;
-    public static event Action<Vector3, bool> OnPlayerPositionUpdated;
+    private const float HardLandRollForwardSpeed = 14f;
+
     
-    private const float JumpYVelocity = 22f;
-    private const float CoyoteTime = 0.04f;
-
-    private const float VaultMinimumYVelocity = -2f;
-    private const float WallSquatMinimumMomentum = 3f;
-
-    private const float MediumVaultHangMinimumYVelocity = 12f;
-
-    private const float WallstepEntryMinimumYVelocity = 12f;
-    private const float WallstepEntryMaximumYVelocity = 23.5f;
-    private const float WallstepMinimumDuration = 0.25f;
+    // Hard turn
+    
+    private const float HardTurnMinimumAngle = 130f;
+    private const float HardTurnMinimumMomentum = 8.5f;
+    private const float HardTurnMomentumLossModifier = 1.25f;
+    
+    // Dash
 
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
-
-    private Vector3 _currentLedgePosition;
-    private Vector3 _checkpointVector3;
-    private Quaternion _checkpointQuaternion;
-
-    private Camera _camera;
-    
-    // ---------
-
-    private const float HardTurnMinimumAngle = 130f;
-    private const float HardTurnMinimumMomentum = 8.5f;
-
-    private const float NoMomentumThreshold = 0.25f;
-    
-    // ---------
-
-    private const float DynamicForwardRaycastMaximumModifier = 2f;
-
-    private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
-
-    private const float VaultHangLedgeYOffset = -2.5f;
-    private const float VaultHangLedgeLerpStrength = 60f;
-
-    private const float VaultTurningMultiplier = 0.75f;
-
-    private const float SlowVaultFinishLedgeLerpStrength = 25f;
-    private const float SlowVaultFinishForwardSpeed = 2f;
-
-    private const float VaultMinimumMomentum = 6f;
-    
-    private const float VaultMinimumAnimatorSpeedMod = 0.3f;
-    private const float VaultMaximumAnimatorSpeedMod = 1.1f;
-    private const float VaultLedgeLerpStrength = 40f;
-
-    private const float HardTurnMomentumLossModifier = 1.25f;
-
-    private const float HardLandRollForwardSpeed = 14f;
-
-    private const float ForceWallRotationRaycastDistance = 3f;
-    private const float ForceWallRotationSpeed = 3f;
-
     private const float DashsquatTurnMultiplier = 2.25f;
-
     private const float DashForwardSpeed = 20f;
-    
-    // ---------
-
-    private const float UpdateLedgePositionEpsilon = 3f;
-
-    private const float InputMagnitudeThreshhold = 0.1f;
-
-    private const float CollisionMoveSphereCastRadius = 0.1f;
-    private const float CollisionMoveSphereCastHeight = 0.75f;
-    private const float CollisionMoveSphereCastDistance = 0.45f;
-
-    private const float MaximumMomentumSpeedMod = 3.5f;
     
     // --------- End of subclass Fsm data ------------- //
 
@@ -368,7 +364,7 @@ public class PlayerFsm : GravityFsm
             {
                 _inputBuffer.ConsumeBuffer("Jump");
                 ReplaceAnimatorTrigger("Wallstep");
-                YVelocity = Mathf.Lerp(WallstepEntryMinimumYVelocity, WallstepEntryMaximumYVelocity, ComputeMomentumWeight());
+                YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain, ComputeMomentumWeight());
                 Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
                 _momentum = 0;
             });
