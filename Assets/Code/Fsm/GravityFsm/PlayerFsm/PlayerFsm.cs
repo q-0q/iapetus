@@ -52,7 +52,7 @@ public class PlayerFsm : GravityFsm
         public static int Vault;
         public static int Wallstep;
         public static int Wallsquat;
-        public static int ForceFaceWallRotation;
+        public static int ForceWallRotation;
         public static int SlowVaultHang;
         public static int MediumVaultHang;
         public static int SlowVaultFinish;
@@ -68,7 +68,7 @@ public class PlayerFsm : GravityFsm
     {
         public static int Jump;
         public static int HardTurn;
-        public static int LowMomentum;
+        public static int NoMomentum;
         public static int FaceLedge;
         public static int FaceHighLedge;
         public static int FaceWall;
@@ -131,6 +131,47 @@ public class PlayerFsm : GravityFsm
 
     private Camera _camera;
     
+    // ---------
+
+    private float _hardTurnMinimumAngle = 130f;
+    private float _hardTurnMinimumMomentum = 8.5f;
+
+    private float _noMomentumThreshold = 0.25f;
+    
+    // ---------
+
+    private float _dynamicForwardRaycastMaximumModifier = 2f;
+
+    private float _groundMoveMaximumAnimatorSpeedMod = 3.5f;
+
+    private float _vaultHangLedgeYOffset = -2.5f;
+    private float _vaultHangLedgeLerpStrength = 60f;
+
+    private float _vaultTurningMultiplier = 0.75f;
+
+    private float _slowVaultFinishLedgeLerpStrength = 25f;
+    private float _slowVaultFinishForwardSpeed = 2f;
+
+    private float _vaultMinimumMomentum = 6f;
+    
+    private float _vaultMinimumAnimatorSpeedMod = 0.3f;
+    private float _vaultMaximumAnimatorSpeedMod = 1.1f;
+    private float _vaultLedgeLerpStrength = 40f;
+
+    private float _hardTurnMomentumLossModifier = 1.25f;
+
+    private float _hardLandRollForwardSpeed = 14f;
+
+    private float _forceWallRotationRaycastDistance = 3f;
+    private float _forceWallRotationSpeed = 3f;
+
+    private float _dashsquatTurnMultiplier = 2.25f;
+
+    private float _dashForwardSpeed = 20f;
+    
+    // ---------
+
+    private float _updateLedgePositionEpsilon = 3f;
     
     // --------- End of subclass Fsm data ------------- //
 
@@ -252,7 +293,7 @@ public class PlayerFsm : GravityFsm
             });
 
         Machine.Configure(PlayerFsmState.HardTurn)
-            .Permit(PlayerFsmTrigger.LowMomentum, PlayerFsmState.GroundMove)
+            .Permit(PlayerFsmTrigger.NoMomentum, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ =>
@@ -275,7 +316,7 @@ public class PlayerFsm : GravityFsm
             });
         
         Machine.Configure(PlayerFsmState.SlowVaultHang)
-            .SubstateOf(PlayerFsmState.ForceFaceWallRotation)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
@@ -286,7 +327,7 @@ public class PlayerFsm : GravityFsm
             });
         
         Machine.Configure(PlayerFsmState.MediumVaultHang)
-            .SubstateOf(PlayerFsmState.ForceFaceWallRotation)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
@@ -297,7 +338,7 @@ public class PlayerFsm : GravityFsm
             });
         
         Machine.Configure(PlayerFsmState.SlowVaultFinish)
-            .SubstateOf(PlayerFsmState.ForceFaceWallRotation)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
@@ -312,7 +353,7 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.Wallstep)
             .SubstateOf(GravityFsmState.Aerial)
-            .SubstateOf(PlayerFsmState.ForceFaceWallRotation)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.SlowVaultHang, _ => YVelocity < _mediumVaultHangMinimumYVelocity)
@@ -329,7 +370,7 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.Wallsquat)
             .SubstateOf(GravityFsmState.Aerial)
-            .SubstateOf(PlayerFsmState.ForceFaceWallRotation)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             // .Permit(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall)
@@ -403,14 +444,14 @@ public class PlayerFsm : GravityFsm
         
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
-        if (angle > 130f && _momentum > 8.5f)
+        if (angle > _hardTurnMinimumAngle && _momentum > _hardTurnMinimumMomentum)
         {
             Machine.Fire(PlayerFsmTrigger.HardTurn);
         }
 
-        if (_momentum < 0.25f)
+        if (_momentum < _noMomentumThreshold)
         {
-            Machine.Fire(PlayerFsmTrigger.LowMomentum);
+            Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
 
         var distance = ComputeDynamicForwardRaycastDistance();
@@ -436,17 +477,11 @@ public class PlayerFsm : GravityFsm
         Debug.DrawRay(transform.position + Vector3.up * _faceWallHeight, transform.forward * distance, Color.red);
         Debug.DrawRay(transform.position + Vector3.up * _faceHighLedgeHeight, transform.forward * distance, Color.yellow);
         Debug.DrawRay(transform.position + Vector3.up * _faceLedgeHeight, transform.forward * distance, Color.cyan);
-        
-        // if (!Physics.Raycast(transform.position, -Vector3.up,8f, ~0, QueryTriggerInteraction.Ignore))
-        // {
-        //     if (YVelocity <= 6) Machine.Fire(PlayerFsmTrigger.StartLongFall);
-        // }
-        
     }
 
     private float ComputeDynamicForwardRaycastDistance()
     {
-        return Mathf.Lerp(1f, 2f, ComputeMomentumWeight()) * _forwardRaycastDistance * GetRaycastTimeModifier();
+        return Mathf.Lerp(1f, _dynamicForwardRaycastMaximumModifier, ComputeMomentumWeight()) * _forwardRaycastDistance * GetRaycastTimeModifier();
     }
 
 
@@ -456,42 +491,42 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
-                                                            Machine.IsInState(PlayerFsmState.ForceFaceWallRotation) ||
+                                                            Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
 
-            
+            HandleInputMomentumLoss();
             HandleTurning();
             HandleCollisionMove();
             
             SetAnimatorMomentum();
-            var speedMod = Mathf.Lerp(0f, 3.5f, ComputeMomentumWeight());
+            var speedMod = Mathf.Lerp(0f, _groundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
             Animator.SetFloat("SpeedMod", speedMod);
         }
 
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang) || Machine.IsInState(PlayerFsmState.MediumVaultHang) )
         {
-            MoveYOntoLedge(-2.5f, 60f);
+            MoveYOntoLedge(_vaultHangLedgeYOffset, _vaultHangLedgeLerpStrength);
             HandleCollisionMove();
             
         }
         if (Machine.IsInState(PlayerFsmState.SlowVaultFinish))
         {
-            HandleTurning(0.75f, true);
-            MoveYOntoLedge(0, 25f);
-            transform.position += transform.forward * (2f * Time.deltaTime);
+            HandleTurning(_vaultTurningMultiplier, true);
+            MoveYOntoLedge(0, _slowVaultFinishLedgeLerpStrength);
+            transform.position += transform.forward * (_slowVaultFinishForwardSpeed * Time.deltaTime);
         }
         else if (Machine.IsInState(PlayerFsmState.Vault))
         {
-            _momentum = Mathf.Max(_momentum, 6f);
+            _momentum = Mathf.Max(_momentum, _vaultMinimumMomentum);
             var momentumWeight = ComputeMomentumWeight();
-            Animator.SetFloat("SpeedMod", Mathf.Lerp(0.3f, 1.1f, momentumWeight));
-            MoveYOntoLedge(0f, 40f);
+            Animator.SetFloat("SpeedMod", Mathf.Lerp(_vaultMinimumAnimatorSpeedMod, _vaultMaximumAnimatorSpeedMod, momentumWeight));
+            MoveYOntoLedge(0f, _vaultLedgeLerpStrength);
             SetAnimatorMomentum();
             transform.position += ComputeDesiredMove();
-            HandleTurning(0.75f, true);
+            HandleTurning(_vaultTurningMultiplier, true);
         }
         else if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
         {
@@ -506,34 +541,34 @@ public class PlayerFsm : GravityFsm
 
         if (Machine.IsInState(PlayerFsmState.HardTurn))
         {
-            _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.25f);
+            _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * _hardTurnMomentumLossModifier);
         }
         
         if (Machine.IsInState(PlayerFsmState.HardLandRoll))
         {
-            transform.position += ComputeCollisionMove(transform.forward * (14f * Time.deltaTime));
+            transform.position += ComputeCollisionMove(transform.forward * (_hardLandRollForwardSpeed * Time.deltaTime));
         }
 
 
 
-        if (Machine.IsInState(PlayerFsmState.ForceFaceWallRotation))
+        if (Machine.IsInState(PlayerFsmState.ForceWallRotation))
         {
-            if (Physics.Raycast(transform.position, transform.forward, out var hit, 3f * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
+            if (Physics.Raycast(transform.position, transform.forward, out var hit, _forceWallRotationRaycastDistance * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
             {
                 var quaternion = Quaternion.LookRotation(-hit.normal, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * 2f);
+                transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * _forceWallRotationSpeed);
             }
         }
 
         if (Machine.IsInState(PlayerFsmState.Dashsquat))
         {
             HandleCollisionMove();
-            HandleTurning(2.25f, true);
+            HandleTurning(_dashsquatTurnMultiplier, true);
         }
         if (Machine.IsInState(PlayerFsmState.Dash))
         {
             Animator.SetLayerWeight(1, 0);
-            var collisionMove = ComputeCollisionMove(transform.forward * (20f * Time.deltaTime));
+            var collisionMove = ComputeCollisionMove(transform.forward * (_dashForwardSpeed * Time.deltaTime));
             transform.position += collisionMove;
         }
 
@@ -547,20 +582,19 @@ public class PlayerFsm : GravityFsm
         }
     }
 
-    private void MoveYOntoLedge(float yTransform, float lerpStrength)
+    private void MoveYOntoLedge(float yOffset, float lerpStrength)
     {
-        var newY = lerpStrength < 0 ? _currentLedgePosition.y : Mathf.Lerp(transform.position.y, _currentLedgePosition.y + yTransform, Time.deltaTime * lerpStrength);
+        var newY = lerpStrength < 0 ? _currentLedgePosition.y : Mathf.Lerp(transform.position.y, _currentLedgePosition.y + yOffset, Time.deltaTime * lerpStrength);
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
     private bool UpdateLedgePosition(float ledgeHeight)
     {
-        var f = 3f;
-        var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
-        Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + f)), Color.green);
+        var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + _updateLedgePositionEpsilon)) + transform.forward * ComputeDynamicForwardRaycastDistance();
+        Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + _updateLedgePositionEpsilon)), Color.green);
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
-                (ledgeHeight + f) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore)) return false;
+                (ledgeHeight + _updateLedgePositionEpsilon) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore)) return false;
         _currentLedgePosition = hit.point;
         return true;
 
@@ -569,19 +603,12 @@ public class PlayerFsm : GravityFsm
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false)
     {
         
-        var v2 = GetInputMovementVector2();
         var v3 = GetInputMovementVector3();
         var inputVector3 = forceForwardInput ? MirrorInputForward(v3, transform.forward) : v3;
-
-        if (v2.magnitude > 0.1f)
+        
+        var v2 = GetInputMovementVector2();
+        if (v2.magnitude < 0.1f)
         {
-            var lowMomentumMomentumGainMod = _momentum < _lowMomentumThreshhold ? _lowMomentumMomentumGainMod : 1f;
-            _momentum = Mathf.Min(MaxMomentum, _momentum + _momentumGainRate  * lowMomentumMomentumGainMod *  Time.deltaTime);
-        }
-        else
-        {
-            var lowMomentumMomentumLossMod = _momentum < _lowMomentumThreshhold ? _lowMomentumMomentumLossMod : 1f;
-            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * lowMomentumMomentumLossMod * Time.deltaTime));
             inputVector3 = transform.forward;
         }
         
@@ -603,6 +630,21 @@ public class PlayerFsm : GravityFsm
         
         var lowMomentumRotationMod = _momentum < _lowMomentumThreshhold ? _lowMomentumRotationMod : 1f;
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
+    }
+
+    private void HandleInputMomentumLoss()
+    {
+        var v2 = GetInputMovementVector2();
+        if (v2.magnitude > 0.1f)
+        {
+            var lowMomentumMomentumGainMod = _momentum < _lowMomentumThreshhold ? _lowMomentumMomentumGainMod : 1f;
+            _momentum = Mathf.Min(MaxMomentum, _momentum + _momentumGainRate  * lowMomentumMomentumGainMod *  Time.deltaTime);
+        }
+        else
+        {
+            var lowMomentumMomentumLossMod = _momentum < _lowMomentumThreshhold ? _lowMomentumMomentumLossMod : 1f;
+            _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * lowMomentumMomentumLossMod * Time.deltaTime));
+        }
     }
 
 
