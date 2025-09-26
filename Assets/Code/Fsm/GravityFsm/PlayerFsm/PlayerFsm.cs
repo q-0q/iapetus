@@ -172,6 +172,14 @@ public class PlayerFsm : GravityFsm
     // ---------
 
     private float _updateLedgePositionEpsilon = 3f;
+
+    private float _inputMagnitudeThreshhold = 0.1f;
+
+    private float _collisionMoveSphereCastRadius = 0.1f;
+    private float _collisionMoveSphereCastHeight = 0.75f;
+    private float _collisionMoveSphereCastDistance = 0.45f;
+
+    private float _maximumMomentumSpeedMod = 3.5f;
     
     // --------- End of subclass Fsm data ------------- //
 
@@ -607,7 +615,7 @@ public class PlayerFsm : GravityFsm
         var inputVector3 = forceForwardInput ? MirrorInputForward(v3, transform.forward) : v3;
         
         var v2 = GetInputMovementVector2();
-        if (v2.magnitude < 0.1f)
+        if (v2.magnitude < _inputMagnitudeThreshhold)
         {
             inputVector3 = transform.forward;
         }
@@ -635,7 +643,7 @@ public class PlayerFsm : GravityFsm
     private void HandleInputMomentumLoss()
     {
         var v2 = GetInputMovementVector2();
-        if (v2.magnitude > 0.1f)
+        if (v2.magnitude > _inputMagnitudeThreshhold)
         {
             var lowMomentumMomentumGainMod = _momentum < _lowMomentumThreshhold ? _lowMomentumMomentumGainMod : 1f;
             _momentum = Mathf.Min(MaxMomentum, _momentum + _momentumGainRate  * lowMomentumMomentumGainMod *  Time.deltaTime);
@@ -666,11 +674,10 @@ public class PlayerFsm : GravityFsm
         var output = desiredMove;
         
         // Radius of your character (adjust as needed)
-        float radius = 0.1f;
-        float castDistance = 0.45f * GetRaycastTimeModifier();
-        float pushExitPadding = 0.35f;
+        float radius = _collisionMoveSphereCastRadius;
+        float castDistance = _collisionMoveSphereCastDistance * GetRaycastTimeModifier();
 
-        Vector3 position = transform.position + Vector3.up * 0.75f;
+        Vector3 position = transform.position + Vector3.up * _collisionMoveSphereCastHeight;
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
@@ -681,12 +688,10 @@ public class PlayerFsm : GravityFsm
             Vector3 firstNormal = hit.normal;
             output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up));
 
-            bool corner = false;
 
             // Cast again in the new direction to handle corner (second surface)
             if (Physics.SphereCast(position, radius, output.normalized, out RaycastHit secondHit, output.magnitude))
             {
-                corner = true;
                 Vector3 secondNormal = secondHit.normal;
 
                 // Slide again
@@ -712,7 +717,7 @@ public class PlayerFsm : GravityFsm
 
     private Vector3 ComputeDesiredMove()
     {
-        var value = Mathf.Lerp(0f, 3.5f, ComputeMomentumWeight());
+        var value = Mathf.Lerp(0f, _maximumMomentumSpeedMod, ComputeMomentumWeight());
         return transform.forward.normalized * (_moveSpeed * value * Time.deltaTime);
     }
 
