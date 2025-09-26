@@ -32,8 +32,8 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Dash");
         _camera = Camera.main;
         
-        // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        // Application.targetFrameRate = 10;
+        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
+        Application.targetFrameRate = 120;
         OnStart();
     }
     
@@ -60,6 +60,8 @@ public class PlayerFsm : GravityFsm
         public static int LongFallJump;
         public static int Dashsquat;
         public static int Dash;
+        public static int HardLand;
+        public static int HardLandRoll;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -99,11 +101,13 @@ public class PlayerFsm : GravityFsm
     private float _lowMomentumMomentumGainMod = 1.15f;
     private float _lowMomentumMomentumLossMod = 1.25f;
     private float _collisionMomentumLossRate = 300f;
+    
+    private float _hardLandAirDiff = -9;
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     
     private float _jumpYVelocity = 22f;
-    private float _coyoteTime = 0.05f;
+    private float _coyoteTime = 0.04f;
     private float _vaultDistance = 3f;
 
     private Vector3 _currentLedgePosition;
@@ -164,11 +168,34 @@ public class PlayerFsm : GravityFsm
                 Animator.SetFloat("Flip", flip);
             });
         
+        Machine.Configure(PlayerFsmState.HardLand)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .OnEntry(_ =>
+            {
+                _momentum = 4f;
+                ReplaceAnimatorTrigger("HardLand");
+            });
+        
+        Machine.Configure(PlayerFsmState.HardLandRoll)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .OnEntry(_ =>
+            {
+                _momentum = 10f;
+                ReplaceAnimatorTrigger("HardLandRoll");
+            });
+
+        
         Machine.Configure(PlayerFsmState.Jump)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > -2f)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < _hardLandAirDiff, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < _hardLandAirDiff && _momentum > 7f, 2)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > -2f, 1)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _minYVelocityToInteractWithWall)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > 3f && YVelocity < _minYVelocityToInteractWithWall)
             .Permit(PlayerFsmTrigger.StartLongFall, PlayerFsmState.LongFallJump)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
@@ -192,6 +219,8 @@ public class PlayerFsm : GravityFsm
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInAir <= _coyoteTime)
             // .Permit(PlayerFsmTrigger.StartLongFall, PlayerFsmState.LongFall)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < _hardLandAirDiff, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < _hardLandAirDiff && _momentum > 7f, 2)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
             {
@@ -247,7 +276,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
-                UpdateLedgePosition(_faceHighLedgeHeight);
+                if (!UpdateLedgePosition(_faceHighLedgeHeight)) UpdateLedgePosition(_faceLedgeHeight);
                 ReplaceAnimatorTrigger("MediumVaultHang");
                 YVelocity = 0;
             });
@@ -330,6 +359,8 @@ public class PlayerFsm : GravityFsm
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.HardLand, 0.65f);
+        StateMapConfig.Duration.Add(PlayerFsmState.HardLandRoll, 0.45f);
         StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
         StateMapConfig.Duration.Add(PlayerFsmState.MediumVaultHang, 0.375f);
@@ -368,18 +399,18 @@ public class PlayerFsm : GravityFsm
         }
 
         var distance = ComputeDynamicForwardRaycastDistance();
-        if (Physics.Raycast(transform.position + transform.up * _faceWallHeight, transform.forward,
+        if (Physics.Raycast(transform.position + Vector3.up * _faceWallHeight, transform.forward,
                 distance, ~0, QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FaceWall);
-        } else if (Physics.Raycast(transform.position + transform.up * _faceHighLedgeHeight, transform.forward, 
+        } else if (Physics.Raycast(transform.position + Vector3.up * _faceHighLedgeHeight, transform.forward, 
                        distance, ~0, QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
-        } else if (Physics.Raycast(transform.position + transform.up * _faceLedgeHeight, transform.forward, 
+        } else if (Physics.Raycast(transform.position + Vector3.up * _faceLedgeHeight, transform.forward, 
                        out var hit, distance, ~0, QueryTriggerInteraction.Ignore))
         {
-            var slope = Vector3.Angle(hit.normal, transform.up);
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge);
         }
         else
@@ -387,11 +418,11 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
         
-        Debug.DrawRay(transform.position + transform.up * _faceWallHeight, transform.forward * distance, Color.red);
-        Debug.DrawRay(transform.position + transform.up * _faceHighLedgeHeight, transform.forward * distance, Color.yellow);
-        Debug.DrawRay(transform.position + transform.up * _faceLedgeHeight, transform.forward * distance, Color.cyan);
+        Debug.DrawRay(transform.position + Vector3.up * _faceWallHeight, transform.forward * distance, Color.red);
+        Debug.DrawRay(transform.position + Vector3.up * _faceHighLedgeHeight, transform.forward * distance, Color.yellow);
+        Debug.DrawRay(transform.position + Vector3.up * _faceLedgeHeight, transform.forward * distance, Color.cyan);
         
-        // if (!Physics.Raycast(transform.position, -transform.up,8f, ~0, QueryTriggerInteraction.Ignore))
+        // if (!Physics.Raycast(transform.position, -Vector3.up,8f, ~0, QueryTriggerInteraction.Ignore))
         // {
         //     if (YVelocity <= 6) Machine.Fire(PlayerFsmTrigger.StartLongFall);
         // }
@@ -410,7 +441,8 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
-                                                            Machine.IsInState(PlayerFsmState.ForceFaceWallRotation));
+                                                            Machine.IsInState(PlayerFsmState.ForceFaceWallRotation) ||
+                                                            YVelocity < -6f);
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
@@ -424,7 +456,7 @@ public class PlayerFsm : GravityFsm
             Animator.SetFloat("SpeedMod", speedMod);
         }
 
-        if (Machine.IsInState(PlayerFsmState.SlowVaultHang))
+        if (Machine.IsInState(PlayerFsmState.SlowVaultHang) || Machine.IsInState(PlayerFsmState.MediumVaultHang) )
         {
             MoveYOntoLedge(-2.5f, 60f);
             HandleCollisionMove();
@@ -461,6 +493,11 @@ public class PlayerFsm : GravityFsm
         {
             _momentum = Mathf.Max(0, _momentum - _momentumLossRate * Time.deltaTime * 1.25f);
         }
+        
+        if (Machine.IsInState(PlayerFsmState.HardLandRoll))
+        {
+            transform.position += ComputeCollisionMove(transform.forward * (14f * Time.deltaTime));
+        }
 
 
 
@@ -468,7 +505,7 @@ public class PlayerFsm : GravityFsm
         {
             if (Physics.Raycast(transform.position, transform.forward, out var hit, 3f * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
             {
-                var quaternion = Quaternion.LookRotation(-hit.normal, transform.up);
+                var quaternion = Quaternion.LookRotation(-hit.normal, Vector3.up);
                 transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * 2f);
             }
         }
@@ -501,16 +538,17 @@ public class PlayerFsm : GravityFsm
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
-    private void UpdateLedgePosition(float ledgeHeight)
+    private bool UpdateLedgePosition(float ledgeHeight)
     {
         var f = 3f;
-        var downwardRaycastOrigin = transform.position + (transform.up * (ledgeHeight + f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
-        Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (transform.up * (ledgeHeight + f)), Color.green);
-        
-        if (Physics.Raycast(downwardRaycastOrigin, -transform.up, out var hit, (ledgeHeight + f) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
-        {
-            _currentLedgePosition = hit.point;
-        }
+        var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + f)) + transform.forward * ComputeDynamicForwardRaycastDistance();
+        Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + f)), Color.green);
+
+        if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
+                (ledgeHeight + f) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore)) return false;
+        _currentLedgePosition = hit.point;
+        return true;
+
     }
 
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false)
@@ -533,7 +571,7 @@ public class PlayerFsm : GravityFsm
         }
         
         float momentumWeight = ComputeMomentumWeight();
-        var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, transform.up);
+        var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
         var animationDesiredTurnAmount = Mathf.InverseLerp(35f, -35f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
@@ -546,7 +584,7 @@ public class PlayerFsm : GravityFsm
         _momentum = Mathf.Max(0, _momentum - (_momentumLossRate * Time.deltaTime *
                                               Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * _momentumTurnLoss));
         
-        var quaternion = Quaternion.LookRotation(inputVector3.normalized, transform.up);
+        var quaternion = Quaternion.LookRotation(inputVector3.normalized, Vector3.up);
         
         var lowMomentumRotationMod = _momentum < _lowMomentumThreshhold ? _lowMomentumRotationMod : 1f;
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, _rotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
@@ -575,7 +613,7 @@ public class PlayerFsm : GravityFsm
         float castDistance = 0.45f * GetRaycastTimeModifier();
         float pushExitPadding = 0.35f;
 
-        Vector3 position = transform.position + transform.up * 0.75f;
+        Vector3 position = transform.position + Vector3.up * 0.75f;
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
@@ -584,7 +622,7 @@ public class PlayerFsm : GravityFsm
             
             // First collision: slide along the surface
             Vector3 firstNormal = hit.normal;
-            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, transform.up));
+            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up));
 
             bool corner = false;
 
@@ -595,7 +633,7 @@ public class PlayerFsm : GravityFsm
                 Vector3 secondNormal = secondHit.normal;
 
                 // Slide again
-                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, transform.up));
+                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, Vector3.up));
                 
                 if (output.magnitude < 0.01f)
                 {
@@ -687,5 +725,11 @@ public class PlayerFsm : GravityFsm
             // Scale by original input magnitude (preserve intensity)
             return mirrored.normalized * input.magnitude;
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(_currentLedgePosition, 0.25f);
     }
 }

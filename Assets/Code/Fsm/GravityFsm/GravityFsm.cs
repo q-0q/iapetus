@@ -29,6 +29,8 @@ public abstract class GravityFsm : Fsm
     protected float YVelocity;
     protected float GravityStrength;
     protected float TimeInAir;
+    protected float MinYVelocity = -40f;
+    protected float LastUpwardsY;
     
     protected override void OnStart()
     {
@@ -59,12 +61,17 @@ public abstract class GravityFsm : Fsm
         {
             Machine.Fire(GravityFsmTrigger.StartFrameWithNegativeYVelocity);
         }
+        
+        
     }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
 
+        YVelocity = Mathf.Max(YVelocity, MinYVelocity);
+        if (YVelocity > 0 || Machine.IsInState(GravityFsmState.Grounded)) LastUpwardsY = transform.position.y;
+            
         if (Machine.IsInState(GravityFsmState.Aerial) && !Machine.IsInState(GravityFsmState.DontApplyYVelocity))
         {
             var v3 = new Vector3(0, YVelocity * Time.deltaTime, 0);
@@ -78,7 +85,8 @@ public abstract class GravityFsm : Fsm
             YVelocity = 0;
             if (GetGroundedRaycastHit(out var hit))
             {
-                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * 20);
+                var f = 50f;
+                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * f);
                 transform.position = new Vector3(transform.position.x, newY, transform.position.z);
             }
         }
@@ -86,14 +94,21 @@ public abstract class GravityFsm : Fsm
 
     private bool GetGroundedRaycastHit(out RaycastHit hit)
     {
-        var raycastLength = 0.9f * GetRaycastTimeModifier();
-        Debug.DrawLine(transform.position + transform.up * raycastLength, transform.position + transform.up * raycastLength - transform.up * (raycastLength * 1.3f), Color.red);
-        if (Physics.Raycast(transform.position + transform.up * raycastLength, -transform.up, out hit,
+        var raycastLength = 0.5f * GetRaycastTimeModifier();
+        Debug.DrawLine(transform.position + Vector3.up * raycastLength, transform.position + Vector3.up * raycastLength - Vector3.up * (raycastLength * 1.3f), Color.red);
+        if (Physics.Raycast(transform.position + Vector3.up * raycastLength, -Vector3.up, out hit,
                 raycastLength * 2f, ~0, QueryTriggerInteraction.Ignore))
         {
-            var slope = Vector3.Angle(hit.normal, transform.up);
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
             return slope < 70f;
         }
         return false;
+    }
+
+    protected float AirYDiff()
+    {
+        var diff = transform.position.y - LastUpwardsY;
+        print(diff);
+        return diff;
     }
 }
