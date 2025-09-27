@@ -108,7 +108,6 @@ public abstract class GravityFsm : Fsm
     protected float AirYDiff()
     {
         var diff = transform.position.y - LastUpwardsY;
-        print(diff);
         return diff;
     }
 }
