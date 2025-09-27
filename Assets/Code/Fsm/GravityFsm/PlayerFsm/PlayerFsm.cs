@@ -163,7 +163,7 @@ public class PlayerFsm : GravityFsm
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 2f;
-    private const float WallsquatMinimumYVelocity = 0f; 
+    private const float WallsquatMinimumYVelocity = 10f; 
     private const float WallSquatMinimumMomentum = 3f;
     private const float WallstepMinimumYVelocityGain = 12f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
@@ -174,7 +174,7 @@ public class PlayerFsm : GravityFsm
     private const float WallRunMinimumYVelocity = 10f;
     private const float FlankAlignmentRotationSpeed = 25f;
     private const float FlankWallVacuumStrength = 20f;
-    private const float WallrunJumpAngle = 60f;
+    private const float WallrunJumpAngle = 65f;
     
     // Hard land
     
@@ -699,12 +699,15 @@ public class PlayerFsm : GravityFsm
         {
             _currentFlankWallNormal = hitRight.normal;
             _currentFlankType = FlankType.Right;
+            Animator.SetFloat("Flip", 0);
+            
         } else if (Physics.Raycast(flankRaycastOrigin, -transform.right,
                        out var hitLeft, MaximumFlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
                    Vector3.Angle(hitLeft.normal, transform.right) < FlankMaximumAngle)
         {
             _currentFlankWallNormal = hitLeft.normal;
             _currentFlankType = FlankType.Left;
+            Animator.SetFloat("Flip", 1);
         }
         else
         {
