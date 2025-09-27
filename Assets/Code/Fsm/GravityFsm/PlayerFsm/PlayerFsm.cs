@@ -72,6 +72,7 @@ public class PlayerFsm : GravityFsm
         public static int FaceLedge;
         public static int FaceHighLedge;
         public static int FaceWall;
+        public static int FaceWallStrict;
         public static int FaceOpen;
         public static int FlankWall;
         public static int FlankOpen;
@@ -120,6 +121,7 @@ public class PlayerFsm : GravityFsm
     private const float FaceHighLedgeHeight = 2.15f;
     private const float FaceWallHeight = 2.4f;
     private const float FaceWallMaximumAngle = 60f;
+    private const float FaceWallStrictMaximumAngle = 20f;
     private const float MaximumFlankWallDistance = 5.5f;
     private const float FlankWallHeight = 3f;
     private const float FlankMaximumAngle = 50f;
@@ -269,6 +271,7 @@ public class PlayerFsm : GravityFsm
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
@@ -391,7 +394,7 @@ public class PlayerFsm : GravityFsm
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum)
+            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum)
             .OnEntry(_ =>
             {
@@ -422,6 +425,7 @@ public class PlayerFsm : GravityFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => true)
+            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => true)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .OnEntry(_ =>
             {
@@ -486,7 +490,9 @@ public class PlayerFsm : GravityFsm
         if (Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward, 
                 out var hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
-            Machine.Fire(PlayerFsmTrigger.FaceWall);
+            Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
+                ? PlayerFsmTrigger.FaceWallStrict
+                : PlayerFsmTrigger.FaceWall);
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward, 
                        out hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
