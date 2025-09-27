@@ -33,8 +33,8 @@ public class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Dash");
         _camera = Camera.main;
         
-        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 120;
+        // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
+        // Application.targetFrameRate = 30;
         OnStart();
     }
     
@@ -77,6 +77,13 @@ public class PlayerFsm : GravityFsm
         public static int FlankOpen;
         public static int Dash;
     }
+
+    private enum FlankType
+    {
+        Left,
+        Right,
+        None
+    }
     
     // Fluid data
     
@@ -86,7 +93,7 @@ public class PlayerFsm : GravityFsm
     private float _momentum = 0f;
     private Vector3 _currentLedgePosition;
     private Vector3 _currentFlankWallNormal;
-    private bool _currentFlankSide;
+    private FlankType _currentFlankType;
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
     private bool _movementAnimationMirror;
@@ -102,17 +109,20 @@ public class PlayerFsm : GravityFsm
     
     // Raycasting
     
-    private const float ForwardRaycastDistance = 1f;
+    private const float ForwardRaycastDistance = 0.9f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;
-    private const float CollisionMoveSphereCastRadius = 0.1f;
-    private const float CollisionMoveSphereCastHeight = 0.75f;
+    private const float CollisionMoveSphereCastRadius = 0.5f;
+    private const float GroundCollisionMoveSphereCastHeight = 0.95f;
+    private const float FallingCollisionMoveSphereCastHeight = -0.5f;
+    private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
     private const float FaceLedgeHeight = 0.2f;
     private const float FaceHighLedgeHeight = 2.15f;
     private const float FaceWallHeight = 2.4f;
-    private const float FlankWallDistance = 1f;
-    private const float FlankWallHeight = 2.5f;
-    private const float FlankMaximumAngle = 40f;
+    private const float FaceWallMaximumAngle = 60f;
+    private const float MaximumFlankWallDistance = 5.5f;
+    private const float FlankWallHeight = 3f;
+    private const float FlankMaximumAngle = 50f;
     private const float ForceWallRotationRaycastDistance = 3f;
     
     // General movement
@@ -140,7 +150,6 @@ public class PlayerFsm : GravityFsm
     // Wall interaction
     
     private const float UpdateLedgePositionEpsilon = 3f;
-    private const float MinYVelocityToInteractWithWall = 0f; 
     private const float VaultMinimumYVelocity = -2f;
     private const float VaultMinimumMomentum = 6f;
     private const float VaultHangLedgeYOffset = -2.5f;
@@ -152,15 +161,18 @@ public class PlayerFsm : GravityFsm
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 2f;
+    private const float WallsquatMinimumYVelocity = 0f; 
     private const float WallSquatMinimumMomentum = 3f;
     private const float WallstepMinimumYVelocityGain = 12f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
     private const float WallstepMinimumDuration = 0.25f;
     private const float ForceWallRotationSpeed = 3f;
-    private const float WallRunMinimumEntryMomentum = 7f;
-    private const float WallRunMinimumMomentum = 7f;
+    private const float WallRunMinimumEntryMomentum = 9f;
+    private const float WallRunMinimumMomentum = 9f;
+    private const float WallRunMinimumYVelocity = 10f;
     private const float FlankAlignmentRotationSpeed = 25f;
-    private const float FlankWallVacuumStrength = 12f;
+    private const float FlankWallVacuumStrength = 20f;
+    private const float WallrunJumpAngle = 60f;
     
     // Hard land
     
@@ -256,9 +268,9 @@ public class PlayerFsm : GravityFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < MinYVelocityToInteractWithWall)
-            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < MinYVelocityToInteractWithWall)
-            .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
             {
@@ -375,12 +387,24 @@ public class PlayerFsm : GravityFsm
         Machine.Configure(PlayerFsmState.Wallrun)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum)
             .OnEntry(_ =>
             {
+                print("Yvelocity on entering wallrun: " + YVelocity);
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
                 ReplaceAnimatorTrigger("Wallrun");
 
+            })
+            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
+            {
+                var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
+                var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
+                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
             });
         
         Machine.Configure(PlayerFsmState.Dashsquat)
@@ -452,17 +476,23 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
 
+        FireFaceTriggers();
+        FireFlankTriggers();
+    }
+
+    private void FireFaceTriggers()
+    {
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
-        if (Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward,
-                forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward, 
+                out var hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(PlayerFsmTrigger.FaceWall);
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward, 
-                       forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore))
+                       out hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
-        } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward, 
-                       out var hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore))
+        } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
+                       out hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge);
@@ -472,22 +502,27 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
         
-        Debug.DrawRay(transform.position + Vector3.up * FaceWallHeight, transform.forward * forwardRaycastDistance, Color.red);
-        Debug.DrawRay(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward * forwardRaycastDistance, Color.yellow);
-        Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward * forwardRaycastDistance, Color.cyan);
-        
-        var flankRaycastDistance = FlankWallDistance; // I don't think we need to multiply flank distance by RaycastTimeModifier
+        // Debug.DrawRay(transform.position + Vector3.up * FaceWallHeight, transform.forward * forwardRaycastDistance, Color.red);
+        // Debug.DrawRay(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward * forwardRaycastDistance, Color.yellow);
+        // Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward * forwardRaycastDistance, Color.cyan);
+    }
 
-
+    private void FireFlankTriggers()
+    {
+        RaycastHit hit;
+        var maximumFlankRaycastDistance = MaximumFlankWallDistance;
         var flankRaycastOrigin = transform.position + Vector3.up * FlankWallHeight;
-        if (Physics.Raycast(flankRaycastOrigin, transform.right,
-                out var hitRight, flankRaycastDistance, ~0, QueryTriggerInteraction.Ignore) &&
-            Vector3.Angle(hitRight.normal, -transform.right) < FlankMaximumAngle)
+        if 
+            (Physics.Raycast(flankRaycastOrigin, transform.right,
+                 out hit, maximumFlankRaycastDistance, ~0, QueryTriggerInteraction.Ignore) 
+             && IsHitValidFlank(hit, true))
         {
             Machine.Fire(PlayerFsmTrigger.FlankWall);
-        } else if (Physics.Raycast(flankRaycastOrigin, -transform.right,
-                       out var hitLeft, flankRaycastDistance, ~0, QueryTriggerInteraction.Ignore) &&
-                   Vector3.Angle(hitLeft.normal, transform.right) < FlankMaximumAngle)
+
+        } else if 
+            (Physics.Raycast(flankRaycastOrigin, -transform.right, 
+                 out hit, maximumFlankRaycastDistance, ~0, QueryTriggerInteraction.Ignore)
+             && IsHitValidFlank(hit, false))
         {
             Machine.Fire(PlayerFsmTrigger.FlankWall);
         }
@@ -496,8 +531,22 @@ public class PlayerFsm : GravityFsm
             Machine.Fire(PlayerFsmTrigger.FlankOpen);
         }
         
-        Debug.DrawRay(flankRaycastOrigin, transform.right * flankRaycastDistance, Color.magenta);
-        Debug.DrawRay(flankRaycastOrigin, -transform.right * flankRaycastDistance, Color.magenta);
+        Debug.DrawRay(flankRaycastOrigin, transform.right * maximumFlankRaycastDistance, Color.blue);
+        Debug.DrawRay(flankRaycastOrigin, -transform.right * maximumFlankRaycastDistance, Color.blue);
+    }
+
+    private bool IsHitValidFlank(RaycastHit hit, bool left)
+    {
+        float DistanceFromPointToPlane(Vector3 pointA, Vector3 pointB, Vector3 planeNormal)
+        {
+            Vector3 AB = pointA - pointB;
+            float distance = Vector3.Dot(AB, planeNormal.normalized);
+            return Mathf.Abs(distance); // Absolute value to get the unsigned distance
+        }
+
+        float flipMod = left ? -1f : 1f;
+        var distance = DistanceFromPointToPlane(transform.position, hit.point, hit.normal);
+        return distance < 2f && Vector3.Angle(transform.right * flipMod, hit.normal) < FlankMaximumAngle;
     }
 
     private float ComputeDynamicForwardRaycastDistance()
@@ -529,6 +578,7 @@ public class PlayerFsm : GravityFsm
 
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang) || Machine.IsInState(PlayerFsmState.MediumVaultHang) )
         {
+            UpdateLedgePosition(FaceHighLedgeHeight);
             MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
             HandleCollisionMove();
             
@@ -546,7 +596,9 @@ public class PlayerFsm : GravityFsm
             Animator.SetFloat("SpeedMod", Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
             MoveYOntoLedge(0f, VaultLedgeLerpStrength);
             SetAnimatorMomentum();
-            transform.position += ComputeDesiredMove();
+            UpdateFlankWallNormal();
+            HandleFlankAlignment();
+            transform.position += ComputeCollisionMove(ComputeDesiredMove());
             HandleTurning(VaultTurningMultiplier, true);
         }
         else if (Machine.IsInState(PlayerFsmState.Wallrun))
@@ -636,25 +688,31 @@ public class PlayerFsm : GravityFsm
     {
         var flankRaycastOrigin = transform.position + Vector3.up * FlankWallHeight;
         if (Physics.Raycast(flankRaycastOrigin, transform.right,
-                out var hitRight, FlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
+                out var hitRight, MaximumFlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
             Vector3.Angle(hitRight.normal, -transform.right) < FlankMaximumAngle)
         {
             _currentFlankWallNormal = hitRight.normal;
-            _currentFlankSide = false;
+            _currentFlankType = FlankType.Right;
         } else if (Physics.Raycast(flankRaycastOrigin, -transform.right,
-                       out var hitLeft, FlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
+                       out var hitLeft, MaximumFlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
                    Vector3.Angle(hitLeft.normal, transform.right) < FlankMaximumAngle)
         {
             _currentFlankWallNormal = hitLeft.normal;
-            _currentFlankSide = true;
+            _currentFlankType = FlankType.Left;
+        }
+        else
+        {
+            _currentFlankType = FlankType.None;
         }
     }
 
     private void HandleFlankAlignment()
     {
-        var rotationMod = _currentFlankSide ? -1f : 1f;
+        if (_currentFlankType == FlankType.None) return; 
+        var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
         var forward = Quaternion.Euler(0f, 90f * rotationMod, 0f) * _currentFlankWallNormal;
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * FlankAlignmentRotationSpeed);
+        var lookRotation = Quaternion.LookRotation(forward, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
     }
 
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false)
@@ -724,9 +782,12 @@ public class PlayerFsm : GravityFsm
         
         // Radius of your character (adjust as needed)
         float radius = CollisionMoveSphereCastRadius;
-        float castDistance = CollisionMoveSphereCastDistance * GetRaycastTimeModifier();
+        float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f);
 
-        Vector3 position = transform.position + Vector3.up * CollisionMoveSphereCastHeight;
+        print(YVelocity);
+        Vector3 position = transform.position + Vector3.up * (YVelocity > FallingCollisionMoveSphereCastHeightYVelocityThreshhold
+            ? GroundCollisionMoveSphereCastHeight
+            : FallingCollisionMoveSphereCastHeight);
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
@@ -783,7 +844,8 @@ public class PlayerFsm : GravityFsm
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;
-        if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity >MinYVelocityToInteractWithWall - 1f) return;
+        if (Machine.IsInState(PlayerFsmState.Wallrun)) return;
+        if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity > WallsquatMinimumYVelocity - 1f) return;
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
