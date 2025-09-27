@@ -171,7 +171,7 @@ public class PlayerFsm : GravityFsm
     private const float ForceWallRotationSpeed = 3f;
     private const float WallRunMinimumEntryMomentum = 9f;
     private const float WallRunMinimumMomentum = 9f;
-    private const float WallRunMinimumYVelocity = 10f;
+    private const float WallRunMinimumYVelocity = 13f; // It's pretty important that this value is larger than WallsquatMinimumYVelocity
     private const float FlankAlignmentRotationSpeed = 25f;
     private const float FlankWallVacuumStrength = 20f;
     private const float WallrunJumpAngle = 65f;
