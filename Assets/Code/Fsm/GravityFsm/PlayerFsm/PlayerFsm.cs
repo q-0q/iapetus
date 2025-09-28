@@ -103,6 +103,7 @@ public class PlayerFsm : GravityFsm
     private InputBuffer _inputBuffer;
     private Camera _camera;
     private float _momentum = 0f;
+    private float _stateEntryMomentum = 0f;
     private Vector3 _currentLedgePosition;
     private Vector3 _currentFlankWallNormal;
     private FlankType _currentFlankType;
@@ -214,7 +215,10 @@ public class PlayerFsm : GravityFsm
     
     // Attack
 
-    private const float ImpaleMovementModifier = 0.95f;
+    private const float ImpaleMovementModifier = 1f;
+    private const float ImpaleMomentumOffset = -0.5f;
+    private const float ImpaleMinimumMomentumAfterOffset = 6f;
+    private const float ImpaleMomentumLerpStrenth = 10f;
     
     // --------- End of subclass Fsm data ------------- //
 
@@ -362,6 +366,7 @@ public class PlayerFsm : GravityFsm
         
         Machine.Configure(PlayerFsmState.SlowVaultFinish)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
+            .SubstateOf(PlayerFsmState.Grounded)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
@@ -463,11 +468,14 @@ public class PlayerFsm : GravityFsm
         Machine.Configure(PlayerFsmState.Impale)
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Attack");
+                // ReplaceAnimatorTrigger("GroundMove");
                 Animator.SetTrigger("Impale");
+                _stateEntryMomentum = _momentum;
             }).OnExit(_ =>
             {
                 Animator.ResetTrigger("Impale");
@@ -720,12 +728,15 @@ public class PlayerFsm : GravityFsm
             Animator.SetLayerWeight(1, 0);
             HandleInputMomentumLoss();
 
-            HandleTurning();
+            HandleTurning(0.75f, true);
             HandleCollisionMove(ImpaleMovementModifier);
             
             SetAnimatorMomentum();
             var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
             Animator.SetFloat("SpeedMod", speedMod);
+
+            var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset ? _momentum : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
+            _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
         } else
         {
             Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 0, Time.deltaTime * 10f));
