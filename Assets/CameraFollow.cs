@@ -20,7 +20,7 @@ public class CameraFollow : MonoBehaviour
     void UpdatePosition(Vector3 pos, bool grounded)
     {
         pos = CameraFollowTarget.Singleton.transform.position;
-        var newY = grounded ? Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * YLerpRate) : transform.position.y;
+        var newY = true ? Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * YLerpRate) : transform.position.y;
         transform.position = new Vector3(pos.x, newY, pos.z);
     }
 }

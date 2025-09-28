@@ -21,10 +21,17 @@ public class PlayerFsm : GravityFsm
     protected override void OnStart()
     {
         base.OnStart();
+        
+    }
+    
+    protected override void OnAwake()
+    {
+        Singleton = this;
     }
 
     private void Start()
     {
+        Singleton = this;
         InitState = PlayerFsmState.GroundMove;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
@@ -103,6 +110,7 @@ public class PlayerFsm : GravityFsm
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
     private bool _movementAnimationMirror;
+    public static PlayerFsm Singleton;
     
     // Events
     
@@ -649,7 +657,6 @@ public class PlayerFsm : GravityFsm
             Animator.SetFloat("SpeedMod", Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
             MoveYOntoLedge(0f, VaultLedgeLerpStrength);
             SetAnimatorMomentum();
-            HandleFlankAlignment();
             transform.position += ComputeCollisionMove(ComputeDesiredMove());
             HandleTurning(VaultTurningMultiplier, true);
         }

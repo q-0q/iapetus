@@ -28,8 +28,12 @@ public abstract class Fsm : MonoBehaviour
     private void Awake()
     {
         InheritableEnum.Initialize();
+        OnAwake();
     }
 
+    protected virtual void OnAwake()
+    { }
+    
     protected virtual void OnStart()
     {
         SetupMachine();
