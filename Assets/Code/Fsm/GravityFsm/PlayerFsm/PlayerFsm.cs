@@ -31,6 +31,7 @@ public class PlayerFsm : GravityFsm
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);
         _inputBuffer.InitInput("Jump");
         _inputBuffer.InitInput("Dash");
+        _inputBuffer.InitInput("Attack");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
         
@@ -63,6 +64,7 @@ public class PlayerFsm : GravityFsm
         public static int HardLand;
         public static int HardLandRoll;
         public static int Wallrun;
+        public static int Impale;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -78,6 +80,7 @@ public class PlayerFsm : GravityFsm
         public static int FlankWall;
         public static int FlankOpen;
         public static int Dash;
+        public static int Attack;
     }
 
     private enum FlankType
@@ -201,6 +204,10 @@ public class PlayerFsm : GravityFsm
     private const float DashsquatTurnMultiplier = 2.25f;
     private const float DashForwardSpeed = 20f;
     
+    // Attack
+
+    private const float ImpaleMovementModifier = 0.95f;
+    
     // --------- End of subclass Fsm data ------------- //
 
 
@@ -213,6 +220,7 @@ public class PlayerFsm : GravityFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
+            .Permit(PlayerFsmTrigger.Attack, PlayerFsmState.Impale)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("GroundMove");
@@ -278,7 +286,7 @@ public class PlayerFsm : GravityFsm
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
-            .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => true)
+            .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
         // _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
@@ -443,6 +451,19 @@ public class PlayerFsm : GravityFsm
                 _momentum = Mathf.Min(Mathf.Max(_momentum + DashEntryMomentumGain, DashEntryMinimumMomentum), MaxMomentum);
                 ReplaceAnimatorTrigger("Dash");
             });
+        
+        Machine.Configure(PlayerFsmState.Impale)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .OnEntry(_ =>
+            {
+                Animator.SetLayerWeight(1, 0);
+                _inputBuffer.ConsumeBuffer("Attack");
+                Animator.SetTrigger("Impale");
+            }).OnExit(_ =>
+            {
+                Animator.ResetTrigger("Impale");
+            });
     }
 
     public override void SetupStateMaps()
@@ -459,6 +480,7 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.1f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.15f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Impale, 0.55f);
         
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
@@ -471,6 +493,11 @@ public class PlayerFsm : GravityFsm
         if (_inputBuffer.IsBuffered("Jump"))
         {
             Machine.Fire(PlayerFsmTrigger.Jump);
+        }
+        
+        if (_inputBuffer.IsBuffered("Attack"))
+        {
+            Machine.Fire(PlayerFsmTrigger.Attack);
         }
         
         // if (_inputBuffer.IsBuffered("Dash"))
@@ -491,7 +518,7 @@ public class PlayerFsm : GravityFsm
         }
 
         FireFaceTriggers();
-        FireFlankTriggers();
+        // FireFlankTriggers();
     }
 
     private void FireFaceTriggers()
@@ -558,22 +585,6 @@ public class PlayerFsm : GravityFsm
         Debug.DrawRay(flankRaycastOrigin, -transform.right * maximumFlankRaycastDistance, Color.blue);
     }
     
-    // private void UpdateFlankWallNormal()
-    // {
-    //     var flankRaycastOrigin = transform.position + Vector3.up * FlankWallHeight;
-    //     if (Physics.Raycast(flankRaycastOrigin, transform.right,
-    //             out var hitRight, MaximumFlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
-    //         Vector3.Angle(hitRight.normal, -transform.right) < FlankMaximumAngle)
-    //     {
-    //
-    //         
-    //     } else if (Physics.Raycast(flankRaycastOrigin, -transform.right,
-    //                    out var hitLeft, MaximumFlankWallDistance, ~0, QueryTriggerInteraction.Ignore) &&
-    //                Vector3.Angle(hitLeft.normal, transform.right) < FlankMaximumAngle)
-    //     {
-    //
-    //     }
-    // }
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
     {
@@ -694,6 +705,23 @@ public class PlayerFsm : GravityFsm
             Animator.SetLayerWeight(1, 0);
             var collisionMove = ComputeCollisionMove(transform.forward * (DashForwardSpeed * Time.deltaTime));
             transform.position += collisionMove;
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Impale))
+        {
+            Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
+            Animator.SetLayerWeight(1, 0);
+            HandleInputMomentumLoss();
+
+            HandleTurning();
+            HandleCollisionMove(ImpaleMovementModifier);
+            
+            SetAnimatorMomentum();
+            var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+            Animator.SetFloat("SpeedMod", speedMod);
+        } else
+        {
+            Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 0, Time.deltaTime * 10f));
         }
 
 
