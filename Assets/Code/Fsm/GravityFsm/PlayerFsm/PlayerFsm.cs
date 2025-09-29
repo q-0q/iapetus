@@ -117,10 +117,11 @@ public class PlayerFsm : GravityFsm
     
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
+    public static event Action OnPlayerImpaleStateEntered;
     
     // Input
     
-    private const float InputMagnitudeThreshhold = 0.1f;
+    public const float InputMagnitudeThreshhold = 0.1f;
     
     // Raycasting
     
@@ -473,7 +474,7 @@ public class PlayerFsm : GravityFsm
             {
                 Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Attack");
-                // ReplaceAnimatorTrigger("GroundMove");
+                OnPlayerImpaleStateEntered?.Invoke();
                 Animator.SetTrigger("Impale");
                 _stateEntryMomentum = _momentum;
             }).OnExit(_ =>
@@ -692,6 +693,7 @@ public class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.HardTurn))
         {
             _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * HardTurnMomentumLossModifier);
+            Animator.SetLayerWeight(2, 0);
         }
         
         if (Machine.IsInState(PlayerFsmState.HardLandRoll))
@@ -726,9 +728,9 @@ public class PlayerFsm : GravityFsm
         {
             Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
             Animator.SetLayerWeight(1, 0);
-            HandleInputMomentumLoss();
+            // HandleInputMomentumLoss();
 
-            HandleTurning(0.75f, true);
+            HandleTurning(0.5f, true);
             HandleCollisionMove(ImpaleMovementModifier);
             
             SetAnimatorMomentum();
@@ -837,7 +839,7 @@ public class PlayerFsm : GravityFsm
         return _playerInput.actions["Move"].ReadValue<Vector2>();
     }
     
-    private Vector3 GetInputMovementVector3()
+    public Vector3 GetInputMovementVector3()
     {
         var v2 = GetInputMovementVector2();
         return Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0) * new Vector3(v2.x, 0, v2.y);
