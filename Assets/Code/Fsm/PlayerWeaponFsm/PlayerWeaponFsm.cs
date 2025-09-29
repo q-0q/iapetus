@@ -11,6 +11,8 @@ public class PlayerWeaponFsm : Fsm
 
     private Transform _subTransform;
     private Vector3 _impaleActiveTargetPosition;
+    private CinemachineImpulseSource _impulseSource;
+    public static PlayerWeaponFsm Singleton;
 
     private const float IdleOrbitRadius = 3f;
     private const float IdleOrbitHeight = 3.5f;
@@ -29,7 +31,7 @@ public class PlayerWeaponFsm : Fsm
     private const float ImpaleStuckRecoveryPullbackSpeed = 14f;
 
     public static event Action<Vector3, bool> OnPlayerWeaponPositionUpdated;
-    private CinemachineImpulseSource _impulseSource;
+    
     
     
     public class PlayerWeaponFsmState : FsmState
@@ -100,6 +102,13 @@ public class PlayerWeaponFsm : Fsm
 
     }
 
+    protected override void OnAwake()
+    {
+        base.OnAwake();
+
+        Singleton = this;
+    }
+
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
@@ -107,7 +116,7 @@ public class PlayerWeaponFsm : Fsm
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStartup, 0.35f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleActive, 0.25f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleRecovery, 0.25f);
-        StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuck, 0.45f);
+        StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuck, 0.65f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuckRecovery, 0.1f);
     }
 

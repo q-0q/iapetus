@@ -1,4 +1,6 @@
 using System;
+using DG.Tweening;
+using JetBrains.Annotations;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
@@ -6,6 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
 using UnityEngine.Serialization;
+using Wasp;
 
 public class PlayerFsm : GravityFsm
 {
@@ -84,6 +87,9 @@ public class PlayerFsm : GravityFsm
         public static int Wallrun;
         public static int ImpaleGround;
         public static int ImpaleAir;
+        public static int GrappleStartup;
+        public static int GrappleFlipsquat;
+        public static int GrappleFlip;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -100,6 +106,7 @@ public class PlayerFsm : GravityFsm
         public static int FlankOpen;
         public static int Dash;
         public static int Attack;
+        public static int ContactHitboxTrigger;
     }
 
     private enum FlankType
@@ -232,6 +239,10 @@ public class PlayerFsm : GravityFsm
     private const float ImpaleMomentumOffset = -0.5f;
     private const float ImpaleMinimumMomentumAfterOffset = 6f;
     private const float ImpaleMomentumLerpStrenth = 10f;
+    private const float GrappleStartupRotationLerpStrength = 13f;
+    private const float GrappleStartupYPositionLerpStrength = 3f;
+    private const float GrappleStartupYPositionOffset = 1f;
+    private const float GrappleStartupMomentumLossMod = 1.25f;
     
     // --------- End of subclass Fsm data ------------- //
 
@@ -245,7 +256,8 @@ public class PlayerFsm : GravityFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
-            .Permit(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("GroundMove");
@@ -312,7 +324,8 @@ public class PlayerFsm : GravityFsm
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
-            .Permit(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
         // _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
@@ -468,6 +481,7 @@ public class PlayerFsm : GravityFsm
         Machine.Configure(PlayerFsmState.Dash)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            .Permit(PlayerFsmTrigger.ContactHitboxTrigger, PlayerFsmState.GrappleFlipsquat)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => true)
@@ -484,6 +498,8 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
+            .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
@@ -500,6 +516,14 @@ public class PlayerFsm : GravityFsm
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < HardLandAirDiff, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
@@ -511,6 +535,51 @@ public class PlayerFsm : GravityFsm
             {
                 Animator.ResetTrigger("ImpaleJump");
             });;
+        
+        Machine.Configure(PlayerFsmState.GrappleStartup)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Dash)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("GrappleStartup");
+                YVelocity = 10;
+                _inputBuffer.ConsumeBuffer("Attack");
+            }).OnExit(_ =>
+            {
+                YVelocity = 0;
+            });
+        
+        Machine.Configure(PlayerFsmState.GrappleFlipsquat)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GrappleFlip)
+            .OnEntry(_ =>
+            {
+                
+                // transform.DOShakePosition(0.5f, 0.3f);
+                ReplaceAnimatorTrigger("GrappleFlipsquat");
+            })
+            .OnExit(_ =>
+            {
+                // HitstopManager.Singleton.StartHitstop(0.075f);
+            });
+        
+        Machine.Configure(PlayerFsmState.GrappleFlip)
+            .SubstateOf(GravityFsmState.Aerial)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < HardLandAirDiff, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll, _ => AirYDiff() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
+            .OnEntry(_ =>
+            {
+                _momentum = 10f;
+                ReplaceAnimatorTrigger("GrappleFlip");
+                YVelocity = 30;
+            });
     }
 
     public override void SetupStateMaps()
@@ -526,9 +595,11 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);
         StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.1f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.15f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleGround, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleAir, 0.55f);
+        StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.175f);
         
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
@@ -786,6 +857,25 @@ public class PlayerFsm : GravityFsm
             Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 0, Time.deltaTime * 10f));
         }
 
+        if (Machine.IsInState(PlayerFsmState.GrappleStartup))
+        {
+            Animator.SetLayerWeight(2, 0);
+            var transformPosition = new Vector3(PlayerWeaponFsm.Singleton.transform.position.x, transform.position.y, PlayerWeaponFsm.Singleton.transform.position.z);
+            var forward = transformPosition - transform.position;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * GrappleStartupRotationLerpStrength);
+
+            var destinationPosition = new Vector3(transform.position.x,
+                PlayerWeaponFsm.Singleton.transform.position.y + GrappleStartupYPositionOffset, transform.position.z);
+            
+            transform.position = Vector3.Lerp(transform.position,
+                destinationPosition,
+                Time.deltaTime * GrappleStartupYPositionLerpStrength);
+            
+            _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * GrappleStartupMomentumLossMod);
+            HandleCollisionMove();
+            
+        }
+
 
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
         {
@@ -1015,7 +1105,29 @@ public class PlayerFsm : GravityFsm
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(_currentLedgePosition, 0.25f);
     }
+    
+    private bool CanGrapple(TriggerParams? triggerParams)
+    {
+        return PlayerWeaponFsm.Singleton.Machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.ImpaleStuck);
+    }
+    
+    private bool CanImpale(TriggerParams? triggerParams)
+    {
+        return PlayerWeaponFsm.Singleton.Machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.Idle);
+    }
 
+    private void OnContactHitboxCollide()
+    {
+        Machine.Fire(PlayerFsmTrigger.ContactHitboxTrigger);
+    }
 
-
+    private void OnEnable()
+    {
+        PlayerContactCollider.OnPlayerContactHitboxCollision += OnContactHitboxCollide;
+    }
+    
+    private void OnDisable()
+    {
+        PlayerContactCollider.OnPlayerContactHitboxCollision -= OnContactHitboxCollide;
+    }
 }
