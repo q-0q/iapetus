@@ -13,6 +13,17 @@ public class PlayerFsm : GravityFsm
     
     void Update()
     {
+
+        if (HitstopManager.Singleton.IsHitstopActive())
+        {
+            Animator.enabled = false;
+            return;
+        }
+        else
+        {
+            Animator.enabled = true;
+        }
+        
         OnUpdate();
         FireTriggers();
         
@@ -1004,4 +1015,7 @@ public class PlayerFsm : GravityFsm
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(_currentLedgePosition, 0.25f);
     }
+
+
+
 }
