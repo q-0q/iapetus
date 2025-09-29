@@ -71,7 +71,8 @@ public class PlayerFsm : GravityFsm
         public static int HardLand;
         public static int HardLandRoll;
         public static int Wallrun;
-        public static int Impale;
+        public static int ImpaleGround;
+        public static int ImpaleAir;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -233,7 +234,7 @@ public class PlayerFsm : GravityFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
-            .Permit(PlayerFsmTrigger.Attack, PlayerFsmState.Impale)
+            .Permit(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround)
             .OnEntry(_ =>
             {
                 ReplaceAnimatorTrigger("GroundMove");
@@ -300,6 +301,7 @@ public class PlayerFsm : GravityFsm
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat, _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun, _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
+            .Permit(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir)
         // _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity
             .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat)
             .OnEntry(_ =>
@@ -466,7 +468,8 @@ public class PlayerFsm : GravityFsm
                 ReplaceAnimatorTrigger("Dash");
             });
         
-        Machine.Configure(PlayerFsmState.Impale)
+
+        Machine.Configure(PlayerFsmState.ImpaleGround)
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
@@ -480,7 +483,23 @@ public class PlayerFsm : GravityFsm
             }).OnExit(_ =>
             {
                 Animator.ResetTrigger("Impale");
-            });
+            });;
+
+        Machine.Configure(PlayerFsmState.ImpaleAir)
+            .SubstateOf(GravityFsmState.Aerial)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .OnEntry(_ =>
+            {
+                Animator.SetLayerWeight(1, 0);
+                _inputBuffer.ConsumeBuffer("Attack");
+                OnPlayerImpaleStateEntered?.Invoke();
+                Animator.SetTrigger("ImpaleJump");
+                _stateEntryMomentum = _momentum;
+            }).OnExit(_ =>
+            {
+                Animator.ResetTrigger("ImpaleJump");
+            });;
     }
 
     public override void SetupStateMaps()
@@ -497,7 +516,8 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.1f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.15f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Impale, 0.55f);
+        StateMapConfig.Duration.Add(PlayerFsmState.ImpaleGround, 0.55f);
+        StateMapConfig.Duration.Add(PlayerFsmState.ImpaleAir, 0.55f);
         
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
@@ -724,7 +744,7 @@ public class PlayerFsm : GravityFsm
             transform.position += collisionMove;
         }
         
-        if (Machine.IsInState(PlayerFsmState.Impale))
+        if (Machine.IsInState(PlayerFsmState.ImpaleGround))
         {
             Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
             Animator.SetLayerWeight(1, 0);
@@ -734,6 +754,17 @@ public class PlayerFsm : GravityFsm
             HandleCollisionMove(ImpaleMovementModifier);
             
             SetAnimatorMomentum();
+            var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+            Animator.SetFloat("SpeedMod", speedMod);
+
+            var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset ? _momentum : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
+            _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
+        } 
+        else if (Machine.IsInState(PlayerFsmState.ImpaleAir))
+        {
+            Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
+            Animator.SetLayerWeight(1, 0);
+            
             var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
             Animator.SetFloat("SpeedMod", speedMod);
 

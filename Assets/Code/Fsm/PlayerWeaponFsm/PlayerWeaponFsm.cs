@@ -14,11 +14,11 @@ public class PlayerWeaponFsm : Fsm
     
     private const float ImpaleStartupOrbitRadius = 1f;
     private const float ImpaleStartupOrbitHeight = 3.5f;
-    private const float ImpaleStartupPositionLerpStrength = 20f;
+    private const float ImpaleStartupPositionLerpStrength = 27.5f;
     private const float ImpaleStartupRotationLerpStrength = 25f;
     private const float ImpaleStartupPullbackSpeed = 3.5f;
     
-    private const float ImpaleActiveForwardSpeed = 40f;
+    private const float ImpaleActiveForwardSpeed = 47.5f;
     
     
     public class PlayerWeaponFsmState : FsmState
@@ -116,7 +116,7 @@ public class PlayerWeaponFsm : Fsm
         if (Machine.IsInState(PlayerWeaponFsmState.ImpaleActive))
         {
             transform.position += transform.forward * (Time.deltaTime * ImpaleActiveForwardSpeed *
-                                                       (TimeInCurrentState() > 0.185f ? 0.25f : 1f));
+                                                       (TimeInCurrentState() > 0.195f ? 0.25f : 1f));
         }
         
     }
