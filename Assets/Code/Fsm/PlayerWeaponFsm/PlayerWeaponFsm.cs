@@ -1,6 +1,7 @@
 using System;
 using Cinemachine;
 using DG.Tweening;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.InputSystem.HID;
 using UnityEngine.Serialization;
@@ -10,6 +11,7 @@ public class PlayerWeaponFsm : Fsm
 {
 
     private Transform _subTransform;
+    private Vector3 _subTransformBaseLocalPosition;
     private Vector3 _impaleActiveTargetPosition;
     private CinemachineImpulseSource _impulseSource;
     public static PlayerWeaponFsm Singleton;
@@ -162,7 +164,7 @@ public class PlayerWeaponFsm : Fsm
         }
         else
         {
-            _subTransform.localPosition = Vector3.Lerp(_subTransform.localPosition, Vector3.zero, Time.deltaTime * ImpaleStartupPullbackSpeed * 5f);
+            _subTransform.localPosition = Vector3.Lerp(_subTransform.localPosition, _subTransformBaseLocalPosition, Time.deltaTime * ImpaleStartupPullbackSpeed * 5f);
         }
         
         if (Machine.IsInState(PlayerWeaponFsmState.ImpaleActive))
@@ -180,6 +182,16 @@ public class PlayerWeaponFsm : Fsm
             transform.position += pullback;
         }
         
+        if (Machine.IsInState(PlayerWeaponFsmState.ImpaleStuck))
+        {
+            if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.GrappleStartup) ||
+                PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dash))
+            {
+                var forward = transform.position - new Vector3(PlayerFsm.Singleton.transform.position.x, transform.position.y, PlayerFsm.Singleton.transform.position.z);
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 30f);
+            }
+        }
+        
     }
 
     private void Start()
@@ -187,6 +199,7 @@ public class PlayerWeaponFsm : Fsm
         InitState = PlayerWeaponFsmState.Idle;
         transform.SetParent(null);
         _subTransform = transform.GetChild(0);
+        _subTransformBaseLocalPosition = _subTransform.localPosition;
         TryGetComponent(out _impulseSource);
         OnStart();
     }
@@ -229,4 +242,25 @@ public class PlayerWeaponFsm : Fsm
 
         return transform.position + (transform.forward * ImpaleActiveMaxDistance);
     }
+    
+    public static void LerpRotateAroundPointWithOrientation(Transform target, Vector3 pivot, Vector3 targetForward, Vector3 targetUp, float lerpWeight)
+    {
+        // --- Compute target rotation ---
+        Quaternion targetRotation = Quaternion.LookRotation(targetForward, targetUp);
+
+        // --- Current offset from pivot ---
+        Vector3 currentOffset = target.position - pivot;
+
+        // --- Rotate offset into target space ---
+        Quaternion rotationDelta = targetRotation * Quaternion.Inverse(target.rotation);
+        Vector3 rotatedOffset = rotationDelta * currentOffset;
+
+        // --- Final target position ---
+        Vector3 targetPosition = pivot + rotatedOffset;
+
+        // --- Interpolate position and rotation ---
+        target.position = Vector3.Lerp(target.position, targetPosition, lerpWeight);
+        target.rotation = Quaternion.Slerp(target.rotation, targetRotation, lerpWeight);
+    }
+
 }

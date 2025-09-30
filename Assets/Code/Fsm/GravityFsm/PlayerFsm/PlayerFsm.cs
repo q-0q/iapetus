@@ -236,7 +236,7 @@ public class PlayerFsm : GravityFsm
     // Attack
 
     private const float ImpaleMovementModifier = 1f;
-    private const float ImpaleMomentumOffset = -0.5f;
+    private const float ImpaleMomentumOffset = 2.5f;
     private const float ImpaleMinimumMomentumAfterOffset = 6f;
     private const float ImpaleMomentumLerpStrenth = 10f;
     private const float GrappleStartupRotationLerpStrength = 13f;
@@ -557,10 +557,11 @@ public class PlayerFsm : GravityFsm
                 
                 // transform.DOShakePosition(0.5f, 0.3f);
                 ReplaceAnimatorTrigger("GrappleFlipsquat");
+                // HitstopManager.Singleton.StartHitstop(0.075f);
             })
             .OnExit(_ =>
             {
-                // HitstopManager.Singleton.StartHitstop(0.075f);
+                
             });
         
         Machine.Configure(PlayerFsmState.GrappleFlip)
@@ -598,8 +599,8 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleGround, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleAir, 0.55f);
-        StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.25f);
-        StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.175f);
+        StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.175f);
+        StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.165f);
         
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
