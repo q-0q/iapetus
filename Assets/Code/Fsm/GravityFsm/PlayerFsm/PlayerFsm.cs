@@ -490,6 +490,9 @@ public class PlayerFsm : GravityFsm
             {
                 YVelocity = 0;
                 _momentum = Mathf.Min(Mathf.Max(_momentum + DashEntryMomentumGain, DashEntryMinimumMomentum), MaxMomentum);
+                transform.rotation =
+                    Quaternion.LookRotation(PlayerWeaponFsm.Singleton.transform.position - transform.position,
+                        Vector3.up);
                 ReplaceAnimatorTrigger("Dash");
             });
         
@@ -596,7 +599,7 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);
         StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.1f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleGround, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleAir, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.175f);
@@ -740,7 +743,7 @@ public class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
 
-            HandleInputMomentumLoss();
+            HandleInputMomentumChange();
             HandleTurning();
             HandleCollisionMove();
             
@@ -831,9 +834,9 @@ public class PlayerFsm : GravityFsm
         {
             Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
             Animator.SetLayerWeight(1, 0);
-            // HandleInputMomentumLoss();
+            HandleInputMomentumChange();
 
-            HandleTurning(0.5f, true);
+            HandleTurning(0.75f, true);
             HandleCollisionMove(ImpaleMovementModifier);
             
             SetAnimatorMomentum();
@@ -949,7 +952,7 @@ public class PlayerFsm : GravityFsm
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
     }
 
-    private void HandleInputMomentumLoss()
+    private void HandleInputMomentumChange()
     {
         var v2 = GetInputMovementVector2();
         if (v2.magnitude > InputMagnitudeThreshhold)

@@ -18,14 +18,14 @@ public class PlayerWeaponFsm : Fsm
 
     private const float IdleOrbitRadius = 3f;
     private const float IdleOrbitHeight = 3.5f;
-    private const float IdlePositionLerpStrength = 3f;
+    private const float IdlePositionLerpStrength = 9f;
     private const float IdleRotationLerpStrength = 5f;
     
     private const float ImpaleStartupOrbitRadius = 1f;
     private const float ImpaleStartupOrbitHeight = 4.5f;
     private const float ImpaleStartupPositionLerpStrength = 27.5f;
     private const float ImpaleStartupRotationLerpStrength = 15f;
-    private const float ImpaleStartupPullbackSpeed = 3.5f;
+    private const float ImpaleStartupPullbackSpeed = 6.5f;
     
     private const float ImpaleActivePositionLerpStrength = 45f;
     private const float ImpaleActiveMaxDistance = 10f;
@@ -81,7 +81,7 @@ public class PlayerWeaponFsm : Fsm
             .Permit(FsmTrigger.Timeout, PlayerWeaponFsmState.Idle)
             .OnEntry(_ =>
             {
-                transform.DOShakePosition(0.5f, 0.3f);
+                // transform.DOShakePosition(0.5f, 0.3f);
             });
         
         Machine.Configure(PlayerWeaponFsmState.ImpaleStuck)
@@ -142,22 +142,27 @@ public class PlayerWeaponFsm : Fsm
             var destinationPos = (playerPosition - toPlayer.normalized * IdleOrbitRadius) + Vector3.up * IdleOrbitHeight;
             transform.position = Vector3.Lerp(transform.position, destinationPos, Time.deltaTime * IdlePositionLerpStrength);
 
-            var destinationRot = Quaternion.LookRotation((playerPosition + Vector3.up * IdleOrbitHeight) - transform.position, Vector3.up);
-            transform.rotation = Quaternion.Lerp(transform.rotation, destinationRot, Time.deltaTime * IdleRotationLerpStrength);
+            var playerRotation = Quaternion.LookRotation((playerPosition + Vector3.up * IdleOrbitHeight) - transform.position, Vector3.up);
+            // var inputMovementVector3 = PlayerFsm.Singleton.GetInputMovementVector3();
+            // if (inputMovementVector3.magnitude < PlayerFsm.InputMagnitudeThreshhold)
+            //     inputMovementVector3 = transform.forward;
+            // var inputRotation = Quaternion.LookRotation(inputMovementVector3.normalized, Vector3.up);
+            // var destinationRotation = Quaternion.Slerp(playerRotation, inputRotation, 0.f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, playerRotation, Time.deltaTime * IdleRotationLerpStrength);
         }
         
         if (Machine.IsInState(PlayerWeaponFsmState.ImpaleStartup))
         {
-            var playerPosition = PlayerFsm.Singleton.transform.position;
+            var forward = PlayerFsm.Singleton.GetInputMovementVector3().normalized;
+            var orbitCenter = PlayerFsm.Singleton.transform.position + forward * 5f;
             var pullback = Vector3.forward * (-ImpaleStartupPullbackSpeed * Time.deltaTime);
             _subTransform.localPosition += pullback;
             
-            var toPlayer = playerPosition - new Vector3(transform.position.x, playerPosition.y, transform.position.z);
-            var destinationPos = (playerPosition - toPlayer.normalized * ImpaleStartupOrbitRadius) +
+            var toOrbitCenter = orbitCenter - new Vector3(transform.position.x, orbitCenter.y, transform.position.z);
+            var destinationPos = (orbitCenter - toOrbitCenter.normalized * ImpaleStartupOrbitRadius) +
                                  (Vector3.up * ImpaleStartupOrbitHeight);
             transform.position = Vector3.Lerp(transform.position, destinationPos, Time.deltaTime * ImpaleStartupPositionLerpStrength);
 
-            var forward = PlayerFsm.Singleton.GetInputMovementVector3().normalized;
             if (forward.magnitude < PlayerFsm.InputMagnitudeThreshhold) forward = transform.forward; 
             var destinationRot = Quaternion.LookRotation(forward, Vector3.up);
             transform.rotation = Quaternion.Lerp(transform.rotation, destinationRot, Time.deltaTime * ImpaleStartupRotationLerpStrength);
@@ -189,6 +194,9 @@ public class PlayerWeaponFsm : Fsm
             {
                 var forward = transform.position - new Vector3(PlayerFsm.Singleton.transform.position.x, transform.position.y, PlayerFsm.Singleton.transform.position.z);
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 30f);
+                PlayerWeaponTail.FinalSegmentRigidbody.AddForce((PlayerFsm.Singleton.transform.position -
+                                                                 PlayerWeaponTail.FinalSegmentRigidbody.transform
+                                                                     .position).normalized * (250000f * Time.deltaTime));
             }
         }
         

@@ -25,17 +25,18 @@ public class CameraFollow : MonoBehaviour
     void UpdatePlayerPosition(Vector3 pos, bool grounded)
     {
         pos = CameraFollowTarget.Singleton.transform.position;
-        var newY = true ? Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * YLerpRate) : transform.position.y;
+        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * YLerpRate);
         _playerPos = new Vector3(pos.x, newY, pos.z);
     }
     
     void UpdatePlayerWeaponPosition(Vector3 pos, bool active)
     {
-        _playerWeaponPos = Vector3.Lerp(_playerWeaponPos, active ? pos : _playerPos, Time.deltaTime * 5f);
+        pos = new Vector3(pos.x, PlayerFsm.Singleton.transform.position.y, pos.z);
+        _playerWeaponPos = Vector3.Lerp(_playerWeaponPos, pos, Time.deltaTime * 5f);
     }
 
     private void Update()
     {
-        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, 0.25f);
+        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, 0.2f);
     }
 }
