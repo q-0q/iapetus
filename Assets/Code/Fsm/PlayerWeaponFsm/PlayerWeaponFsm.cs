@@ -85,7 +85,7 @@ public class PlayerWeaponFsm : Fsm
             });
         
         Machine.Configure(PlayerWeaponFsmState.ImpaleStuck)
-            .Permit(FsmTrigger.Timeout, PlayerWeaponFsmState.ImpaleStuckRecovery)
+            .PermitIf(FsmTrigger.Timeout, PlayerWeaponFsmState.ImpaleStuckRecovery, _ => !PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Grapple))
             .OnEntry(_ =>
             {
                 // _impulseSource.GenerateImpulse();
@@ -118,7 +118,7 @@ public class PlayerWeaponFsm : Fsm
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStartup, 0.35f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleActive, 0.25f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleRecovery, 0.25f);
-        StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuck, 0.65f);
+        StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuck, 0.95f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuckRecovery, 0.1f);
     }
 
@@ -190,7 +190,7 @@ public class PlayerWeaponFsm : Fsm
         if (Machine.IsInState(PlayerWeaponFsmState.ImpaleStuck))
         {
             if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.GrappleStartup) ||
-                PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dash))
+                PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Grapple))
             {
                 var forward = transform.position - new Vector3(PlayerFsm.Singleton.transform.position.x, transform.position.y, PlayerFsm.Singleton.transform.position.z);
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * 30f);
