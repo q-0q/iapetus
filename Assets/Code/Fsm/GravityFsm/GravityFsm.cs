@@ -95,8 +95,9 @@ public abstract class GravityFsm : Fsm
     private bool GetGroundedRaycastHit(out RaycastHit hit)
     {
         var raycastLength = 0.5f * GetRaycastTimeModifier();
-        Debug.DrawLine(transform.position + Vector3.up * raycastLength, transform.position + Vector3.up * raycastLength - Vector3.up * (raycastLength * 1.3f), Color.red);
-        if (Physics.Raycast(transform.position + Vector3.up * raycastLength, -Vector3.up, out hit,
+        var forward = transform.forward * (0.2f * GetRaycastTimeModifier());
+        Debug.DrawLine(transform.position + Vector3.up * raycastLength + forward, transform.position + Vector3.up * raycastLength - Vector3.up * (raycastLength * 1.3f) + forward, Color.red);
+        if (Physics.Raycast(transform.position + Vector3.up * raycastLength + forward, -Vector3.up, out hit,
                 raycastLength * 2f, ~0, QueryTriggerInteraction.Ignore))
         {
             var slope = Vector3.Angle(hit.normal, Vector3.up);

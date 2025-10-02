@@ -1060,10 +1060,10 @@ public class PlayerFsm : GravityFsm
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
     }
 
-    public void InvokeBoost(bool jump)
+    public void InvokeBoost(bool jump, float momentumWeight)
     {
         if (jump) Machine.Fire(PlayerFsmTrigger.Jump);
-        _momentum = MaxMomentum;
+        _momentum = MaxMomentum * momentumWeight;
     }
     
     public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
