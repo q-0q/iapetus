@@ -13,6 +13,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
+                _wallsquattedSinceLeavingGround = true;
                 YVelocity = 0;
                 ReplaceAnimatorTrigger("Wallsquat");
             })

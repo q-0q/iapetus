@@ -10,6 +10,7 @@ public partial class PlayerFsm
             .OnEntry(_ => { ReplaceAnimatorTrigger("Landsquat"); })
             .OnExit(_ =>
             {
+                _wallsquattedSinceLeavingGround = false;
                 _movementAnimationMirror = !_movementAnimationMirror;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
