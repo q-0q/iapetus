@@ -98,123 +98,69 @@ public partial class PlayerFsm : GravityFsm
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
-            
-            HandleInputMomentumChange();
-            HandleTurning();
-            HandleCollisionMove();
-            
-            SetAnimatorMomentum();
-            var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-            Animator.SetFloat("SpeedMod", speedMod);
+            GroundMoveOnUpdate();
         }
 
         if (Machine.IsInState(PlayerFsmState.VaultHang))
         {
-            UpdateLedgePosition(FaceHighLedgeHeight);
-            MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
-            HandleCollisionMove();
-            
+            VaultHangOnUpdate();
         }
         if (Machine.IsInState(PlayerFsmState.SlowVaultFinish))
         {
-            HandleTurning(VaultTurningMultiplier, true);
-            MoveYOntoLedge(0f, SlowVaultFinishLedgeLerpStrength);
-            transform.position += transform.forward * (SlowVaultFinishForwardSpeed * Time.deltaTime);
+            SlowVaultFinishOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Vault))
         {
-            _momentum = Mathf.Max(_momentum, VaultMinimumMomentum);
-            var momentumWeight = ComputeMomentumWeight();
-            Animator.SetFloat("SpeedMod", Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
-            MoveYOntoLedge(0f, VaultLedgeLerpStrength);
-            SetAnimatorMomentum();
-            transform.position += ComputeCollisionMove(ComputeDesiredMove());
-            HandleTurning(VaultTurningMultiplier, true);
+            VaultOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Wallrun))
         {
-            SetAnimatorMomentum();
-            HandleFlankAlignment();
-            HandleCollisionMove();
-
-            transform.position +=
-                ComputeCollisionMove(-_currentFlankWallNormal * (Time.deltaTime * FlankWallVacuumStrength));
+            WallrunOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.LockMomentum))
         {
-            Animator.SetFloat("SpeedMod", Mathf.Lerp(0, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()));
-            SetAnimatorMomentum();
-            HandleCollisionMove();
+            LockMomentumOnUpdate();
         }
 
         if (Machine.IsInState(GravityFsmState.Aerial))
         {
-            Animator.SetLayerWeight(1, 0);
+            AerialOnUpdate();
         }
 
         if (Machine.IsInState(PlayerFsmState.HardTurn))
         {
-            _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * HardTurnMomentumLossModifier);
-            Animator.SetLayerWeight(2, 0);
+            HardTurnOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.HardLandRoll))
         {
-            transform.position += ComputeCollisionMove(transform.forward * (HardLandRollForwardSpeed * Time.deltaTime));
+            HardLandRollOnUpdate();
         }
         
-        
-
         if (Machine.IsInState(PlayerFsmState.ForceWallRotation))
         {
-            if (Physics.Raycast(transform.position, transform.forward, out var hit, ForceWallRotationRaycastDistance * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
-            {
-                var quaternion = Quaternion.LookRotation(-hit.normal, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * ForceWallRotationSpeed);
-            }
+            ForceWallRotationOnUpdate();
         }
 
         if (Machine.IsInState(PlayerFsmState.Dashsquat))
         {
-            HandleCollisionMove();
-            HandleTurning(DashsquatTurnMultiplier, true);
+            DashsquatOnUpdate();
         }
         if (Machine.IsInState(PlayerFsmState.Grapple))
         {
-            Animator.SetLayerWeight(1, 0);
-            var collisionMove = ComputeCollisionMove(transform.forward * (DashForwardSpeed * Time.deltaTime));
-            transform.position += collisionMove;
+            GrappleOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.ImpaleGround))
         {
-            Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
-            Animator.SetLayerWeight(1, 0);
-            HandleInputMomentumChange();
-
-            HandleTurning(0.75f, true);
-            HandleCollisionMove(ImpaleMovementModifier);
-            
-            SetAnimatorMomentum();
-            var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-            Animator.SetFloat("SpeedMod", speedMod);
-
-            var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset ? _momentum : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
-            _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
+            ImpaleGroundOnUpdate();
         } 
         else if (Machine.IsInState(PlayerFsmState.ImpaleAir))
         {
-            Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
-            Animator.SetLayerWeight(1, 0);
-            
-            var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-            Animator.SetFloat("SpeedMod", speedMod);
-
-            var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset ? _momentum : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
-            _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
+            ImpaleAirOnUpdate();
         } else
         {
             Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 0, Time.deltaTime * 10f));
@@ -222,21 +168,7 @@ public partial class PlayerFsm : GravityFsm
 
         if (Machine.IsInState(PlayerFsmState.GrappleStartup))
         {
-            Animator.SetLayerWeight(2, 0);
-            var transformPosition = new Vector3(PlayerWeaponFsm.Singleton.transform.position.x, transform.position.y, PlayerWeaponFsm.Singleton.transform.position.z);
-            var forward = transformPosition - transform.position;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * GrappleStartupRotationLerpStrength);
-
-            var destinationPosition = new Vector3(transform.position.x,
-                PlayerWeaponFsm.Singleton.transform.position.y + GrappleStartupYPositionOffset, transform.position.z);
-            
-            transform.position = Vector3.Lerp(transform.position,
-                destinationPosition,
-                Time.deltaTime * GrappleStartupYPositionLerpStrength);
-            
-            _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * GrappleStartupMomentumLossMod);
-            HandleCollisionMove();
-            
+            GrappleStartupOnUpdate();
         }
 
 
@@ -247,6 +179,144 @@ public partial class PlayerFsm : GravityFsm
             _momentum = 0;
             YVelocity = 0;
         }
+    }
+
+    private void GrappleStartupOnUpdate()
+    {
+        Animator.SetLayerWeight(2, 0);
+        var transformPosition = new Vector3(PlayerWeaponFsm.Singleton.transform.position.x, transform.position.y, PlayerWeaponFsm.Singleton.transform.position.z);
+        var forward = transformPosition - transform.position;
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(forward, Vector3.up), Time.deltaTime * GrappleStartupRotationLerpStrength);
+
+        var destinationPosition = new Vector3(transform.position.x,
+            PlayerWeaponFsm.Singleton.transform.position.y + GrappleStartupYPositionOffset, transform.position.z);
+            
+        transform.position = Vector3.Lerp(transform.position,
+            destinationPosition,
+            Time.deltaTime * GrappleStartupYPositionLerpStrength);
+            
+        _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * GrappleStartupMomentumLossMod);
+        HandleCollisionMove();
+    }
+
+    private void ImpaleAirOnUpdate()
+    {
+        Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
+        Animator.SetLayerWeight(1, 0);
+            
+        var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        Animator.SetFloat("SpeedMod", speedMod);
+
+        var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset ? _momentum : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
+        _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
+    }
+
+    private void ImpaleGroundOnUpdate()
+    {
+        Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
+        Animator.SetLayerWeight(1, 0);
+        HandleInputMomentumChange();
+
+        HandleTurning(0.75f, true);
+        HandleCollisionMove(ImpaleMovementModifier);
+            
+        SetAnimatorMomentum();
+        var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        Animator.SetFloat("SpeedMod", speedMod);
+
+        var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset ? _momentum : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
+        _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
+    }
+
+    private void GrappleOnUpdate()
+    {
+        Animator.SetLayerWeight(1, 0);
+        var collisionMove = ComputeCollisionMove(transform.forward * (DashForwardSpeed * Time.deltaTime));
+        transform.position += collisionMove;
+    }
+
+    private void DashsquatOnUpdate()
+    {
+        HandleCollisionMove();
+        HandleTurning(DashsquatTurnMultiplier, true);
+    }
+
+    private void ForceWallRotationOnUpdate()
+    {
+        if (Physics.Raycast(transform.position, transform.forward, out var hit, ForceWallRotationRaycastDistance * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore))
+        {
+            var quaternion = Quaternion.LookRotation(-hit.normal, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * ForceWallRotationSpeed);
+        }
+    }
+
+    private void HardLandRollOnUpdate()
+    {
+        transform.position += ComputeCollisionMove(transform.forward * (HardLandRollForwardSpeed * Time.deltaTime));
+    }
+
+    private void HardTurnOnUpdate()
+    {
+        _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * HardTurnMomentumLossModifier);
+        Animator.SetLayerWeight(2, 0);
+    }
+
+    private void AerialOnUpdate()
+    {
+        Animator.SetLayerWeight(1, 0);
+    }
+
+    private void LockMomentumOnUpdate()
+    {
+        Animator.SetFloat("SpeedMod", Mathf.Lerp(0, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()));
+        SetAnimatorMomentum();
+        HandleCollisionMove();
+    }
+
+    private void WallrunOnUpdate()
+    {
+        SetAnimatorMomentum();
+        HandleFlankAlignment();
+        HandleCollisionMove();
+
+        transform.position +=
+            ComputeCollisionMove(-_currentFlankWallNormal * (Time.deltaTime * FlankWallVacuumStrength));
+    }
+
+    private void VaultOnUpdate()
+    {
+        _momentum = Mathf.Max(_momentum, VaultMinimumMomentum);
+        var momentumWeight = ComputeMomentumWeight();
+        Animator.SetFloat("SpeedMod", Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
+        MoveYOntoLedge(0f, VaultLedgeLerpStrength);
+        SetAnimatorMomentum();
+        transform.position += ComputeCollisionMove(ComputeDesiredMove());
+        HandleTurning(VaultTurningMultiplier, true);
+    }
+
+    private void SlowVaultFinishOnUpdate()
+    {
+        HandleTurning(VaultTurningMultiplier, true);
+        MoveYOntoLedge(0f, SlowVaultFinishLedgeLerpStrength);
+        transform.position += transform.forward * (SlowVaultFinishForwardSpeed * Time.deltaTime);
+    }
+
+    private void VaultHangOnUpdate()
+    {
+        UpdateLedgePosition(FaceHighLedgeHeight);
+        MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
+        HandleCollisionMove();
+    }
+
+    private void GroundMoveOnUpdate()
+    {
+        HandleInputMomentumChange();
+        HandleTurning();
+        HandleCollisionMove();
+            
+        SetAnimatorMomentum();
+        var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        Animator.SetFloat("SpeedMod", speedMod);
     }
 
     private bool HitstopOnUpdate()
