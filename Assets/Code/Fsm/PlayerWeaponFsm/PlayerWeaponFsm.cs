@@ -101,7 +101,11 @@ public class PlayerWeaponFsm : Fsm
     protected override void OnStart()
     {
         base.OnStart();
-
+        InitState = PlayerWeaponFsmState.Idle;
+        transform.SetParent(null);
+        _subTransform = transform.GetChild(0);
+        _subTransformBaseLocalPosition = _subTransform.localPosition;
+        TryGetComponent(out _impulseSource);
     }
 
     protected override void OnAwake()
@@ -122,9 +126,9 @@ public class PlayerWeaponFsm : Fsm
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuckRecovery, 0.1f);
     }
 
-    public override void FireTriggers()
+    public override void OnFireTriggers()
     {
-        base.FireTriggers();
+        base.OnFireTriggers();
         
     }
     
@@ -202,20 +206,10 @@ public class PlayerWeaponFsm : Fsm
         
     }
 
-    private void Start()
-    {
-        InitState = PlayerWeaponFsmState.Idle;
-        transform.SetParent(null);
-        _subTransform = transform.GetChild(0);
-        _subTransformBaseLocalPosition = _subTransform.localPosition;
-        TryGetComponent(out _impulseSource);
-        OnStart();
-    }
-
     private void Update()
     {
         OnUpdate();
-        FireTriggers();
+        OnFireTriggers();
     }
 
     private void OnEnable()

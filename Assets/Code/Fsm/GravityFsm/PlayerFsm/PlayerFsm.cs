@@ -12,41 +12,14 @@ using Wasp;
 
 public class PlayerFsm : GravityFsm
 {
-    // --------- Boilerplate Fsm code --------- //
-    
-    void Update()
-    {
-
-        if (HitstopManager.Singleton.IsHitstopActive())
-        {
-            Animator.enabled = false;
-            return;
-        }
-        else
-        {
-            Animator.enabled = true;
-        }
-        
-        OnUpdate();
-        FireTriggers();
-        
-    }
     
     protected override void OnStart()
     {
+        print("player onstart");
         base.OnStart();
-        
-    }
-    
-    protected override void OnAwake()
-    {
-        Singleton = this;
-    }
-
-    private void Start()
-    {
         Singleton = this;
         InitState = PlayerFsmState.GroundMove;
+        print("init state: " + InitState);
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);
@@ -58,7 +31,12 @@ public class PlayerFsm : GravityFsm
         
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;
-        OnStart();
+        
+    }
+    
+    protected override void OnAwake()
+    {
+        Singleton = this;
     }
     
     // --------- End of boilerplate Fsm code --------- //
@@ -249,6 +227,7 @@ public class PlayerFsm : GravityFsm
 
     public override void SetupMachine()
     {
+        print("player setupmachine");
         base.SetupMachine();
         
         Machine.Configure(PlayerFsmState.GroundMove)
@@ -593,6 +572,8 @@ public class PlayerFsm : GravityFsm
 
     public override void SetupStateMaps()
     {
+        print("player setupstatemaps");
+        
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
@@ -614,9 +595,12 @@ public class PlayerFsm : GravityFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
     }
 
-    public override void FireTriggers()
+    public override void OnFireTriggers()
     {
-        base.FireTriggers();
+        
+        print("player onfiretriggers");
+        
+        base.OnFireTriggers();
         
         if (_inputBuffer.IsBuffered("Jump"))
         {
@@ -738,6 +722,20 @@ public class PlayerFsm : GravityFsm
 
     public override void OnUpdate()
     {
+        
+        if (HitstopManager.Singleton.IsHitstopActive())
+        {
+            Animator.enabled = false;
+            return;
+        }
+        else
+        {
+            Animator.enabled = true;
+        }
+        
+        print("player onupdate");
+        
+        
         base.OnUpdate();
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
@@ -745,9 +743,10 @@ public class PlayerFsm : GravityFsm
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
         
+        print(Machine.State());
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
-
+            
             HandleInputMomentumChange();
             HandleTurning();
             HandleCollisionMove();
