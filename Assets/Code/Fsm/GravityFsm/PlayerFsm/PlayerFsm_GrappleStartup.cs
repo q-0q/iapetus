@@ -21,4 +21,28 @@ public partial class PlayerFsm
         _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * GrappleStartupMomentumLossMod);
         HandleCollisionMove();
     }
+
+    private void GrappleStartupConfigure()
+    {
+        Machine.Configure(PlayerFsmState.GrappleStartup)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Grapple)
+            .OnEntry(_ =>
+            {
+                ReplaceAnimatorTrigger("GrappleStartup");
+                YVelocity = 10;
+                _inputBuffer.ConsumeBuffer("Attack");
+            }).OnExit(_ => { YVelocity = 0; });
+
+        Machine.Configure(PlayerFsmState.GrappleFlipsquat)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GrappleFlip)
+            .OnEntry(_ =>
+            {
+                // transform.DOShakePosition(0.5f, 0.3f);
+                ReplaceAnimatorTrigger("GrappleFlipsquat");
+                // HitstopManager.Singleton.StartHitstop(0.075f);
+            })
+            .OnExit(_ => { });
+    }
 }

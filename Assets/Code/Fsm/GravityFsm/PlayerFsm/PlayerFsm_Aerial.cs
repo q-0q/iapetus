@@ -4,4 +4,10 @@ public partial class PlayerFsm
     {
         Animator.SetLayerWeight(1, 0);
     }
+
+    private void AerialConfigure()
+    {
+        Machine.Configure(GravityFsmState.Aerial)
+            .SubstateOf(PlayerFsmState.LockMomentum);
+    }
 }

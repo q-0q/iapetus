@@ -1,26 +1,9 @@
-using UnityEngine;
-
 public partial class PlayerFsm
 {
-    private void ImpaleAirOnUpdate()
+    private void GrappleFlipConfigure()
     {
-        Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
-        Animator.SetLayerWeight(1, 0);
-
-        var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-        Animator.SetFloat("SpeedMod", speedMod);
-
-        var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset
-            ? _momentum
-            : Mathf.Max(_stateEntryMomentum + ImpaleMomentumOffset, ImpaleMinimumMomentumAfterOffset);
-        _momentum = Mathf.Lerp(_momentum, targetMomentum, Time.deltaTime * ImpaleMomentumLerpStrenth);
-    }
-
-    private void ImpaleAirConfigure()
-    {
-        Machine.Configure(PlayerFsmState.ImpaleAir)
+        Machine.Configure(PlayerFsmState.GrappleFlip)
             .SubstateOf(GravityFsmState.Aerial)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < HardLandAirDiff,
                 1)
@@ -34,14 +17,13 @@ public partial class PlayerFsm
                 _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
-            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple)
+            .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun,
+                _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity)
             .OnEntry(_ =>
             {
-                Animator.SetLayerWeight(1, 0);
-                _inputBuffer.ConsumeBuffer("Attack");
-                OnPlayerImpaleStateEntered?.Invoke();
-                Animator.SetTrigger("ImpaleJump");
-                _stateEntryMomentum = _momentum;
-            }).OnExit(_ => { Animator.ResetTrigger("ImpaleJump"); });
+                _momentum = 10f;
+                ReplaceAnimatorTrigger("GrappleFlip");
+                YVelocity = 30;
+            });
     }
 }

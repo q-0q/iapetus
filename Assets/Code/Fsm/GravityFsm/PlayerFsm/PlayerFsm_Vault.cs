@@ -13,4 +13,18 @@ public partial class PlayerFsm
         transform.position += ComputeCollisionMove(ComputeDesiredMove());
         HandleTurning(VaultTurningMultiplier, true);
     }
+
+    private void VaultConfigure()
+    {
+        Machine.Configure(PlayerFsmState.Vault)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .OnEntry(_ =>
+            {
+                UpdateLedgePosition(FaceLedgeHeight);
+                ReplaceAnimatorTrigger("Vault");
+                YVelocity = 0;
+            });
+    }
 }
