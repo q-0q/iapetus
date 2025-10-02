@@ -11,6 +11,7 @@ public partial class PlayerFsm
         LandsquatConfigure();
         HardLandConfigure();
         HardLandRollConfigure();
+        HardTurnConfigure();
         JumpConfigure();
         FallConfigure();
         AerialConfigure();
