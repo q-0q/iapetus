@@ -49,24 +49,25 @@ public abstract class Fsm : MonoBehaviour
 
     protected virtual void OnAwake() { }
 
-    protected virtual void OnStart()
-    {
-        print("base onstart");
-    }
+    protected virtual void OnStart() { }
     
     public virtual void OnUpdate()
     {
-        print("base onupdate");
+        if (StateMapConfig.IsAbstract.GetStrict(this))
+        {
+            Debug.LogError("Machine somehow entered an abstract state: " + StateMapConfig.Name.Get(this));
+        }
+        
         IncrementClockByAmount(Time.deltaTime);
     }
     
     public virtual void SetupStateMaps()
     {
-        print("base setupstatemaps");
         StateMapConfig = new StateMapConfig();
         StateMapConfig.Name = new StateMap<string>("No state name provided");
         StateMapConfig.Duration = new StateMap<float>(1f);
         StateMapConfig.GravityStrengthMod = new StateMap<float>(1f);
+        StateMapConfig.IsAbstract = new StateMap<bool>(false);
     }
 
     public virtual void SetupMachine()

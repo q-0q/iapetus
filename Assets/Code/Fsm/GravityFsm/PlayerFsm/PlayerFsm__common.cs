@@ -24,6 +24,7 @@ public partial class PlayerFsm
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
     private bool _movementAnimationMirror;
+    private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
     
     public static event Action<float> OnPlayerMomentumUpdated;
