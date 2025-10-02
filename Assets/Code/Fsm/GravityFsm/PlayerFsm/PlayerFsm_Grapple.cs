@@ -22,10 +22,11 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 YVelocity = 0;
-                _momentum = Mathf.Min(Mathf.Max(_momentum + DashEntryMomentumGain, DashEntryMinimumMomentum),
-                    MaxMomentum);
+                var transformPosition = new Vector3(PlayerWeaponFsm.Singleton.transform.position.x, transform.position.y,
+                    PlayerWeaponFsm.Singleton.transform.position.z);
+                var forward = transformPosition - transform.position;
                 transform.rotation =
-                    Quaternion.LookRotation(PlayerWeaponFsm.Singleton.transform.position - transform.position,
+                    Quaternion.LookRotation(forward,
                         Vector3.up);
                 ReplaceAnimatorTrigger("Dash");
             })

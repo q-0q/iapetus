@@ -39,6 +39,8 @@ public partial class PlayerFsm : GravityFsm
         public static int GrappleFlip;
         public static int VaultHang;
         public static int LockMomentum;
+        public static int WallInteractable;
+        public static int Landable;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -129,7 +131,7 @@ public partial class PlayerFsm : GravityFsm
         {
             AerialOnUpdate();
         }
-
+        
         if (Machine.IsInState(PlayerFsmState.HardTurn))
         {
             HardTurnOnUpdate();
@@ -180,7 +182,7 @@ public partial class PlayerFsm : GravityFsm
             YVelocity = 0;
         }
     }
-
+    
     private bool HitstopOnUpdate()
     {
         if (HitstopManager.Singleton.IsHitstopActive())

@@ -28,6 +28,9 @@ public partial class PlayerFsm
         ImpaleAirConfigure();
         GrappleStartupConfigure();
         GrappleFlipConfigure();
+        GrappleFlipsquatConfigure();
+        WallInteractableConfigure();
+        LandableConfigure();
     }
 
     public override void SetupStateMaps()
