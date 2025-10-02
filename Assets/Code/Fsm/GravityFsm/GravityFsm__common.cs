@@ -2,6 +2,12 @@ using UnityEngine;
 
 public abstract partial class GravityFsm
 {
+    protected float YVelocity;
+    protected float GravityStrength;
+    protected float TimeInAir;
+    protected float MinYVelocity = -40f;
+    protected float LastUpwardsY;
+    
     private bool GetGroundedRaycastHit(out RaycastHit hit)
     {
         var raycastLength = 0.5f * GetRaycastTimeModifier();
