@@ -38,6 +38,7 @@ public partial class PlayerFsm : GravityFsm
         public static int GrappleFlipsquat;
         public static int GrappleFlip;
         public static int VaultHang;
+        public static int LockMomentum;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -107,7 +108,7 @@ public partial class PlayerFsm : GravityFsm
             Animator.SetFloat("SpeedMod", speedMod);
         }
 
-        if (Machine.IsInState(PlayerFsmState.SlowVaultHang) || Machine.IsInState(PlayerFsmState.MediumVaultHang) )
+        if (Machine.IsInState(PlayerFsmState.VaultHang))
         {
             UpdateLedgePosition(FaceHighLedgeHeight);
             MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
@@ -120,7 +121,8 @@ public partial class PlayerFsm : GravityFsm
             MoveYOntoLedge(0f, SlowVaultFinishLedgeLerpStrength);
             transform.position += transform.forward * (SlowVaultFinishForwardSpeed * Time.deltaTime);
         }
-        else if (Machine.IsInState(PlayerFsmState.Vault))
+        
+        if (Machine.IsInState(PlayerFsmState.Vault))
         {
             _momentum = Mathf.Max(_momentum, VaultMinimumMomentum);
             var momentumWeight = ComputeMomentumWeight();
@@ -130,7 +132,8 @@ public partial class PlayerFsm : GravityFsm
             transform.position += ComputeCollisionMove(ComputeDesiredMove());
             HandleTurning(VaultTurningMultiplier, true);
         }
-        else if (Machine.IsInState(PlayerFsmState.Wallrun))
+        
+        if (Machine.IsInState(PlayerFsmState.Wallrun))
         {
             SetAnimatorMomentum();
             HandleFlankAlignment();
@@ -139,7 +142,8 @@ public partial class PlayerFsm : GravityFsm
             transform.position +=
                 ComputeCollisionMove(-_currentFlankWallNormal * (Time.deltaTime * FlankWallVacuumStrength));
         }
-        else if (Machine.IsInState(GravityFsmState.Aerial) || Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat) || Machine.IsInState(PlayerFsmState.HardTurn))
+        
+        if (Machine.IsInState(PlayerFsmState.LockMomentum))
         {
             Animator.SetFloat("SpeedMod", Mathf.Lerp(0, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()));
             SetAnimatorMomentum();

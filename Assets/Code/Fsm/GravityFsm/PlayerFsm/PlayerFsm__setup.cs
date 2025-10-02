@@ -4,7 +4,6 @@ public partial class PlayerFsm
 {
     public override void SetupMachine()
     {
-        print("player setupmachine");
         base.SetupMachine();
 
         Machine.Configure(PlayerFsmState.GroundMove)
@@ -18,6 +17,7 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.Jumpsquat)
             .SubstateOf(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.LockMomentum)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
             .OnEntry(_ =>
@@ -29,6 +29,7 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.Landsquat)
             .SubstateOf(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.LockMomentum)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ => { ReplaceAnimatorTrigger("Landsquat"); })
@@ -96,18 +97,19 @@ public partial class PlayerFsm
             .OnEntry(_ => { ReplaceAnimatorTrigger("Fall"); });
 
         Machine.Configure(PlayerFsmState.HardTurn)
+            .SubstateOf(PlayerFsmState.LockMomentum)
             .Permit(PlayerFsmTrigger.NoMomentum, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ => { ReplaceAnimatorTrigger("HardTurn"); });
 
         Machine.Configure(GravityFsmState.Aerial)
-            ;
+            .SubstateOf(PlayerFsmState.LockMomentum);
 
         Machine.Configure(PlayerFsmState.Vault)
-            .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .OnEntry(_ =>
             {
                 UpdateLedgePosition(FaceLedgeHeight);
