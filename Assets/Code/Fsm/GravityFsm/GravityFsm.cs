@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public abstract class GravityFsm : Fsm
+public  abstract partial class GravityFsm : Fsm
 {
     public class GravityFsmState : FsmState
     {
@@ -15,100 +15,29 @@ public abstract class GravityFsm : Fsm
         public static int StartFrameGrounded;
         public static int StartFrameAerial;
         public static int StartFrameWithNegativeYVelocity;
-        
     }
 
-    public override void SetupMachine()
-    {
-        base.SetupMachine();
-        Machine.Configure(GravityFsmState.Aerial)
-            .OnEntryFrom(GravityFsmTrigger.StartFrameAerial, _ => { TimeInAir = 0;});
-        Machine.Configure(GravityFsmState.Grounded);
-    }
-
-    protected float YVelocity;
-    protected float GravityStrength;
-    protected float TimeInAir;
-    protected float MinYVelocity = -40f;
-    protected float LastUpwardsY;
-    
     protected override void OnStart()
     {
         base.OnStart();
         YVelocity = 0;
         GravityStrength = 9.8f;
     }
-
-    public override void SetupStateMaps()
-    {
-        base.SetupStateMaps();
-    }
-
-    public override void FireTriggers()
-    {
-        base.FireTriggers();
-
-        if (GetGroundedRaycastHit(out _))
-        {
-            if (YVelocity < 0.5f) Machine.Fire(GravityFsmTrigger.StartFrameGrounded);
-        }
-        else
-        {
-            Machine.Fire(GravityFsmTrigger.StartFrameAerial);
-        }
-
-        if (YVelocity < 0)
-        {
-            Machine.Fire(GravityFsmTrigger.StartFrameWithNegativeYVelocity);
-        }
-        
-        
-    }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
-
-        YVelocity = Mathf.Max(YVelocity, MinYVelocity);
-        if (YVelocity > 0 || Machine.IsInState(GravityFsmState.Grounded)) LastUpwardsY = transform.position.y;
-            
-        if (Machine.IsInState(GravityFsmState.Aerial) && !Machine.IsInState(GravityFsmState.DontApplyYVelocity))
+        
+        if (Machine.IsInState(GravityFsmState.Aerial))
         {
-            var v3 = new Vector3(0, YVelocity * Time.deltaTime, 0);
-            transform.position += v3;
-            YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime * StateMapConfig.GravityStrengthMod.Get(this));
-            TimeInAir += Time.deltaTime;
+            AerialOnUpdate();
         }
         
         if (Machine.IsInState(GravityFsmState.Grounded))
         {
-            YVelocity = 0;
-            if (GetGroundedRaycastHit(out var hit))
-            {
-                var f = 50f;
-                var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * f);
-                transform.position = new Vector3(transform.position.x, newY, transform.position.z);
-            }
+            GroundedOnUpdate();
         }
     }
 
-    private bool GetGroundedRaycastHit(out RaycastHit hit)
-    {
-        var raycastLength = 0.5f * GetRaycastTimeModifier();
-        var forward = transform.forward * (0.2f * GetRaycastTimeModifier());
-        Debug.DrawLine(transform.position + Vector3.up * raycastLength + forward, transform.position + Vector3.up * raycastLength - Vector3.up * (raycastLength * 1.3f) + forward, Color.red);
-        if (Physics.Raycast(transform.position + Vector3.up * raycastLength + forward, -Vector3.up, out hit,
-                raycastLength * 2f, ~0, QueryTriggerInteraction.Ignore))
-        {
-            var slope = Vector3.Angle(hit.normal, Vector3.up);
-            return slope < 70f;
-        }
-        return false;
-    }
 
-    protected float AirYDiff()
-    {
-        var diff = transform.position.y - LastUpwardsY;
-        return diff;
-    }
 }

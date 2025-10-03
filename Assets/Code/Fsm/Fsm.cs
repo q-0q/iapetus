@@ -30,21 +30,34 @@ public abstract class Fsm : MonoBehaviour
         InheritableEnum.Initialize();
         OnAwake();
     }
-
-    protected virtual void OnAwake()
-    { }
     
-    protected virtual void OnStart()
+    private void Start()
     {
+        print("base start");
+        OnStart();
         SetupMachine();
         SetupStateMaps();
         _timeInCurrentState = 0;
-        
         TryGetComponent(out Animator);
     }
+
+    private void Update()
+    {
+        OnUpdate();
+        OnFireTriggers();
+    }
+
+    protected virtual void OnAwake() { }
+
+    protected virtual void OnStart() { }
     
     public virtual void OnUpdate()
     {
+        if (StateMapConfig.IsAbstract.GetStrict(this))
+        {
+            Debug.LogError("Machine somehow entered an abstract state: " + StateMapConfig.Name.Get(this));
+        }
+        
         IncrementClockByAmount(Time.deltaTime);
     }
     
@@ -54,16 +67,19 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.Name = new StateMap<string>("No state name provided");
         StateMapConfig.Duration = new StateMap<float>(1f);
         StateMapConfig.GravityStrengthMod = new StateMap<float>(1f);
+        StateMapConfig.IsAbstract = new StateMap<bool>(false);
     }
 
     public virtual void SetupMachine()
     {
+        print("base setupmachine");
         Machine = new Machine<int, int>(InitState);
         Machine.OnTransitioned(OnStateChanged);
     }
 
-    public virtual void FireTriggers()
+    public virtual void OnFireTriggers()
     {
+        print("base onfiretriggers");
         if (TimeInCurrentState() >= StateMapConfig.Duration.Get(this))
         {
             Machine.Fire(FsmTrigger.Timeout);

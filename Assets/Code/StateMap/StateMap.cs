@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Wasp;
 
 public class StateMap<T>
 {
@@ -41,6 +42,29 @@ public class StateMap<T>
         if (!_dictionary.ContainsKey(state)) _dictionary[state] = new List<Binding<T>>();
         _dictionary[state].Add(new Binding<T>(value, weight));
     }
+    
+    public T GetStrict(Fsm fsm)
+    {
+        var eligibleBindings = _dictionary
+            .Where(kv => fsm.Machine.State() == kv.Key)
+            .SelectMany(kv => kv.Value)
+            .ToList();
+
+        if (eligibleBindings.Count == 0)
+            return _default;
+
+        var maxWeight = eligibleBindings.Max(b => b.Weight());
+
+        var topBindings = eligibleBindings
+            .Where(b => b.Weight() == maxWeight)
+            .ToList();
+
+        if (topBindings.Count > 1)
+            Debug.LogError($"Tie detected: {topBindings.Count} bindings with weight {maxWeight}");
+
+        return topBindings[0].Value();
+    }
+    
 }
 
 public class Binding<T>
