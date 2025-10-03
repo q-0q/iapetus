@@ -22,7 +22,7 @@ public partial class PlayerWeaponFsm
     private void ImpaleActiveConfigure()
     {
         Machine.Configure(PlayerWeaponFsmState.ImpaleActive)
-            .Permit(FsmTrigger.Timeout, PlayerWeaponFsmState.ImpaleRecovery)
+            .Permit(FsmTrigger.Timeout, PlayerWeaponFsmState.ImpaleStuck)
             .Permit(PlayerWeaponFsmTrigger.HitTerrain, PlayerWeaponFsmState.ImpaleStuck)
             .OnEntry(_ =>
             {

@@ -8,8 +8,8 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.WallInteractable)
             .OnEntry(_ =>
             {
-                _momentum = 10f;
-                YVelocity = 30;
+                _momentum = MaxMomentum;
+                YVelocity = 10;
                 ReplaceAnimatorTrigger("GrappleFlip");
             });
     }

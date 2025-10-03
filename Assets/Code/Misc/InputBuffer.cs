@@ -6,19 +6,22 @@ using UnityEngine.InputSystem;
 public class InputBuffer
 {
     private Dictionary<string, float> _buffer;
+    private Dictionary<string, bool> _negativeEdge;
     private PlayerInput _playerInput;
     private float _windowSize;
-    
+
     public InputBuffer(PlayerInput playerInput, float windowSize)
     {
         _playerInput = playerInput;
         _windowSize = windowSize;
+        _negativeEdge = new Dictionary<string, bool>();
         _buffer = new Dictionary<string, float>();
     }
 
-    public void InitInput(string input)
+    public void InitInput(string input, bool negativeEdge = false)
     {
         _buffer.Add(input, _windowSize + 1f);
+        _negativeEdge.Add(input, negativeEdge);
     }
     
     public bool IsBuffered(string input)
@@ -38,6 +41,10 @@ public class InputBuffer
         {
             _buffer[input] += Time.deltaTime;
             if (_playerInput.actions[input].WasPressedThisFrame())
+            {
+                _buffer[input] = 0;
+            }
+            if (_negativeEdge[input] && _playerInput.actions[input].WasReleasedThisFrame())
             {
                 _buffer[input] = 0;
             }

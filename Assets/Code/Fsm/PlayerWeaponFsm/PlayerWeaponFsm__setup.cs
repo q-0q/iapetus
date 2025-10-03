@@ -13,6 +13,7 @@ public partial class PlayerWeaponFsm
         ImpaleRecoveryConfigure();
         ImpaleStuckConfigure();
         ImpaleStuckRecoveryConfigure();
+        ImpalePlayerMountedConfigure();
     }
 
     public override void SetupStateMaps()
@@ -24,5 +25,6 @@ public partial class PlayerWeaponFsm
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleRecovery, 0.25f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuck, 0.95f);
         StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpaleStuckRecovery, 0.1f);
+        StateMapConfig.Duration.Add(PlayerWeaponFsmState.ImpalePlayerMounted, 0.3f);
     }
 }

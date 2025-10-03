@@ -11,13 +11,13 @@ public partial class PlayerWeaponFsm
     public static PlayerWeaponFsm Singleton;
     private const float IdleOrbitRadius = 3f;
     private const float IdleOrbitHeight = 3.5f;
-    private const float IdlePositionLerpStrength = 9f;
+    private const float IdlePositionLerpStrength = 3f;
     private const float IdleRotationLerpStrength = 5f;
     private const float ImpaleStartupOrbitRadius = 1f;
     private const float ImpaleStartupOrbitHeight = 4.5f;
     private const float ImpaleStartupPositionLerpStrength = 27.5f;
     private const float ImpaleStartupRotationLerpStrength = 15f;
-    private const float ImpaleStartupPullbackSpeed = 6.5f;
+    private const float ImpaleStartupPullbackSpeed = 0f;
     private const float ImpaleActiveForwardSpeed = 45f;
     private const float ImpaleActiveForwardSpeedEndTimeThreshhold = 0.195f;
     private const float ImpaleActiveForwardSpeedEndModifier = 0.25f;

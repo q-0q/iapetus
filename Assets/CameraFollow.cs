@@ -9,6 +9,8 @@ public class CameraFollow : MonoBehaviour
     private float YLerpRate = 2.75f;
     private Vector3 _playerPos;
     private Vector3 _playerWeaponPos;
+    private float _biasTowardsWeapon = 0.0f;
+    
     
     private void OnEnable()
     {
@@ -31,12 +33,13 @@ public class CameraFollow : MonoBehaviour
     
     void UpdatePlayerWeaponPosition(Vector3 pos, bool active)
     {
+        _biasTowardsWeapon = Mathf.Lerp(_biasTowardsWeapon, active ? 1.0f: 0.0f, Time.deltaTime * 10f);
         pos = new Vector3(pos.x, PlayerFsm.Singleton.transform.position.y, pos.z);
         _playerWeaponPos = Vector3.Lerp(_playerWeaponPos, pos, Time.deltaTime * 5f);
     }
 
     private void Update()
     {
-        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, 0.2f);
+        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.1f, 0.65f, _biasTowardsWeapon));
     }
 }

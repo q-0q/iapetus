@@ -16,18 +16,21 @@ public partial class PlayerWeaponFsm : Fsm
         public static int ImpaleActive;
         public static int ImpaleRecovery;
         public static int ImpaleStuck;
+        public static int ImpalePlayerMounted;
         public static int ImpaleStuckRecovery;
     }
 
     public class PlayerWeaponFsmTrigger : FsmTrigger
     {
         public static int PlayerImpaleStateEntered;
+        public static int PlayerGrappleStateEntered;
         public static int HitTerrain;
     }
 
     protected override void OnStart()
     {
         base.OnStart();
+        Cursor.visible = false;
         InitState = PlayerWeaponFsmState.Idle;
         transform.SetParent(null);
         _subTransform = transform.GetChild(0);
@@ -46,7 +49,7 @@ public partial class PlayerWeaponFsm : Fsm
     public override void OnUpdate()
     {
         base.OnUpdate();
-        OnPlayerWeaponPositionUpdated?.Invoke(transform.position, true);
+        OnPlayerWeaponPositionUpdated?.Invoke(transform.position, Machine.IsInState(PlayerWeaponFsmState.ImpaleStartup) || Machine.IsInState(PlayerWeaponFsmState.ImpaleActive) || Machine.IsInState(PlayerWeaponFsmState.ImpaleStuck));
         
         
         if (Machine.IsInState(PlayerWeaponFsmState.Idle))
@@ -78,17 +81,24 @@ public partial class PlayerWeaponFsm : Fsm
             ImpaleStuckOnUpdate();
         }
         
+        if (Machine.IsInState(PlayerWeaponFsmState.ImpalePlayerMounted))
+        {
+            ImpalePlayerMountedOnUpdate();
+        }
+        
     }
 
     private void OnEnable()
     {
         PlayerFsm.OnPlayerImpaleStateEntered += OnPlayerImpaleEnter;
+        PlayerFsm.OnPlayerGrappleStateEntered += OnPlayerGrappleEnter;
         PlayerWeaponCollider.OnPlayerWeaponCollision += OnWeaponCollision;
     }
 
     private void OnDisable()
     {
         PlayerFsm.OnPlayerImpaleStateEntered -= OnPlayerImpaleEnter;
+        PlayerFsm.OnPlayerGrappleStateEntered -= OnPlayerGrappleEnter;
         PlayerWeaponCollider.OnPlayerWeaponCollision -= OnWeaponCollision;
     }
 }

@@ -30,6 +30,7 @@ public partial class PlayerFsm
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     public static event Action OnPlayerImpaleStateEntered;
+    public static event Action OnPlayerGrappleStateEntered;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     
@@ -121,6 +122,7 @@ public partial class PlayerFsm
     private const float GrappleStartupYPositionOffset = 1f;
     private const float GrappleStartupMomentumLossMod = 1.25f;
     
+
     private bool IsHitValidFlank(RaycastHit hit, bool left)
     {
         float DistanceFromPointToPlane(Vector3 pointA, Vector3 pointB, Vector3 planeNormal)
@@ -229,6 +231,14 @@ public partial class PlayerFsm
     {
         var v2 = GetInputMovementVector2();
         return Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0) * new Vector3(v2.x, 0, v2.y);
+    }
+    
+    public Vector3 GetMouseVector3()
+    {
+        Vector2 mouseScreenPosition = Input.mousePosition;
+        Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        Vector2 v2 = mouseScreenPosition - screenCenter;
+        return Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0) * new Vector3(v2.x, 0, v2.y).normalized;
     }
     
     private Vector3 ComputeCollisionMove(Vector3 desiredMove)
@@ -367,7 +377,8 @@ public partial class PlayerFsm
     
     private bool CanImpale(TriggerParams? triggerParams)
     {
-        return PlayerWeaponFsm.Singleton.Machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.Idle);
+        var machine = PlayerWeaponFsm.Singleton.Machine;
+        return machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.Idle) || machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.ImpaleStartup);
     }
 
     private void OnContactHitboxCollide()

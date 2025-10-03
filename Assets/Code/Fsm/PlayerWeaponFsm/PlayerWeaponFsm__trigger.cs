@@ -10,6 +10,11 @@ public partial class PlayerWeaponFsm
         Machine.Fire(PlayerWeaponFsmTrigger.PlayerImpaleStateEntered);
     }
     
+    public void OnPlayerGrappleEnter()
+    {
+        Machine.Fire(PlayerWeaponFsmTrigger.PlayerGrappleStateEntered);
+    }
+    
     private void OnWeaponCollision()
     {
         Machine.Fire(PlayerWeaponFsmTrigger.HitTerrain);

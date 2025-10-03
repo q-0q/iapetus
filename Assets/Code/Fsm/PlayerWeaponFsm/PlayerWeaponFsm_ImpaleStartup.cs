@@ -32,4 +32,12 @@ public partial class PlayerWeaponFsm
                 transform.rotation = Quaternion.LookRotation(PlayerFsm.Singleton.transform.forward, Vector3.up);
             });
     }
+
+    private Vector3 GetMouseVector()
+    {
+        Vector2 mouseScreenPosition = Input.mousePosition;
+        Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        Vector2 mouseOffsetFromCenter = mouseScreenPosition - screenCenter;
+        return mouseOffsetFromCenter;
+    }
 }

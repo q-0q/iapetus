@@ -29,6 +29,7 @@ public partial class PlayerFsm
                     Quaternion.LookRotation(forward,
                         Vector3.up);
                 ReplaceAnimatorTrigger("Dash");
+                OnPlayerGrappleStateEntered?.Invoke();
             })
             .OnExit(_ =>
             {

@@ -22,6 +22,6 @@ public partial class PlayerFsm
                 ReplaceAnimatorTrigger("SlowVaultFinish");
                 YVelocity = 0;
             })
-            .OnExit(_ => { _momentum = 3f; });
+            .OnExit(_ => { _momentum = 8f; });
     }
 }

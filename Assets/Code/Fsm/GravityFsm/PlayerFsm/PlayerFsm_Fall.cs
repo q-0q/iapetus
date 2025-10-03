@@ -6,6 +6,8 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(PlayerFsmState.WallInteractable)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
+            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .OnEntry(_ => { ReplaceAnimatorTrigger("Fall"); });
     }
 }
