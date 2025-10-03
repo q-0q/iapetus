@@ -22,6 +22,10 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
-            .OnEntry(_ => { ReplaceAnimatorTrigger("GroundMove"); });
+            .OnEntry(_ =>
+            {
+                _wallsquattedSinceLeavingGround = false;
+                ReplaceAnimatorTrigger("GroundMove");
+            });
     }
 }
