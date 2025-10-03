@@ -21,19 +21,8 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.ImpaleAir)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < HardLandAirDiff,
-                1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
-                _ => AirYDiff() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
-            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
-            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity)
+            .SubstateOf(PlayerFsmState.WallInteractable)
+            .SubstateOf(PlayerFsmState.Landable)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple)
             .OnEntry(_ =>
             {

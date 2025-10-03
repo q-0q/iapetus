@@ -27,9 +27,7 @@ public  abstract partial class GravityFsm : Fsm
     public override void OnUpdate()
     {
         base.OnUpdate();
-
-        UpdateYVelocityMetadata();
-
+        
         if (Machine.IsInState(GravityFsmState.Aerial))
         {
             AerialOnUpdate();
@@ -41,9 +39,5 @@ public  abstract partial class GravityFsm : Fsm
         }
     }
 
-    private void UpdateYVelocityMetadata()
-    {
-        YVelocity = Mathf.Max(YVelocity, MinYVelocity);
-        if (YVelocity > 0 || Machine.IsInState(GravityFsmState.Grounded)) LastUpwardsY = transform.position.y;
-    }
+
 }

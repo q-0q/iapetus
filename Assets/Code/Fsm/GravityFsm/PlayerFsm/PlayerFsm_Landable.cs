@@ -4,9 +4,9 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Landable)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => AirYDiff() < HardLandAirDiff,
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => CurrentFallDistance() < HardLandAirDiff,
                 1)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
-                _ => AirYDiff() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2);
+                _ => CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2);
     }
 }
