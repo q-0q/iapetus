@@ -2,7 +2,6 @@ using UnityEngine;
 
 public abstract partial class GravityFsm
 {
-    // Soft-snap y position onto the grounded raycast point via Lerp
     private void GroundedOnUpdate()
     {
         YVelocity = 0;

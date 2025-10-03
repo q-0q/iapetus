@@ -4,13 +4,10 @@ public partial class PlayerWeaponFsm
 {
     private void ImpaleActiveOnUpdate()
     {
-        transform.position += transform.forward * (Time.deltaTime * ImpaleActivePositionLerpStrength *
-                                                   (TimeInCurrentState() > 0.195f ? 0.25f : 1f));
-
-        // transform.position = Vector3.Lerp(transform.position, _impaleActiveTargetPosition,
-        //     Time.deltaTime * ImpaleActivePositionLerpStrength);
+        transform.position += transform.forward * (Time.deltaTime * ImpaleActiveForwardSpeed *
+                                                   (TimeInCurrentState() > ImpaleActiveForwardSpeedEndTimeThreshhold ? ImpaleActiveForwardSpeedEndModifier : 1f));
     }
-
+    
     private Vector3 ComputeImpaleActiveTargetPosition()
     {
         if (Physics.Raycast(transform.position, transform.forward, out var hit, ImpaleActiveMaxDistance,

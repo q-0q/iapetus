@@ -2,7 +2,6 @@ using UnityEngine;
 
 public abstract partial class GravityFsm
 {
-    // Update y position based on YVelocity. Update YVelocity using a square function.
     private void AerialOnUpdate()
     {
         if (Machine.IsInState(GravityFsmState.DontApplyYVelocity)) return;

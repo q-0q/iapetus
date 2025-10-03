@@ -11,12 +11,7 @@ public abstract partial class GravityFsm
     private const float GroundedRaycastLength = 0.5f;
     private const float GroundedRaycastForwardOffset = 0.2f;
     private const float GroundedRaycastMaximumAngle = 70f;
-
     
-    // Source of truth for whether the GravityFsm is on the ground. Checks down a certain distance with a slightly
-    // forward origin to prevent corner clipping. To account for being potentially both above or below the ground
-    // plane, the raycast origin is placed above the true position and then casted downwards with double length.
-    // Ignores slopes with an angle greater than some threshhold.
     private bool GetGroundedRaycastHit(out RaycastHit hit)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
@@ -30,15 +25,13 @@ public abstract partial class GravityFsm
 
         return false;
     }
-
-    // Tracks the height of the GravityFsm's current fall, for use in "hard landings".
+    
     protected float CurrentFallDistance()
     {
         var diff = transform.position.y - LastUpwardsY;
         return diff;
     }
     
-    // Keeps YVelocity clamped to maximum and updates LastUpwardsY if necessary
     private void UpdateYVelocityMetadata()
     {
         YVelocity = Mathf.Max(YVelocity, MinYVelocity);

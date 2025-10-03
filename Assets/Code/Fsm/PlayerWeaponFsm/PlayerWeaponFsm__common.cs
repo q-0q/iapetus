@@ -18,8 +18,11 @@ public partial class PlayerWeaponFsm
     private const float ImpaleStartupPositionLerpStrength = 27.5f;
     private const float ImpaleStartupRotationLerpStrength = 15f;
     private const float ImpaleStartupPullbackSpeed = 6.5f;
-    private const float ImpaleActivePositionLerpStrength = 45f;
+    private const float ImpaleActiveForwardSpeed = 45f;
+    private const float ImpaleActiveForwardSpeedEndTimeThreshhold = 0.195f;
+    private const float ImpaleActiveForwardSpeedEndModifier = 0.25f;
     private const float ImpaleActiveMaxDistance = 10f;
     private const float ImpaleStuckRecoveryPullbackSpeed = 14f;
     public static event Action<Vector3, bool> OnPlayerWeaponPositionUpdated;
+    private const float ImpaleStartupOrbitCenterForwardOffset = 5f;
 }

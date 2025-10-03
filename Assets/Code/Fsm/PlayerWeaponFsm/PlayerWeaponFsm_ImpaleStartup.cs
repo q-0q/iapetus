@@ -6,7 +6,7 @@ public partial class PlayerWeaponFsm
     private void ImpaleStartupOnUpdate()
     {
         var forward = PlayerFsm.Singleton.GetInputMovementVector3().normalized;
-        var orbitCenter = PlayerFsm.Singleton.transform.position + forward * 5f;
+        var orbitCenter = PlayerFsm.Singleton.transform.position + forward * ImpaleStartupOrbitCenterForwardOffset;
         var pullback = Vector3.forward * (-ImpaleStartupPullbackSpeed * Time.deltaTime);
         _subTransform.localPosition += pullback;
 
