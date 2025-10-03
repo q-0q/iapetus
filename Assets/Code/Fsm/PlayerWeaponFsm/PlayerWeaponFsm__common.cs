@@ -25,4 +25,6 @@ public partial class PlayerWeaponFsm
     private const float ImpaleStuckRecoveryPullbackSpeed = 14f;
     public static event Action<Vector3, bool> OnPlayerWeaponPositionUpdated;
     private const float ImpaleStartupOrbitCenterForwardOffset = 5f;
+    private const float ImpaleStuckPlayerGrappleRotationLerpStrength = 30f;
+    private const float ImpaleStuckPlayerGrappleTailPullForce = 25f;
 }
