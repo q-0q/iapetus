@@ -47,17 +47,17 @@ public partial class PlayerFsm
     {
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
         if (Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward, 
-                out var hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
+                out var hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall);
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward, 
-                       out hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
+                       out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
-                       out hit, forwardRaycastDistance, ~0, QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
+                       out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge);
@@ -79,7 +79,7 @@ public partial class PlayerFsm
         var flankRaycastOrigin = transform.position + Vector3.up * FlankWallHeight;
         if 
             (Physics.Raycast(flankRaycastOrigin, transform.right,
-                 out hit, maximumFlankRaycastDistance, ~0, QueryTriggerInteraction.Ignore) 
+                 out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) 
              && IsHitValidFlank(hit, true) && _previousWallrunSide != FlankType.Right)
         {
             Machine.Fire(PlayerFsmTrigger.FlankWall);
@@ -89,7 +89,7 @@ public partial class PlayerFsm
 
         } else if 
             (Physics.Raycast(flankRaycastOrigin, -transform.right, 
-                 out hit, maximumFlankRaycastDistance, ~0, QueryTriggerInteraction.Ignore)
+                 out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)
              && IsHitValidFlank(hit, false) && _previousWallrunSide != FlankType.Left)
         {
             Machine.Fire(PlayerFsmTrigger.FlankWall);
@@ -98,7 +98,7 @@ public partial class PlayerFsm
             Animator.SetFloat("Flip", 1);
         }
         else if (!Physics.Raycast(flankRaycastOrigin + (Vector3.up * FlankWallOpenYOffset), transform.right,
-                     out hit, maximumFlankRaycastDistance, ~0, QueryTriggerInteraction.Ignore))
+                     out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FlankOpen);
         }

@@ -17,7 +17,7 @@ public abstract partial class GravityFsm
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         if (Physics.Raycast(transform.position + Vector3.up * raycastLength + forward, -Vector3.up, out hit,
-                raycastLength * 2f, ~0, QueryTriggerInteraction.Ignore))
+                raycastLength * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             return slope < GroundedRaycastMaximumAngle;

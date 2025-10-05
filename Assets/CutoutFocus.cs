@@ -16,7 +16,7 @@ public class CutoutFocus : MonoBehaviour
     private const float PlayerCameraDistanceOffset = -4f;
     private const float PlayerCameraDistanceFlatOffset = -1.5f;
     
-    private const float MaxRadius = 0.015f;
+    private const float MaxRadius = 0.02f;
     
     private const float RadiusGrowLerpStrength = 30f;
     private const float RadiusShrinkLerpStrength = 5f;

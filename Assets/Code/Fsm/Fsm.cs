@@ -118,4 +118,9 @@ public abstract class Fsm : MonoBehaviour
         float output = Mathf.Lerp(1f, 2f, Mathf.InverseLerp(baseFps, 0, currentFPS));
         return output;
     }
+
+    protected int GetEnvironmentalLayermask()
+    {
+        return ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth");
+    }
 }

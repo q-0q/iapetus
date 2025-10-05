@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: -1254241545216933014}
   - component: {fileID: 396571848041721857}
   - component: {fileID: 9009399381443552740}
-  m_Layer: 3
-  m_Name: PlayerWeaponTailSegment
+  - component: {fileID: 2181278706579984760}
+  m_Layer: 9
+  m_Name: PlayerClothSegment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,24 +45,24 @@ Rigidbody:
   m_GameObject: {fileID: 4242534974444862614}
   serializedVersion: 4
   m_Mass: 1
-  m_Drag: 30
+  m_Drag: 40
   m_AngularDrag: 0.1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!153 &-1254241545216933014
 ConfigurableJoint:
   m_ObjectHideFlags: 0
@@ -80,9 +81,9 @@ ConfigurableJoint:
   m_XMotion: 0
   m_YMotion: 0
   m_ZMotion: 0
-  m_AngularXMotion: 2
-  m_AngularYMotion: 2
-  m_AngularZMotion: 2
+  m_AngularXMotion: 1
+  m_AngularYMotion: 1
+  m_AngularZMotion: 1
   m_LinearLimitSpring:
     spring: 0
     damper: 0
@@ -91,25 +92,25 @@ ConfigurableJoint:
     bounciness: 0
     contactDistance: 0
   m_AngularXLimitSpring:
-    spring: 200000
+    spring: 10000
     damper: 0
   m_LowAngularXLimit:
-    limit: -3
+    limit: -50
     bounciness: 0
     contactDistance: 0
   m_HighAngularXLimit:
-    limit: 3
+    limit: 50
     bounciness: 0
     contactDistance: 0
   m_AngularYZLimitSpring:
-    spring: 200000
+    spring: 10000
     damper: 0
   m_AngularYLimit:
-    limit: 3
+    limit: 50
     bounciness: 0
     contactDistance: 0
   m_AngularZLimit:
-    limit: 3
+    limit: 50
     bounciness: 0
     contactDistance: 0
   m_TargetPosition: {x: 0, y: 0, z: 0}
@@ -214,3 +215,24 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4242534974444862614}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!135 &2181278706579984760
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4242534974444862614}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_LayerOverridePriority: 10
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Radius: 0.3
+  m_Center: {x: 0, y: 0, z: 0}

@@ -157,7 +157,7 @@ public partial class PlayerFsm
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
-                (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), ~0, QueryTriggerInteraction.Ignore)) return false;
+                (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
         _currentLedgePosition = hit.point;
         return true;
     }
@@ -255,7 +255,7 @@ public partial class PlayerFsm
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
-        if (Physics.SphereCast(position, radius, direction, out RaycastHit hit, castDistance, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(position, radius, direction, out RaycastHit hit, castDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             
             // First collision: slide along the surface
