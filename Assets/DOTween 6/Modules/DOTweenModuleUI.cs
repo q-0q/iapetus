@@ -199,10 +199,10 @@ namespace DG.Tweening
 
         #endregion
 
-        #region RectTransform
+        #region RawImage
 
-        /// <summary>Tweens a RectTransform's anchoredPosition to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOAnchorPos(this RectTransform target, Vector2 endValue, float duration, bool snapping = false)
@@ -211,8 +211,8 @@ namespace DG.Tweening
             t.SetOptions(snapping).SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's anchoredPosition X to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition X to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOAnchorPosX(this RectTransform target, float endValue, float duration, bool snapping = false)
@@ -221,8 +221,8 @@ namespace DG.Tweening
             t.SetOptions(AxisConstraint.X, snapping).SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's anchoredPosition Y to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition Y to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOAnchorPosY(this RectTransform target, float endValue, float duration, bool snapping = false)
@@ -232,8 +232,8 @@ namespace DG.Tweening
             return t;
         }
 
-        /// <summary>Tweens a RectTransform's anchoredPosition3D to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition3D to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector3, Vector3, VectorOptions> DOAnchorPos3D(this RectTransform target, Vector3 endValue, float duration, bool snapping = false)
@@ -242,8 +242,8 @@ namespace DG.Tweening
             t.SetOptions(snapping).SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's anchoredPosition3D X to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition3D X to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector3, Vector3, VectorOptions> DOAnchorPos3DX(this RectTransform target, float endValue, float duration, bool snapping = false)
@@ -252,8 +252,8 @@ namespace DG.Tweening
             t.SetOptions(AxisConstraint.X, snapping).SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's anchoredPosition3D Y to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition3D Y to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector3, Vector3, VectorOptions> DOAnchorPos3DY(this RectTransform target, float endValue, float duration, bool snapping = false)
@@ -262,8 +262,8 @@ namespace DG.Tweening
             t.SetOptions(AxisConstraint.Y, snapping).SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's anchoredPosition3D Z to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchoredPosition3D Z to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector3, Vector3, VectorOptions> DOAnchorPos3DZ(this RectTransform target, float endValue, float duration, bool snapping = false)
@@ -273,8 +273,8 @@ namespace DG.Tweening
             return t;
         }
 
-        /// <summary>Tweens a RectTransform's anchorMax to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchorMax to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOAnchorMax(this RectTransform target, Vector2 endValue, float duration, bool snapping = false)
@@ -284,8 +284,8 @@ namespace DG.Tweening
             return t;
         }
 
-        /// <summary>Tweens a RectTransform's anchorMin to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's anchorMin to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOAnchorMin(this RectTransform target, Vector2 endValue, float duration, bool snapping = false)
@@ -295,8 +295,8 @@ namespace DG.Tweening
             return t;
         }
 
-        /// <summary>Tweens a RectTransform's pivot to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's pivot to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOPivot(this RectTransform target, Vector2 endValue, float duration)
         {
@@ -304,8 +304,8 @@ namespace DG.Tweening
             t.SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's pivot X to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's pivot X to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOPivotX(this RectTransform target, float endValue, float duration)
         {
@@ -313,8 +313,8 @@ namespace DG.Tweening
             t.SetOptions(AxisConstraint.X).SetTarget(target);
             return t;
         }
-        /// <summary>Tweens a RectTransform's pivot Y to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's pivot Y to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOPivotY(this RectTransform target, float endValue, float duration)
         {
@@ -323,8 +323,8 @@ namespace DG.Tweening
             return t;
         }
 
-        /// <summary>Tweens a RectTransform's sizeDelta to the given value.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Tweens a RawImage's sizeDelta to the given value.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param><param name="duration">The duration of the tween</param>
         /// <param name="snapping">If TRUE the tween will smoothly snap all values to integers</param>
         public static TweenerCore<Vector2, Vector2, VectorOptions> DOSizeDelta(this RectTransform target, Vector2 endValue, float duration, bool snapping = false)
@@ -334,10 +334,10 @@ namespace DG.Tweening
             return t;
         }
 
-        /// <summary>Punches a RectTransform's anchoredPosition towards the given direction and then back to the starting one
+        /// <summary>Punches a RawImage's anchoredPosition towards the given direction and then back to the starting one
         /// as if it was connected to the starting position via an elastic.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
-        /// <param name="punch">The direction and strength of the punch (added to the RectTransform's current position)</param>
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
+        /// <param name="punch">The direction and strength of the punch (added to the RawImage's current position)</param>
         /// <param name="duration">The duration of the tween</param>
         /// <param name="vibrato">Indicates how much will the punch vibrate</param>
         /// <param name="elasticity">Represents how much (0 to 1) the vector will go beyond the starting position when bouncing backwards.
@@ -350,8 +350,8 @@ namespace DG.Tweening
                 .SetTarget(target).SetOptions(snapping);
         }
 
-        /// <summary>Shakes a RectTransform's anchoredPosition with the given values.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Shakes a RawImage's anchoredPosition with the given values.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="duration">The duration of the tween</param>
         /// <param name="strength">The shake strength</param>
         /// <param name="vibrato">Indicates how much will the shake vibrate</param>
@@ -365,8 +365,8 @@ namespace DG.Tweening
             return DOTween.Shake(() => target.anchoredPosition, x => target.anchoredPosition = x, duration, strength, vibrato, randomness, true, fadeOut, randomnessMode)
                 .SetTarget(target).SetSpecialStartupMode(SpecialStartupMode.SetShake).SetOptions(snapping);
         }
-        /// <summary>Shakes a RectTransform's anchoredPosition with the given values.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// <summary>Shakes a RawImage's anchoredPosition with the given values.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="duration">The duration of the tween</param>
         /// <param name="strength">The shake strength on each axis</param>
         /// <param name="vibrato">Indicates how much will the shake vibrate</param>
@@ -383,9 +383,9 @@ namespace DG.Tweening
 
         #region Special
 
-        /// <summary>Tweens a RectTransform's anchoredPosition to the given value, while also applying a jump effect along the Y axis.
+        /// <summary>Tweens a RawImage's anchoredPosition to the given value, while also applying a jump effect along the Y axis.
         /// Returns a Sequence instead of a Tweener.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations</summary>
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations</summary>
         /// <param name="endValue">The end value to reach</param>
         /// <param name="jumpPower">Power of the jump (the max height of the jump is represented by this plus the final Y offset)</param>
         /// <param name="numJumps">Total number of jumps</param>
@@ -613,8 +613,8 @@ namespace DG.Tweening
 
         #region Shapes
 
-        /// <summary>Tweens a RectTransform's anchoredPosition so that it draws a circle around the given center.
-        /// Also stores the RectTransform as the tween's target so it can be used for filtered operations.<para/>
+        /// <summary>Tweens a RawImage's anchoredPosition so that it draws a circle around the given center.
+        /// Also stores the RawImage as the tween's target so it can be used for filtered operations.<para/>
         /// IMPORTANT: SetFrom(value) requires a <see cref="Vector2"/> instead of a float, where the X property represents the "from degrees value"</summary>
         /// <param name="center">Circle-center/pivot around which to rotate (in UI anchoredPosition coordinates)</param>
         /// <param name="endValueDegrees">The end value degrees to reach (to rotate counter-clockwise pass a negative value)</param>
@@ -643,7 +643,7 @@ namespace DG.Tweening
         public static class Utils
         {
             /// <summary>
-            /// Converts the anchoredPosition of the first RectTransform to the second RectTransform,
+            /// Converts the anchoredPosition of the first RawImage to the second RawImage,
             /// taking into consideration offset, anchors and pivot, and returns the new anchoredPosition
             /// </summary>
             public static Vector2 SwitchToRectTransform(RectTransform from, RectTransform to)
