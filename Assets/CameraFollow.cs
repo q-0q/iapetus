@@ -40,6 +40,6 @@ public class CameraFollow : MonoBehaviour
 
     private void Update()
     {
-        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.1f, 0.65f, _biasTowardsWeapon));
+        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));
     }
 }

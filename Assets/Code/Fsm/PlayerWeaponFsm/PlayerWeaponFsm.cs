@@ -11,6 +11,7 @@ public partial class PlayerWeaponFsm : Fsm
 {
     public class PlayerWeaponFsmState : FsmState
     {
+        public static int Disabled;
         public static int Idle;
         public static int ImpaleStartup;
         public static int ImpaleActive;
