@@ -16,9 +16,10 @@ public class CutoutFocus : MonoBehaviour
     private const float PlayerCameraDistanceOffset = -4f;
     private const float PlayerCameraDistanceFlatOffset = -1.5f;
     
-    private const float MaxRadius = 0.01f;
+    private const float MaxRadius = 0.015f;
     
-    private const float RadiusLerpStrength = 30f;
+    private const float RadiusGrowLerpStrength = 30f;
+    private const float RadiusShrinkLerpStrength = 5f;
     private static readonly Vector3 PositionOffset = new(0f, 1f, 0f);
 
 
@@ -37,10 +38,11 @@ public class CutoutFocus : MonoBehaviour
         Shader.SetGlobalFloat("_PlayerCameraFlatDistance", playerCameraFlatDistance);
 
         var currentRadius = Shader.GetGlobalFloat("_CutoutRadius");
-        var toPlayer = transform.position + PositionOffset - _camera.transform.position;
+        var toPlayer = transform.position + PositionOffset + transform.forward - _camera.transform.position;
         Debug.DrawRay(_camera.transform.position, toPlayer);
         var blocked = Physics.Raycast(_camera.transform.position, toPlayer, toPlayer.magnitude - 5f, ~0, QueryTriggerInteraction.Ignore);
-        Shader.SetGlobalFloat("_CutoutRadius", Mathf.Lerp(currentRadius, blocked ? MaxRadius : 0f, Time.deltaTime * RadiusLerpStrength));
+        Shader.SetGlobalFloat("_CutoutRadius", Mathf.Lerp(currentRadius, blocked ? MaxRadius : 0f, Time.deltaTime *
+            (blocked ? RadiusGrowLerpStrength : RadiusShrinkLerpStrength)));
         
     }
     
