@@ -4,7 +4,7 @@ public partial class PlayerFsm
 {
     private void AirControlOnUpdate()
     {
-        HandleTurning(0.8f, true, 0.15f);
-        HandleInputMomentumChange(0f, 0.5f);
+        HandleTurning(AirControlTurningMultiplier, true, AirControlTurningMomentumDecayModifier);
+        HandleInputMomentumChange(0f, AirControlMomentumDecayModifier);
     }
 }

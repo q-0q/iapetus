@@ -17,6 +17,7 @@ public partial class PlayerFsm
                 _ => YVelocity > MediumVaultHangMinimumYVelocity, 1)
             .OnEntry(_ =>
             {
+                Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Jump");
                 ReplaceAnimatorTrigger("Wallstep");
                 YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain,

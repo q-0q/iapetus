@@ -14,7 +14,7 @@ public class CutoutFocus : MonoBehaviour
     }
 
     private const float PlayerCameraDistanceOffset = -4f;
-    private const float PlayerCameraDistanceFlatOffset = -1.5f;
+    private const float PlayerCameraDistanceFlatOffset = -1.25f;
     
     private const float MaxRadius = 0.0125f;
     
@@ -39,7 +39,7 @@ public class CutoutFocus : MonoBehaviour
         Shader.SetGlobalFloat("_PlayerCameraFlatDistance", playerCameraFlatDistance);
 
         var currentRadius = Shader.GetGlobalFloat("_CutoutRadius");
-        var toPlayer = transform.position + PositionOffset + transform.forward - _camera.transform.position;
+        var toPlayer = transform.position + PositionOffset - _camera.transform.position;
         Debug.DrawRay(_camera.transform.position, toPlayer);
         var blocked = Physics.Raycast(_camera.transform.position, toPlayer, toPlayer.magnitude - 5f, ~0, QueryTriggerInteraction.Ignore);
         Shader.SetGlobalFloat("_CutoutRadius", Mathf.Lerp(currentRadius, blocked ? MaxRadius : 0f, Time.deltaTime *
@@ -75,7 +75,7 @@ public class CutoutFocus : MonoBehaviour
         var b = _camera.targetTexture == null;
         var width = b ? Screen.width : _camera.targetTexture.width;
         var height = b ? Screen.height : _camera.targetTexture.height;
-        float x = (screenPosition.x / width) * 0.1f;
+        float x = (screenPosition.x / height) * 0.1f;
         float y = (screenPosition.y / height) * 0.1f;
         var output = new Vector2(x, y);
         print(output);
