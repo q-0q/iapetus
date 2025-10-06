@@ -7,7 +7,7 @@ public partial class PlayerFsm
         Animator.SetLayerWeight(2, Mathf.Lerp(Animator.GetLayerWeight(2), 1, Time.deltaTime * 90f));
         Animator.SetLayerWeight(1, 0);
 
-        var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
         Animator.SetFloat("SpeedMod", speedMod);
 
         var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset

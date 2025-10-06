@@ -65,6 +65,7 @@ public partial class PlayerFsm
     private const float LowMomentumRotationMod = 3f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 0.75f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     
     private const float JumpYVelocity = 22f;

@@ -12,7 +12,7 @@ public partial class PlayerFsm
         HandleCollisionMove(ImpaleMovementModifier);
 
         SetAnimatorMomentum();
-        var speedMod = Mathf.Lerp(0f, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
         Animator.SetFloat("SpeedMod", speedMod);
 
         var targetMomentum = _stateEntryMomentum < ImpaleMinimumMomentumAfterOffset
