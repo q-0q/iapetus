@@ -5,6 +5,7 @@ public partial class PlayerFsm
         UpdateLedgePosition(FaceHighLedgeHeight);
         MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
         HandleCollisionMove();
+        Animator.SetLayerWeight(1, 0);
     }
 
     private void VaultHangConfigure()

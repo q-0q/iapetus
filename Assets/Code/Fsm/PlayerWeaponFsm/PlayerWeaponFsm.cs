@@ -31,7 +31,6 @@ public partial class PlayerWeaponFsm : Fsm
     protected override void OnStart()
     {
         base.OnStart();
-        Cursor.visible = false;
         InitState = PlayerWeaponFsmState.Disabled;
         transform.SetParent(null);
         _subTransform = transform.GetChild(0);

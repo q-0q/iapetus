@@ -32,6 +32,7 @@ public partial class PlayerFsm
         GrappleFlipsquatConfigure();
         WallInteractableConfigure();
         LandableConfigure();
+        
     }
 
     public override void SetupStateMaps()

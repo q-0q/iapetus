@@ -175,7 +175,8 @@ public partial class PlayerFsm
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
     }
 
-    private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false)
+    private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false,
+        float momentumDecayMultiplier = 1f)
     {
         
         var v3 = GetInputMovementVector3();
@@ -189,17 +190,17 @@ public partial class PlayerFsm
         
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
-        var animationDesiredTurnAmount = Mathf.InverseLerp(50f, -50f, angle);
+        var animationDesiredTurnAmount = Mathf.InverseLerp(60f, -60f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
-        var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 2f;
+        var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
         Animator.SetFloat("TurnAmount", Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * turnLerpSpeed));
         Animator.SetLayerWeight(1, Mathf.Abs(turnAmount) * momentumWeight);
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
-                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss));
+                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier));
         
         var quaternion = Quaternion.LookRotation(inputVector3.normalized, Vector3.up);
         
@@ -207,18 +208,18 @@ public partial class PlayerFsm
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
     }
 
-    private void HandleInputMomentumChange()
+    private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f)
     {
         var v2 = GetInputMovementVector2();
         if (v2.magnitude > InputMagnitudeThreshhold)
         {
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
-            _momentum = Mathf.Min(MaxMomentum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod *  Time.deltaTime);
+            _momentum = Mathf.Min(MaxMomentum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * Time.deltaTime);
         }
         else
         {
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
-            _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * Time.deltaTime));
+            _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
         }
     }
     

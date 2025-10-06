@@ -19,9 +19,12 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
+                _inputBuffer.ConsumeBuffer("Jump");
                 ReplaceAnimatorTrigger("SlowVaultFinish");
                 YVelocity = 0;
             })
-            .OnExit(_ => { _momentum = 8f; });
+            .OnExit(_ => { 
+                _momentum = 8f;
+            });
     }
 }
