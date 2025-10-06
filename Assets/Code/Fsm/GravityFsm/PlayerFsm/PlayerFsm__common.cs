@@ -57,7 +57,7 @@ public partial class PlayerFsm
     private const float MaximumMomentumSpeedMod = 3.5f;
     private const float RotationSpeed = 3f;
     private const float CollisionMomentumLossRate = 300f;
-    private const float MomentumGainRate = 9f;
+    private const float MomentumGainRate = 14f;
     private const float MomentumLossRate = 20f;
     private const float MomentumTurnLoss = 5f;
     private const float NoMomentumThreshold = 0.25f;
@@ -188,7 +188,7 @@ public partial class PlayerFsm
         
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
-        var animationDesiredTurnAmount = Mathf.InverseLerp(35f, -35f, angle);
+        var animationDesiredTurnAmount = Mathf.InverseLerp(50f, -50f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
         var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 2f;

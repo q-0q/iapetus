@@ -32,7 +32,7 @@ public partial class PlayerWeaponFsm : Fsm
     {
         base.OnStart();
         Cursor.visible = false;
-        InitState = PlayerWeaponFsmState.Idle;
+        InitState = PlayerWeaponFsmState.Disabled;
         transform.SetParent(null);
         _subTransform = transform.GetChild(0);
         _subTransformBaseLocalPosition = _subTransform.localPosition;
