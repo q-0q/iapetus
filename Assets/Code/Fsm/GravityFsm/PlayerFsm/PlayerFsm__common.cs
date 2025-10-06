@@ -67,8 +67,10 @@ public partial class PlayerFsm
     private const float LowMomentumMomentumLossMod = 1.25f;
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.75f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
+    private const float GroundSlopeMaximumMomentumAngle = 120f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.4f;
     
-    private const float JumpYVelocity = 22f;
+    private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
     private const float AirControlTurningMultiplier = 0.8f;
     private const float AirControlTurningMomentumDecayModifier = 0.15f;
@@ -217,7 +219,11 @@ public partial class PlayerFsm
         if (v2.magnitude > InputMagnitudeThreshhold)
         {
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
-            _momentum = Mathf.Min(MaxMomentum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * Time.deltaTime);
+            var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
+            print(weight);
+            var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
+                weight);
+            _momentum = Mathf.Min(MaxMomentum * slopeMaxMomentumMod, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * Time.deltaTime);
         }
         else
         {

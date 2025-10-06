@@ -7,6 +7,8 @@ public abstract partial class GravityFsm
     protected float TimeInAir;
     protected float MinYVelocity = -40f;
     protected float LastUpwardsY;
+    protected float GroundForwardSlope;
+    
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.5f;
     private const float GroundedRaycastForwardOffset = 0.2f;
