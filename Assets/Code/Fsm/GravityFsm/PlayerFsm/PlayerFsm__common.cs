@@ -54,8 +54,8 @@ public partial class PlayerFsm
     private const float ForceWallRotationRaycastDistance = 3f;
 
     private const float FailsafeSphereRadius = 0.1f;
-    private const float FailsafeSphereYOffset = 0.5f;
-    private const float FailsafeSphereForwardOffset = 0.5f;
+    private const float FailsafeSphereYOffset = 0.6f;
+    private const float FailsafeSphereForwardOffset = 0.4f;
     
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
@@ -262,12 +262,14 @@ public partial class PlayerFsm
         var output = desiredMove;
         
         // Radius of your character (adjust as needed)
+        var backwardsPadding = 0.25f;
         float radius = CollisionMoveSphereCastRadius;
-        float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f);
-        
+        float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f) + backwardsPadding;
+
         Vector3 position = transform.position + Vector3.up * (YVelocity > FallingCollisionMoveSphereCastHeightYVelocityThreshhold
-            ? GroundCollisionMoveSphereCastHeight
-            : FallingCollisionMoveSphereCastHeight);
+                               ? GroundCollisionMoveSphereCastHeight
+                               : FallingCollisionMoveSphereCastHeight)
+                           - transform.forward * backwardsPadding;
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
