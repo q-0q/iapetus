@@ -61,6 +61,8 @@ public partial class PlayerFsm
         StateMapConfig.IsAbstract.Add(PlayerFsmState.LockMomentum, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.VaultHang, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.WallInteractable, true);
+        StateMapConfig.IsAbstract.Add(PlayerFsmState.AirControl, true);
+        StateMapConfig.IsAbstract.Add(PlayerFsmState.IgnoreFailsafe, true);
 
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);

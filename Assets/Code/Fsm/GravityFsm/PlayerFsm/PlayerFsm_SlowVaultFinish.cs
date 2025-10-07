@@ -13,7 +13,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.SlowVaultFinish)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
-            // .SubstateOf(PlayerFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)

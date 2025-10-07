@@ -42,6 +42,7 @@ public partial class PlayerFsm : GravityFsm
         public static int WallInteractable;
         public static int Landable;
         public static int AirControl;
+        public static int IgnoreFailsafe;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -98,6 +99,8 @@ public partial class PlayerFsm : GravityFsm
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
+
+        HandleFailsafe();
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {

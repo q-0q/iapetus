@@ -16,7 +16,7 @@ public class CutoutFocus : MonoBehaviour
     private const float PlayerCameraDistanceOffset = -4f;
     private const float PlayerCameraDistanceFlatOffset = -1.25f;
     
-    private const float MaxRadius = 0.01f;
+    private const float MaxRadius = 0.0125f;
     
     private const float RadiusGrowLerpStrength = 30f;
     private const float RadiusShrinkLerpStrength = 5f;
@@ -72,14 +72,19 @@ public class CutoutFocus : MonoBehaviour
     
     public Vector2 ScreenToCustomSpace(Vector2 screenPosition)
     {
-        var b = _camera.targetTexture == null;
-        var width = b ? Screen.width : _camera.targetTexture.width;
-        var height = b ? Screen.height : _camera.targetTexture.height;
-        float x = (screenPosition.x / width) * 0.1f;
-        float y = (screenPosition.y / height) * 0.1f;
-        var output = new Vector2(x, y);
+        Vector2 screenCenter = new Vector2(Screen.width / 2f, Screen.height / 2f);
+        Vector2 v2 = screenPosition - screenCenter;
+        float x = (v2.x / Screen.width) * 0.2f;
+        float y = (v2.y / Screen.width) * 0.2f;
+        var output = new Vector2(y, x);
         print(output);
         return output;
+        // var b = _camera.targetTexture == null;
+        // var width = b ? Screen.width : _camera.targetTexture.width;
+        // var height = b ? Screen.height : _camera.targetTexture.height;
+        // float x = (screenPosition.x / width);
+        // float y = (screenPosition.y / height);
+        // var output = new Vector2(x, y);
     }
 
 

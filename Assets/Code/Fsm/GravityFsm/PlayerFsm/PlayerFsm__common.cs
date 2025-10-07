@@ -23,6 +23,7 @@ public partial class PlayerFsm
     private FlankType _previousWallrunSide;
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
+    private Vector3 _previousFailsafePosition;
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
@@ -51,6 +52,10 @@ public partial class PlayerFsm
     private const float FlankWallOpenYOffset = -2f;
     private const float FlankMaximumAngle = 40f;
     private const float ForceWallRotationRaycastDistance = 3f;
+
+    private const float FailsafeSphereRadius = 0.1f;
+    private const float FailsafeSphereYOffset = 0.5f;
+    private const float FailsafeSphereForwardOffset = 0.5f;
     
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
@@ -395,6 +400,25 @@ public partial class PlayerFsm
     private void OnContactHitboxCollide()
     {
         Machine.Fire(PlayerFsmTrigger.ContactHitboxTrigger);
+    }
+
+    private void HandleFailsafe()
+    {
+        if (Machine.IsInState(PlayerFsmState.IgnoreFailsafe)) return;
+        
+        if (Physics.CheckSphere(transform.position + 
+                                (transform.up * FailsafeSphereYOffset) +
+                                (transform.forward * FailsafeSphereForwardOffset), 
+                FailsafeSphereRadius,
+                GetEnvironmentalLayermask(), 
+                QueryTriggerInteraction.Ignore))
+        {
+            transform.position = _previousFailsafePosition;
+        }
+        else
+        {
+            _previousFailsafePosition = transform.position;
+        }
     }
 
 }
