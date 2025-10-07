@@ -37,7 +37,7 @@ public partial class PlayerFsm
     
     private const float ForwardRaycastDistance = 0.9f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;
-    private const float CollisionMoveSphereCastRadius = 0.5f;
+    private const float CollisionMoveSphereCastRadius = 0.4f;
     private const float GroundCollisionMoveSphereCastHeight = 0.95f;
     private const float FallingCollisionMoveSphereCastHeight = -0.5f;
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
@@ -262,7 +262,7 @@ public partial class PlayerFsm
         var output = desiredMove;
         
         // Radius of your character (adjust as needed)
-        var backwardsPadding = 0.25f;
+        var backwardsPadding = 0.45f;
         float radius = CollisionMoveSphereCastRadius;
         float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f) + backwardsPadding;
 
