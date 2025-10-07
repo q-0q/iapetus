@@ -68,7 +68,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.75f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.4f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -89,7 +89,7 @@ public partial class PlayerFsm
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 3f;
     private const float WallsquatMinimumYVelocity = 10f;
-    private const float WallSquatMinimumMomentum = 3f;
+    private const float WallSquatMinimumMomentum = 0f;
     private const float WallstepMinimumYVelocityGain = 12f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
     private const float WallstepMinimumDuration = 0.25f;
