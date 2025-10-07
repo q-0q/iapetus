@@ -10,7 +10,7 @@ public partial class PlayerFsm
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
         MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         SetAnimatorMomentum();
-        transform.position += ComputeCollisionMove(ComputeDesiredMove()) * 0.85f;
+        transform.position += ComputeCollisionMove(ComputeDesiredMove());
         HandleTurning(VaultTurningMultiplier, true);
     }
 
@@ -18,10 +18,13 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Vault)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .OnEntry(_ =>
             {
+                _movementAnimationMirror = !_movementAnimationMirror;
+                var flip = _movementAnimationMirror ? 0 : 1f;
+                Animator.SetFloat("Flip", flip);
                 UpdateLedgePosition(FaceLedgeHeight);
                 ReplaceAnimatorTrigger("Vault");
                 YVelocity = 0;

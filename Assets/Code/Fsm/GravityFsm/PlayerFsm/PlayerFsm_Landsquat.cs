@@ -11,9 +11,9 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
-                _movementAnimationMirror = !_movementAnimationMirror;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
+                _movementAnimationMirror = !_movementAnimationMirror;
                 var flip = _movementAnimationMirror ? 0 : 1f;
                 Animator.SetFloat("Flip", flip);
             });
