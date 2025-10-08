@@ -53,9 +53,9 @@ public partial class PlayerFsm
     private const float FlankMaximumAngle = 40f;
     private const float ForceWallRotationRaycastDistance = 3f;
 
-    private const float FailsafeSphereRadius = 0.1f;
+    private const float FailsafeSphereRadius = 0.15f;
     private const float FailsafeSphereYOffset = 0.6f;
-    private const float FailsafeSphereForwardOffset = 0.4f;
+    private const float FailsafeSphereForwardOffset = 0.1f;
     
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
@@ -84,6 +84,7 @@ public partial class PlayerFsm
     private const float UpdateLedgePositionEpsilon = 3f;
     private const float VaultMinimumYVelocity = -2f;
     private const float VaultMinimumMomentum = 6f;
+    private const float VaultMinimumMomentumOnUpdate = 6f;
     private const float VaultHangLedgeYOffset = -2.5f;
     private const float VaultHangLedgeLerpStrength = 60f;
     private const float VaultTurningMultiplier = 0.75f;
@@ -92,7 +93,7 @@ public partial class PlayerFsm
     private const float VaultLedgeLerpStrength = 40f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
-    private const float SlowVaultFinishForwardSpeed = 3f;
+    private const float SlowVaultFinishForwardSpeed = 2f;
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
     private const float WallstepMinimumYVelocityGain = 12f;
@@ -110,9 +111,9 @@ public partial class PlayerFsm
     
     private const float HardLandAirDiff = -9;
     private const float HardLandExitMomentum = 4f;
-    private const float HardLandRollExitMomentum = 10f;
-    private const float HardLandRollMinimumMomentum = 7f;
-    private const float HardLandRollForwardSpeed = 14f;
+    private const float HardLandRollExitMomentum = 12f;
+    private const float HardLandRollMinimumMomentum = 7.5f;
+    private const float HardLandRollForwardSpeed = 15f;
     
     private const float HardTurnMinimumAngle = 130f;
     private const float HardTurnMinimumMomentum = 8.5f;

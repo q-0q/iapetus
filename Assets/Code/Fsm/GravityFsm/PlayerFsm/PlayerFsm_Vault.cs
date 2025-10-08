@@ -4,7 +4,7 @@ public partial class PlayerFsm
 {
     private void VaultOnUpdate()
     {
-        _momentum = Mathf.Max(_momentum, VaultMinimumMomentum);
+        _momentum = Mathf.Max(_momentum, VaultMinimumMomentumOnUpdate);
         var momentumWeight = ComputeMomentumWeight();
         Animator.SetFloat("SpeedMod",
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
@@ -29,6 +29,10 @@ public partial class PlayerFsm
                 UpdateLedgePosition(FaceLedgeHeight);
                 ReplaceAnimatorTrigger("Vault");
                 YVelocity = 0;
+            })
+            .OnExit(_ =>
+            {
+                _momentum = Mathf.Min(MaxMomentum, _momentum + 2f);
             });
     }
 }

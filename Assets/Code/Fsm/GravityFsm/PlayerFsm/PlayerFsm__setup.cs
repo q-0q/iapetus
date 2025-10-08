@@ -40,10 +40,10 @@ public partial class PlayerFsm
         print("player setupstatemaps");
 
         base.SetupStateMaps();
-        StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.175f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.145f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.HardLand, 0.65f);
-        StateMapConfig.Duration.Add(PlayerFsmState.HardLandRoll, 0.45f);
+        StateMapConfig.Duration.Add(PlayerFsmState.HardLandRoll, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
         StateMapConfig.Duration.Add(PlayerFsmState.MediumVaultHang, 0.375f);

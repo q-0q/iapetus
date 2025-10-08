@@ -16,7 +16,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)
+            // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Jump");
