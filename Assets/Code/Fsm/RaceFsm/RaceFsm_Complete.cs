@@ -7,6 +7,11 @@ public partial class RaceFsm
 
     private void CompleteConfigure()
     {
-        // throw new System.NotImplementedException();
+        Machine.Configure(RaceFsmState.Complete)
+            .Permit(FsmTrigger.Timeout, RaceFsmState.Inactive)
+            .OnEntry(_ =>
+            {
+                UiTimer.Singleton._active = false;
+            });
     }
 }

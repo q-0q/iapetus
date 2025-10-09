@@ -27,7 +27,7 @@ public partial class PlayerFsm
                 _ => _momentum > WallSquatMinimumMomentum)
             .OnEntry(_ =>
             {
-                print("Yvelocity on entering wallrun: " + YVelocity);
+                
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
                 ReplaceAnimatorTrigger("Wallrun");
             })

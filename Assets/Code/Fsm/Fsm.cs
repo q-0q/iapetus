@@ -33,7 +33,7 @@ public abstract class Fsm : MonoBehaviour
     
     private void Start()
     {
-        print("base start");
+        
         OnStart();
         SetupMachine();
         SetupStateMaps();
@@ -72,14 +72,14 @@ public abstract class Fsm : MonoBehaviour
 
     public virtual void SetupMachine()
     {
-        print("base setupmachine");
+        
         Machine = new Machine<int, int>(InitState);
         Machine.OnTransitioned(OnStateChanged);
     }
 
     public virtual void OnFireTriggers()
     {
-        print("base onfiretriggers");
+        
         if (TimeInCurrentState() >= StateMapConfig.Duration.Get(this))
         {
             Machine.Fire(FsmTrigger.Timeout);

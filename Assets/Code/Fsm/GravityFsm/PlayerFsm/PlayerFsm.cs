@@ -69,11 +69,11 @@ public partial class PlayerFsm : GravityFsm
     
     protected override void OnStart()
     {
-        print("player onstart");
+        
         base.OnStart();
         Singleton = this;
         InitState = PlayerFsmState.GroundMove;
-        print("init state: " + InitState);
+        
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);

@@ -9,10 +9,19 @@ public partial class RaceFsm
     {
         Machine.Configure(RaceFsmState.Inactive)
             .Permit(RaceFsmTrigger.StartTriggered, RaceFsmState.Start)
-            .OnEntry(_ =>
-            {
-                UiTimer.Singleton._display = false;
-                UiTimer.Singleton._active = false;
-            });
+            .OnEntry(_ => { InactiveOnEnter(); });
+    }
+
+    private void InactiveOnEnter()
+    {
+        _currentTriggerId = -1;
+        UiTimer.Singleton._display = false;
+        UiTimer.Singleton._active = false;
+
+        for (int i = 0; i < Triggers.Count; i++)
+        {
+            if (i == 0) Triggers[i].MarkNext();
+            else Triggers[i].Hide();
+        }
     }
 }

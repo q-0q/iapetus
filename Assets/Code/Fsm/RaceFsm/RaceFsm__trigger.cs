@@ -8,14 +8,37 @@ public partial class RaceFsm
 
     }
 
-    private void OnStartTrigger()
+    private void OnRaceTrigger(RaceTrigger trigger)
     {
-        Machine.Fire(RaceFsmTrigger.StartTriggered);
+        if (Machine.IsInState(RaceFsmState.Disabled)) return;
+        
+        var id = -1;
+        for (var i = 0; i < Triggers.Count; i++)
+        {
+            if (Triggers[i] == trigger)
+            {
+                id = i;
+                break;
+            }
+        }
+        
+        if (_currentTriggerId == id - 1 || (_currentTriggerId == Triggers.Count - 1 && id == 0))
+        {
+            if (id == 0)
+            {
+                Machine.Fire(RaceFsmTrigger.StartTriggered);
+            }
+            _currentTriggerId = id;
+
+            var next = _currentTriggerId == Triggers.Count - 1 ? 0 : _currentTriggerId + 1;
+            Triggers[_currentTriggerId].Hide();
+            Triggers[next].MarkNext();
+        }
+        
     }
     
-    private void OnStartNotTrigger()
+    private void OnNotRaceTrigger(RaceTrigger trigger)
     {
         Machine.Fire(RaceFsmTrigger.StartNotTriggered);
-        print("not");
     }
 }

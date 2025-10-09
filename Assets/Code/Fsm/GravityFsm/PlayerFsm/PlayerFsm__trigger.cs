@@ -8,8 +8,6 @@ public partial class PlayerFsm
     public override void OnFireTriggers()
     {
         
-        print("player onfiretriggers");
-        
         base.OnFireTriggers();
         
         if (_inputBuffer.IsBuffered("Jump"))

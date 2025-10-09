@@ -83,14 +83,7 @@ public class CutoutFocus : MonoBehaviour
         float x = (v2.x / Screen.width) * 0.2f;
         float y = (v2.y / Screen.width) * 0.2f;
         var output = new Vector2(y, x);
-        print(output);
         return output;
-        // var b = _camera.targetTexture == null;
-        // var width = b ? Screen.width : _camera.targetTexture.width;
-        // var height = b ? Screen.height : _camera.targetTexture.height;
-        // float x = (screenPosition.x / width);
-        // float y = (screenPosition.y / height);
-        // var output = new Vector2(x, y);
     }
 
 

@@ -150,7 +150,7 @@ public partial class PlayerFsm
         float flipMod = left ? -1f : 1f;
         var distance = DistanceFromPointToPlane(transform.position, hit.point, hit.normal);
         var angle = Vector3.Angle(transform.right * flipMod, hit.normal);
-        print(angle);
+        
         return distance < 2.5f && angle < FlankMaximumAngle;;
     }
 
@@ -229,7 +229,7 @@ public partial class PlayerFsm
         {
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
-            print(weight);
+            
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
             _momentum = Mathf.Min(MaxMomentum * slopeMaxMomentumMod, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * Time.deltaTime);

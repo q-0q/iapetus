@@ -31,7 +31,7 @@ public partial class PlayerWeaponFsm : Fsm
     protected override void OnStart()
     {
         base.OnStart();
-        InitState = PlayerWeaponFsmState.Idle;
+        InitState = PlayerWeaponFsmState.Disabled;
         transform.SetParent(null);
         _subTransform = transform.GetChild(0);
         _subTransformBaseLocalPosition = _subTransform.localPosition;

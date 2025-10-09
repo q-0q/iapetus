@@ -37,7 +37,7 @@ public partial class PlayerFsm
 
     public override void SetupStateMaps()
     {
-        print("player setupstatemaps");
+        
 
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.145f);

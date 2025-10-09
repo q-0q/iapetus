@@ -8,6 +8,7 @@ public partial class RaceFsm
         StartConfigure();
         ActiveConfigure();
         CompleteConfigure();
+        DisabledConfigure();
     }
 
     public override void SetupStateMaps()

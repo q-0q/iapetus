@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using UnityEngine.Serialization;
+
 public partial class RaceFsm
 {
-    private RaceStartTrigger _raceStartTrigger;
+    public List<RaceTrigger> Triggers;
+    private int _currentTriggerId;
 }
