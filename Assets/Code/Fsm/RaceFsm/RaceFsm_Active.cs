@@ -4,4 +4,13 @@ public partial class RaceFsm
     {
         
     }
+
+    private void ActiveConfigure()
+    {
+        Machine.Configure(RaceFsmState.Active)
+            .OnEntry(_ =>
+            {
+                UiTimer.Singleton._active = true;
+            });
+    }
 }

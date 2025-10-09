@@ -12,4 +12,10 @@ public partial class RaceFsm
     {
         Machine.Fire(RaceFsmTrigger.StartTriggered);
     }
+    
+    private void OnStartNotTrigger()
+    {
+        Machine.Fire(RaceFsmTrigger.StartNotTriggered);
+        print("not");
+    }
 }

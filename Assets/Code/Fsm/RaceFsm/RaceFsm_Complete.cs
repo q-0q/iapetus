@@ -1,7 +1,12 @@
 public partial class RaceFsm
 {
-    private void ActiveOnUpdate()
+    private void CompleteOnUpdate()
     {
         
+    }
+
+    private void CompleteConfigure()
+    {
+        // throw new System.NotImplementedException();
     }
 }

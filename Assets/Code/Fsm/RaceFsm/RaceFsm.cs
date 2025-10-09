@@ -16,6 +16,7 @@ public partial class RaceFsm : Fsm
     public class RaceFsmTrigger : FsmTrigger
     {
         public static int StartTriggered;
+        public static int StartNotTriggered;
     }
 
     protected override void OnAwake()
@@ -27,23 +28,45 @@ public partial class RaceFsm : Fsm
     protected override void OnStart()
     {
         base.OnStart();
+        InitState = RaceFsmState.Inactive;
+        
 
     }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
-        
 
+        if (Machine.IsInState(RaceFsmState.Inactive))
+        {
+            InactiveOnUpdate();
+        }
+        
+        if (Machine.IsInState(RaceFsmState.Start))
+        {
+            StartOnUpdate();
+        }
+        
+        if (Machine.IsInState(RaceFsmState.Active))
+        {
+            ActiveOnUpdate();
+        }
+        
+        if (Machine.IsInState(RaceFsmState.Complete))
+        {
+            CompleteOnUpdate();
+        }
     }
 
     private void OnEnable()
     {
         _raceStartTrigger.OnTrigger += OnStartTrigger;
+        _raceStartTrigger.OnNotTrigger += OnStartNotTrigger;
     }
 
     private void OnDisable()
     {
         _raceStartTrigger.OnTrigger -= OnStartTrigger;
+        _raceStartTrigger.OnNotTrigger -= OnStartNotTrigger;
     }
 }
