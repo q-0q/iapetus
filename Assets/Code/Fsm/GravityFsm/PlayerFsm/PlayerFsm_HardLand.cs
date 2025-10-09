@@ -1,5 +1,14 @@
+using UnityEngine;
+
 public partial class PlayerFsm
 {
+    private void HardLandOnUpdate()
+    {
+        if (TimeInCurrentState() < HardLandForwardDuration)
+        {
+            transform.position += ComputeCollisionMove(transform.forward * HardLandForwardSpeed * Time.deltaTime);
+        }
+    }
     private void HardLandConfigure()
     {
         Machine.Configure(PlayerFsmState.HardLand)

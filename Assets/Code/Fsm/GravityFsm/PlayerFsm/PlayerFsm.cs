@@ -151,6 +151,11 @@ public partial class PlayerFsm : GravityFsm
             HardTurnOnUpdate();
         }
         
+        if (Machine.IsInState(PlayerFsmState.HardLand))
+        {
+            HardLandOnUpdate();
+        }
+        
         if (Machine.IsInState(PlayerFsmState.HardLandRoll))
         {
             HardLandRollOnUpdate();

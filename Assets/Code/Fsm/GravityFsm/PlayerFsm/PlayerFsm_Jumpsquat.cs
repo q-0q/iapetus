@@ -5,7 +5,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Jumpsquat)
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.LockMomentum)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
+            // .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
             .OnEntry(_ =>
             {

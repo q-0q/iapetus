@@ -70,7 +70,7 @@ public partial class PlayerFsm
     private const float LowMomentumRotationMod = 3f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
-    private const float GroundMoveMinimumAnimatorSpeedMod = 0.75f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 0.45f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.55f;
@@ -88,7 +88,7 @@ public partial class PlayerFsm
     private const float VaultHangLedgeYOffset = -2.5f;
     private const float VaultHangLedgeLerpStrength = 60f;
     private const float VaultTurningMultiplier = 0.75f;
-    private const float VaultMinimumAnimatorSpeedMod = 0.3f;
+    private const float VaultMinimumAnimatorSpeedMod = 0.5f;
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
     private const float VaultLedgeLerpStrength = 40f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
@@ -111,6 +111,9 @@ public partial class PlayerFsm
     
     private const float HardLandAirDiff = -9;
     private const float HardLandExitMomentum = 4f;
+    private const float HardLandForwardSpeed = 10f;
+    private const float HardLandForwardDuration = 0.105f;
+    
     private const float HardLandRollExitMomentum = 12f;
     private const float HardLandRollMinimumMomentum = 7.5f;
     private const float HardLandRollForwardSpeed = 15f;
@@ -201,7 +204,7 @@ public partial class PlayerFsm
         
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
-        var animationDesiredTurnAmount = Mathf.InverseLerp(60f, -60f, angle);
+        var animationDesiredTurnAmount = Mathf.InverseLerp(50f, -50f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
         var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;

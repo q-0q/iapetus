@@ -10,7 +10,7 @@ public partial class PlayerFsm
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
         MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         SetAnimatorMomentum();
-        transform.position += ComputeCollisionMove(ComputeDesiredMove());
+        transform.position += ComputeCollisionMove(ComputeDesiredMove()) * 0.9f;
         HandleTurning(VaultTurningMultiplier, true);
     }
 
