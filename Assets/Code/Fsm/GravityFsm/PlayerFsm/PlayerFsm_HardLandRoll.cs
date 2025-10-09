@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 public partial class PlayerFsm
@@ -13,6 +14,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.HardLandRoll)
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
                 _momentum = HardLandRollExitMomentum;
