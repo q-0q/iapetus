@@ -10,6 +10,7 @@ public abstract partial class GravityFsm
     protected float GroundForwardSlope;
     private Transform _parentTransform;
     private Vector3 _previousParentTransformPosition;
+    private Quaternion _previousParentRotation;
     
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.75f;
