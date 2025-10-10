@@ -62,12 +62,11 @@ public abstract partial class GravityFsm
 
         Vector3 position = transform.position + Vector3.up * (YVelocity > FallingCollisionMoveSphereCastHeightYVelocityThreshhold
                                ? GroundCollisionMoveSphereCastHeight
-                               : FallingCollisionMoveSphereCastHeight)
-                           - transform.forward * backwardsPadding;
+                               : FallingCollisionMoveSphereCastHeight);
         Vector3 direction = output.normalized;
 
         // SphereCast to account for player volume
-        if (Physics.SphereCast(position, radius, direction, out RaycastHit hit, castDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(position - transform.forward * backwardsPadding, radius, direction, out RaycastHit hit, castDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             
             // First collision: slide along the surface
@@ -76,7 +75,7 @@ public abstract partial class GravityFsm
 
 
             // Cast again in the new direction to handle corner (second surface)
-            if (Physics.SphereCast(position, radius, output.normalized, out RaycastHit secondHit, output.magnitude))
+            if (Physics.SphereCast(position - firstNormal * backwardsPadding, radius, output.normalized, out RaycastHit secondHit, output.magnitude + backwardsPadding))
             {
                 Vector3 secondNormal = secondHit.normal;
 

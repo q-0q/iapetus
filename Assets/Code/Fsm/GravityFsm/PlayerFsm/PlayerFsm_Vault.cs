@@ -8,6 +8,7 @@ public partial class PlayerFsm
         var momentumWeight = ComputeMomentumWeight();
         Animator.SetFloat("SpeedMod",
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
+        UpdateLedgePosition(FaceLedgeHeight);
         MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         SetAnimatorMomentum();
         transform.position += ComputeCollisionMove(ComputeDesiredMove()) * 0.9f;
