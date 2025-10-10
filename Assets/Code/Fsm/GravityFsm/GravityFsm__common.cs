@@ -8,7 +8,8 @@ public abstract partial class GravityFsm
     protected float MinYVelocity = -40f;
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
-    protected Transform motionParentTransform;
+    private Transform _parentTransform;
+    private Vector3 _previousParentTransformPosition;
     
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.75f;

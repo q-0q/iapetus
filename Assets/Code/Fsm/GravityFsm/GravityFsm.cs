@@ -38,6 +38,11 @@ public  abstract partial class GravityFsm : Fsm
         {
             GroundedOnUpdate();
         }
+        
+        if (Machine.IsInState(GravityFsmState.RespectParentTransform))
+        {
+            RespectParentTransformOnUpdate();
+        }
     }
 
 

@@ -5,7 +5,7 @@ public abstract partial class GravityFsm
         base.SetupMachine();
         AerialConfigure();
         GroundedConfigure();
-        RespectParentTrasnformConfigure();
+        RespectParentTransformConfigure();
     }
 
     public override void SetupStateMaps()
