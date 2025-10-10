@@ -93,7 +93,6 @@ public partial class PlayerFsm : GravityFsm
     {
         if (HitstopOnUpdate()) return;
         
-        base.OnUpdate();
         _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
@@ -208,6 +207,9 @@ public partial class PlayerFsm : GravityFsm
             Reset();
             OnPlayerRacePressed?.Invoke();
         }
+        
+        base.OnUpdate(); // 
+
     }
 
     private bool HitstopOnUpdate()
