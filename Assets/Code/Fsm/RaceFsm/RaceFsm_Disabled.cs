@@ -14,6 +14,10 @@ public partial class RaceFsm
 
     private void DisabledOnEnter()
     {
+        _currentTriggerId = -1;
+        UiTimer.Singleton._display = false;
+        UiTimer.Singleton._active = false;
+        
         foreach (var t in Triggers)
         {
             t.Hide();

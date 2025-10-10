@@ -31,7 +31,7 @@ public class UiTimer : MonoBehaviour
     void Update()
     {
         if (_active) _timer += Time.deltaTime;
-        _tmp.text = _timer.ToString();
+        _tmp.text = _timer.ToString("F2");
         _tmp.enabled = _display;
 
     }

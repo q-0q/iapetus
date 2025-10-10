@@ -195,10 +195,18 @@ public partial class PlayerFsm : GravityFsm
 
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
         {
-            transform.position = _checkpointVector3;
-            transform.rotation = _checkpointQuaternion;
-            _momentum = 0;
-            YVelocity = 0;
+            Reset();
+        }
+        
+        if (transform.position.y < -80f)
+        {
+            Reset();
+        }
+        
+        if (_playerInput.actions["Race"].WasPerformedThisFrame())
+        {
+            Reset();
+            OnPlayerRacePressed?.Invoke();
         }
     }
 

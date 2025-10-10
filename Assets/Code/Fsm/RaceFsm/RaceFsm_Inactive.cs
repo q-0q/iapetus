@@ -9,6 +9,7 @@ public partial class RaceFsm
     {
         Machine.Configure(RaceFsmState.Inactive)
             .Permit(RaceFsmTrigger.StartTriggered, RaceFsmState.Start)
+            .Permit(RaceFsmTrigger.Toggle, RaceFsmState.Disabled)
             .OnEntry(_ => { InactiveOnEnter(); });
     }
 

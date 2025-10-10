@@ -15,6 +15,6 @@ public partial class RaceFsm
     {
         base.SetupStateMaps();
         
-        StateMapConfig.Duration.Add(RaceFsmState.Complete, 1f);
+        StateMapConfig.Duration.Add(RaceFsmState.Complete, 2f);
     }
 }

@@ -67,11 +67,13 @@ public partial class RaceFsm : Fsm
     {
         RaceTrigger.OnTrigger += OnRaceTrigger;
         RaceTrigger.OnNotTrigger += OnNotRaceTrigger;
+        PlayerFsm.OnPlayerRacePressed += OnPlayerRacePressed;
     }
 
     private void OnDisable()
     {
         RaceTrigger.OnTrigger -= OnRaceTrigger;
         RaceTrigger.OnNotTrigger -= OnNotRaceTrigger;
+        PlayerFsm.OnPlayerRacePressed -= OnPlayerRacePressed;
     }
 }

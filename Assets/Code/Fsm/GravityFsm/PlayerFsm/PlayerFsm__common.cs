@@ -32,6 +32,7 @@ public partial class PlayerFsm
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     public static event Action OnPlayerImpaleStateEntered;
     public static event Action OnPlayerGrappleStateEntered;
+    public static event Action OnPlayerRacePressed;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     
@@ -427,4 +428,12 @@ public partial class PlayerFsm
         }
     }
 
+    private void Reset()
+    {
+        Machine.Jump(PlayerFsmState.GroundMove);
+        transform.position = _checkpointVector3;
+        transform.rotation = _checkpointQuaternion;
+        _momentum = 0;
+        YVelocity = 0;
+    }
 }

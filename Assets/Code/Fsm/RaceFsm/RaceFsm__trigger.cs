@@ -41,4 +41,9 @@ public partial class RaceFsm
     {
         Machine.Fire(RaceFsmTrigger.StartNotTriggered);
     }
+
+    private void OnPlayerRacePressed()
+    {
+        Machine.Fire(RaceFsmTrigger.Toggle);
+    }
 }
