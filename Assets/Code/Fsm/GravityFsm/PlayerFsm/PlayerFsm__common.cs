@@ -38,11 +38,11 @@ public partial class PlayerFsm
     
     private const float ForwardRaycastDistance = 0.9f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;
-    private const float CollisionMoveSphereCastRadius = 0.4f;
-    private const float GroundCollisionMoveSphereCastHeight = 0.95f;
-    private const float FallingCollisionMoveSphereCastHeight = -0.5f;
-    private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
-    private const float CollisionMoveSphereCastDistance = 0.45f;
+    // private const float CollisionMoveSphereCastRadius = 0.4f;
+    // private const float GroundCollisionMoveSphereCastHeight = 0.95f;
+    // private const float FallingCollisionMoveSphereCastHeight = -0.5f;
+    // private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
+    // private const float CollisionMoveSphereCastDistance = 0.45f;
     private const float FaceLedgeHeight = 0.2f;
     private const float FaceHighLedgeHeight = 2.15f;
     private const float FaceWallHeight = 2.4f;
@@ -262,50 +262,7 @@ public partial class PlayerFsm
         return Quaternion.Euler(0, _camera.transform.rotation.eulerAngles.y, 0) * new Vector3(v2.x, 0, v2.y).normalized;
     }
     
-    private Vector3 ComputeCollisionMove(Vector3 desiredMove)
-    {
-        var output = desiredMove;
-        
-        // Radius of your character (adjust as needed)
-        var backwardsPadding = 0.45f;
-        float radius = CollisionMoveSphereCastRadius;
-        float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f) + backwardsPadding;
 
-        Vector3 position = transform.position + Vector3.up * (YVelocity > FallingCollisionMoveSphereCastHeightYVelocityThreshhold
-                               ? GroundCollisionMoveSphereCastHeight
-                               : FallingCollisionMoveSphereCastHeight)
-                           - transform.forward * backwardsPadding;
-        Vector3 direction = output.normalized;
-
-        // SphereCast to account for player volume
-        if (Physics.SphereCast(position, radius, direction, out RaycastHit hit, castDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
-        {
-            
-            // First collision: slide along the surface
-            Vector3 firstNormal = hit.normal;
-            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up));
-
-
-            // Cast again in the new direction to handle corner (second surface)
-            if (Physics.SphereCast(position, radius, output.normalized, out RaycastHit secondHit, output.magnitude))
-            {
-                Vector3 secondNormal = secondHit.normal;
-
-                // Slide again
-                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, Vector3.up));
-                
-                if (output.magnitude < 0.01f)
-                {
-                    output = Vector3.zero;
-                }
-
-            }
-            
-            
-        }
-        
-        return output;
-    }
     
     private float ComputeMomentumWeight()
     {
