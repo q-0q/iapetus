@@ -13,6 +13,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.VaultHang)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {

@@ -33,6 +33,7 @@ public partial class PlayerFsm
         WallInteractableConfigure();
         LandableConfigure();
         
+        
     }
 
     public override void SetupStateMaps()

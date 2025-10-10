@@ -1,4 +1,5 @@
 using System;
+using Code.TriggerParams;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -49,16 +50,16 @@ public partial class PlayerFsm
         {
             Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
-                : PlayerFsmTrigger.FaceWall);
+                : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward, 
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
-            Machine.Fire(PlayerFsmTrigger.FaceHighLedge);
+            Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             var slope = Vector3.Angle(hit.normal, Vector3.up);
-            if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge);
+            if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});
         }
         else
         {

@@ -1,3 +1,4 @@
+using Code.TriggerParams;
 using UnityEngine;
 
 public abstract partial class GravityFsm
@@ -16,6 +17,7 @@ public abstract partial class GravityFsm
 
     private void GroundedConfigure()
     {
-        Machine.Configure(GravityFsmState.Grounded);
+        Machine.Configure(GravityFsmState.Grounded)
+            .SubstateOf(GravityFsmState.RespectParentTransform);
     }
 }

@@ -15,6 +15,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)
             .OnEntry(_ =>

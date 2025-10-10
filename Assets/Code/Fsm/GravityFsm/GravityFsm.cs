@@ -8,6 +8,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int Grounded;
         public static int Aerial;
         public static int DontApplyYVelocity;
+        public static int RespectParentTransform;
     }
 
     public class GravityFsmTrigger : FsmTrigger
