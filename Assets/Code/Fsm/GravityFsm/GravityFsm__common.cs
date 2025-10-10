@@ -8,21 +8,28 @@ public abstract partial class GravityFsm
     protected float MinYVelocity = -40f;
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
+    private Vector3 _previousFailsafePosition;
     
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.75f;
     private const float GroundedRaycastForwardOffset = 0.05f;
     private const float GroundedRaycastMaximumAngle = 70f;
     
-    private Transform _parentTransform;
-    private Vector3 _previousParentTransformPosition;
-    private Quaternion _previousParentRotation;
+    protected Transform _parentTransform;
+    protected Vector3 _previousParentTransformPosition;
+    protected Quaternion _previousParentRotation;
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
     private const float GroundCollisionMoveSphereCastHeight = 0.95f;
     private const float FallingCollisionMoveSphereCastHeight = -0.5f;
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
+    
+    
+    private const float FailsafeSphereRadius = 0.15f;
+    private const float FailsafeSphereYOffset = 0.6f;
+    private const float FailsafeSphereForwardOffset = 0.1f;
+
     
     
     private bool GetGroundedRaycastHit(out RaycastHit hit)
@@ -86,12 +93,30 @@ public abstract partial class GravityFsm
                 {
                     output = Vector3.zero;
                 }
-
             }
-            
-            
         }
         
         return output;
     }
+    
+    private void HandleFailsafe()
+    {
+        if (Machine.IsInState(GravityFsmState.IgnoreFailsafe)) return;
+        
+        if (Physics.CheckSphere(transform.position + 
+                                (transform.up * FailsafeSphereYOffset) +
+                                (transform.forward * FailsafeSphereForwardOffset), 
+                FailsafeSphereRadius,
+                GetEnvironmentalLayermask(), 
+                QueryTriggerInteraction.Ignore))
+        {
+            transform.position = _previousFailsafePosition;
+        }
+        else
+        {
+            _previousFailsafePosition = transform.position;
+        }
+    }
+    
+
 }

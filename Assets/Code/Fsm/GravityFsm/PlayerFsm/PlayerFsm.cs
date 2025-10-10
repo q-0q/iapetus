@@ -98,8 +98,6 @@ public partial class PlayerFsm : GravityFsm
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
-
-        HandleFailsafe();
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {

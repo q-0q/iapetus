@@ -9,6 +9,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int Aerial;
         public static int DontApplyYVelocity;
         public static int RespectParentTransform;
+        public static int IgnoreFailsafe;
     }
 
     public class GravityFsmTrigger : FsmTrigger
@@ -42,6 +43,11 @@ public  abstract partial class GravityFsm : Fsm
         if (Machine.IsInState(GravityFsmState.RespectParentTransform))
         {
             RespectParentTransformOnUpdate();
+        }
+        
+        if (!Machine.IsInState(GravityFsmState.IgnoreFailsafe))
+        {
+            HandleFailsafe();
         }
     }
 
