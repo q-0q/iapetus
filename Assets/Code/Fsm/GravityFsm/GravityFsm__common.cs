@@ -9,6 +9,7 @@ public abstract partial class GravityFsm
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
     private Vector3 _previousFailsafePosition;
+    private Collider _depenetrationCollider;
     
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.75f;
@@ -101,6 +102,7 @@ public abstract partial class GravityFsm
     
     private void HandleFailsafe()
     {
+        return;
         if (Machine.IsInState(GravityFsmState.IgnoreFailsafe)) return;
         
         if (Physics.CheckSphere(transform.position + 
@@ -117,6 +119,21 @@ public abstract partial class GravityFsm
             _previousFailsafePosition = transform.position;
         }
     }
+
+    private void HandleDepenetration()
+    {
+        var neighbors =Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore);
+        foreach (var neighbor in neighbors)
+        {
+            if (Physics.ComputePenetration(_depenetrationCollider, _depenetrationCollider.transform.position, _depenetrationCollider.transform.rotation, neighbor,
+                    neighbor.transform.position, neighbor.transform.rotation, out Vector3 direction,
+                    out float distance))
+            {
+                transform.position += direction * distance;
+                break;
+            };
+        }
+    } 
     
 
 }

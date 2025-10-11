@@ -10,6 +10,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int DontApplyYVelocity;
         public static int RespectParentTransform;
         public static int IgnoreFailsafe;
+        public static int IgnoreDepenetration;
     }
 
     public class GravityFsmTrigger : FsmTrigger
@@ -24,6 +25,7 @@ public  abstract partial class GravityFsm : Fsm
         base.OnStart();
         YVelocity = 0;
         GravityStrength = 9.8f;
+        transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
     }
     
     public override void OnUpdate()
@@ -48,6 +50,11 @@ public  abstract partial class GravityFsm : Fsm
         if (!Machine.IsInState(GravityFsmState.IgnoreFailsafe))
         {
             HandleFailsafe();
+        }
+        
+        if (!Machine.IsInState(GravityFsmState.IgnoreDepenetration))
+        {
+            HandleDepenetration();
         }
     }
 

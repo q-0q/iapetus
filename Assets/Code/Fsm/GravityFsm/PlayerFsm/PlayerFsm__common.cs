@@ -201,7 +201,7 @@ public partial class PlayerFsm
         
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
-        var animationDesiredTurnAmount = Mathf.InverseLerp(50f, -50f, angle);
+        var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
         var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
