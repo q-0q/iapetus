@@ -15,6 +15,8 @@ public partial class PlayerFsm : GravityFsm
     public class PlayerFsmState : GravityFsmState
     {
         public static int GroundMove;
+        public static int StandardGroundMove;
+        public static int TightropeGroundMove;
         public static int Jumpsquat;
         public static int Landsquat;
         public static int Jump;
@@ -72,7 +74,7 @@ public partial class PlayerFsm : GravityFsm
         
         base.OnStart();
         Singleton = this;
-        InitState = PlayerFsmState.GroundMove;
+        InitState = PlayerFsmState.StandardGroundMove;
         
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
@@ -101,9 +103,9 @@ public partial class PlayerFsm : GravityFsm
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
         
-        if (Machine.IsInState(PlayerFsmState.GroundMove))
+        if (Machine.IsInState(PlayerFsmState.StandardGroundMove))
         {
-            GroundMoveOnUpdate();
+            StandardGroundMoveOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Jump))

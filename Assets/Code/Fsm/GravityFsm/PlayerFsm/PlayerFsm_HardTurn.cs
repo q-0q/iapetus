@@ -13,7 +13,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.HardTurn)
             .SubstateOf(PlayerFsmState.LockMomentum)
-            .Permit(PlayerFsmTrigger.NoMomentum, PlayerFsmState.GroundMove)
+            .Permit(PlayerFsmTrigger.NoMomentum, PlayerFsmState.StandardGroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ => { ReplaceAnimatorTrigger("HardTurn"); });

@@ -20,7 +20,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Vault)
             .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.StandardGroundMove)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .OnEntry(_ =>

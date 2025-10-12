@@ -25,7 +25,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.ImpaleGround)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.StandardGroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)

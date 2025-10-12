@@ -13,7 +13,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.HardLandRoll)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.StandardGroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {

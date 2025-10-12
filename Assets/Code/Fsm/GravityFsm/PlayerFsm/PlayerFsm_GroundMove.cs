@@ -2,17 +2,7 @@ using UnityEngine;
 
 public partial class PlayerFsm
 {
-    private void GroundMoveOnUpdate()
-    {
-        HandleInputMomentumChange();
-        HandleTurning();
-        HandleCollisionMove();
-
-        SetAnimatorMomentum();
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-        Animator.SetFloat("SpeedMod", speedMod);
-    }
-
+    
     private void GroundMoveConfigure()
     {
         Machine.Configure(PlayerFsmState.GroundMove)
@@ -25,7 +15,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
-                ReplaceAnimatorTrigger("GroundMove");
             });
     }
 }

@@ -32,7 +32,8 @@ public partial class PlayerFsm
         GrappleFlipsquatConfigure();
         WallInteractableConfigure();
         LandableConfigure();
-        
+        StandardGroundMoveConfigure();
+        TightropeGroundMoveConfigure();
         
     }
 
@@ -64,6 +65,7 @@ public partial class PlayerFsm
         StateMapConfig.IsAbstract.Add(PlayerFsmState.WallInteractable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.AirControl, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.IgnoreFailsafe, true);
+        StateMapConfig.IsAbstract.Add(PlayerFsmState.GroundMove, true);
 
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);

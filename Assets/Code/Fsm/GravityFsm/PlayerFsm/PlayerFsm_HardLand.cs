@@ -13,7 +13,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.HardLand)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.StandardGroundMove)
             .OnEntry(_ =>
             {
                 _momentum = HardLandExitMomentum;
