@@ -82,10 +82,12 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Attack");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
-        
+        _checkpointVector3 = transform.position;
+        _checkpointQuaternion = transform.rotation;
+
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;
-        
+
     }
     
 

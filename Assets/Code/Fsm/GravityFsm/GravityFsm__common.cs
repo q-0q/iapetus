@@ -11,14 +11,15 @@ public abstract partial class GravityFsm
     private Vector3 _previousFailsafePosition;
     private Collider _depenetrationCollider;
     
+    protected Transform _parentTransform;
+    protected Vector3 _previousParentTransformPosition;
+    protected Quaternion _previousParentRotation;
+    
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.75f;
     private const float GroundedRaycastForwardOffset = 0.05f;
     private const float GroundedRaycastMaximumAngle = 70f;
     
-    protected Transform _parentTransform;
-    protected Vector3 _previousParentTransformPosition;
-    protected Quaternion _previousParentRotation;
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
     private const float GroundCollisionMoveSphereCastHeight = 0.95f;
@@ -26,20 +27,27 @@ public abstract partial class GravityFsm
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
     
-    
     private const float FailsafeSphereRadius = 0.15f;
     private const float FailsafeSphereYOffset = 0.6f;
     private const float FailsafeSphereForwardOffset = 0.1f;
+    
+    protected enum GroundKind
+    {
+        Standard,
+        Tightrope
+    }
 
     
     
-    private bool GetGroundedRaycastHit(out RaycastHit hit)
+    private bool GetGroundedRaycastHit(out RaycastHit hit, out GroundKind kind)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
+        kind = GroundKind.Standard;
         if (Physics.SphereCast(transform.position + Vector3.up * raycastLength + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
+            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Tightrope")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             return slope < GroundedRaycastMaximumAngle;
         }

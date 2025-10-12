@@ -119,7 +119,7 @@ public abstract class Fsm : MonoBehaviour
         return output;
     }
 
-    protected int GetEnvironmentalLayermask()
+    public static int GetEnvironmentalLayermask()
     {
         return ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player");
     }
