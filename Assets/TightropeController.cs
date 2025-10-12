@@ -1,7 +1,6 @@
 using UnityEngine;
 
-[ExecuteInEditMode]
-public class Tightrope : MonoBehaviour
+public class TightropeController : MonoBehaviour
 {
 
     private const float CheckCapsuleRadius = 0.25f;
@@ -15,7 +14,7 @@ public class Tightrope : MonoBehaviour
     {
         _end = transform.Find("End");
         TryGetComponent(out _lineRenderer);
-        transform.Find("Collider").TryGetComponent(out _capsuleCollider);
+        transform.Find("Trigger").TryGetComponent(out _capsuleCollider);
     }
 
     // Update is called once per frame
@@ -52,5 +51,11 @@ public class Tightrope : MonoBehaviour
 
         // Rotate the capsule so its local Y axis aligns with the vector from A to B
         capsule.transform.rotation = Quaternion.FromToRotation(Vector3.up, direction.normalized);
+    }
+
+    public Quaternion GetAlignmentRotation()
+    {
+        var forward = _end.transform.position - transform.position;
+        return Quaternion.LookRotation(forward, Vector3.up);
     }
 }

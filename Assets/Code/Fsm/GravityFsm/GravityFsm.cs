@@ -27,8 +27,10 @@ public  abstract partial class GravityFsm : Fsm
         YVelocity = 0;
         GravityStrength = 9.8f;
         transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
+
+        InstantiateTightropeCollider();
     }
-    
+
     public override void OnUpdate()
     {
         base.OnUpdate();

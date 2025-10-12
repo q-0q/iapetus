@@ -47,7 +47,7 @@ public abstract partial class GravityFsm
         if (Physics.SphereCast(transform.position + Vector3.up * raycastLength + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Tightrope")) kind = GroundKind.Tightrope;
+            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             return slope < GroundedRaycastMaximumAngle;
         }
@@ -141,7 +141,15 @@ public abstract partial class GravityFsm
                 break;
             };
         }
-    } 
-    
+    }
 
+
+    private void InstantiateTightropeCollider()
+    {
+        var tightropeColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmTightropeCollider") as GameObject;
+        var tightropeCollider = Instantiate(tightropeColliderPrefab, transform.position, Quaternion.identity);
+        tightropeCollider.TryGetComponent(out GravityFsmTightropeCollider component);
+        component.SetOwner(this);
+        
+    }
 }
