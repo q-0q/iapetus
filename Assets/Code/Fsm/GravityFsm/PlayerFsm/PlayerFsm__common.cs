@@ -37,7 +37,7 @@ public partial class PlayerFsm
     public static event Action OnPlayerRacePressed;
     
     public const float InputMagnitudeThreshhold = 0.1f;
-    private const float InteractionDistance = 5f;
+    private const float InteractionDistance = 2.5f;
     
     private const float ForwardRaycastDistance = 0.9f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;
@@ -378,6 +378,7 @@ public partial class PlayerFsm
 
     private void Reset()
     {
+        _parentTransform = null;
         Machine.Jump(PlayerFsmState.GroundMove);
         transform.position = _checkpointVector3;
         transform.rotation = _checkpointQuaternion;

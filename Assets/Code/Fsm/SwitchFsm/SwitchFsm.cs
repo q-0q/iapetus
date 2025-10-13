@@ -28,17 +28,13 @@ public partial class SwitchFsm : Fsm
         InitState = SwitchFsmState.Off;
         _interactionCollider.SetEnabled(true);
         _powerConnector = GetComponentInChildren<PowerConnector>();
-        foreach (var powerConnector in outputs)
-        {
-            powerConnector.AddInput(_powerConnector);
-        }
     }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
 
-        if (TimeInCurrentState() > 0.5f)
+        if (TimeInCurrentState() > 0.7f)
         {
             _powerConnector.Source = Machine.IsInState(SwitchFsmState.On);
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,9 @@ public class PowerConnector : MonoBehaviour
 {
 
     public bool Source = false;
+    
+    [SerializeField]
+    private List<PowerConnector> outputs;
     
     private HashSet<PowerConnector> _spatialInputs;
     private HashSet<PowerConnector> _inputs;
@@ -21,7 +25,15 @@ public class PowerConnector : MonoBehaviour
         _spatialInputs = new HashSet<PowerConnector>();
         _powerLamp = GetComponentInChildren<PowerLamp>();
     }
-    
+
+    private void Start()
+    {
+        foreach (var powerConnector in outputs)
+        {
+            powerConnector.AddInput(this);
+        }
+    }
+
     void Update()
     {
         _spatialInputs = FindSpatialInputs();
