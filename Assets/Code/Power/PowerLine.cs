@@ -15,8 +15,10 @@ public class PowerLine : MonoBehaviour
         _powerConnectorB = transform.Find("PowerConnectorB").GetComponent<PowerConnector>();
         _powerConnectorA.AddInput(_powerConnectorB);
         _powerConnectorB.AddInput(_powerConnectorA);
+        _lineRenderer.SetPosition(0, _powerConnectorA.transform.position);
+        _lineRenderer.SetPosition(1, _powerConnectorB.transform.position);
     }
-
+    
     void Update()
     {
         Color color = _powerConnectorA.IsPowered() || _powerConnectorB.IsPowered() ? Color.cyan : Color.gray;
