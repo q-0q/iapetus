@@ -21,6 +21,11 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.Attack);
         }
         
+        if (_inputBuffer.IsBuffered("Interact"))
+        {
+            Machine.Fire(PlayerFsmTrigger.Interact);
+        }
+        
         // if (_inputBuffer.IsBuffered("Dash"))
         // {
         //     Machine.Fire(PlayerFsmTrigger.Dash);

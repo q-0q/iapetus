@@ -42,6 +42,7 @@ public partial class PlayerFsm : GravityFsm
         public static int WallInteractable;
         public static int Landable;
         public static int AirControl;
+        public static int WalkToPosition;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -59,6 +60,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Dash;
         public static int Attack;
         public static int ContactHitboxTrigger;
+        public static int Interact;
     }
     
     protected override void OnAwake()
@@ -79,6 +81,7 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Jump");
         _inputBuffer.InitInput("Dash");
         _inputBuffer.InitInput("Attack");
+        _inputBuffer.InitInput("Interact");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
         _checkpointVector3 = transform.position;
