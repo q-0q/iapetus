@@ -3,6 +3,7 @@ public partial class PlayerFsm
     private void LandableConfigure()
     {
         Machine.Configure(PlayerFsmState.Landable)
+            .Permit(GravityFsmTrigger.StartFrameOnTightrope, PlayerFsmState.TightropeLandsquat)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => CurrentFallDistance() < HardLandAirDiff,
                 1)

@@ -11,6 +11,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.TightropeGroundMove)
             .SubstateOf(PlayerFsmState.GroundMove)
+            .SubstateOf(PlayerFsmState.Tightrope)
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;

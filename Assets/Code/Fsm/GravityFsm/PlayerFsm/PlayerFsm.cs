@@ -16,7 +16,7 @@ public partial class PlayerFsm : GravityFsm
     {
         public static int GroundMove;
         public static int StandardGroundMove;
-        public static int TightropeGroundMove;
+
         public static int Jumpsquat;
         public static int Landsquat;
         public static int Jump;
@@ -45,6 +45,11 @@ public partial class PlayerFsm : GravityFsm
         public static int Landable;
         public static int AirControl;
         public static int IgnoreFailsafe;
+
+        public static int Tightrope;
+        public static int TightropeGroundMove;
+        public static int TightropeLandsquat;
+        public static int TightropeJumpsquat;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

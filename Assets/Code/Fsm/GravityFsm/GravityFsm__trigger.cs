@@ -11,7 +11,11 @@ public abstract partial class GravityFsm
             if (YVelocity < 0.5f)
             {
                 var param = new RaycastHitParam() { Hit = hit };
-                Machine.Fire(GravityFsmTrigger.StartFrameGrounded, param);
+                var trigger = kind == GroundKind.Tightrope
+                    ? GravityFsmTrigger.StartFrameOnTightrope
+                    : GravityFsmTrigger.StartFrameGrounded;
+                print(kind);
+                Machine.Fire(trigger, param);
             }
         }
         else

@@ -19,7 +19,7 @@ public partial class PlayerFsm
             Time.deltaTime * GrappleStartupYPositionLerpStrength);
 
         _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * GrappleStartupMomentumLossMod);
-        HandleCollisionMove();
+        DoGenericCollisionMove();
     }
 
     private void GrappleStartupConfigure()

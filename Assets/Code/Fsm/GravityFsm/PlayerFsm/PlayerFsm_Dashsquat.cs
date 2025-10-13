@@ -2,7 +2,7 @@ public partial class PlayerFsm
 {
     private void DashsquatOnUpdate()
     {
-        HandleCollisionMove();
+        DoGenericCollisionMove();
         HandleTurning(DashsquatTurnMultiplier, true);
     }
 

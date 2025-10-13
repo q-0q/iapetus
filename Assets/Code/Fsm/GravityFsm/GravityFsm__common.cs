@@ -10,6 +10,7 @@ public abstract partial class GravityFsm
     protected float GroundForwardSlope;
     private Vector3 _previousFailsafePosition;
     private Collider _depenetrationCollider;
+    protected Transform TightropeCollider;
     
     protected Transform _parentTransform;
     protected Vector3 _previousParentTransformPosition;
@@ -47,7 +48,7 @@ public abstract partial class GravityFsm
         if (Physics.SphereCast(transform.position + Vector3.up * raycastLength + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
+            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Tightrope")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             return slope < GroundedRaycastMaximumAngle;
         }

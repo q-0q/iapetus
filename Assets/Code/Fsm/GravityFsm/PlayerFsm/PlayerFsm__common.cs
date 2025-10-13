@@ -276,11 +276,12 @@ public partial class PlayerFsm
         Animator.SetFloat("Momentum", ComputeMomentumWeight());
     }
 
-    private void HandleCollisionMove(float modifier = 1f)
+    private void DoGenericCollisionMove(float modifier = 1f)
     {
+        var t = Machine.IsInState(PlayerFsmState.Tightrope) ? TightropeCollider : transform;
         var desiredMove = ComputeDesiredMove();
         var collisionMove = ComputeCollisionMove(desiredMove);
-        transform.position += collisionMove * modifier;
+        t.position += collisionMove * modifier;
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;

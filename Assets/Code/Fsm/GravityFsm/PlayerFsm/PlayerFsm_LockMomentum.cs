@@ -6,6 +6,6 @@ public partial class PlayerFsm
     {
         Animator.SetFloat("SpeedMod", Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()));
         SetAnimatorMomentum();
-        HandleCollisionMove();
+        DoGenericCollisionMove();
     }
 }

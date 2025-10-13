@@ -6,7 +6,7 @@ public partial class PlayerFsm
     {
         HandleInputMomentumChange();
         HandleTurning();
-        HandleCollisionMove();
+        DoGenericCollisionMove();
 
         SetAnimatorMomentum();
         var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
