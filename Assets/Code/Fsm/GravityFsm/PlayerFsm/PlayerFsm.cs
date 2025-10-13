@@ -43,6 +43,8 @@ public partial class PlayerFsm : GravityFsm
         public static int Landable;
         public static int AirControl;
         public static int WalkToPosition;
+        public static int WalkToSwitchPosition;
+        public static int InteractWithSwitch;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -60,7 +62,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Dash;
         public static int Attack;
         public static int ContactHitboxTrigger;
-        public static int Interact;
+        public static int InteractWithSwitch;
         public static int ArriveAtWalkToPositionTarget;
     }
     

@@ -19,7 +19,6 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WalkToPosition)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;

@@ -23,7 +23,7 @@ public partial class PlayerFsm
         
         if (_inputBuffer.IsBuffered("Interact"))
         {
-            Machine.Fire(PlayerFsmTrigger.Interact);
+            Machine.Fire(PlayerFsmTrigger.InteractWithSwitch);
         }
         
         // if (_inputBuffer.IsBuffered("Dash"))
