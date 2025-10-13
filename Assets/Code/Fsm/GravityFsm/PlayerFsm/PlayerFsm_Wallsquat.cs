@@ -7,6 +7,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(GravityFsmState.LockTightropeColliderPosition)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             // .Permit(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep,

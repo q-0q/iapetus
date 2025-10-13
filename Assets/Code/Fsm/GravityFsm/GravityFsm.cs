@@ -11,6 +11,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int RespectParentTransform;
         public static int IgnoreFailsafe;
         public static int IgnoreDepenetration;
+        public static int LockTightropeColliderPosition;
     }
 
     public class GravityFsmTrigger : FsmTrigger

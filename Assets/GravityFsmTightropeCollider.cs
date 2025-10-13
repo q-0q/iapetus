@@ -29,7 +29,12 @@ public class GravityFsmTightropeCollider : MonoBehaviour
         var neighbors = Physics.OverlapSphere(_owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
         foreach (var neighbor in neighbors)
         {
-            transform.position = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation);
+            if (!_owner.Machine.IsInState(GravityFsm.GravityFsmState.LockTightropeColliderPosition))
+            {
+                transform.position = Physics.ClosestPoint(_owner.transform.position, neighbor,
+                    neighbor.transform.position, neighbor.transform.rotation);
+            }
+            
             neighbor.transform.parent.TryGetComponent(out TightropeController controller);
             transform.rotation = controller.GetAlignmentRotation();
             _collider.enabled = true;

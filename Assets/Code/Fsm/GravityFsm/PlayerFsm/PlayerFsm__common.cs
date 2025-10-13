@@ -366,6 +366,7 @@ public partial class PlayerFsm
 
     private void Reset()
     {
+        _parentTransform = null;
         Machine.Jump(PlayerFsmState.StandardGroundMove);
         transform.position = _checkpointVector3;
         transform.rotation = _checkpointQuaternion;

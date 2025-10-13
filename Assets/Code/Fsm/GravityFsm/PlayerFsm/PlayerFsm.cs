@@ -199,7 +199,7 @@ public partial class PlayerFsm : GravityFsm
             Reset();
         }
         
-        if (transform.position.y < -80f)
+        if (transform.position.y < -30f)
         {
             Reset();
         }
