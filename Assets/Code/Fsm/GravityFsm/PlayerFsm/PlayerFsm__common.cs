@@ -137,7 +137,7 @@ public partial class PlayerFsm
     private const float GrappleStartupYPositionOffset = 1f;
     private const float GrappleStartupMomentumLossMod = 1.25f;
 
-    private const float WalkToPositionTurnPhaseDuration = 0.2f;
+    private const float WalkToPositionTurnPhaseAngle = 30f;
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
     

@@ -1,5 +1,6 @@
 using System;
 using Code.TriggerParams;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -27,6 +28,8 @@ public partial class PlayerFsm
                 LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
             foreach (var neighbor in neighbors)
             {
+                var deltaY = neighbor.transform.position.y - transform.position.y;
+                print(deltaY);
                 neighbor.TryGetComponent(out InteractionCollider interactionCollider);
                 var param = new InteractionParam() { InteractionCollider = interactionCollider };
                 Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
@@ -50,7 +53,7 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
         
-        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < 1.5f)
+        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < 1.75f)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
         }

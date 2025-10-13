@@ -200,6 +200,11 @@ public partial class PlayerFsm : GravityFsm
         {
             WalkToPositionOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.InteractWithSwitch))
+        {
+            InteractWithSwitchOnUpdate();
+        }
 
 
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())

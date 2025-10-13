@@ -7,8 +7,6 @@ public partial class SwitchFsm
             .Permit(SwitchFsmTrigger.Toggle, SwitchFsmState.Off)
             .OnEntry(_ =>
             {
-                OnInteractionCollider.SetEnabled(false);
-                OffInteractionCollider.SetEnabled(true);
                 ReplaceAnimatorTrigger("On");
             });
     }

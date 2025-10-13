@@ -5,9 +5,10 @@ public partial class PlayerFsm
 {
     private void WalkToPositionOnUpdate()
     {
-        var isInTurnPhase = TimeInCurrentState() < WalkToPositionTurnPhaseDuration;
         var toTarget = _walkToPositionTarget - transform.position;
         toTarget = new Vector3(toTarget.x, 0, toTarget.z);
+        var angle = Vector3.Angle(transform.forward, toTarget);
+        var isInTurnPhase = angle > WalkToPositionTurnPhaseAngle;
         _momentum = Mathf.Lerp(_momentum, isInTurnPhase ? 0 : WalkToPositionMomentum, Time.deltaTime * WalkToPositionMomentumLerpStrength);
         HandleTurningCore(1f, 0f, toTarget);
         HandleCollisionMove();
