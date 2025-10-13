@@ -42,7 +42,6 @@ public partial class PlayerFsm : GravityFsm
         public static int WallInteractable;
         public static int Landable;
         public static int AirControl;
-        public static int IgnoreFailsafe;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

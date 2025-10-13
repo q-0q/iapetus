@@ -18,7 +18,6 @@ public partial class PlayerFsm
     private void VaultConfigure()
     {
         Machine.Configure(PlayerFsmState.Vault)
-            .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.RespectParentTransform)

@@ -8,7 +8,6 @@ public abstract partial class GravityFsm
     protected float MinYVelocity = -40f;
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
-    private Vector3 _previousFailsafePosition;
     private Collider _depenetrationCollider;
     
     protected Transform _parentTransform;
@@ -26,10 +25,6 @@ public abstract partial class GravityFsm
     private const float FallingCollisionMoveSphereCastHeight = -0.5f;
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
-    
-    private const float FailsafeSphereRadius = 0.15f;
-    private const float FailsafeSphereYOffset = 0.6f;
-    private const float FailsafeSphereForwardOffset = 0.1f;
     
     protected enum GroundKind
     {
@@ -108,25 +103,6 @@ public abstract partial class GravityFsm
         return output;
     }
     
-    private void HandleFailsafe()
-    {
-        return;
-        if (Machine.IsInState(GravityFsmState.IgnoreFailsafe)) return;
-        
-        if (Physics.CheckSphere(transform.position + 
-                                (transform.up * FailsafeSphereYOffset) +
-                                (transform.forward * FailsafeSphereForwardOffset), 
-                FailsafeSphereRadius,
-                GetEnvironmentalLayermask(), 
-                QueryTriggerInteraction.Ignore))
-        {
-            transform.position = _previousFailsafePosition;
-        }
-        else
-        {
-            _previousFailsafePosition = transform.position;
-        }
-    }
 
     private void HandleDepenetration()
     {

@@ -14,7 +14,6 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.SlowVaultFinish)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
-            .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
