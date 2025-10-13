@@ -25,6 +25,8 @@ public partial class SwitchFsm : Fsm
     {
         base.OnStart();
         InitState = SwitchFsmState.Off;
+        transform.Find("OnInteractionCollider").TryGetComponent(out OnInteractionCollider);
+        transform.Find("OffInteractionCollider").TryGetComponent(out OffInteractionCollider);
     }
     
     public override void OnUpdate()

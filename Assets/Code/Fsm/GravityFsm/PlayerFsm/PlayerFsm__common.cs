@@ -36,6 +36,7 @@ public partial class PlayerFsm
     public static event Action OnPlayerRacePressed;
     
     public const float InputMagnitudeThreshhold = 0.1f;
+    private const float InteractionDistance = 5f;
     
     private const float ForwardRaycastDistance = 0.9f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;

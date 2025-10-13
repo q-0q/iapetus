@@ -23,7 +23,13 @@ public partial class PlayerFsm
         
         if (_inputBuffer.IsBuffered("Interact"))
         {
-            Machine.Fire(PlayerFsmTrigger.InteractWithSwitch);
+            var neighbors = Physics.OverlapSphere(transform.position, InteractionDistance,
+                LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
+            foreach (var neighbor in neighbors)
+            {
+                var param = new Vector3Param() { Vector3 = neighbor.transform.position };
+                Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
+            }
         }
         
         // if (_inputBuffer.IsBuffered("Dash"))
