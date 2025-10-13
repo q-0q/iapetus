@@ -29,7 +29,6 @@ public partial class PlayerFsm
             foreach (var neighbor in neighbors)
             {
                 var deltaY = neighbor.transform.position.y - transform.position.y;
-                print(deltaY);
                 neighbor.TryGetComponent(out InteractionCollider interactionCollider);
                 var param = new InteractionParam() { InteractionCollider = interactionCollider };
                 Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);

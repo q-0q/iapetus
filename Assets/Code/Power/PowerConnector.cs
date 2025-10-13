@@ -10,6 +10,7 @@ public class PowerConnector : MonoBehaviour
     
     private HashSet<PowerConnector> _spatialInputs;
     private HashSet<PowerConnector> _inputs;
+    private PowerLamp _powerLamp;
 
     public bool Disabled = false;
     private bool _powered;
@@ -18,11 +19,16 @@ public class PowerConnector : MonoBehaviour
     {
         _inputs = new HashSet<PowerConnector>();
         _spatialInputs = new HashSet<PowerConnector>();
+        _powerLamp = GetComponentInChildren<PowerLamp>();
     }
     
     void Update()
     {
         _spatialInputs = FindSpatialInputs();
+        if (_powerLamp is not null)
+        {
+            _powerLamp.SetLamp(IsPowered());
+        }
         
         // var color = IsPowered() ? Color.yellow : Color.red;
         // var mat = GetComponent<MeshRenderer>().material;
