@@ -1,3 +1,4 @@
+using Code.TriggerParams;
 using UnityEngine;
 
 public partial class PlayerFsm
@@ -19,8 +20,11 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WalkToPosition)
             .SubstateOf(GravityFsmState.Grounded)
-            .OnEntry(_ =>
+            .OnEntry(param =>
             {
+                if (param is not InteractionParam interactionParam) return;
+                _currentInteractionCollider = interactionParam.InteractionCollider;
+                _walkToPositionTarget = interactionParam.InteractionCollider.transform.position;
                 _wallsquattedSinceLeavingGround = false;
                 ReplaceAnimatorTrigger("GroundMove");
             });

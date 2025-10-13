@@ -1,3 +1,5 @@
+using Unity.VisualScripting;
+
 public partial class SwitchFsm
 {
 
@@ -6,5 +8,10 @@ public partial class SwitchFsm
         base.OnFireTriggers();
 
 
+    }
+
+    private void OnToggle()
+    {
+        Machine.Fire(SwitchFsmTrigger.Toggle);
     }
 }

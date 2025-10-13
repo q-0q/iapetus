@@ -13,7 +13,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
-                ReplaceAnimatorTrigger("HardLand");
+                ReplaceAnimatorTrigger("InteractWithSwitch");
             });
     }
 }

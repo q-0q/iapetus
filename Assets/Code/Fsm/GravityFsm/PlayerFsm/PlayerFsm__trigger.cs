@@ -27,7 +27,8 @@ public partial class PlayerFsm
                 LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
             foreach (var neighbor in neighbors)
             {
-                var param = new Vector3Param() { Vector3 = neighbor.transform.position };
+                neighbor.TryGetComponent(out InteractionCollider interactionCollider);
+                var param = new InteractionParam() { InteractionCollider = interactionCollider };
                 Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
             }
         }
@@ -49,7 +50,7 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
         
-        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < 1f)
+        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < 1.5f)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
         }

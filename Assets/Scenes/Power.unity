@@ -122,6 +122,33 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &402734608 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -8391222552659086748, guid: 366abcd28c9054d90af565e2359705fc,
+    type: 3}
+  m_PrefabInstance: {fileID: 910161039}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &402734612
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 402734608}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.02, y: 0.019999996, z: 0.019999996}
+  m_Center: {x: 0, y: -2.7755576e-17, z: 4.656613e-10}
 --- !u!1 &778140055
 GameObject:
   m_ObjectHideFlags: 0
@@ -237,8 +264,9 @@ GameObject:
   m_Component:
   - component: {fileID: 792035661}
   - component: {fileID: 792035662}
+  - component: {fileID: 792035663}
   m_Layer: 13
-  m_Name: OffInteractionCollider
+  m_Name: OnInteractionCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -253,7 +281,7 @@ Transform:
   m_GameObject: {fileID: 792035660}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.6, y: 1.93, z: 0}
+  m_LocalPosition: {x: 4, y: 1.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -280,6 +308,18 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &792035663
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 792035660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92e8042624f594a99bc2abbe1f2b02a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &910161039
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -290,13 +330,28 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -1.76
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
         type: 3}
@@ -338,6 +393,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 366abcd28c9054d90af565e2359705fc,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 366abcd28c9054d90af565e2359705fc,
         type: 3}
       propertyPath: m_Name
@@ -363,6 +423,14 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 910161042}
+    - targetCorrespondingSourceObject: {fileID: -5620631720405983345, guid: 366abcd28c9054d90af565e2359705fc,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1700845813}
+    - targetCorrespondingSourceObject: {fileID: -8391222552659086748, guid: 366abcd28c9054d90af565e2359705fc,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 402734612}
   m_SourcePrefab: {fileID: 100100000, guid: 366abcd28c9054d90af565e2359705fc, type: 3}
 --- !u!1 &910161040 stripped
 GameObject:
@@ -605,8 +673,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1409871540}
   - component: {fileID: 1409871541}
+  - component: {fileID: 1409871542}
   m_Layer: 13
-  m_Name: OnInteractionCollider
+  m_Name: OffInteractionCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -621,7 +690,7 @@ Transform:
   m_GameObject: {fileID: 1409871539}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.6, y: 1.93, z: 0}
+  m_LocalPosition: {x: -4, y: 1.24, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -648,6 +717,45 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1409871542
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1409871539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92e8042624f594a99bc2abbe1f2b02a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &1700845809 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -5620631720405983345, guid: 366abcd28c9054d90af565e2359705fc,
+    type: 3}
+  m_PrefabInstance: {fileID: 910161039}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1700845813
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700845809}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.019999998, y: 0.019999994, z: 0.019999988}
+  m_Center: {x: 0, y: -9.880985e-15, z: 0.000000016763806}
 --- !u!1001 &1745830528
 PrefabInstance:
   m_ObjectHideFlags: 0

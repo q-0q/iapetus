@@ -19,14 +19,16 @@ public partial class SwitchFsm : Fsm
     protected override void OnAwake()
     {
         base.OnAwake();
+        transform.Find("OnInteractionCollider").TryGetComponent(out OnInteractionCollider);
+        transform.Find("OffInteractionCollider").TryGetComponent(out OffInteractionCollider);
     }
 
     protected override void OnStart()
     {
         base.OnStart();
         InitState = SwitchFsmState.Off;
-        transform.Find("OnInteractionCollider").TryGetComponent(out OnInteractionCollider);
-        transform.Find("OffInteractionCollider").TryGetComponent(out OffInteractionCollider);
+        OnInteractionCollider.SetEnabled(true);
+        OffInteractionCollider.SetEnabled(false);
     }
     
     public override void OnUpdate()
@@ -37,11 +39,13 @@ public partial class SwitchFsm : Fsm
 
     private void OnEnable()
     {
-
+        OnInteractionCollider.OnInteracted += OnToggle;
+        OffInteractionCollider.OnInteracted += OnToggle;
     }
 
     private void OnDisable()
     {
-
+        OnInteractionCollider.OnInteracted -= OnToggle;
+        OffInteractionCollider.OnInteracted -= OnToggle;
     }
 }

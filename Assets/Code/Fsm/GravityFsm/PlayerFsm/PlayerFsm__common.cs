@@ -24,6 +24,7 @@ public partial class PlayerFsm
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
     private Vector3 _walkToPositionTarget;
+    private InteractionCollider _currentInteractionCollider;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;

@@ -7,6 +7,10 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WalkToSwitchPosition)
             .SubstateOf(PlayerFsmState.WalkToPosition)
-            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.InteractWithSwitch);
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.InteractWithSwitch)
+            .OnExit(_ =>
+            {
+                _currentInteractionCollider.InvokeOnInteracted();
+            });
     }
 }

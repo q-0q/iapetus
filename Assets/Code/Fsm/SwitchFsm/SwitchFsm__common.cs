@@ -4,6 +4,6 @@ using UnityEngine.Serialization;
 
 public partial class SwitchFsm
 {
-    private Collider OnInteractionCollider;
-    private Collider OffInteractionCollider;
+    private InteractionCollider OnInteractionCollider;
+    private InteractionCollider OffInteractionCollider;
 }
