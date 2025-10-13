@@ -32,7 +32,7 @@ public partial class PlayerFsm
         GrappleFlipsquatConfigure();
         WallInteractableConfigure();
         LandableConfigure();
-        
+        WalkToPositionConfigure();
         
     }
 

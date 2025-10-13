@@ -192,6 +192,11 @@ public partial class PlayerFsm : GravityFsm
         {
             GrappleStartupOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.WalkToPosition))
+        {
+            WalkToPositionOnUpdate();
+        }
 
 
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
