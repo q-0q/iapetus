@@ -42,6 +42,11 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
+        
+        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < 1f)
+        {
+            Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
+        }
 
         FireFaceTriggers();
         // FireFlankTriggers();

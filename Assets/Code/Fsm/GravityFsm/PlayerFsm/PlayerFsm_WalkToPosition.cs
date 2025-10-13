@@ -4,10 +4,12 @@ public partial class PlayerFsm
 {
     private void WalkToPositionOnUpdate()
     {
-        // 1. set momentum as a function of distance from target (slow down at end) and maybe also time in state (speed up at start)
-        HandleTurning(1f, false, 0f); // 2. abstract away HandleTurningCore to support turning based on non-input vectors
-        // 3. collisionmove on transform
-
+        var isInTurnPhase = TimeInCurrentState() < WalkToPositionTurnPhaseDuration;
+        var toTarget = _walkToPositionTarget - transform.position;
+        toTarget = new Vector3(toTarget.x, 0, toTarget.z);
+        _momentum = Mathf.Lerp(_momentum, isInTurnPhase ? 0 : WalkToPositionMomentum, Time.deltaTime * WalkToPositionMomentumLerpStrength);
+        HandleTurningCore(1f, 0f, toTarget);
+        HandleCollisionMove();
         SetAnimatorMomentum();
         var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
         Animator.SetFloat("SpeedMod", speedMod);
@@ -17,11 +19,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WalkToPosition)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
-            .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
-            .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
-            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
-            .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;

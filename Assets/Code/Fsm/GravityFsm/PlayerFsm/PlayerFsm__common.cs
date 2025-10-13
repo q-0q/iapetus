@@ -23,6 +23,7 @@ public partial class PlayerFsm
     private FlankType _previousWallrunSide;
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
+    private Vector3 _walkToPositionTarget;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -133,6 +134,10 @@ public partial class PlayerFsm
     private const float GrappleStartupYPositionLerpStrength = 3f;
     private const float GrappleStartupYPositionOffset = 1f;
     private const float GrappleStartupMomentumLossMod = 1.25f;
+
+    private const float WalkToPositionTurnPhaseDuration = 0.2f;
+    private const float WalkToPositionMomentum = 6f;
+    private const float WalkToPositionMomentumLerpStrength = 9f;
     
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -199,8 +204,13 @@ public partial class PlayerFsm
             inputVector3 = transform.forward;
         }
         
+        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3);
+    }
+
+    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction)
+    {
         float momentumWeight = ComputeMomentumWeight();
-        var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
+        var angle = Vector3.SignedAngle(direction.normalized, transform.forward.normalized, Vector3.up);
         var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
@@ -213,7 +223,7 @@ public partial class PlayerFsm
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
                                               Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier));
         
-        var quaternion = Quaternion.LookRotation(inputVector3.normalized, Vector3.up);
+        var quaternion = Quaternion.LookRotation(direction.normalized, Vector3.up);
         
         var lowMomentumRotationMod = _momentum < LowMomentumThreshhold ? LowMomentumRotationMod : 1f;
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);

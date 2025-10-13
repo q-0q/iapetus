@@ -61,6 +61,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Attack;
         public static int ContactHitboxTrigger;
         public static int Interact;
+        public static int ArriveAtWalkToPositionTarget;
     }
     
     protected override void OnAwake()
