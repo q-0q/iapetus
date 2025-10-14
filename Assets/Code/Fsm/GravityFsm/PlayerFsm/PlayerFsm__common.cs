@@ -369,6 +369,11 @@ public partial class PlayerFsm
         var machine = PlayerWeaponFsm.Singleton.Machine;
         return machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.Idle) || machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.ImpaleStartup);
     }
+    
+    private bool CanDash(TriggerParams? triggerParams)
+    {
+        return _momentum > 9f;
+    }
 
     private void OnContactHitboxCollide()
     {

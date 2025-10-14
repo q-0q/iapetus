@@ -25,6 +25,7 @@ public partial class PlayerFsm
         WallrunConfigure();
         DashsquatConfigure();
         GrappleConfigure();
+        DashConfigure();
         ImpaleGroundConfigure();
         ImpaleAirConfigure();
         GrappleStartupConfigure();
@@ -52,8 +53,9 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.MediumVaultHang, 0.375f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);
         StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.1f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.13f);
         StateMapConfig.Duration.Add(PlayerFsmState.Grapple, 0.1f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleGround, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.ImpaleAir, 0.55f);
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.175f);
@@ -68,6 +70,7 @@ public partial class PlayerFsm
         StateMapConfig.IsAbstract.Add(PlayerFsmState.AirControl, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.WalkToPosition, true);
 
+        // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
     }

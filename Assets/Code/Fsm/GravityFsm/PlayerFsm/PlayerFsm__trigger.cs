@@ -35,10 +35,10 @@ public partial class PlayerFsm
             }
         }
         
-        // if (_inputBuffer.IsBuffered("Dash"))
-        // {
-        //     Machine.Fire(PlayerFsmTrigger.Dash);
-        // }
+        if (_inputBuffer.IsBuffered("Dash"))
+        {
+            Machine.Fire(PlayerFsmTrigger.Dash);
+        }
         
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);

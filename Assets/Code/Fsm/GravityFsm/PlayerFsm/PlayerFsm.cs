@@ -45,6 +45,7 @@ public partial class PlayerFsm : GravityFsm
         public static int WalkToPosition;
         public static int WalkToSwitchPosition;
         public static int InteractWithSwitch;
+        public static int Dash;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -173,6 +174,10 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Dashsquat))
         {
             DashsquatOnUpdate();
+        }
+        if (Machine.IsInState(PlayerFsmState.Dash))
+        {
+            DashOnUpdate();
         }
         if (Machine.IsInState(PlayerFsmState.Grapple))
         {
