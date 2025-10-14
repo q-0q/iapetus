@@ -378,7 +378,7 @@ public partial class PlayerFsm
     
     private bool CanDash(TriggerParams? triggerParams)
     {
-        return _momentum > KiMomentumThreshhold;
+        return true;
     }
 
     private void OnContactHitboxCollide()
@@ -401,16 +401,15 @@ public partial class PlayerFsm
     private void HandleKiEffects()
     {
 
-        var on = _momentum > KiMomentumThreshhold;
+        var on = Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Dashsquat);
         
         foreach (var p in _kiIndicatorParticles)
         {
-            var play = Machine.IsInState(PlayerFsmState.Dash);
-            if (play && !p.isEmitting) p.Play();
-            else if (!play) p.Stop();
+            if (on && !p.isEmitting) p.Play();
+            else if (!on) p.Stop();
         }
 
-        var desiredGlowWeight = on ? 2.5f : 0f;
+        var desiredGlowWeight = on ? 3.5f : 0f;
         var currentGlowWeight =  _material.GetFloat("_GlowWeight");
         _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * 5f));
     }
