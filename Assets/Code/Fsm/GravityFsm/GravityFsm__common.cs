@@ -17,7 +17,7 @@ public abstract partial class GravityFsm
     private const float GroundedYPositionLerpStrength = 50f;
     private const float GroundedRaycastLength = 0.75f;
     private const float GroundedRaycastForwardOffset = 0.05f;
-    private const float GroundedRaycastMaximumAngle = 70f;
+    private const float GroundedRaycastMaximumAngle = 50f;
     
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
@@ -44,6 +44,7 @@ public abstract partial class GravityFsm
         {
             if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
+            print(slope);
             return slope < GroundedRaycastMaximumAngle;
         }
 
@@ -114,7 +115,6 @@ public abstract partial class GravityFsm
                     out float distance))
             {
                 transform.position += direction * distance;
-                break;
             };
         }
     }
