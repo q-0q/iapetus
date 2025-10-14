@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using DG.Tweening;
 using JetBrains.Annotations;
 using Unity.Mathematics;
@@ -90,6 +91,9 @@ public partial class PlayerFsm : GravityFsm
         _previousWallrunSide = FlankType.None;
         _checkpointVector3 = transform.position;
         _checkpointQuaternion = transform.rotation;
+        _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().ToList();
+        // transform.Find("KiIndicatorParticles").SetParent(null);
+        _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
 
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;
@@ -106,6 +110,8 @@ public partial class PlayerFsm : GravityFsm
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
+
+        var oldMomentum = _momentum;
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
@@ -227,7 +233,9 @@ public partial class PlayerFsm : GravityFsm
             Reset();
             OnPlayerRacePressed?.Invoke();
         }
-        
+
+        HandleKiEffects();
+
         base.OnUpdate(); // 
 
     }

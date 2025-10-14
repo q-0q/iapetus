@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Wasp;
@@ -25,6 +27,8 @@ public partial class PlayerFsm
     private Quaternion _checkpointQuaternion;
     private Vector3 _walkToPositionTarget;
     private InteractionCollider _currentInteractionCollider;
+    private List<ParticleSystem> _kiIndicatorParticles;
+    private Material _material;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -62,7 +66,7 @@ public partial class PlayerFsm
     private const float MaximumMomentumSpeedMod = 3.5f;
     private const float RotationSpeed = 3f;
     private const float CollisionMomentumLossRate = 300f;
-    private const float MomentumGainRate = 14f;
+    private const float MomentumGainRate = 12f;
     private const float MomentumLossRate = 20f;
     private const float MomentumTurnLoss = 5f;
     private const float NoMomentumThreshold = 0.25f;
@@ -141,6 +145,8 @@ public partial class PlayerFsm
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
     private const float ArriveAtWalkPositionTargetDistance = 1.5f;
+
+    private const float KiMomentumThreshhold = 11.5f;
     
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -372,7 +378,7 @@ public partial class PlayerFsm
     
     private bool CanDash(TriggerParams? triggerParams)
     {
-        return _momentum > 9f;
+        return _momentum > KiMomentumThreshhold;
     }
 
     private void OnContactHitboxCollide()
@@ -390,5 +396,22 @@ public partial class PlayerFsm
         transform.rotation = _checkpointQuaternion;
         _momentum = 0;
         YVelocity = 0;
+    }
+    
+    private void HandleKiEffects()
+    {
+
+        var on = _momentum > KiMomentumThreshhold;
+        
+        foreach (var p in _kiIndicatorParticles)
+        {
+            var play = Machine.IsInState(PlayerFsmState.Dash);
+            if (play && !p.isEmitting) p.Play();
+            else if (!play) p.Stop();
+        }
+
+        var desiredGlowWeight = on ? 2.5f : 0f;
+        var currentGlowWeight =  _material.GetFloat("_GlowWeight");
+        _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * 5f));
     }
 }

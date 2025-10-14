@@ -25,7 +25,7 @@ public partial class PlayerFsm
                 YVelocity = 0;
             })
             .OnExit(_ => { 
-                _momentum = 8f;
+                _momentum = 5f;
             });
     }
 }
