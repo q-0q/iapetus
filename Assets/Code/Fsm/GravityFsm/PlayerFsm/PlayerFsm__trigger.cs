@@ -51,8 +51,9 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
-        
-        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < 1.75f)
+
+
+        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < ArriveAtWalkPositionTargetDistance)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
         }

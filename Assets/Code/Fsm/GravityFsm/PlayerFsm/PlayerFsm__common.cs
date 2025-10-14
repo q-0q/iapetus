@@ -140,6 +140,7 @@ public partial class PlayerFsm
     private const float WalkToPositionTurnPhaseAngle = 30f;
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
+    private const float ArriveAtWalkPositionTargetDistance = 1.5f;
     
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
