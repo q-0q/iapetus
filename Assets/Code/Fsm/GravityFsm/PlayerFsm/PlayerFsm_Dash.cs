@@ -17,21 +17,10 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.WallInteractable)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            // .Permit(PlayerFsmTrigger.ContactHitboxTrigger, PlayerFsmState.DashFlipsquat)
-            // .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
-            // .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat, _ => true)
-            // .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat, _ => true)
-            // .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .OnEntry(_ =>
             {
                 YVelocity = 0;
-                // var transformPosition = new Vector3(PlayerWeaponFsm.Singleton.transform.position.x, transform.position.y,
-                //     PlayerWeaponFsm.Singleton.transform.position.z);
-                // var forward = transformPosition - transform.position;
-                // transform.rotation =
-                //     Quaternion.LookRotation(forward,
-                //         Vector3.up);
-                YVelocity = Mathf.Max(YVelocity, 15f);
+                YVelocity = Mathf.Max(YVelocity, 12f);
                 ReplaceAnimatorTrigger("Dash");
             })
             .OnExit(_ =>

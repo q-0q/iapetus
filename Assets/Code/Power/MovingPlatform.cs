@@ -27,6 +27,9 @@ public class MovingPlatform : MonoBehaviour
 
     private void Update()
     {
+        
+        if (HitstopManager.Singleton.IsHitstopActive()) return;
+        
         float t;
         
         if (_powerConnector is null)

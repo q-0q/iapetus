@@ -129,7 +129,7 @@ public partial class PlayerFsm
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
-    private const float DashForwardSpeed = 20f;
+    private const float DashForwardSpeed = 16f;
     
     private const float ImpaleMovementModifier = 1f;
     private const float ImpaleMomentumOffset = 2.5f;
@@ -411,6 +411,7 @@ public partial class PlayerFsm
 
         var desiredGlowWeight = on ? 3.5f : 0f;
         var currentGlowWeight =  _material.GetFloat("_GlowWeight");
-        _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * 5f));
+        var f = on ? 5f : 2f;
+        _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * f));
     }
 }
