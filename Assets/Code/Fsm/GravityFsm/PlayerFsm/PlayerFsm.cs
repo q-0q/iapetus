@@ -123,6 +123,7 @@ public partial class PlayerFsm : GravityFsm
         {
             JumpOnUpdate();
         }
+        
 
         if (Machine.IsInState(PlayerFsmState.VaultHang))
         {
@@ -217,6 +218,12 @@ public partial class PlayerFsm : GravityFsm
         {
             InteractWithSwitchOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.Fall))
+        {
+            FallAfterDashOnUpdate();
+        }
+
 
 
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())

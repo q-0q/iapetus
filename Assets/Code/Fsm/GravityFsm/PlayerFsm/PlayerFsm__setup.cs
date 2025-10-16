@@ -14,6 +14,7 @@ public partial class PlayerFsm
         HardTurnConfigure();
         JumpConfigure();
         FallConfigure();
+        FallAfterDashConfigure();
         AerialConfigure();
         VaultConfigure();
         VaultHangConfigure();
@@ -65,6 +66,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Fall, "Fall");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterDash, "FallAfterDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMove, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardLand, "HardLand");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardLandRoll, "HardLandRoll");

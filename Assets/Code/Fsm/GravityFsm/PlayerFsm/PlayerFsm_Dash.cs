@@ -15,7 +15,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Dash)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.WallInteractable)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterDash)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .OnEntry(_ =>
             {
