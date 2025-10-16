@@ -16,7 +16,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.WallInteractable)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterDash)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat)
             .OnEntry(_ =>
             {
                 YVelocity = 0;

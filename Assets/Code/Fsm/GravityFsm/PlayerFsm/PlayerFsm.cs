@@ -48,6 +48,7 @@ public partial class PlayerFsm : GravityFsm
         public static int InteractWithSwitch;
         public static int Dash;
         public static int FallAfterDash;
+        public static int Skipsquat;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
