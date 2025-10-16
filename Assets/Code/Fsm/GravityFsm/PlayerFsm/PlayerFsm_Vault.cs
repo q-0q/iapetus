@@ -28,7 +28,6 @@ public partial class PlayerFsm
                 var flip = _movementAnimationMirror ? 0 : 1f;
                 Animator.SetFloat("Flip", flip);
                 UpdateLedgePosition(FaceLedgeHeight);
-                ReplaceAnimatorTrigger("Vault");
                 YVelocity = 0;
             })
             .OnExit(_ =>

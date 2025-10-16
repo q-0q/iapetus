@@ -28,7 +28,7 @@ public partial class PlayerFsm
                 transform.rotation =
                     Quaternion.LookRotation(forward,
                         Vector3.up);
-                ReplaceAnimatorTrigger("Dash");
+                // ReplaceAnimatorTrigger("Dash");
                 OnPlayerGrappleStateEntered?.Invoke();
             })
             .OnExit(_ =>

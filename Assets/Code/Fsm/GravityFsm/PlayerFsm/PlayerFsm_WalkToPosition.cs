@@ -27,7 +27,6 @@ public partial class PlayerFsm
                 _currentInteractionCollider = interactionParam.InteractionCollider;
                 _walkToPositionTarget = interactionParam.InteractionCollider.transform.position;
                 _wallsquattedSinceLeavingGround = false;
-                ReplaceAnimatorTrigger("GroundMove");
             });
     }
 }

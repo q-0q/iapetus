@@ -21,7 +21,6 @@ public partial class PlayerFsm
             {
                 YVelocity = 0;
                 YVelocity = Mathf.Max(YVelocity, 12f);
-                ReplaceAnimatorTrigger("Dash");
             })
             .OnExit(_ =>
             {

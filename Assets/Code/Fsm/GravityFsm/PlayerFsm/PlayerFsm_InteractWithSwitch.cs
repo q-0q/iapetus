@@ -18,7 +18,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _momentum = 0f;
-                ReplaceAnimatorTrigger("InteractWithSwitch");
             });
     }
 }

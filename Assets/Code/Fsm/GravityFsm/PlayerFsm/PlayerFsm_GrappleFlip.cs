@@ -10,7 +10,7 @@ public partial class PlayerFsm
             {
                 _momentum = MaxMomentum;
                 YVelocity = 10;
-                ReplaceAnimatorTrigger("GrappleFlip");
+                // ReplaceAnimatorTrigger("GrappleFlip");
             });
     }
 }

@@ -8,7 +8,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 // transform.DOShakePosition(0.5f, 0.3f);
-                ReplaceAnimatorTrigger("GrappleFlipsquat");
+                // ReplaceAnimatorTrigger("GrappleFlipsquat");
                 // HitstopManager.Singleton.StartHitstop(0.075f);
             })
             .OnExit(_ => { });

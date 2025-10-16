@@ -21,7 +21,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Jump");
-                ReplaceAnimatorTrigger("SlowVaultFinish");
                 YVelocity = 0;
             })
             .OnExit(_ => { 

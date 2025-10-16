@@ -12,5 +12,7 @@ public partial class SwitchFsm
     {
         base.SetupStateMaps();
         
+        StateMapConfig.AnimationTrigger.Add(SwitchFsmState.On, "On");
+        StateMapConfig.AnimationTrigger.Add(SwitchFsmState.Off, "Off");
     }
 }

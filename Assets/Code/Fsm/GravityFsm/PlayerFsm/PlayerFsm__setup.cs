@@ -62,6 +62,25 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.265f);
         StateMapConfig.Duration.Add(PlayerFsmState.InteractWithSwitch, 0.65f);
         
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Fall, "Fall");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMove, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardLand, "HardLand");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardLandRoll, "HardLandRoll");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardTurn, "HardTurn");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.InteractWithSwitch, "InteractWithSwitch");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Jump, "Jump");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Jumpsquat, "Jumpsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Landsquat, "Landsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MediumVaultHang, "MediumVaultHang");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlowVaultFinish, "SlowVaultFinish");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlowVaultHang, "SlowVaultHang");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Vault, "Vault");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToPosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
+        
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.LockMomentum, true);

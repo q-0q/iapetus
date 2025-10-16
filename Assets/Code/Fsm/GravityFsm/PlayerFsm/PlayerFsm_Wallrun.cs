@@ -29,7 +29,7 @@ public partial class PlayerFsm
             {
                 
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
-                ReplaceAnimatorTrigger("Wallrun");
+                // ReplaceAnimatorTrigger("Wallrun");
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {

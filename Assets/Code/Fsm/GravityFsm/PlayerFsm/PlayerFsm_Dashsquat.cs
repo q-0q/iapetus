@@ -18,7 +18,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Dash");
-                ReplaceAnimatorTrigger("Dashsquat");
             });
     }
 }

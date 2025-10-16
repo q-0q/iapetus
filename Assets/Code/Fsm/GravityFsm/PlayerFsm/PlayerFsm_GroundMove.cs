@@ -27,7 +27,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
-                ReplaceAnimatorTrigger("GroundMove");
             });
     }
 }

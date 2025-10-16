@@ -7,7 +7,6 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.LockMomentum)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
-            .OnEntry(_ => { ReplaceAnimatorTrigger("Landsquat"); })
             .OnExit(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;

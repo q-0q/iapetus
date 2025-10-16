@@ -29,7 +29,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Grapple)
             .OnEntry(_ =>
             {
-                ReplaceAnimatorTrigger("GrappleStartup");
+                // ReplaceAnimatorTrigger("GrappleStartup");
                 YVelocity = 10;
                 _inputBuffer.ConsumeBuffer("Attack");
             }).OnExit(_ => { YVelocity = 0; });
