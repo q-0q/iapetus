@@ -16,11 +16,12 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.WallInteractable)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterDash)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat, _ => _inputBuffer.IsBuffered("Jump"), 1)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .OnEntry(_ =>
             {
                 YVelocity = 0;
-                YVelocity = Mathf.Max(YVelocity, 12f);
+                YVelocity = Mathf.Max(YVelocity, 15f);
             })
             .OnExit(_ =>
             {

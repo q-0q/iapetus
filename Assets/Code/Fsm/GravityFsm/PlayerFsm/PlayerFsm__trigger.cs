@@ -93,11 +93,6 @@ public partial class PlayerFsm
         Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward * forwardRaycastDistance, Color.cyan);
     }
 
-    private float GetCurrentDashRaycastHeightOffset()
-    {
-        return Machine.IsInState(PlayerFsmState.Dash) ? DashRaycastHeightOffset : 0;
-    }
-
     private void FireFlankTriggers()
     {
         RaycastHit hit;

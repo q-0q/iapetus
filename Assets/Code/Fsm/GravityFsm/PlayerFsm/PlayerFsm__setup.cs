@@ -38,6 +38,7 @@ public partial class PlayerFsm
         WalkToSwitchPositionConfigure();
         InteractWithSwitchConfigure();
         SkipsquatConfigure();
+        SkipConfigure();
         
     }
 
@@ -63,7 +64,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.265f);
         StateMapConfig.Duration.Add(PlayerFsmState.InteractWithSwitch, 0.65f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.225f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.185f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -85,6 +86,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skip, "Skip");
         
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
@@ -97,5 +99,6 @@ public partial class PlayerFsm
         // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
     }
 }

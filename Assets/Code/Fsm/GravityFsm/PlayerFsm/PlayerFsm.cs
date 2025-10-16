@@ -49,6 +49,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Dash;
         public static int FallAfterDash;
         public static int Skipsquat;
+        public static int Skip;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -220,9 +221,19 @@ public partial class PlayerFsm : GravityFsm
             InteractWithSwitchOnUpdate();
         }
         
-        if (Machine.IsInState(PlayerFsmState.Fall))
+        if (Machine.IsInState(PlayerFsmState.FallAfterDash))
         {
             FallAfterDashOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Skipsquat))
+        {
+            SkipsquatOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Skip))
+        {
+            SkipOnUpdate();
         }
 
 

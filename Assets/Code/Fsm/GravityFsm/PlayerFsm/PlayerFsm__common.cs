@@ -129,8 +129,8 @@ public partial class PlayerFsm
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
-    private const float DashForwardSpeed = 16f;
-    private const float DashRaycastHeightOffset = 2.5f;
+    private const float DashForwardSpeed = 18f;
+    private const float DashRaycastHeightOffset = 2f;
     
     
     private const float ImpaleMovementModifier = 1f;
@@ -415,5 +415,10 @@ public partial class PlayerFsm
         var currentGlowWeight =  _material.GetFloat("_GlowWeight");
         var f = on ? 5f : 2f;
         _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * f));
+    }
+
+    private float GetCurrentDashRaycastHeightOffset()
+    {
+        return Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Skip) ? DashRaycastHeightOffset : 0;
     }
 }
