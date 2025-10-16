@@ -50,6 +50,7 @@ public partial class PlayerFsm : GravityFsm
         public static int FallAfterDash;
         public static int Skipsquat;
         public static int Skip;
+        public static int LandsquatAfterDash;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -114,7 +115,7 @@ public partial class PlayerFsm : GravityFsm
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
 
-        var oldMomentum = _momentum;
+        _timeSinceDashFinished += Time.deltaTime;
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {

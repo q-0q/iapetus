@@ -15,7 +15,7 @@ public abstract partial class GravityFsm
     protected Quaternion _previousParentRotation;
     
     private const float GroundedYPositionLerpStrength = 50f;
-    private const float GroundedRaycastLength = 0.75f;
+    private const float GroundedRaycastLength = 0.5f;
     private const float GroundedRaycastForwardOffset = 0.05f;
     private const float GroundedRaycastMaximumAngle = 50f;
     

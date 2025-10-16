@@ -87,6 +87,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skip, "Skip");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LandsquatAfterDash, "LandsquatAfterDash");
         
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

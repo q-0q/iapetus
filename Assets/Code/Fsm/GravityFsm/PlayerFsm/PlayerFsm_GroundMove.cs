@@ -19,6 +19,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
             .Permit(PlayerFsmTrigger.InteractWithSwitch, PlayerFsmState.WalkToSwitchPosition)
             // .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)

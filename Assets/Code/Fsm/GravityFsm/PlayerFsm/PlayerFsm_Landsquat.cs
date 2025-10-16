@@ -6,6 +6,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.LockMomentum)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnExit(_ =>
             {
@@ -16,5 +17,8 @@ public partial class PlayerFsm
                 var flip = _movementAnimationMirror ? 0 : 1f;
                 Animator.SetFloat("Flip", flip);
             });
+
+        Machine.Configure(PlayerFsmState.LandsquatAfterDash)
+            .SubstateOf(PlayerFsmState.Landsquat);
     }
 }

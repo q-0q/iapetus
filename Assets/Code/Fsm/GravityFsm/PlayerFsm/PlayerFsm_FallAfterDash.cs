@@ -9,6 +9,7 @@ public partial class PlayerFsm
     private void FallAfterDashConfigure()
     {
         Machine.Configure(PlayerFsmState.FallAfterDash)
-            .SubstateOf(PlayerFsmState.Fall);
+            .SubstateOf(PlayerFsmState.Fall)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, _ => true, 1);
     }
 }

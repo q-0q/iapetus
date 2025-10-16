@@ -190,9 +190,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.011089076
+  m_TransitionDuration: 0.0146678975
   m_TransitionOffset: 0
-  m_ExitTime: 0.0000000012708204
+  m_ExitTime: 0.0000000010261376
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -970,6 +970,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -2211954902338975866}
     m_Position: {x: 1230, y: 1170, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: -2279990280183689229}
+    m_Position: {x: 540, y: 1050, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: -467869392498190076}
@@ -998,11 +1001,12 @@ AnimatorStateMachine:
   - {fileID: -4995442563293914565}
   - {fileID: -6585532179821838349}
   - {fileID: 8862917049850864203}
+  - {fileID: -1333559115528009249}
   m_EntryTransitions: []
   m_StateMachineTransitions: {}
   m_StateMachineBehaviours: []
-  m_AnyStatePosition: {x: 330, y: 530, z: 0}
-  m_EntryPosition: {x: 310, y: 890, z: 0}
+  m_AnyStatePosition: {x: 220, y: 530, z: 0}
+  m_EntryPosition: {x: 180, y: 890, z: 0}
   m_ExitPosition: {x: -310, y: -180, z: 0}
   m_ParentStateMachinePosition: {x: 800, y: 20, z: 0}
   m_DefaultState: {fileID: -1789399870782626151}
@@ -1181,6 +1185,33 @@ BlendTree:
   m_UseAutomaticThresholds: 1
   m_NormalizedBlendValues: 0
   m_BlendType: 0
+--- !u!1102 &-2279990280183689229
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: LandsquatAfterDash
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 6273970644019780327, guid: cb4cee4a5b1684c1c8c637f886f2104a,
+    type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1102 &-2211954902338975866
 AnimatorState:
   serializedVersion: 6
@@ -1288,6 +1319,31 @@ AnimatorStateTransition:
   m_TransitionDuration: 0.121289514
   m_TransitionOffset: 0
   m_ExitTime: 0.0000000072932296
+  m_HasExitTime: 0
+  m_HasFixedDuration: 1
+  m_InterruptionSource: 0
+  m_OrderedInterruption: 1
+  m_CanTransitionToSelf: 1
+--- !u!1101 &-1333559115528009249
+AnimatorStateTransition:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_Conditions:
+  - m_ConditionMode: 1
+    m_ConditionEvent: LandsquatAfterDash
+    m_EventTreshold: 0
+  m_DstStateMachine: {fileID: 0}
+  m_DstState: {fileID: -2279990280183689229}
+  m_Solo: 0
+  m_Mute: 0
+  m_IsExit: 0
+  serializedVersion: 3
+  m_TransitionDuration: 0.013063136
+  m_TransitionOffset: 0
+  m_ExitTime: 3.2803796e-10
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -1522,9 +1578,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.1410117
+  m_TransitionDuration: 0.15567945
   m_TransitionOffset: 0
-  m_ExitTime: 0.0000000018502292
+  m_ExitTime: 0.0000000026745826
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -1848,6 +1904,12 @@ AnimatorController:
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
   - m_Name: Skip
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
+  - m_Name: LandsquatAfterDash
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -2368,9 +2430,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.083821766
+  m_TransitionDuration: 0.069926515
   m_TransitionOffset: 0
-  m_ExitTime: 4.9420973e-10
+  m_ExitTime: 5.236273e-10
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

@@ -29,6 +29,7 @@ public partial class PlayerFsm
     private InteractionCollider _currentInteractionCollider;
     private List<ParticleSystem> _kiIndicatorParticles;
     private Material _material;
+    private float _timeSinceDashFinished = 0f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -131,6 +132,7 @@ public partial class PlayerFsm
     private const float DashsquatTurnMultiplier = 2.25f;
     private const float DashForwardSpeed = 18f;
     private const float DashRaycastHeightOffset = 2f;
+    private const float SkipWindowDuration = 0.3f;
     
     
     private const float ImpaleMovementModifier = 1f;

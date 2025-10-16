@@ -17,7 +17,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.WallInteractable)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterDash)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat, _ => _inputBuffer.IsBuffered("Jump"), 1)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash)
             .OnEntry(_ =>
             {
                 YVelocity = 0;
@@ -26,6 +26,7 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 _momentum = 13f;
+                _timeSinceDashFinished = 0f;
             });
     }
 }
