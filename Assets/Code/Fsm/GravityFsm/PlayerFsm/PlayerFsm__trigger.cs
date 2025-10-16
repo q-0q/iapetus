@@ -1,6 +1,7 @@
 using System;
 using Code.TriggerParams;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -65,13 +66,14 @@ public partial class PlayerFsm
     private void FireFaceTriggers()
     {
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
-        if (Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward, 
+        if (Physics.Raycast(transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                 out var hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
-        } else if (Physics.Raycast(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward, 
+        } else if (Physics.Raycast(transform.position + Vector3.up *
+                       (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
@@ -86,9 +88,14 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
         
-        // Debug.DrawRay(transform.position + Vector3.up * FaceWallHeight, transform.forward * forwardRaycastDistance, Color.red);
-        // Debug.DrawRay(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward * forwardRaycastDistance, Color.yellow);
-        // Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward * forwardRaycastDistance, Color.cyan);
+        Debug.DrawRay(transform.position + Vector3.up * (FaceWallHeight  + GetCurrentDashRaycastHeightOffset()), transform.forward * forwardRaycastDistance, Color.red);
+        Debug.DrawRay(transform.position + Vector3.up * (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward * forwardRaycastDistance, Color.yellow);
+        Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward * forwardRaycastDistance, Color.cyan);
+    }
+
+    private float GetCurrentDashRaycastHeightOffset()
+    {
+        return Machine.IsInState(PlayerFsmState.Dash) ? DashRaycastHeightOffset : 0;
     }
 
     private void FireFlankTriggers()

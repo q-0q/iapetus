@@ -130,6 +130,8 @@ public partial class PlayerFsm
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
     private const float DashForwardSpeed = 16f;
+    private const float DashRaycastHeightOffset = 2.5f;
+    
     
     private const float ImpaleMovementModifier = 1f;
     private const float ImpaleMomentumOffset = 2.5f;
