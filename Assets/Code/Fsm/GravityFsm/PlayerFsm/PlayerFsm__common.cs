@@ -133,6 +133,7 @@ public partial class PlayerFsm
     private const float DashForwardSpeed = 18f;
     private const float DashRaycastHeightOffset = 2f;
     private const float SkipWindowDuration = 0.3f;
+    private const float SkipForwardBonusSpeed = 2f;
     
     
     private const float ImpaleMovementModifier = 1f;
