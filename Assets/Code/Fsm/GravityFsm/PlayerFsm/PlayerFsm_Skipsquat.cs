@@ -10,11 +10,6 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Skipsquat)
             .SubstateOf(GravityFsmState.Grounded)
             // .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Skip)
-            .OnEntry(_ =>
-            {
-                _inputBuffer.ConsumeBuffer("Jump");
-            })
-            .OnExitFrom(FsmTrigger.Timeout, _ => { YVelocity = JumpYVelocity; });
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Skip);
     }
 }

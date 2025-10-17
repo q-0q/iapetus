@@ -51,6 +51,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Skipsquat;
         public static int Skip;
         public static int LandsquatAfterDash;
+        public static int DashVault;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

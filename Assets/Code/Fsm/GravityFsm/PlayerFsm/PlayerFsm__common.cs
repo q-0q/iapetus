@@ -132,8 +132,9 @@ public partial class PlayerFsm
     private const float DashsquatTurnMultiplier = 2.25f;
     private const float DashForwardSpeed = 18f;
     private const float DashRaycastHeightOffset = 0f;
-    private const float SkipWindowDuration = 0.3f;
-    private const float SkipForwardBonusSpeed = 2f;
+    private const float SkipWindowDuration = 0.2f;
+    private const float SkipForwardBonusSpeed = 2.25f;
+    private const float SkipYVelocity = 25f; 
     
     
     private const float ImpaleMovementModifier = 1f;

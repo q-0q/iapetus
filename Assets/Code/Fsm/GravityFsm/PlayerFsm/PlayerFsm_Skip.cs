@@ -18,6 +18,11 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.WallInteractable)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, _ => true, 1);
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, _ => true, 1)
+            .OnEntry(_ =>
+            {
+                _inputBuffer.ConsumeBuffer("Jump");
+            })
+            .OnEntryFrom(FsmTrigger.Timeout, _ => { YVelocity = SkipYVelocity; });
     }
 }
