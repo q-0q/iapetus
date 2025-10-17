@@ -6,8 +6,8 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat, _ => Machine.IsInState(PlayerFsmState.FallAfterDash) && _inputBuffer.IsBuffered("Jump"), 3) // ANTI PATTERN
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand, _ => CurrentFallDistance() < HardLandAirDiff,
-                1)
+                2)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
-                _ => CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 2);
+                _ => CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 4);
     }
 }

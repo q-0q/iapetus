@@ -20,6 +20,6 @@ public partial class PlayerFsm
 
     private bool CanVault(TriggerParams t)
     {
-        return YVelocity > VaultMinimumYVelocity && _momentum > VaultMinimumMomentum;
+        return (YVelocity > VaultMinimumYVelocity && _momentum > VaultMinimumMomentum);
     }
 }

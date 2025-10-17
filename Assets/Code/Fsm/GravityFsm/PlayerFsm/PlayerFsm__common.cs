@@ -44,7 +44,7 @@ public partial class PlayerFsm
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;
     
-    private const float ForwardRaycastDistance = 0.9f;
+    private const float ForwardRaycastDistance = 0.95f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;
     // private const float CollisionMoveSphereCastRadius = 0.4f;
     // private const float GroundCollisionMoveSphereCastHeight = 0.95f;
@@ -61,6 +61,7 @@ public partial class PlayerFsm
     private const float FlankWallOpenYOffset = -2f;
     private const float FlankMaximumAngle = 40f;
     private const float ForceWallRotationRaycastDistance = 3f;
+    private const float DashForwardRaycastDistanceOffset = 0.5f;
 
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
@@ -134,7 +135,8 @@ public partial class PlayerFsm
     private const float DashRaycastHeightOffset = 0f;
     private const float SkipWindowDuration = 0.2f;
     private const float SkipForwardBonusSpeed = 2.25f;
-    private const float SkipYVelocity = 25f; 
+    private const float SkipYVelocity = 25f;
+    
     
     
     private const float ImpaleMovementModifier = 1f;
@@ -173,7 +175,9 @@ public partial class PlayerFsm
 
     private float ComputeDynamicForwardRaycastDistance()
     {
-        return Mathf.Lerp(1f, DynamicForwardRaycastMaximumModifier, ComputeMomentumWeight()) * ForwardRaycastDistance * GetRaycastTimeModifier();
+        // var offset = Machine.IsInState(PlayerFsmState.Dash) ? DashForwardRaycastDistanceOffset : 0f;
+        return (Mathf.Lerp(1f, DynamicForwardRaycastMaximumModifier, ComputeMomentumWeight()) * ForwardRaycastDistance *
+                GetRaycastTimeModifier());
     }
     
     
