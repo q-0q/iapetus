@@ -32,7 +32,6 @@ public class PowerLamp : MonoBehaviour
 
     public void SetLamp(bool val)
     {
-        print(val);
         _lamp = val;
     }
 }

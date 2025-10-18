@@ -17,11 +17,11 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.Interactable)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
-            .Permit(PlayerFsmTrigger.InteractWithSwitch, PlayerFsmState.WalkToSwitchPosition)
             // .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)

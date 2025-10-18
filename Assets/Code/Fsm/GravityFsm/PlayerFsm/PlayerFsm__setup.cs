@@ -39,6 +39,9 @@ public partial class PlayerFsm
         InteractWithSwitchConfigure();
         SkipsquatConfigure();
         SkipConfigure();
+        InteractableConfigure();
+        WalkToDialoguePositionConfigure();
+        DialogueConfigure();
         
     }
 

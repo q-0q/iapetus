@@ -7,7 +7,7 @@ public class Interactable : MonoBehaviour
 {
     
     public string text = "Chat with guard";
-    public float triggerRange = 2;
+    public float triggerRange = 10f;
     
     public event Action OnInteracted;
     private Collider _collider;

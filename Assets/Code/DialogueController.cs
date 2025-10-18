@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Code.TriggerParams;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -17,29 +19,30 @@ public class DialogueController : MonoBehaviour
     
     public List<Dialogue> dialogues;
     public string DialogueName = "Unnamed dialogue";
+    private Interactable _interactable;
     public event Action OnCompleted;
     private void OnEnable()
     {
         TryGetComponent(out Interactable interactable);
-        interactable.OnInteracted += StartDialogue;
+        _interactable = interactable;
+        _interactable.OnInteracted += StartDialogue;
     }
 
     private void StartDialogue()
     {
         DialogueCanvas.Singleton.StartDialogue(this);
-        PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.StartDialogue);
-
+        InteractableParam p = new InteractableParam() { Interactable = _interactable, WalkToPositionTarget =
+            transform.position};
+        PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.StartDialogue, p);
     }
 
     private void OnDisable()
     {
-        TryGetComponent(out Interactable interactable);
-        interactable.OnInteracted -= StartDialogue;
+        _interactable.OnInteracted -= StartDialogue;
     }
 
     public void Completed()
     {
-        Debug.Log("completed dialogue");
         OnCompleted?.Invoke();
     }
 

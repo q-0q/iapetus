@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Wasp;
 
 public partial class PlayerFsm
@@ -34,7 +35,7 @@ public partial class PlayerFsm
     private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
     private HashSet<Interactable> _interactables;
-    private Interactable _currentInteractable;
+    public Interactable currentInteractable;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -154,6 +155,7 @@ public partial class PlayerFsm
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
     private const float ArriveAtWalkPositionTargetDistance = 1.5f;
+    private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
 
     private const float KiMomentumThreshhold = 11.5f;
     

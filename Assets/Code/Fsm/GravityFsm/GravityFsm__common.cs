@@ -44,7 +44,6 @@ public abstract partial class GravityFsm
         {
             if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
-            print(slope);
             return slope < GroundedRaycastMaximumAngle;
         }
 

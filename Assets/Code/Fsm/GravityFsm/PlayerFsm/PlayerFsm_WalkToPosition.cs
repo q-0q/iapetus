@@ -23,10 +23,23 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(param =>
             {
-                if (param is not InteractionParam interactionParam) return;
-                _currentInteractable = interactionParam.Interactable;
-                _walkToPositionTarget = interactionParam.Interactable.transform.position;
+                if (param is not InteractableParam interactionParam) return;
+                _walkToPositionTarget = interactionParam.WalkToPositionTarget;
                 _wallsquattedSinceLeavingGround = false;
             });
+    }
+    
+    private void WalkToSwitchPositionConfigure()
+    {
+        Machine.Configure(PlayerFsmState.WalkToSwitchPosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.InteractWithSwitch);
+    }
+    
+    private void WalkToDialoguePositionConfigure()
+    {
+        Machine.Configure(PlayerFsmState.WalkToDialoguePosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged, PlayerFsmState.Dialogue);
     }
 }

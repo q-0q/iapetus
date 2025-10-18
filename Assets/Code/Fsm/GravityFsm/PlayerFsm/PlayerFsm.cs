@@ -52,7 +52,11 @@ public partial class PlayerFsm : GravityFsm
         public static int Skipsquat;
         public static int Skip;
         public static int LandsquatAfterDash;
-        public static int DashVault; }
+        public static int DashVault;
+        public static int Dialogue;
+        public static int WalkToDialoguePosition;
+        public static int Interactable;
+    }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
     {
@@ -71,10 +75,9 @@ public partial class PlayerFsm : GravityFsm
         public static int ContactHitboxTrigger;
         public static int InteractWithSwitch;
         public static int ArriveAtWalkToPositionTarget;
+        public static int ArriveAtWalkToPositionTargetRanged;
         public static int StartDialogue;
         public static int EndDialogue;
-
-        public static int Interactable;
     }
     
     protected override void OnAwake()
@@ -108,7 +111,6 @@ public partial class PlayerFsm : GravityFsm
         {
             _interactables.Add(interactable);
         }
-
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;
 
@@ -245,6 +247,16 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Skip))
         {
             SkipOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Interactable))
+        {
+            InteractableOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Dialogue))
+        {
+            DialogueOnUpdate();
         }
 
 

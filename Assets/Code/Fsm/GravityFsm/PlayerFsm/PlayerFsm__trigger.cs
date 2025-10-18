@@ -23,18 +23,18 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.Attack);
         }
         
-        if (_inputBuffer.IsBuffered("Interact"))
-        {
-            var neighbors = Physics.OverlapSphere(transform.position, InteractionDistance,
-                LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
-            foreach (var neighbor in neighbors)
-            {
-                var deltaY = neighbor.transform.position.y - transform.position.y;
-                neighbor.TryGetComponent(out Interactable interactionCollider);
-                var param = new InteractionParam() { Interactable = interactionCollider };
-                Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
-            }
-        }
+        // if (_inputBuffer.IsBuffered("Interact"))
+        // {
+        //     var neighbors = Physics.OverlapSphere(transform.position, InteractionDistance,
+        //         LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
+        //     foreach (var neighbor in neighbors)
+        //     {
+        //         var deltaY = neighbor.transform.position.y - transform.position.y;
+        //         neighbor.TryGetComponent(out Interactable interactionCollider);
+        //         var param = new InteractableParam() { Interactable = interactionCollider };
+        //         Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
+        //     }
+        // }
         
         if (_inputBuffer.IsBuffered("Dash"))
         {
@@ -54,10 +54,14 @@ public partial class PlayerFsm
         }
 
 
-        if (Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z)) < ArriveAtWalkPositionTargetDistance)
+        var walkToPositionTargetDistance = Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z));
+        if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetDistance)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
-        }
+        } else if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetRangedDistance)
+        {
+            Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged);
+        } 
 
         FireFaceTriggers();
         // FireFlankTriggers();
