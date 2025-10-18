@@ -4,6 +4,6 @@ using UnityEngine.Serialization;
 
 public partial class SwitchFsm
 {
-    private InteractionCollider _interactionCollider;
+    private Interactable _interactable;
     private PowerConnector _powerConnector;
 }

@@ -3,17 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractionCollider : MonoBehaviour
+public class Interactable : MonoBehaviour
 {
+    
+    public string text = "Chat with guard";
+    public float triggerRange = 2;
+    
     public event Action OnInteracted;
     private Collider _collider;
+
+    public Type type;
+    
+    public enum Type
+    {
+        Switch,
+        Dialogue
+    }
 
     private void Awake()
     {
         TryGetComponent(out _collider);
     }
 
-    public void InvokeOnInteracted()
+    public void TriggerInteraction()
     {
         OnInteracted?.Invoke();
     }

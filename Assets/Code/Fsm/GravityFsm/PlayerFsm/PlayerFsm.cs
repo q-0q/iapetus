@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using JetBrains.Annotations;
@@ -51,8 +52,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Skipsquat;
         public static int Skip;
         public static int LandsquatAfterDash;
-        public static int DashVault;
-    }
+        public static int DashVault; }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
     {
@@ -71,6 +71,10 @@ public partial class PlayerFsm : GravityFsm
         public static int ContactHitboxTrigger;
         public static int InteractWithSwitch;
         public static int ArriveAtWalkToPositionTarget;
+        public static int StartDialogue;
+        public static int EndDialogue;
+
+        public static int Interactable;
     }
     
     protected override void OnAwake()
@@ -99,6 +103,11 @@ public partial class PlayerFsm : GravityFsm
         _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().ToList();
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
+        _interactables = new HashSet<Interactable>();
+        foreach (var interactable in FindObjectsByType<Interactable>(FindObjectsSortMode.None))
+        {
+            _interactables.Add(interactable);
+        }
 
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;

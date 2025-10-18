@@ -24,8 +24,8 @@ public partial class PlayerFsm
             .OnEntry(param =>
             {
                 if (param is not InteractionParam interactionParam) return;
-                _currentInteractionCollider = interactionParam.InteractionCollider;
-                _walkToPositionTarget = interactionParam.InteractionCollider.transform.position;
+                _currentInteractable = interactionParam.Interactable;
+                _walkToPositionTarget = interactionParam.Interactable.transform.position;
                 _wallsquattedSinceLeavingGround = false;
             });
     }

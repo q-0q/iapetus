@@ -10,7 +10,7 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.InteractWithSwitch)
             .OnExit(_ =>
             {
-                _currentInteractionCollider.InvokeOnInteracted();
+                _currentInteractable.TriggerInteraction();
             });
     }
 }

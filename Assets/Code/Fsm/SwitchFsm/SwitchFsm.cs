@@ -19,14 +19,14 @@ public partial class SwitchFsm : Fsm
     protected override void OnAwake()
     {
         base.OnAwake();
-        _interactionCollider = GetComponentInChildren<InteractionCollider>();
+        _interactable = GetComponentInChildren<Interactable>();
     }
 
     protected override void OnStart()
     {
         base.OnStart();
         InitState = SwitchFsmState.Off;
-        _interactionCollider.SetEnabled(true);
+        _interactable.SetEnabled(true);
         _powerConnector = GetComponentInChildren<PowerConnector>();
     }
     
@@ -43,11 +43,11 @@ public partial class SwitchFsm : Fsm
 
     private void OnEnable()
     {
-        _interactionCollider.OnInteracted += OnToggle;
+        _interactable.OnInteracted += OnToggle;
     }
 
     private void OnDisable()
     {
-        _interactionCollider.OnInteracted -= OnToggle;
+        _interactable.OnInteracted -= OnToggle;
     }
 }

@@ -26,7 +26,6 @@ public partial class PlayerFsm
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
     private Vector3 _walkToPositionTarget;
-    private InteractionCollider _currentInteractionCollider;
     private List<ParticleSystem> _kiIndicatorParticles;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
@@ -34,7 +33,9 @@ public partial class PlayerFsm
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
-    
+    private HashSet<Interactable> _interactables;
+    private Interactable _currentInteractable;
+
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     public static event Action OnPlayerImpaleStateEntered;
