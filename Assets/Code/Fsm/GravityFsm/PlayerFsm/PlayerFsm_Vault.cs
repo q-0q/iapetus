@@ -12,7 +12,7 @@ public partial class PlayerFsm
         UpdateLedgePosition(FaceLedgeHeight);
         MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         SetAnimatorMomentum();
-        var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.3f : 0.9f;
+        var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.2f : 0.9f;
         transform.position += ComputeCollisionMove(ComputeDesiredMove()) * movementModifier;
         HandleTurning(VaultTurningMultiplier, true);
     }
