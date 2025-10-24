@@ -78,7 +78,7 @@ public partial class PlayerFsm
     private const float LowMomentumRotationMod = 3f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
-    private const float GroundMoveMinimumAnimatorSpeedMod = 0.45f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.55f;
@@ -391,7 +391,7 @@ public partial class PlayerFsm
     
     private bool CanDash(TriggerParams? triggerParams)
     {
-        return true;
+        return YVelocity < 6f;
     }
 
     private void OnContactHitboxCollide()

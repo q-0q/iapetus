@@ -7,7 +7,8 @@ public partial class PlayerFsm
     {
         currentInteractable = null;
         
-        _momentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 5f);
+        _momentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
+        HandleCollisionMove();
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (interacted) DialogueCanvas.Singleton.AdvanceDialogue();
         SetAnimatorMomentum();

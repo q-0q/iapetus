@@ -8,6 +8,12 @@ namespace SomeNamespace
     /// </summary>
     public class AnimationQuantizer : AssetPostprocessor
     {
+
+        private bool ShouldQuantizeClip(AnimationClip clip)
+        {
+            return true;
+            return clip.name == "Armature|DashVault" || clip.name == "Armature|Vault" || clip.name == "Armature|VaultRun";
+        }
         /// <summary>
         ///
         /// </summary>
@@ -15,7 +21,7 @@ namespace SomeNamespace
         /// <param name="clip"></param>
         private void OnPostprocessAnimation(GameObject root, AnimationClip clip)
         {
-            if(AnimationQuantizerSettings.Enabled)
+            if(AnimationQuantizerSettings.Enabled && ShouldQuantizeClip(clip))
             {
                 Debug.Log($"Quanitizing animation clip '{clip.name}'");
                 var curveBindings = AnimationUtility.GetCurveBindings(clip);
@@ -65,6 +71,6 @@ namespace SomeNamespace
     /// </summary>
     public static class AnimationQuantizerSettings
     {
-        public static bool Enabled = false;
+        public static bool Enabled = true;
     }
 }

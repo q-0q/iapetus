@@ -248,10 +248,14 @@ public partial class PlayerFsm : GravityFsm
         {
             SkipOnUpdate();
         }
-        
+
         if (Machine.IsInState(PlayerFsmState.Interactable))
         {
             InteractableOnUpdate();
+        }
+        else
+        {
+            currentInteractable = null;
         }
         
         if (Machine.IsInState(PlayerFsmState.Dialogue))
