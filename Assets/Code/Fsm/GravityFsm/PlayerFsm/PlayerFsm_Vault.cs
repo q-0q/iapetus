@@ -9,7 +9,7 @@ public partial class PlayerFsm
         var momentumWeight = ComputeMomentumWeight();
         Animator.SetFloat("SpeedMod",
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
-        UpdateLedgePosition(FaceLedgeHeight);
+        // UpdateLedgePosition(FaceLedgeHeight);
         MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         SetAnimatorMomentum();
         var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.2f : 0.9f;

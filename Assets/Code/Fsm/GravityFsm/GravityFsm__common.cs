@@ -39,8 +39,8 @@ public abstract partial class GravityFsm
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         kind = GroundKind.Standard;
-        if (Physics.SphereCast(transform.position + Vector3.up * raycastLength + forward, 0.35f, -Vector3.up, out hit,
-                raycastLength * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        if (Physics.SphereCast(transform.position + Vector3.up * (2f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
+                raycastLength * 4f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);

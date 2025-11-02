@@ -58,6 +58,7 @@ public partial class PlayerFsm
     private const float FaceWallHeight = 2.4f;
     private const float FaceWallMaximumAngle = 60f;
     private const float FaceWallStrictMaximumAngle = 20f;
+    private const float FaceRaycastSkew = 0.2f;
     private const float MaximumFlankWallDistance = 7.5f;
     private const float FlankWallHeight = 3f;
     private const float FlankWallOpenYOffset = -2f;

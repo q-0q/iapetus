@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
 using DG.Tweening;
 using JetBrains.Annotations;
 using Unity.Mathematics;
@@ -111,6 +112,9 @@ public partial class PlayerFsm : GravityFsm
         {
             _interactables.Add(interactable);
         }
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;
 
