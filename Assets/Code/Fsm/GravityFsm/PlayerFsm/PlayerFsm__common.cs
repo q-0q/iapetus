@@ -174,7 +174,7 @@ public partial class PlayerFsm
         var distance = DistanceFromPointToPlane(transform.position, hit.point, hit.normal);
         var angle = Vector3.Angle(transform.right * flipMod, hit.normal);
         
-        return distance < 2.5f && angle < FlankMaximumAngle;;
+        return distance < 1.5f && angle < FlankMaximumAngle;;
     }
 
     private float ComputeDynamicForwardRaycastDistance()

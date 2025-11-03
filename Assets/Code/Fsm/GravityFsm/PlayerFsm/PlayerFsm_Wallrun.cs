@@ -6,7 +6,7 @@ public partial class PlayerFsm
     {
         SetAnimatorMomentum();
         HandleFlankAlignment();
-        HandleCollisionMove();
+        HandleCollisionMove(0.25f);
 
         transform.position +=
             ComputeCollisionMove(-_currentFlankWallNormal * (Time.deltaTime * FlankWallVacuumStrength));
@@ -29,7 +29,7 @@ public partial class PlayerFsm
             {
                 
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
-                // ReplaceAnimatorTrigger("Wallrun");
+                ReplaceAnimatorTrigger("Wallrun");
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {

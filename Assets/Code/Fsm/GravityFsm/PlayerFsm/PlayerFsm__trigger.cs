@@ -64,7 +64,7 @@ public partial class PlayerFsm
         } 
 
         FireFaceTriggers();
-        // FireFlankTriggers();
+        FireFlankTriggers();
     }
 
     private void FireFaceTriggers()
