@@ -28,6 +28,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .OnEntry(_ =>
             {

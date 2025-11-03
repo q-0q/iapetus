@@ -1,3 +1,4 @@
+using Unity.VisualScripting.Dependencies.NCalc;
 using UnityEngine;
 
 public partial class PlayerFsm
@@ -8,17 +9,17 @@ public partial class PlayerFsm
         var momentumWeight = ComputeMomentumWeight();
         Animator.SetFloat("SpeedMod",
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
-        UpdateLedgePosition(FaceLedgeHeight);
+        // UpdateLedgePosition(FaceLedgeHeight);
         MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         SetAnimatorMomentum();
-        transform.position += ComputeCollisionMove(ComputeDesiredMove()) * 0.9f;
+        var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.2f : 0.9f;
+        transform.position += ComputeCollisionMove(ComputeDesiredMove()) * movementModifier;
         HandleTurning(VaultTurningMultiplier, true);
     }
 
     private void VaultConfigure()
     {
         Machine.Configure(PlayerFsmState.Vault)
-            .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.RespectParentTransform)
@@ -29,12 +30,17 @@ public partial class PlayerFsm
                 var flip = _movementAnimationMirror ? 0 : 1f;
                 Animator.SetFloat("Flip", flip);
                 UpdateLedgePosition(FaceLedgeHeight);
-                ReplaceAnimatorTrigger("Vault");
                 YVelocity = 0;
             })
             .OnExit(_ =>
             {
                 _momentum = Mathf.Min(MaxMomentum, _momentum + 2f);
             });
+        
+        Machine.Configure(PlayerFsmState.DashVault)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump"), 1)
+            .SubstateOf(PlayerFsmState.Vault);
     }
+    
+    
 }

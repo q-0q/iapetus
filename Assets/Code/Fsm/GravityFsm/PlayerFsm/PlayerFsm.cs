@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security;
 using DG.Tweening;
 using JetBrains.Annotations;
 using Unity.Mathematics;
@@ -42,7 +45,18 @@ public partial class PlayerFsm : GravityFsm
         public static int WallInteractable;
         public static int Landable;
         public static int AirControl;
-        public static int IgnoreFailsafe;
+        public static int WalkToPosition;
+        public static int WalkToSwitchPosition;
+        public static int InteractWithSwitch;
+        public static int Dash;
+        public static int FallAfterDash;
+        public static int Skipsquat;
+        public static int Skip;
+        public static int LandsquatAfterDash;
+        public static int DashVault;
+        public static int Dialogue;
+        public static int WalkToDialoguePosition;
+        public static int Interactable;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -60,6 +74,11 @@ public partial class PlayerFsm : GravityFsm
         public static int Dash;
         public static int Attack;
         public static int ContactHitboxTrigger;
+        public static int InteractWithSwitch;
+        public static int ArriveAtWalkToPositionTarget;
+        public static int ArriveAtWalkToPositionTargetRanged;
+        public static int StartDialogue;
+        public static int EndDialogue;
     }
     
     protected override void OnAwake()
@@ -80,12 +99,25 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Jump");
         _inputBuffer.InitInput("Dash");
         _inputBuffer.InitInput("Attack");
+        _inputBuffer.InitInput("Interact");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
-        
+        _checkpointVector3 = transform.position;
+        _checkpointQuaternion = transform.rotation;
+        _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().ToList();
+        // transform.Find("KiIndicatorParticles").SetParent(null);
+        _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
+        _interactables = new HashSet<Interactable>();
+        foreach (var interactable in FindObjectsByType<Interactable>(FindObjectsSortMode.None))
+        {
+            _interactables.Add(interactable);
+        }
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         // Application.targetFrameRate = 30;
-        
+
     }
     
 
@@ -98,6 +130,8 @@ public partial class PlayerFsm : GravityFsm
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
+
+        _timeSinceDashFinished += Time.deltaTime;
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
@@ -108,6 +142,7 @@ public partial class PlayerFsm : GravityFsm
         {
             JumpOnUpdate();
         }
+        
 
         if (Machine.IsInState(PlayerFsmState.VaultHang))
         {
@@ -167,6 +202,10 @@ public partial class PlayerFsm : GravityFsm
         {
             DashsquatOnUpdate();
         }
+        if (Machine.IsInState(PlayerFsmState.Dash))
+        {
+            DashOnUpdate();
+        }
         if (Machine.IsInState(PlayerFsmState.Grapple))
         {
             GrappleOnUpdate();
@@ -188,6 +227,46 @@ public partial class PlayerFsm : GravityFsm
         {
             GrappleStartupOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.WalkToPosition))
+        {
+            WalkToPositionOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.InteractWithSwitch))
+        {
+            InteractWithSwitchOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.FallAfterDash))
+        {
+            FallAfterDashOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Skipsquat))
+        {
+            SkipsquatOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Skip))
+        {
+            SkipOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.Interactable))
+        {
+            InteractableOnUpdate();
+        }
+        else
+        {
+            currentInteractable = null;
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Dialogue))
+        {
+            DialogueOnUpdate();
+        }
+
 
 
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
@@ -205,7 +284,9 @@ public partial class PlayerFsm : GravityFsm
             Reset();
             OnPlayerRacePressed?.Invoke();
         }
-        
+
+        HandleKiEffects();
+
         base.OnUpdate(); // 
 
     }
@@ -223,6 +304,12 @@ public partial class PlayerFsm : GravityFsm
         }
 
         return false;
+    }
+    
+    private void OnStateChangedCompleted(TriggerParams obj)
+    {
+        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 
     private void OnEnable()

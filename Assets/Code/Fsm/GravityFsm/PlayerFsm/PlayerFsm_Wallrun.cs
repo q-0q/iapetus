@@ -6,7 +6,7 @@ public partial class PlayerFsm
     {
         SetAnimatorMomentum();
         HandleFlankAlignment();
-        HandleCollisionMove();
+        HandleCollisionMove(0.25f);
 
         transform.position +=
             ComputeCollisionMove(-_currentFlankWallNormal * (Time.deltaTime * FlankWallVacuumStrength));

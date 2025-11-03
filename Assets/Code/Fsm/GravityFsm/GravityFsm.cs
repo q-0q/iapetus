@@ -9,12 +9,13 @@ public  abstract partial class GravityFsm : Fsm
         public static int Aerial;
         public static int DontApplyYVelocity;
         public static int RespectParentTransform;
-        public static int IgnoreFailsafe;
+        public static int IgnoreDepenetration;
     }
 
     public class GravityFsmTrigger : FsmTrigger
     {
         public static int StartFrameGrounded;
+        public static int StartFrameOnTightrope;
         public static int StartFrameAerial;
         public static int StartFrameWithNegativeYVelocity;
     }
@@ -24,8 +25,11 @@ public  abstract partial class GravityFsm : Fsm
         base.OnStart();
         YVelocity = 0;
         GravityStrength = 9.8f;
+        transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
+
+        InstantiateTightropeCollider();
     }
-    
+
     public override void OnUpdate()
     {
         base.OnUpdate();
@@ -45,9 +49,9 @@ public  abstract partial class GravityFsm : Fsm
             RespectParentTransformOnUpdate();
         }
         
-        if (!Machine.IsInState(GravityFsmState.IgnoreFailsafe))
+        if (!Machine.IsInState(GravityFsmState.IgnoreDepenetration))
         {
-            HandleFailsafe();
+            HandleDepenetration();
         }
     }
 

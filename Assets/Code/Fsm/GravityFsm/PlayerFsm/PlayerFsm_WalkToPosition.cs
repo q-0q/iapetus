@@ -1,0 +1,45 @@
+using Code.TriggerParams;
+using UnityEngine;
+
+public partial class PlayerFsm
+{
+    private void WalkToPositionOnUpdate()
+    {
+        var toTarget = _walkToPositionTarget - transform.position;
+        toTarget = new Vector3(toTarget.x, 0, toTarget.z);
+        var angle = Vector3.Angle(transform.forward, toTarget);
+        var isInTurnPhase = angle > WalkToPositionTurnPhaseAngle;
+        _momentum = Mathf.Lerp(_momentum, isInTurnPhase ? 0 : WalkToPositionMomentum, Time.deltaTime * WalkToPositionMomentumLerpStrength);
+        HandleTurningCore(1f, 0f, toTarget);
+        HandleCollisionMove();
+        SetAnimatorMomentum();
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        Animator.SetFloat("SpeedMod", speedMod);
+    }
+
+    private void WalkToPositionConfigure()
+    {
+        Machine.Configure(PlayerFsmState.WalkToPosition)
+            .SubstateOf(GravityFsmState.Grounded)
+            .OnEntry(param =>
+            {
+                if (param is not InteractableParam interactionParam) return;
+                _walkToPositionTarget = interactionParam.WalkToPositionTarget;
+                _wallsquattedSinceLeavingGround = false;
+            });
+    }
+    
+    private void WalkToSwitchPositionConfigure()
+    {
+        Machine.Configure(PlayerFsmState.WalkToSwitchPosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.InteractWithSwitch);
+    }
+    
+    private void WalkToDialoguePositionConfigure()
+    {
+        Machine.Configure(PlayerFsmState.WalkToDialoguePosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged, PlayerFsmState.Dialogue);
+    }
+}

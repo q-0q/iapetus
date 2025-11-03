@@ -11,15 +11,17 @@ public class PowerLine : MonoBehaviour
     void Start()
     {
         _lineRenderer = GetComponent<LineRenderer>();
-        _powerConnectorA = transform.Find("PowerConnectorA").GetComponent<PowerConnector>();
-        _powerConnectorB = transform.Find("PowerConnectorB").GetComponent<PowerConnector>();
+        _powerConnectorA = transform.GetChild(0).GetComponent<PowerConnector>();
+        _powerConnectorB = transform.GetChild(1).GetComponent<PowerConnector>();
         _powerConnectorA.AddInput(_powerConnectorB);
         _powerConnectorB.AddInput(_powerConnectorA);
     }
-
+    
     void Update()
     {
-        Color color = _powerConnectorA.IsPowered() || _powerConnectorB.IsPowered() ? Color.cyan : Color.gray;
+        _lineRenderer.SetPosition(0, _powerConnectorA.transform.position);
+        _lineRenderer.SetPosition(1, _powerConnectorB.transform.position);
+        Color color = _powerConnectorA.IsPowered() || _powerConnectorB.IsPowered() ? Color.white : Color.gray;
         _lineRenderer.startColor = color;
         _lineRenderer.endColor = color;
     }

@@ -19,7 +19,6 @@ public partial class PlayerFsm
             {
                 
                 _momentum = HardLandRollExitMomentum;
-                ReplaceAnimatorTrigger("HardLandRoll");
             });
     }
 }

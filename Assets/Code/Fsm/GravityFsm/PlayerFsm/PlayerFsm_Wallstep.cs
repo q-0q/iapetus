@@ -20,7 +20,6 @@ public partial class PlayerFsm
             {
                 Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Jump");
-                ReplaceAnimatorTrigger("Wallstep");
                 YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain,
                     ComputeMomentumWeight());
                 Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());

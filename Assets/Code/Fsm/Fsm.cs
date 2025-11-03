@@ -68,6 +68,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.Duration = new StateMap<float>(1f);
         StateMapConfig.GravityStrengthMod = new StateMap<float>(1f);
         StateMapConfig.IsAbstract = new StateMap<bool>(false);
+        StateMapConfig.AnimationTrigger = new StateMap<string>("");
     }
 
     public virtual void SetupMachine()
@@ -75,6 +76,12 @@ public abstract class Fsm : MonoBehaviour
         
         Machine = new Machine<int, int>(InitState);
         Machine.OnTransitioned(OnStateChanged);
+        Machine.OnTransitionCompleted(OnStateChangedCompleted);
+    }
+
+    private void OnStateChangedCompleted(TriggerParams obj)
+    {
+        ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 
     public virtual void OnFireTriggers()
@@ -95,6 +102,7 @@ public abstract class Fsm : MonoBehaviour
     {
         _timeInCurrentState = 0;
     }
+    
 
     private void IncrementClockByAmount(float amount)
     {
@@ -103,6 +111,7 @@ public abstract class Fsm : MonoBehaviour
 
     protected void ReplaceAnimatorTrigger(string trigger)
     {
+        if (trigger == "") return;
         foreach (var t in Animator.parameters)
         {
             if (t.type != AnimatorControllerParameterType.Trigger) continue;
@@ -119,8 +128,8 @@ public abstract class Fsm : MonoBehaviour
         return output;
     }
 
-    protected int GetEnvironmentalLayermask()
+    public static int GetEnvironmentalLayermask()
     {
-        return ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth");
+        return ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player");
     }
 }

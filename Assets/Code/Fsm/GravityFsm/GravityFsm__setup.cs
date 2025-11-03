@@ -6,6 +6,7 @@ public abstract partial class GravityFsm
         AerialConfigure();
         GroundedConfigure();
         RespectParentTransformConfigure();
+        IgnoreDepenetrationConfigure();
     }
 
     public override void SetupStateMaps()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,12 @@ public class PowerConnector : MonoBehaviour
 
     public bool Source = false;
     
+    [SerializeField]
+    private List<PowerConnector> outputs;
+    
     private HashSet<PowerConnector> _spatialInputs;
     private HashSet<PowerConnector> _inputs;
+    private PowerLamp _powerLamp;
 
     public bool Disabled = false;
     private bool _powered;
@@ -18,11 +23,24 @@ public class PowerConnector : MonoBehaviour
     {
         _inputs = new HashSet<PowerConnector>();
         _spatialInputs = new HashSet<PowerConnector>();
+        _powerLamp = GetComponentInChildren<PowerLamp>();
     }
-    
+
+    private void Start()
+    {
+        foreach (var powerConnector in outputs)
+        {
+            powerConnector.AddInput(this);
+        }
+    }
+
     void Update()
     {
         _spatialInputs = FindSpatialInputs();
+        if (_powerLamp is not null)
+        {
+            _powerLamp.SetLamp(IsPowered());
+        }
         
         // var color = IsPowered() ? Color.yellow : Color.red;
         // var mat = GetComponent<MeshRenderer>().material;

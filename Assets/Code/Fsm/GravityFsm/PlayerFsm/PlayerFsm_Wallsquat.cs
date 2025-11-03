@@ -16,7 +16,6 @@ public partial class PlayerFsm
             {
                 _wallsquattedSinceLeavingGround = true;
                 YVelocity = 0;
-                ReplaceAnimatorTrigger("Wallsquat");
             })
             .OnExitFrom(PlayerFsmTrigger.FaceOpen, _ => { _momentum = 0; });
     }

@@ -1,5 +1,7 @@
 using System;
 using Code.TriggerParams;
+using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,10 +23,23 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.Attack);
         }
         
-        // if (_inputBuffer.IsBuffered("Dash"))
+        // if (_inputBuffer.IsBuffered("Interact"))
         // {
-        //     Machine.Fire(PlayerFsmTrigger.Dash);
+        //     var neighbors = Physics.OverlapSphere(transform.position, InteractionDistance,
+        //         LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
+        //     foreach (var neighbor in neighbors)
+        //     {
+        //         var deltaY = neighbor.transform.position.y - transform.position.y;
+        //         neighbor.TryGetComponent(out Interactable interactionCollider);
+        //         var param = new InteractableParam() { Interactable = interactionCollider };
+        //         Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
+        //     }
         // }
+        
+        if (_inputBuffer.IsBuffered("Dash"))
+        {
+            Machine.Fire(PlayerFsmTrigger.Dash);
+        }
         
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
@@ -38,21 +53,33 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.NoMomentum);
         }
 
+
+        var walkToPositionTargetDistance = Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z));
+        if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetDistance)
+        {
+            Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
+        } else if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetRangedDistance)
+        {
+            Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged);
+        } 
+
         FireFaceTriggers();
-        // FireFlankTriggers();
+        FireFlankTriggers();
     }
 
     private void FireFaceTriggers()
     {
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
-        if (Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward, 
-                out var hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
+        var skew = FaceRaycastSkew * GetRaycastTimeModifier();
+        if (Physics.Raycast(transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
+                out var hit, forwardRaycastDistance + skew * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
-        } else if (Physics.Raycast(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward, 
-                       out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
+        } else if (Physics.Raycast(transform.position + Vector3.up *
+                       (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
+                       out hit, forwardRaycastDistance + skew, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
@@ -66,9 +93,11 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
         
-        // Debug.DrawRay(transform.position + Vector3.up * FaceWallHeight, transform.forward * forwardRaycastDistance, Color.red);
-        // Debug.DrawRay(transform.position + Vector3.up * FaceHighLedgeHeight, transform.forward * forwardRaycastDistance, Color.yellow);
-        // Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward * forwardRaycastDistance, Color.cyan);
+        Debug.DrawRay(transform.position + Vector3.up * (FaceWallHeight  + GetCurrentDashRaycastHeightOffset()), transform.forward *
+            (forwardRaycastDistance + skew * 2f), Color.red);
+        Debug.DrawRay(transform.position + Vector3.up * (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward *
+            (forwardRaycastDistance + skew), Color.yellow);
+        Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward, Color.cyan);
     }
 
     private void FireFlankTriggers()

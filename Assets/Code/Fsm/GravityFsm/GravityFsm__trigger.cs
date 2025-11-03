@@ -6,7 +6,7 @@ public abstract partial class GravityFsm
     {
         base.OnFireTriggers();
 
-        if (GetGroundedRaycastHit(out var hit))
+        if (GetGroundedRaycastHit(out var hit, out var kind))
         {
             if (YVelocity < 0.5f)
             {

@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Wasp;
 
 public partial class PlayerFsm
@@ -23,11 +26,17 @@ public partial class PlayerFsm
     private FlankType _previousWallrunSide;
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
+    private Vector3 _walkToPositionTarget;
+    private List<ParticleSystem> _kiIndicatorParticles;
+    private Material _material;
+    private float _timeSinceDashFinished = 0f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
-    
+    private HashSet<Interactable> _interactables;
+    public Interactable currentInteractable;
+
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     public static event Action OnPlayerImpaleStateEntered;
@@ -35,8 +44,9 @@ public partial class PlayerFsm
     public static event Action OnPlayerRacePressed;
     
     public const float InputMagnitudeThreshhold = 0.1f;
+    private const float InteractionDistance = 2.5f;
     
-    private const float ForwardRaycastDistance = 0.9f;
+    private const float ForwardRaycastDistance = 0.95f;
     private const float DynamicForwardRaycastMaximumModifier = 2f;
     // private const float CollisionMoveSphereCastRadius = 0.4f;
     // private const float GroundCollisionMoveSphereCastHeight = 0.95f;
@@ -48,26 +58,28 @@ public partial class PlayerFsm
     private const float FaceWallHeight = 2.4f;
     private const float FaceWallMaximumAngle = 60f;
     private const float FaceWallStrictMaximumAngle = 20f;
+    private const float FaceRaycastSkew = 0.2f;
     private const float MaximumFlankWallDistance = 7.5f;
     private const float FlankWallHeight = 3f;
     private const float FlankWallOpenYOffset = -2f;
     private const float FlankMaximumAngle = 40f;
     private const float ForceWallRotationRaycastDistance = 3f;
+    private const float DashForwardRaycastDistanceOffset = 0.5f;
 
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
     private const float MaximumMomentumSpeedMod = 3.5f;
     private const float RotationSpeed = 3f;
     private const float CollisionMomentumLossRate = 300f;
-    private const float MomentumGainRate = 14f;
-    private const float MomentumLossRate = 20f;
+    private const float MomentumGainRate = 15f;
+    private const float MomentumLossRate = 15f;
     private const float MomentumTurnLoss = 5f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 4.75f;
     private const float LowMomentumRotationMod = 3f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
-    private const float GroundMoveMinimumAnimatorSpeedMod = 0.45f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.55f;
@@ -116,13 +128,19 @@ public partial class PlayerFsm
     private const float HardLandRollForwardSpeed = 15f;
     
     private const float HardTurnMinimumAngle = 130f;
-    private const float HardTurnMinimumMomentum = 8.5f;
+    private const float HardTurnMinimumMomentum = 12.5f;
     private const float HardTurnMomentumLossModifier = 1.25f;
     
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
-    private const float DashForwardSpeed = 20f;
+    private const float DashForwardSpeed = 18f;
+    private const float DashRaycastHeightOffset = 0f;
+    private const float SkipWindowDuration = 0.2f;
+    private const float SkipForwardBonusSpeed = 2.25f;
+    private const float SkipYVelocity = 25f;
+    
+    
     
     private const float ImpaleMovementModifier = 1f;
     private const float ImpaleMomentumOffset = 2.5f;
@@ -133,6 +151,14 @@ public partial class PlayerFsm
     private const float GrappleStartupYPositionLerpStrength = 3f;
     private const float GrappleStartupYPositionOffset = 1f;
     private const float GrappleStartupMomentumLossMod = 1.25f;
+
+    private const float WalkToPositionTurnPhaseAngle = 30f;
+    private const float WalkToPositionMomentum = 6f;
+    private const float WalkToPositionMomentumLerpStrength = 9f;
+    private const float ArriveAtWalkPositionTargetDistance = 1.5f;
+    private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
+
+    private const float KiMomentumThreshhold = 11.5f;
     
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -148,12 +174,14 @@ public partial class PlayerFsm
         var distance = DistanceFromPointToPlane(transform.position, hit.point, hit.normal);
         var angle = Vector3.Angle(transform.right * flipMod, hit.normal);
         
-        return distance < 2.5f && angle < FlankMaximumAngle;;
+        return distance < 1.5f && angle < FlankMaximumAngle;;
     }
 
     private float ComputeDynamicForwardRaycastDistance()
     {
-        return Mathf.Lerp(1f, DynamicForwardRaycastMaximumModifier, ComputeMomentumWeight()) * ForwardRaycastDistance * GetRaycastTimeModifier();
+        // var offset = Machine.IsInState(PlayerFsmState.Dash) ? DashForwardRaycastDistanceOffset : 0f;
+        return (Mathf.Lerp(1f, DynamicForwardRaycastMaximumModifier, ComputeMomentumWeight()) * ForwardRaycastDistance *
+                GetRaycastTimeModifier());
     }
     
     
@@ -199,9 +227,14 @@ public partial class PlayerFsm
             inputVector3 = transform.forward;
         }
         
+        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3);
+    }
+
+    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction)
+    {
         float momentumWeight = ComputeMomentumWeight();
-        var angle = Vector3.SignedAngle(inputVector3.normalized, transform.forward.normalized, Vector3.up);
-        var animationDesiredTurnAmount = Mathf.InverseLerp(50f, -50f, angle);
+        var angle = Vector3.SignedAngle(direction.normalized, transform.forward.normalized, Vector3.up);
+        var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
         animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
         var turnAmount = Animator.GetFloat("TurnAmount");
         var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
@@ -213,7 +246,7 @@ public partial class PlayerFsm
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
                                               Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier));
         
-        var quaternion = Quaternion.LookRotation(inputVector3.normalized, Vector3.up);
+        var quaternion = Quaternion.LookRotation(direction.normalized, Vector3.up);
         
         var lowMomentumRotationMod = _momentum < LowMomentumThreshhold ? LowMomentumRotationMod : 1f;
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
@@ -303,7 +336,7 @@ public partial class PlayerFsm
         _checkpointQuaternion = rotation;
     }
     
-    public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward)
+    public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)
     {
         if (input == Vector3.zero)
             return Vector3.zero;
@@ -321,22 +354,26 @@ public partial class PlayerFsm
         }
         else
         {
-            // Mirror the input vector across the forward's perpendicular plane
-            // First, get the right vector (90° rotation from forward)
-            Vector3 right = Vector3.Cross(Vector3.up, forwardFlat).normalized;
+            
+            print(-dot / inputFlat.magnitude);
+            return input - (forward.normalized * dot);
 
-            // Project input onto the forward-right basis
-            float f = Vector3.Dot(inputFlat, forwardFlat);
-            float r = Vector3.Dot(inputFlat, right);
-
-            // Mirror the forward component (flip sign of f)
-            float mirroredF = -f;
-
-            // Reconstruct the mirrored vector
-            Vector3 mirrored = (mirroredF * forwardFlat) + (r * right);
-
-            // Scale by original input magnitude (preserve intensity)
-            return mirrored.normalized * input.magnitude;
+            // // Mirror the input vector across the forward's perpendicular plane
+            // // First, get the right vector (90° rotation from forward)
+            // Vector3 right = Vector3.Cross(Vector3.up, forwardFlat).normalized;
+            //
+            // // Project input onto the forward-right basis
+            // float f = Vector3.Dot(inputFlat, forwardFlat);
+            // float r = Vector3.Dot(inputFlat, right);
+            //
+            // // Mirror the forward component (flip sign of f)
+            // float mirroredF = -f;
+            //
+            // // Reconstruct the mirrored vector
+            // Vector3 mirrored = (mirroredF * forwardFlat) + (r * right);
+            //
+            // // Scale by original input magnitude (preserve intensity)
+            // return mirrored.normalized * input.magnitude;
         }
     }
 
@@ -344,6 +381,13 @@ public partial class PlayerFsm
     {
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(_currentLedgePosition, 0.25f);
+        
+        var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
+        var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
+        Gizmos.color = Color.blue;
+        var transformPosition = transform.position + Vector3.up * (2f * raycastLength) + forward;
+        Gizmos.DrawSphere(transformPosition, 0.35f);
+        Gizmos.DrawSphere(transformPosition - Vector3.up * raycastLength * 4f, 0.35f);
     }
     
     private bool CanGrapple(TriggerParams? triggerParams)
@@ -356,6 +400,11 @@ public partial class PlayerFsm
         var machine = PlayerWeaponFsm.Singleton.Machine;
         return machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.Idle) || machine.IsInState(PlayerWeaponFsm.PlayerWeaponFsmState.ImpaleStartup);
     }
+    
+    private bool CanDash(TriggerParams? triggerParams)
+    {
+        return YVelocity < 6f;
+    }
 
     private void OnContactHitboxCollide()
     {
@@ -366,10 +415,33 @@ public partial class PlayerFsm
 
     private void Reset()
     {
+        _parentTransform = null;
         Machine.Jump(PlayerFsmState.GroundMove);
         transform.position = _checkpointVector3;
         transform.rotation = _checkpointQuaternion;
         _momentum = 0;
         YVelocity = 0;
+    }
+    
+    private void HandleKiEffects()
+    {
+
+        var on = Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Dashsquat);
+        
+        foreach (var p in _kiIndicatorParticles)
+        {
+            if (on && !p.isEmitting) p.Play();
+            else if (!on) p.Stop();
+        }
+
+        var desiredGlowWeight = on ? 3.5f : 0f;
+        var currentGlowWeight =  _material.GetFloat("_GlowWeight");
+        var f = on ? 5f : 2f;
+        _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * f));
+    }
+
+    private float GetCurrentDashRaycastHeightOffset()
+    {
+        return Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Skip) ? DashRaycastHeightOffset : 0;
     }
 }

@@ -2,7 +2,7 @@ public partial class PlayerFsm
 {
     private void VaultHangOnUpdate()
     {
-        UpdateLedgePosition(FaceHighLedgeHeight);
+        // UpdateLedgePosition(FaceHighLedgeHeight);
         MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
         HandleCollisionMove();
         Animator.SetLayerWeight(1, 0);
@@ -17,7 +17,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
-                if (!UpdateLedgePosition(FaceHighLedgeHeight)) UpdateLedgePosition(FaceLedgeHeight);
+                if (!UpdateLedgePosition(FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset())) UpdateLedgePosition(FaceLedgeHeight);
                 YVelocity = 0;
             });
     }

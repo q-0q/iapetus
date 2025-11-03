@@ -1,0 +1,31 @@
+using System.Linq;
+using UnityEngine;
+
+public partial class PlayerFsm
+{
+    private void DialogueOnUpdate()
+    {
+        currentInteractable = null;
+        
+        _momentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
+        HandleCollisionMove();
+        var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
+        if (interacted) DialogueCanvas.Singleton.AdvanceDialogue();
+        SetAnimatorMomentum();
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        Animator.SetFloat("SpeedMod", speedMod);
+        
+        
+        if (DialogueCanvas.Singleton.currentDialogueController is null) return;
+        var rotationTarget = DialogueCanvas.Singleton.ControllerPosition() - transform.position;
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(rotationTarget + transform.forward * 0.01f, transform.up), Time.deltaTime * 5f);
+
+    }
+
+    private void DialogueConfigure()
+    {
+        Machine.Configure(PlayerFsmState.Dialogue)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.GroundMove);
+    }
+}

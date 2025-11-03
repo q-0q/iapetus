@@ -17,7 +17,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _momentum = HardLandExitMomentum;
-                ReplaceAnimatorTrigger("HardLand");
             });
     }
 }

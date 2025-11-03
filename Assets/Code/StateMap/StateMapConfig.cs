@@ -6,4 +6,5 @@ public class StateMapConfig
     public StateMap<float> Duration;
     public StateMap<float> GravityStrengthMod;
     public StateMap<bool> IsAbstract;
+    public StateMap<string> AnimationTrigger;
 }

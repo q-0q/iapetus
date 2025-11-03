@@ -14,7 +14,6 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.SlowVaultFinish)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
-            .SubstateOf(PlayerFsmState.IgnoreFailsafe)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
@@ -22,11 +21,10 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Jump");
-                ReplaceAnimatorTrigger("SlowVaultFinish");
                 YVelocity = 0;
             })
             .OnExit(_ => { 
-                _momentum = 8f;
+                _momentum = 5f;
             });
     }
 }

@@ -28,6 +28,7 @@ public class PrefabGrid : MonoBehaviour
                 var obj = Instantiate(prefab, pos, Quaternion.identity);
                 obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(minRotation, maxRotation), 0f);
                 var s = UnityEngine.Random.Range(minScale, maxScale);
+                obj.transform.SetParent(transform.parent);
                 obj.transform.localScale = new Vector3(s, s, s);
             }
         }
