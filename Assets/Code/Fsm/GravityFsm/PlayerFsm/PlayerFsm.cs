@@ -305,6 +305,12 @@ public partial class PlayerFsm : GravityFsm
 
         return false;
     }
+    
+    private void OnStateChangedCompleted(TriggerParams obj)
+    {
+        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
+    }
 
     private void OnEnable()
     {

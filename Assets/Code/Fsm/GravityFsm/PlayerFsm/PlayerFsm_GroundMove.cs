@@ -3,9 +3,9 @@ using UnityEngine;
 public partial class PlayerFsm
 {
     private void GroundMoveOnUpdate()
-    {
+    { 
         HandleInputMomentumChange();
-        HandleTurning();
+        HandleTurning(1f, true);
         HandleCollisionMove();
 
         SetAnimatorMomentum();

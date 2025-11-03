@@ -5,6 +5,8 @@ public partial class PlayerFsm
     public override void SetupMachine()
     {
         base.SetupMachine();
+        
+        Machine.OnTransitionCompleted(OnStateChangedCompleted);
 
         GroundMoveConfigure();
         JumpsquatConfigure();

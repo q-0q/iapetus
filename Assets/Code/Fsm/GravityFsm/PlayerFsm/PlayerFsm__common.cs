@@ -71,8 +71,8 @@ public partial class PlayerFsm
     private const float MaximumMomentumSpeedMod = 3.5f;
     private const float RotationSpeed = 3f;
     private const float CollisionMomentumLossRate = 300f;
-    private const float MomentumGainRate = 12f;
-    private const float MomentumLossRate = 20f;
+    private const float MomentumGainRate = 15f;
+    private const float MomentumLossRate = 15f;
     private const float MomentumTurnLoss = 5f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 4.75f;
@@ -128,7 +128,7 @@ public partial class PlayerFsm
     private const float HardLandRollForwardSpeed = 15f;
     
     private const float HardTurnMinimumAngle = 130f;
-    private const float HardTurnMinimumMomentum = 8.5f;
+    private const float HardTurnMinimumMomentum = 12.5f;
     private const float HardTurnMomentumLossModifier = 1.25f;
     
     private const float DashEntryMomentumGain = 5f;
@@ -336,7 +336,7 @@ public partial class PlayerFsm
         _checkpointQuaternion = rotation;
     }
     
-    public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward)
+    public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)
     {
         if (input == Vector3.zero)
             return Vector3.zero;
@@ -354,22 +354,26 @@ public partial class PlayerFsm
         }
         else
         {
-            // Mirror the input vector across the forward's perpendicular plane
-            // First, get the right vector (90° rotation from forward)
-            Vector3 right = Vector3.Cross(Vector3.up, forwardFlat).normalized;
+            
+            print(-dot / inputFlat.magnitude);
+            return input - (forward.normalized * dot);
 
-            // Project input onto the forward-right basis
-            float f = Vector3.Dot(inputFlat, forwardFlat);
-            float r = Vector3.Dot(inputFlat, right);
-
-            // Mirror the forward component (flip sign of f)
-            float mirroredF = -f;
-
-            // Reconstruct the mirrored vector
-            Vector3 mirrored = (mirroredF * forwardFlat) + (r * right);
-
-            // Scale by original input magnitude (preserve intensity)
-            return mirrored.normalized * input.magnitude;
+            // // Mirror the input vector across the forward's perpendicular plane
+            // // First, get the right vector (90° rotation from forward)
+            // Vector3 right = Vector3.Cross(Vector3.up, forwardFlat).normalized;
+            //
+            // // Project input onto the forward-right basis
+            // float f = Vector3.Dot(inputFlat, forwardFlat);
+            // float r = Vector3.Dot(inputFlat, right);
+            //
+            // // Mirror the forward component (flip sign of f)
+            // float mirroredF = -f;
+            //
+            // // Reconstruct the mirrored vector
+            // Vector3 mirrored = (mirroredF * forwardFlat) + (r * right);
+            //
+            // // Scale by original input magnitude (preserve intensity)
+            // return mirrored.normalized * input.magnitude;
         }
     }
 
@@ -377,6 +381,13 @@ public partial class PlayerFsm
     {
         Gizmos.color = Color.green;
         Gizmos.DrawSphere(_currentLedgePosition, 0.25f);
+        
+        var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
+        var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
+        Gizmos.color = Color.blue;
+        var transformPosition = transform.position + Vector3.up * (2f * raycastLength) + forward;
+        Gizmos.DrawSphere(transformPosition, 0.35f);
+        Gizmos.DrawSphere(transformPosition - Vector3.up * raycastLength * 4f, 0.35f);
     }
     
     private bool CanGrapple(TriggerParams? triggerParams)

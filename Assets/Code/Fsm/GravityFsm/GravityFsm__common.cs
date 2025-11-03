@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public abstract partial class GravityFsm
@@ -15,9 +16,9 @@ public abstract partial class GravityFsm
     protected Quaternion _previousParentRotation;
     
     private const float GroundedYPositionLerpStrength = 50f;
-    private const float GroundedRaycastLength = 0.5f;
-    private const float GroundedRaycastForwardOffset = 0.05f;
-    private const float GroundedRaycastMaximumAngle = 50f;
+    protected const float GroundedRaycastLength = 0.5f;
+    protected const float GroundedRaycastForwardOffset = 0.05f;
+    private const float GroundedRaycastMaximumAngle = 65f;
     
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
@@ -39,17 +40,21 @@ public abstract partial class GravityFsm
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         kind = GroundKind.Standard;
-        if (Physics.SphereCast(transform.position + Vector3.up * (2f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
-                raycastLength * 4f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        var f = 1f;
+        if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
+                raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             return slope < GroundedRaycastMaximumAngle;
         }
 
+        print("failed ground check");
         return false;
     }
-    
+
+
+
     protected float CurrentFallDistance()
     {
         var diff = transform.position.y - LastUpwardsY;
@@ -82,7 +87,7 @@ public abstract partial class GravityFsm
             
             // First collision: slide along the surface
             Vector3 firstNormal = hit.normal;
-            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up));
+            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up).normalized);
 
 
             // Cast again in the new direction to handle corner (second surface)
@@ -91,7 +96,7 @@ public abstract partial class GravityFsm
                 Vector3 secondNormal = secondHit.normal;
 
                 // Slide again
-                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, Vector3.up));
+                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, Vector3.up).normalized);
                 
                 if (output.magnitude < 0.01f)
                 {
