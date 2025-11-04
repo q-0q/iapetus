@@ -354,8 +354,6 @@ public partial class PlayerFsm
         }
         else
         {
-            
-            print(-dot / inputFlat.magnitude);
             return input - (forward.normalized * dot);
 
             // // Mirror the input vector across the forward's perpendicular plane

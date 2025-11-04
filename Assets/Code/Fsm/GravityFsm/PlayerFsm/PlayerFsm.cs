@@ -57,6 +57,8 @@ public partial class PlayerFsm : GravityFsm
         public static int Dialogue;
         public static int WalkToDialoguePosition;
         public static int Interactable;
+        
+        public static int Slide;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -265,6 +267,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Dialogue))
         {
             DialogueOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Slide))
+        {
+            SlideOnUpdate();
         }
 
 

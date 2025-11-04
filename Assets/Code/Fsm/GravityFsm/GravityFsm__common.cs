@@ -18,8 +18,8 @@ public abstract partial class GravityFsm
     private const float GroundedYPositionLerpStrength = 50f;
     protected const float GroundedRaycastLength = 0.5f;
     protected const float GroundedRaycastForwardOffset = 0.05f;
-    private const float GroundedRaycastMaximumAngle = 65f;
     
+    private const float GroundedRaycastMaximumAngle = 65f;
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
     private const float GroundCollisionMoveSphereCastHeight = 0.95f;
@@ -35,7 +35,7 @@ public abstract partial class GravityFsm
 
     
     
-    private bool GetGroundedRaycastHit(out RaycastHit hit, out GroundKind kind)
+    protected bool GetGroundedRaycastHit(out RaycastHit hit, out GroundKind kind)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
@@ -44,12 +44,10 @@ public abstract partial class GravityFsm
         if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
-            var slope = Vector3.Angle(hit.normal, Vector3.up);
-            return slope < GroundedRaycastMaximumAngle;
+            return true;
         }
 
-        print("failed ground check");
+        // print("failed ground check");
         return false;
     }
 

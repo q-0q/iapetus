@@ -25,6 +25,7 @@ public partial class PlayerFsm
             // .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, IsRaycastHitParamSteep)
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
