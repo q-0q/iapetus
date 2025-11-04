@@ -69,6 +69,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.GravityStrengthMod = new StateMap<float>(1f);
         StateMapConfig.IsAbstract = new StateMap<bool>(false);
         StateMapConfig.AnimationTrigger = new StateMap<string>("");
+        StateMapConfig.LockSpringCollider = new StateMap<bool>(false);
     }
 
     public virtual void SetupMachine()

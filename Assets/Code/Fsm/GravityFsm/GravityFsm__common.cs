@@ -122,11 +122,11 @@ public abstract partial class GravityFsm
     }
 
 
-    private void InstantiateTightropeCollider()
+    private void InstantiateSpringCollider()
     {
-        var tightropeColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmTightropeCollider") as GameObject;
-        var tightropeCollider = Instantiate(tightropeColliderPrefab, transform.position, Quaternion.identity);
-        tightropeCollider.TryGetComponent(out GravityFsmTightropeCollider component);
+        var springColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmSpringCollider") as GameObject;
+        var springCollider = Instantiate(springColliderPrefab, transform.position, Quaternion.identity);
+        springCollider.TryGetComponent(out GravityFsmSpringCollider component);
         component.SetOwner(this);
         
     }

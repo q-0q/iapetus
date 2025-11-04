@@ -27,7 +27,7 @@ public  abstract partial class GravityFsm : Fsm
         GravityStrength = 9.8f;
         transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
 
-        InstantiateTightropeCollider();
+        InstantiateSpringCollider();
     }
 
     public override void OnUpdate()

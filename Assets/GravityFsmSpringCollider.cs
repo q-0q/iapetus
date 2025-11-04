@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class GravityFsmTightropeCollider : MonoBehaviour
+public class GravityFsmSpringCollider : MonoBehaviour
 {
     private GravityFsm _owner;
     private Collider _collider;
@@ -27,6 +28,7 @@ public class GravityFsmTightropeCollider : MonoBehaviour
     {
         var mask = LayerMask.GetMask("TightropeTrigger");
         var neighbors = Physics.OverlapSphere(_owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
+        if (_owner.StateMapConfig.LockSpringCollider.Get(_owner)) return;
         foreach (var neighbor in neighbors)
         {
             transform.position = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation);

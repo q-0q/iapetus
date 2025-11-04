@@ -109,5 +109,16 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
+        
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Skipsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.GroundMove, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Wallsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Wallstep, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.MediumVaultHang, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.SlowVaultHang, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.SlowVaultFinish, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Vault, true);
     }
 }
