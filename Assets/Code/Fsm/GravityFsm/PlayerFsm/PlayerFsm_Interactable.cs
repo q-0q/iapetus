@@ -6,17 +6,18 @@ public partial class PlayerFsm
     private void InteractableOnUpdate()
     {
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
-        if (currentInteractable != null && interacted) currentInteractable.TriggerInteraction();
+        if (currentPotentialInteractable != null && interacted) currentPotentialInteractable.TriggerInteraction();
         
-        currentInteractable = _interactables
+        currentPotentialInteractable = _interactables
             .Where(i => i != null)
             .Where(i => Vector3.Distance(transform.position, i.transform.position) <= i.triggerRange)
             .OrderBy(i => Vector3.Distance(transform.position, i.transform.position))
             .FirstOrDefault();
-        
-        if(currentInteractable is null) return;
+
+        currentInteractable = currentPotentialInteractable;
+        if(currentPotentialInteractable is null) return;
         print("boo");
-        print(currentInteractable.name);
+        print(currentPotentialInteractable.name);
     }
 
     private void InteractableConfigure()

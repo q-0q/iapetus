@@ -25,7 +25,6 @@ public partial class PlayerFsm
             {
                 if (param is not InteractableParam interactionParam) return;
                 _walkToPositionTarget = interactionParam.WalkToPositionTarget;
-                _wallsquattedSinceLeavingGround = false;
             });
     }
     

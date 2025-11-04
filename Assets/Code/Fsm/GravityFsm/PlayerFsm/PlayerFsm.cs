@@ -261,7 +261,7 @@ public partial class PlayerFsm : GravityFsm
         }
         else
         {
-            currentInteractable = null;
+            currentPotentialInteractable = null;
         }
         
         if (Machine.IsInState(PlayerFsmState.Dialogue))

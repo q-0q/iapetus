@@ -36,6 +36,7 @@ public partial class PlayerFsm
     private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
     private HashSet<Interactable> _interactables;
+    public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
 
     public static event Action<float> OnPlayerMomentumUpdated;

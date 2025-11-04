@@ -43,11 +43,13 @@ public partial class SwitchFsm : Fsm
 
     private void OnEnable()
     {
-        _interactable.OnInteracted += OnToggle;
+        _interactable.OnInteracted += StartPlayerInteraction;
+        _interactable.OnHardInteracted += OnToggle;
     }
 
     private void OnDisable()
     {
-        _interactable.OnInteracted -= OnToggle;
+        _interactable.OnInteracted -= StartPlayerInteraction;
+        _interactable.OnHardInteracted -= OnToggle;
     }
 }
