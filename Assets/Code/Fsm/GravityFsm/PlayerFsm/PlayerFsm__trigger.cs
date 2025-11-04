@@ -74,14 +74,16 @@ public partial class PlayerFsm
         if (Physics.Raycast(transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                 out var hit, forwardRaycastDistance + skew * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
-            Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
+            if (slope > 70f) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up *
                        (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                        out hit, forwardRaycastDistance + skew, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
-            Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
+            if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {

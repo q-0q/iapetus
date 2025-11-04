@@ -32,7 +32,8 @@ public partial class PlayerFsm
     private bool IsRaycastHitParamSteep(TriggerParams triggerParams)
     {
         if (triggerParams is not RaycastHitParam raycastHitParam) return false;
-        raycastHitParam.Hit.collider.Raycast(new Ray(raycastHitParam.Hit.point + Vector3.up, -Vector3.up), out var hit, 2f);
+        if (!raycastHitParam.Hit.collider.Raycast(new Ray(raycastHitParam.Hit.point + Vector3.up, -Vector3.up),
+            out var hit, 2f)) return false;
         var angle = Vector3.Angle(hit.normal, Vector3.up);
         Debug.DrawRay(raycastHitParam.Hit.point, hit.normal, Color.yellow, 1f);
         return angle > 50f;
