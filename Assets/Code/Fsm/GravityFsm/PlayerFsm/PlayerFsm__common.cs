@@ -30,6 +30,7 @@ public partial class PlayerFsm
     private List<ParticleSystem> _kiIndicatorParticles;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
+    private float _slopeTimer = 0f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -82,7 +83,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.25f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -441,5 +442,25 @@ public partial class PlayerFsm
     private float GetCurrentDashRaycastHeightOffset()
     {
         return Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Skip) ? DashRaycastHeightOffset : 0;
+    }
+
+    private void HandleSlopeTimer()
+    {
+        GetGroundedRaycastHit(out var groundedRaycastHit, out _);
+        if (groundedRaycastHit.collider == null)
+        {
+            _slopeTimer = 0f;
+        }
+        else if (!groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up),
+                out var hit, 2f))
+        {
+            _slopeTimer = 0f;
+        }
+        else if (Vector3.Angle(hit.normal, Vector3.up) < 50f)
+        {
+            _slopeTimer = 0f;
+        }
+
+        _slopeTimer += Time.deltaTime;
     }
 }

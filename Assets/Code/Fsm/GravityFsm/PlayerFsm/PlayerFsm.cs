@@ -292,6 +292,7 @@ public partial class PlayerFsm : GravityFsm
             OnPlayerRacePressed?.Invoke();
         }
 
+        HandleSlopeTimer();
         HandleKiEffects();
 
         base.OnUpdate(); // 
