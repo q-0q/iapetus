@@ -1,9 +1,7 @@
 using UnityEngine;
 
-namespace Code.TriggerParams
+public class RaycastHitParam : Wasp.TriggerParams
 {
-    public class RaycastHitParam : Wasp.TriggerParams
-    {
-        public RaycastHit Hit;
-    }
+    public RaycastHit Hit;
+    public GravityFsm.GroundKind kind;
 }

@@ -45,6 +45,7 @@ public partial class PlayerFsm
         WalkToDialoguePositionConfigure();
         DialogueConfigure();
         SlideConfigure();
+        TightropeMoveConfigure();
         
     }
 
@@ -113,7 +114,7 @@ public partial class PlayerFsm
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Skipsquat, true);
-        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.GroundMove, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.TightropeMove, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Wallsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Wallstep, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.MediumVaultHang, true);

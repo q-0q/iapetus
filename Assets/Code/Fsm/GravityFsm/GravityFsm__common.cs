@@ -27,7 +27,7 @@ public abstract partial class GravityFsm
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
     
-    protected enum GroundKind
+    public enum GroundKind
     {
         Standard,
         Tightrope
@@ -35,11 +35,10 @@ public abstract partial class GravityFsm
 
     
     
-    protected bool GetGroundedRaycastHit(out RaycastHit hit, out GroundKind kind)
+    protected bool GetGroundedRaycastHit(out RaycastHit hit)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
-        kind = GroundKind.Standard;
         var f = 1f;
         if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public partial class PlayerFsm
 {
-    private void GroundMoveOnUpdate()
+    private void TightropeMoveOnUpdate()
     { 
         HandleInputMomentumChange();
         HandleTurning(1f, true);
@@ -13,9 +13,9 @@ public partial class PlayerFsm
         Animator.SetFloat("SpeedMod", speedMod);
     }
 
-    private void GroundMoveConfigure()
+    private void TightropeMoveConfigure()
     {
-        Machine.Configure(PlayerFsmState.GroundMove)
+        Machine.Configure(PlayerFsmState.TightropeMove)
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
@@ -26,7 +26,6 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;

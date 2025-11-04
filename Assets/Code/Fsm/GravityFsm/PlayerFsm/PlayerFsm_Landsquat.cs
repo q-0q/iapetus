@@ -20,5 +20,10 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.LandsquatAfterDash)
             .SubstateOf(PlayerFsmState.Landsquat);
+        
+        Machine.Configure(PlayerFsmState.LandsquatTightrope)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.TightropeMove, _=> true, 1)
+            .SubstateOf(PlayerFsmState.Landsquat);
+        
     }
 }

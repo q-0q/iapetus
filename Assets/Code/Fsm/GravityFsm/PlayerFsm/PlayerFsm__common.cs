@@ -447,7 +447,7 @@ public partial class PlayerFsm
 
     private void HandleSlopeTimer()
     {
-        GetGroundedRaycastHit(out var groundedRaycastHit, out _);
+        GetGroundedRaycastHit(out var groundedRaycastHit);
         if (groundedRaycastHit.collider == null)
         {
             _slopeTimer = 0f;

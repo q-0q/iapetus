@@ -1,4 +1,5 @@
 using Code.TriggerParams;
+using UnityEngine;
 
 public abstract partial class GravityFsm
 {
@@ -6,11 +7,11 @@ public abstract partial class GravityFsm
     {
         base.OnFireTriggers();
 
-        if (GetGroundedRaycastHit(out var hit, out var kind))
+        if (GetGroundedRaycastHit(out var hit))
         {
             if (YVelocity < 0.5f)
             {
-                var param = new RaycastHitParam() { Hit = hit };
+                var param = new RaycastHitParam() { Hit = hit, kind = hit.transform.gameObject.layer == LayerMask.NameToLayer("Tightrope") ? GroundKind.Tightrope : GroundKind.Standard};
                 Machine.Fire(GravityFsmTrigger.StartFrameGrounded, param);
             }
         }

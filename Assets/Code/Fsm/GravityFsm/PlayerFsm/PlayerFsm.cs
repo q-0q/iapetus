@@ -59,6 +59,8 @@ public partial class PlayerFsm : GravityFsm
         public static int Interactable;
         
         public static int Slide;
+        public static int TightropeMove;
+        public static int LandsquatTightrope;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -138,6 +140,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             GroundMoveOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.TightropeMove))
+        {
+            TightropeMoveOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Jump))

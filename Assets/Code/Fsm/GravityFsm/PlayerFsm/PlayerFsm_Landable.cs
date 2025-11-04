@@ -1,3 +1,6 @@
+using Code.TriggerParams;
+using Wasp;
+
 public partial class PlayerFsm
 {
     private void LandableConfigure()
@@ -13,5 +16,12 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
                 _ => CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum, 4)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5);
+
+    }
+    
+    private bool IsTightropeTrigger(TriggerParams triggerParams)
+    {
+        if (triggerParams is not RaycastHitParam raycastHitParam) return false;
+        return raycastHitParam.kind == GroundKind.Tightrope;
     }
 }

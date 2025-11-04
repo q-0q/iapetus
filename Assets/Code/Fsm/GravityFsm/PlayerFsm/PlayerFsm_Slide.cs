@@ -9,7 +9,7 @@ public partial class PlayerFsm
     private void SlideOnUpdate()
     {
         Animator.SetLayerWeight(1, 0);
-        GetGroundedRaycastHit(out var groundedRaycastHit, out _);
+        GetGroundedRaycastHit(out var groundedRaycastHit);
         if (groundedRaycastHit.collider == null) return; 
         groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up), out var hit, 2f);
         var forward = new Vector3(hit.normal.x, 0, hit.normal.z);
