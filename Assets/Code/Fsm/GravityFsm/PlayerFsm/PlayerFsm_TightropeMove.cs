@@ -22,7 +22,7 @@ public partial class PlayerFsm
 
         var collisionMove = ComputeCollisionMove((target.position - _springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
         
-        _springCollider.transform.position += collisionMove;
+        _springCollider.transform.parent.position += collisionMove;
         
 
         var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());

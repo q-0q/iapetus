@@ -126,8 +126,7 @@ public abstract partial class GravityFsm
     {
         var springColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmSpringCollider") as GameObject;
         var springCollider = Instantiate(springColliderPrefab, transform.position, Quaternion.identity);
-        springCollider.TryGetComponent(out _springCollider);
+        _springCollider = springCollider.GetComponentInChildren<GravityFsmSpringCollider>();
         _springCollider.SetOwner(this);
-        
     }
 }
