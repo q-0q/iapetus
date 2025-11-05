@@ -301,9 +301,9 @@ public partial class PlayerFsm : GravityFsm
 
         HandleSlopeTimer();
         HandleKiEffects();
-
-        base.OnUpdate(); // 
-
+        
+        base.OnUpdate();
+        
     }
 
     private bool HitstopOnUpdate()

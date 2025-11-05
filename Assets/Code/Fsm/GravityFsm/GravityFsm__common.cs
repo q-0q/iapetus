@@ -129,4 +129,6 @@ public abstract partial class GravityFsm
         _springCollider = springCollider.GetComponentInChildren<GravityFsmSpringCollider>();
         _springCollider.SetOwner(this);
     }
+
+    protected virtual void OnParentTransformChanged(Transform t) { }
 }

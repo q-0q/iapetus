@@ -45,6 +45,7 @@ public partial class PlayerFsm
     public static event Action OnPlayerImpaleStateEntered;
     public static event Action OnPlayerGrappleStateEntered;
     public static event Action OnPlayerRacePressed;
+    public static event Action<Transform> OnPlayerParentTransformChanged;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;
@@ -464,5 +465,12 @@ public partial class PlayerFsm
         }
 
         _slopeTimer += Time.deltaTime;
+    }
+
+    protected override void OnParentTransformChanged(Transform t)
+    {
+        print("bazinga");
+        OnPlayerParentTransformChanged?.Invoke(t);
+        base.OnParentTransformChanged(t);
     }
 }

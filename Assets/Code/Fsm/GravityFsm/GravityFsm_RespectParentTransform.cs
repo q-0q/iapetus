@@ -46,6 +46,7 @@ public abstract partial class GravityFsm
                 _parentTransform = p.Hit.transform;
                 _previousParentTransformPosition = _parentTransform.position;
                 _previousParentRotation = _parentTransform.rotation;
+                OnParentTransformChanged(_parentTransform);
             });
     }
 

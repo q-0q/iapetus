@@ -16,7 +16,9 @@ public abstract partial class GravityFsm
                 _parentTransform = hit.transform;
                 _previousParentTransformPosition = _parentTransform.position;
                 _previousParentRotation = _parentTransform.rotation;
+                OnParentTransformChanged(_parentTransform);
             }
+            print("WAAA base");
         }
         UpdateYVelocityMetadata();
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -27,12 +28,6 @@ public class GravityFsmSpringCollider : MonoBehaviour
     void Update()
     {
         UpdateTransform();
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            var time = 0.5f;
-            _rigidBody.AddForce(-Vector3.up * (time * 45f), ForceMode.Impulse);
-        }
     }
 
     public Vector3 anchorPoint; // The point where the spring is anchored
@@ -43,7 +38,6 @@ public class GravityFsmSpringCollider : MonoBehaviour
     {
         // Calculate the displacement vector between the anchor point and the current position
         Vector3 displacement = anchorPoint - transform.localPosition;
-        print(displacement);
 
         // Calculate the spring force using Hooke's Law
         Vector3 springForce = springConstant * displacement;
@@ -78,5 +72,26 @@ public class GravityFsmSpringCollider : MonoBehaviour
         target.rotation = _owner.transform.rotation;
         target.position = _owner.transform.position;
         _collider.enabled = false;
+    }
+
+    private void OnPlayerParentTransformChanged(Transform t)
+    {
+        print("A");
+        if (t != transform) return;
+        print("B");
+        
+        var time = 0.3f;
+        _rigidBody.AddForce(-Vector3.up * (time * 45f), ForceMode.Impulse);
+        
+    }
+
+    private void OnEnable()
+    {
+        PlayerFsm.OnPlayerParentTransformChanged += OnPlayerParentTransformChanged;
+    }
+
+    private void OnDestroy()
+    {
+        PlayerFsm.OnPlayerParentTransformChanged -= OnPlayerParentTransformChanged;
     }
 }
