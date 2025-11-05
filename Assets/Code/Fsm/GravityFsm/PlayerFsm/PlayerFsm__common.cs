@@ -45,7 +45,7 @@ public partial class PlayerFsm
     public static event Action OnPlayerImpaleStateEntered;
     public static event Action OnPlayerGrappleStateEntered;
     public static event Action OnPlayerRacePressed;
-    public static event Action<Transform> OnPlayerParentTransformChanged;
+    public static event Action<Transform, float, float> OnPlayerParentTransformChanged;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;
@@ -469,8 +469,7 @@ public partial class PlayerFsm
 
     protected override void OnParentTransformChanged(Transform t)
     {
-        print("bazinga");
-        OnPlayerParentTransformChanged?.Invoke(t);
+        OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }
 }

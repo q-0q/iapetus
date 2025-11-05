@@ -74,14 +74,13 @@ public class GravityFsmSpringCollider : MonoBehaviour
         _collider.enabled = false;
     }
 
-    private void OnPlayerParentTransformChanged(Transform t)
+    private void OnPlayerParentTransformChanged(Transform t, float momentum, float yVelocity)
     {
-        print("A");
         if (t != transform) return;
-        print("B");
-        
-        var time = 0.3f;
-        _rigidBody.AddForce(-Vector3.up * (time * 45f), ForceMode.Impulse);
+
+        var forward = PlayerFsm.Singleton.transform.forward * (momentum * 0.1f);
+        var down = PlayerFsm.Singleton.transform.up * (yVelocity * 0.5f);;
+        _rigidBody.AddForce(down, ForceMode.Impulse);
         
     }
 
