@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public abstract partial class GravityFsm
 {
@@ -10,8 +11,8 @@ public abstract partial class GravityFsm
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
-    
-    protected Transform _parentTransform;
+
+    public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
     protected Quaternion _previousParentRotation;
     protected GravityFsmSpringCollider _springCollider;

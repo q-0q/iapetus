@@ -20,7 +20,7 @@ public partial class PlayerFsm
         HandleInputMomentumChange();
         SetAnimatorMomentum();
 
-        var collisionMove = ComputeCollisionMove((target.position - _springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
+        var collisionMove = ComputeCollisionMove(((target.position - Vector3.up * GravityFsmSpringCollider.Sag) - _springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
         
         _springCollider.transform.parent.position += collisionMove;
         

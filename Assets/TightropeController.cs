@@ -5,8 +5,8 @@ public class TightropeController : MonoBehaviour
 {
 
     private const float CheckCapsuleRadius = 0.25f;
-    
-    private LineRenderer _lineRenderer;
+
+    public LineRenderer lineRenderer;
     private CapsuleCollider _capsuleCollider;
     public Transform end;
     private Transform _player;
@@ -15,7 +15,7 @@ public class TightropeController : MonoBehaviour
     void Start()
     {
         end = transform.Find("End");
-        TryGetComponent(out _lineRenderer);
+        TryGetComponent(out lineRenderer);
         transform.Find("Trigger").TryGetComponent(out _capsuleCollider);
         _player = PlayerFsm.Singleton.transform;
     }
@@ -23,8 +23,9 @@ public class TightropeController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _lineRenderer.SetPosition(0, transform.position);
-        _lineRenderer.SetPosition(1, end.transform.position);
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, transform.position);
+        lineRenderer.SetPosition(2, end.transform.position);
         
         ConfigureCapsuleBetweenPoints(_capsuleCollider, transform.position, end.transform.position, CheckCapsuleRadius);
     }
@@ -134,9 +135,9 @@ public class TightropeController : MonoBehaviour
     
     private void UpdatePositions()
     {
-        Vector3[] positions = { transform.position, _lineRenderer.GetPosition(1), end.position };
+        Vector3[] positions = { transform.position, lineRenderer.GetPosition(1), end.position };
         //_baseMiddlePoint = (transform.position + _end.position) / 2f;
         //if (!_playerOn) _middlePoint = _baseMiddlePoint;
-        _lineRenderer.SetPositions(positions);
+        lineRenderer.SetPositions(positions);
     }
 }

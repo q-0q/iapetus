@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -12,6 +13,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     private Collider _collider;
     public TightropeController tightropeController;
     private Rigidbody _rigidBody;
+    public static float Sag = 2f;
 
     public void SetOwner(GravityFsm owner)
     {
@@ -28,6 +30,10 @@ public class GravityFsmSpringCollider : MonoBehaviour
     void Update()
     {
         UpdateTransform();
+        if (PlayerFsm.Singleton.parentTransform == transform && PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
+        {
+            tightropeController.lineRenderer.SetPosition(1, _owner.transform.position);
+        }
     }
 
     public Vector3 anchorPoint; // The point where the spring is anchored
@@ -61,7 +67,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
         var target = transform.parent;
         foreach (var neighbor in neighbors)
         {
-            target.position = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation);
+            target.position = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation) - Vector3.up * Sag;
             neighbor.transform.parent.TryGetComponent(out TightropeController controller);
             tightropeController = controller;
             target.rotation = controller.GetAlignmentRotation();
