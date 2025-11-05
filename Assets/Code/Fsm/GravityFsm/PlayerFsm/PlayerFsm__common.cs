@@ -38,6 +38,7 @@ public partial class PlayerFsm
     private HashSet<Interactable> _interactables;
     public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
+    private TightropeController _currentTightropeController;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;

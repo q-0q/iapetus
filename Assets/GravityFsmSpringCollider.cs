@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GravityFsmSpringCollider : MonoBehaviour
 {
     private GravityFsm _owner;
     private Collider _collider;
+    public TightropeController tightropeController;
 
     public void SetOwner(GravityFsm owner)
     {
@@ -33,6 +35,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
         {
             transform.position = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation);
             neighbor.transform.parent.TryGetComponent(out TightropeController controller);
+            tightropeController = controller;
             transform.rotation = controller.GetAlignmentRotation();
             _collider.enabled = true;
             return;
