@@ -78,7 +78,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     {
         var mask = LayerMask.GetMask("TightropeTrigger");
         var neighbors = Physics.OverlapSphere(_owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
-        if (_owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform)) return;
+        if (_owner.StateMapConfig.LockSpringCollider.Get(_owner)) return;
         var target = transform.parent;
         var closestPosition = Vector3.zero;
         Collider closestNeighbor = null;

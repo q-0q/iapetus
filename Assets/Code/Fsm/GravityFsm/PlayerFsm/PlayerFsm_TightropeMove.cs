@@ -21,7 +21,7 @@ public partial class PlayerFsm
         // // transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
         
         
-        HandleTurningCore(1f, 1f, toTarget);
+        HandleTurningCore(1.75f, 1f, toTarget);
         
         var weightedMomentum = Mathf.Lerp(0f, MaxMomentum, weight);
         var clampedMomentum = Mathf.Min(_momentum, weightedMomentum);

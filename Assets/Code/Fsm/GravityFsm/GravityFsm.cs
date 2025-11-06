@@ -15,7 +15,6 @@ public  abstract partial class GravityFsm : Fsm
     public class GravityFsmTrigger : FsmTrigger
     {
         public static int StartFrameGrounded;
-        public static int StartFrameOnTightrope;
         public static int StartFrameAerial;
         public static int StartFrameWithNegativeYVelocity;
     }

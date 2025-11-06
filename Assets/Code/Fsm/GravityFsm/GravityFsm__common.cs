@@ -113,6 +113,7 @@ public abstract partial class GravityFsm
         var neighbors =Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore);
         foreach (var neighbor in neighbors)
         {
+            if (neighbor.gameObject.layer == LayerMask.NameToLayer("Tightrope")) continue;
             if (Physics.ComputePenetration(_depenetrationCollider, _depenetrationCollider.transform.position, _depenetrationCollider.transform.rotation, neighbor,
                     neighbor.transform.position, neighbor.transform.rotation, out Vector3 direction,
                     out float distance))

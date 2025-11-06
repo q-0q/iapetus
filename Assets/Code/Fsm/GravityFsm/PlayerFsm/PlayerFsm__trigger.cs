@@ -112,7 +112,7 @@ public partial class PlayerFsm
                  out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) 
              && IsHitValidFlank(hit, true) && _previousWallrunSide != FlankType.Right)
         {
-            Machine.Fire(PlayerFsmTrigger.FlankWall);
+            Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Right;
             Animator.SetFloat("Flip", 0);
@@ -122,7 +122,7 @@ public partial class PlayerFsm
                  out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)
              && IsHitValidFlank(hit, false) && _previousWallrunSide != FlankType.Left)
         {
-            Machine.Fire(PlayerFsmTrigger.FlankWall);
+            Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Left;
             Animator.SetFloat("Flip", 1);
