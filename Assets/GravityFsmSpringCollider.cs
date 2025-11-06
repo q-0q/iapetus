@@ -13,7 +13,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     private Collider _collider;
     public TightropeController tightropeController;
     private Rigidbody _rigidBody;
-    public static float Sag = 2f;
+    public static float Sag = 1f;
 
     public void SetOwner(GravityFsm owner)
     {
@@ -93,7 +93,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
             }
         }
 
-        if (closestNeighbor != null)
+        if (closestNeighbor != null && closestPosition.y < _owner.transform.position.y + 1f)
         {
             target.position = closestPosition;
             closestNeighbor.transform.parent.TryGetComponent(out TightropeController controller);
