@@ -18,13 +18,16 @@ public class TightropeController : MonoBehaviour
         TryGetComponent(out lineRenderer);
         transform.Find("Trigger").TryGetComponent(out _capsuleCollider);
         _player = PlayerFsm.Singleton.transform;
+        
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, transform.position);
+        lineRenderer.SetPosition(2, end.transform.position);
     }
 
     // Update is called once per frame
     void Update()
     {
         lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.position);
         lineRenderer.SetPosition(2, end.transform.position);
         
         ConfigureCapsuleBetweenPoints(_capsuleCollider, transform.position, end.transform.position, CheckCapsuleRadius);
@@ -75,7 +78,7 @@ public class TightropeController : MonoBehaviour
     }
     
     
-    Vector3 ClosestPointOnLine(Vector3 queryPoint)
+    public Vector3 ClosestPointOnLine(Vector3 queryPoint)
     {
         // Calculate the direction vector of the line
         Vector3 direction = end.position - transform.position;

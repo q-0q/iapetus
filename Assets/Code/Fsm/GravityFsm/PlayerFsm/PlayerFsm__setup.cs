@@ -124,5 +124,6 @@ public partial class PlayerFsm
         
         StateMapConfig.TightropeLineYOffset.Add(PlayerFsmState.VaultHang, 2.5f);
         StateMapConfig.TightropeLineYOffset.Add(PlayerFsmState.Wallsquat, 2.5f);
+        StateMapConfig.TightropeLineYLerpStrength.Add(PlayerFsmState.SlowVaultFinish, 50f);
     }
 }

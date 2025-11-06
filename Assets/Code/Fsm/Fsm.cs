@@ -72,6 +72,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.AnimationTrigger = new StateMap<string>("");
         StateMapConfig.LockSpringCollider = new StateMap<bool>(false);
         StateMapConfig.TightropeLineYOffset = new StateMap<float>(0f);
+        StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(-1f);
     }
 
     public virtual void SetupMachine()

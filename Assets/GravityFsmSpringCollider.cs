@@ -30,13 +30,21 @@ public class GravityFsmSpringCollider : MonoBehaviour
     void Update()
     {
         UpdateTransform();
-        if (PlayerFsm.Singleton.parentTransform == transform && PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
+        if (_owner.parentTransform == transform && _owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
         {
-            var offsetY = PlayerFsm.Singleton.StateMapConfig.TightropeLineYOffset.Get(PlayerFsm.Singleton);
-            var offset = PlayerFsm.Singleton.transform.up * offsetY;
-
-            // var pos = Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), _owner.transform.position + offset, Time.deltaTime * 30f);
-            tightropeController.lineRenderer.SetPosition(1, _owner.transform.position + offset);
+            var offsetY = _owner.StateMapConfig.TightropeLineYOffset.Get(_owner);
+            var offset = _owner.transform.up * offsetY;
+            var position = _owner.transform.position + offset;
+            var strength = _owner.StateMapConfig.TightropeLineYLerpStrength.Get(_owner);
+            tightropeController.lineRenderer.SetPosition(1, strength < 0f ? position : Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), position, Time.deltaTime * strength) );
+        }
+        else
+        {
+            var strength = 10f;
+            var position = tightropeController.ClosestPointOnLine(tightropeController.lineRenderer.GetPosition(1));
+            tightropeController.lineRenderer.SetPosition(1,
+                Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), position,
+                    Time.deltaTime * strength));
         }
     }
 
@@ -70,7 +78,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     {
         var mask = LayerMask.GetMask("TightropeTrigger");
         var neighbors = Physics.OverlapSphere(_owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
-        if (_owner.StateMapConfig.LockSpringCollider.Get(_owner)) return;
+        if (_owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform)) return;
         var target = transform.parent;
         foreach (var neighbor in neighbors)
         {
@@ -108,4 +116,11 @@ public class GravityFsmSpringCollider : MonoBehaviour
     {
         PlayerFsm.OnPlayerParentTransformChanged -= OnPlayerParentTransformChanged;
     }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(tightropeController.lineRenderer.GetPosition(1), 1);
+    }
+    
+    
 }

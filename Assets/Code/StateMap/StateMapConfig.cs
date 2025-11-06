@@ -9,4 +9,5 @@ public class StateMapConfig
     public StateMap<string> AnimationTrigger;
     public StateMap<bool> LockSpringCollider;
     public StateMap<float> TightropeLineYOffset;
+    public StateMap<float> TightropeLineYLerpStrength;
 }
