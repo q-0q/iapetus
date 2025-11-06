@@ -57,6 +57,10 @@ public partial class PlayerFsm : GravityFsm
         public static int Dialogue;
         public static int WalkToDialoguePosition;
         public static int Interactable;
+        
+        public static int Slide;
+        public static int TightropeMove;
+        // public static int LandsquatTightrope;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -136,6 +140,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             GroundMoveOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.TightropeMove))
+        {
+            TightropeMoveOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Jump))
@@ -259,12 +268,17 @@ public partial class PlayerFsm : GravityFsm
         }
         else
         {
-            currentInteractable = null;
+            currentPotentialInteractable = null;
         }
         
         if (Machine.IsInState(PlayerFsmState.Dialogue))
         {
             DialogueOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Slide))
+        {
+            SlideOnUpdate();
         }
 
 
@@ -285,10 +299,11 @@ public partial class PlayerFsm : GravityFsm
             OnPlayerRacePressed?.Invoke();
         }
 
+        HandleSlopeTimer();
         HandleKiEffects();
-
-        base.OnUpdate(); // 
-
+        
+        base.OnUpdate();
+        
     }
 
     private bool HitstopOnUpdate()

@@ -7,4 +7,7 @@ public class StateMapConfig
     public StateMap<float> GravityStrengthMod;
     public StateMap<bool> IsAbstract;
     public StateMap<string> AnimationTrigger;
+    public StateMap<bool> LockSpringCollider;
+    public StateMap<Vector3> TightropeLineOffset;
+    public StateMap<float> TightropeLineYLerpStrength;
 }

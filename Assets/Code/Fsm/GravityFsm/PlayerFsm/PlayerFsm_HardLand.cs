@@ -4,9 +4,10 @@ public partial class PlayerFsm
 {
     private void HardLandOnUpdate()
     {
+        Animator.SetLayerWeight(1, 0);
         if (TimeInCurrentState() < HardLandForwardDuration)
         {
-            transform.position += ComputeCollisionMove(transform.forward * HardLandForwardSpeed * Time.deltaTime);
+            transform.position += ComputeCollisionMove(transform.forward * (HardLandForwardSpeed * Time.deltaTime));
         }
     }
     private void HardLandConfigure()

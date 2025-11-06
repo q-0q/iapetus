@@ -5,7 +5,7 @@ public partial class PlayerFsm
 {
     private void DialogueOnUpdate()
     {
-        currentInteractable = null;
+        currentPotentialInteractable = null;
         
         _momentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
         HandleCollisionMove();

@@ -19,7 +19,7 @@ public class InteractionCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var interactable = PlayerFsm.Singleton.currentInteractable;
+        var interactable = PlayerFsm.Singleton.currentPotentialInteractable;
         if (interactable is not null)
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.deltaTime * 15f);

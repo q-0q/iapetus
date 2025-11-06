@@ -15,6 +15,9 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = true;
+            })
+            .OnExit(_ =>
+            {
                 YVelocity = 0;
             })
             .OnExitFrom(PlayerFsmTrigger.FaceOpen, _ => { _momentum = 0; });

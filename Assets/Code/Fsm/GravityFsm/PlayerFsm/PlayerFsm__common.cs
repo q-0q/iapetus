@@ -30,18 +30,22 @@ public partial class PlayerFsm
     private List<ParticleSystem> _kiIndicatorParticles;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
+    private float _slopeTimer = 0f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
     public static PlayerFsm Singleton;
     private HashSet<Interactable> _interactables;
+    public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
+    private TightropeController _currentTightropeController;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
     public static event Action OnPlayerImpaleStateEntered;
     public static event Action OnPlayerGrappleStateEntered;
     public static event Action OnPlayerRacePressed;
+    public static event Action<Transform, float, float> OnPlayerParentTransformChanged;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;
@@ -58,7 +62,7 @@ public partial class PlayerFsm
     private const float FaceWallHeight = 2.4f;
     private const float FaceWallMaximumAngle = 60f;
     private const float FaceWallStrictMaximumAngle = 20f;
-    private const float FaceRaycastSkew = 0.2f;
+    private const float FaceRaycastSkew = 0.4f;
     private const float MaximumFlankWallDistance = 7.5f;
     private const float FlankWallHeight = 3f;
     private const float FlankWallOpenYOffset = -2f;
@@ -82,7 +86,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.25f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -99,7 +103,7 @@ public partial class PlayerFsm
     private const float VaultTurningMultiplier = 0.75f;
     private const float VaultMinimumAnimatorSpeedMod = 0.5f;
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
-    private const float VaultLedgeLerpStrength = 40f;
+    private const float VaultLedgeLerpStrength = -1f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 2f;
@@ -354,8 +358,6 @@ public partial class PlayerFsm
         }
         else
         {
-            
-            print(-dot / inputFlat.magnitude);
             return input - (forward.normalized * dot);
 
             // // Mirror the input vector across the forward's perpendicular plane
@@ -415,7 +417,7 @@ public partial class PlayerFsm
 
     private void Reset()
     {
-        _parentTransform = null;
+        parentTransform = null;
         Machine.Jump(PlayerFsmState.GroundMove);
         transform.position = _checkpointVector3;
         transform.rotation = _checkpointQuaternion;
@@ -443,5 +445,31 @@ public partial class PlayerFsm
     private float GetCurrentDashRaycastHeightOffset()
     {
         return Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Skip) ? DashRaycastHeightOffset : 0;
+    }
+
+    private void HandleSlopeTimer()
+    {
+        GetGroundedRaycastHit(out var groundedRaycastHit);
+        if (groundedRaycastHit.collider == null)
+        {
+            _slopeTimer = 0f;
+        }
+        else if (!groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up),
+                out var hit, 2f))
+        {
+            _slopeTimer = 0f;
+        }
+        else if (Vector3.Angle(hit.normal, Vector3.up) < 50f)
+        {
+            _slopeTimer = 0f;
+        }
+
+        _slopeTimer += Time.deltaTime;
+    }
+
+    protected override void OnParentTransformChanged(Transform t)
+    {
+        OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
+        base.OnParentTransformChanged(t);
     }
 }

@@ -44,6 +44,8 @@ public partial class PlayerFsm
         InteractableConfigure();
         WalkToDialoguePositionConfigure();
         DialogueConfigure();
+        SlideConfigure();
+        TightropeMoveConfigure();
         
     }
 
@@ -94,7 +96,8 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skip, "Skip");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LandsquatAfterDash, "LandsquatAfterDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DashVault, "DashVault");
-        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Slide, "Slide");
+
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.LockMomentum, true);
@@ -107,5 +110,21 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
+        
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Skipsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.TightropeMove, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Wallsquat, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Wallstep, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.MediumVaultHang, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.SlowVaultHang, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.SlowVaultFinish, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Vault, true);
+        
+        StateMapConfig.TightropeLineOffset.Add(PlayerFsmState.VaultHang, new Vector3(0, 2.5f, 1.0f));
+        StateMapConfig.TightropeLineOffset.Add(PlayerFsmState.Wallsquat, new Vector3(0, 2.5f, 1.0f));
+        StateMapConfig.TightropeLineYLerpStrength.Add(PlayerFsmState.SlowVaultFinish, 50f);
+        StateMapConfig.TightropeLineYLerpStrength.Add(PlayerFsmState.Wallstep, 5f);
     }
 }

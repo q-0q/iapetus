@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Wasp;
+using Random = UnityEngine.Random;
 
 public abstract class Fsm : MonoBehaviour
 {
@@ -69,6 +70,9 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.GravityStrengthMod = new StateMap<float>(1f);
         StateMapConfig.IsAbstract = new StateMap<bool>(false);
         StateMapConfig.AnimationTrigger = new StateMap<string>("");
+        StateMapConfig.LockSpringCollider = new StateMap<bool>(false);
+        StateMapConfig.TightropeLineOffset = new StateMap<Vector3>(Vector3.zero);
+        StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(50f);
     }
 
     public virtual void SetupMachine()

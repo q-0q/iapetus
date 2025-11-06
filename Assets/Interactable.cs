@@ -10,6 +10,7 @@ public class Interactable : MonoBehaviour
     public float triggerRange = 10f;
     
     public event Action OnInteracted;
+    public event Action OnHardInteracted;
     private Collider _collider;
 
     public Type type;
@@ -28,6 +29,11 @@ public class Interactable : MonoBehaviour
     public void TriggerInteraction()
     {
         OnInteracted?.Invoke();
+    }
+    
+    public void TriggerHardInteraction()
+    {
+        OnHardInteracted?.Invoke();
     }
 
     public void SetEnabled(bool val)

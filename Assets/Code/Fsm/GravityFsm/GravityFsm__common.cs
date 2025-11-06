@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public abstract partial class GravityFsm
 {
@@ -10,16 +11,17 @@ public abstract partial class GravityFsm
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
-    
-    protected Transform _parentTransform;
+
+    public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
     protected Quaternion _previousParentRotation;
+    public GravityFsmSpringCollider springCollider;
     
     private const float GroundedYPositionLerpStrength = 50f;
     protected const float GroundedRaycastLength = 0.5f;
     protected const float GroundedRaycastForwardOffset = 0.05f;
-    private const float GroundedRaycastMaximumAngle = 65f;
     
+    private const float GroundedRaycastMaximumAngle = 65f;
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
     private const float GroundCollisionMoveSphereCastHeight = 0.95f;
@@ -27,7 +29,7 @@ public abstract partial class GravityFsm
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
     
-    protected enum GroundKind
+    public enum GroundKind
     {
         Standard,
         Tightrope
@@ -35,21 +37,18 @@ public abstract partial class GravityFsm
 
     
     
-    private bool GetGroundedRaycastHit(out RaycastHit hit, out GroundKind kind)
+    protected bool GetGroundedRaycastHit(out RaycastHit hit)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
-        kind = GroundKind.Standard;
         var f = 1f;
         if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-            if (hit.transform.gameObject.layer == LayerMask.NameToLayer("TightropeController")) kind = GroundKind.Tightrope;
-            var slope = Vector3.Angle(hit.normal, Vector3.up);
-            return slope < GroundedRaycastMaximumAngle;
+            return true;
         }
 
-        print("failed ground check");
+        // print("failed ground check");
         return false;
     }
 
@@ -124,12 +123,13 @@ public abstract partial class GravityFsm
     }
 
 
-    private void InstantiateTightropeCollider()
+    private void InstantiateSpringCollider()
     {
-        var tightropeColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmTightropeCollider") as GameObject;
-        var tightropeCollider = Instantiate(tightropeColliderPrefab, transform.position, Quaternion.identity);
-        tightropeCollider.TryGetComponent(out GravityFsmTightropeCollider component);
-        component.SetOwner(this);
-        
+        var springColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmSpringCollider") as GameObject;
+        var springCollider = Instantiate(springColliderPrefab, transform.position, Quaternion.identity);
+        this.springCollider = springCollider.GetComponentInChildren<GravityFsmSpringCollider>();
+        this.springCollider.SetOwner(this);
     }
+
+    protected virtual void OnParentTransformChanged(Transform t) { }
 }

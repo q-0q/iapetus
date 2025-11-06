@@ -7,19 +7,19 @@ public abstract partial class GravityFsm
 
     private void RespectParentTransformOnUpdate()
     {
-        if (_parentTransform == null) return;
+        if (parentTransform == null) return;
 
         // Move position by the parent's movement delta
-        Vector3 posDiff = _parentTransform.position - _previousParentTransformPosition;
+        Vector3 posDiff = parentTransform.position - _previousParentTransformPosition;
         transform.position += ComputeCollisionMove(posDiff);
 
         // Compute rotation delta
-        Quaternion rotationDelta = _parentTransform.rotation * Quaternion.Inverse(_previousParentRotation);
+        Quaternion rotationDelta = parentTransform.rotation * Quaternion.Inverse(_previousParentRotation);
 
         // Rotate position around the parent
-        Vector3 offset = transform.position - _parentTransform.position;
+        Vector3 offset = transform.position - parentTransform.position;
         offset = rotationDelta * offset;
-        var rotationMove = (_parentTransform.position + offset) - transform.position;
+        var rotationMove = (parentTransform.position + offset) - transform.position;
         transform.position += ComputeCollisionMove(rotationMove);
 
         
@@ -32,8 +32,8 @@ public abstract partial class GravityFsm
         }
 
         // Update previous transform state
-        _previousParentTransformPosition = _parentTransform.position;
-        _previousParentRotation = _parentTransform.rotation;
+        _previousParentTransformPosition = parentTransform.position;
+        _previousParentRotation = parentTransform.rotation;
     }
 
     
@@ -43,9 +43,10 @@ public abstract partial class GravityFsm
             .OnEntry(@params =>
             {
                 if (@params is not RaycastHitParam p) return;
-                _parentTransform = p.Hit.transform;
-                _previousParentTransformPosition = _parentTransform.position;
-                _previousParentRotation = _parentTransform.rotation;
+                parentTransform = p.Hit.transform;
+                _previousParentTransformPosition = parentTransform.position;
+                _previousParentRotation = parentTransform.rotation;
+                OnParentTransformChanged(parentTransform);
             });
     }
 
