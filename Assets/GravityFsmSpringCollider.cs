@@ -42,6 +42,8 @@ public class GravityFsmSpringCollider : MonoBehaviour
     
     void FixedUpdate()
     {
+        
+        // return;
         // Calculate the displacement vector between the anchor point and the current position
         Vector3 displacement = anchorPoint - transform.localPosition;
 
@@ -56,7 +58,8 @@ public class GravityFsmSpringCollider : MonoBehaviour
 
         // Apply the force to the Rigidbody
         _rigidBody.AddForce(totalForce * Time.deltaTime * 40f, ForceMode.Force);
-        
+        transform.localPosition = new Vector3(0, transform.localPosition.y, 0);
+
     }
     
     private void UpdateTransform()
@@ -82,10 +85,12 @@ public class GravityFsmSpringCollider : MonoBehaviour
 
     private void OnPlayerParentTransformChanged(Transform t, float momentum, float yVelocity)
     {
+        
         if (t != transform) return;
 
         var forward = PlayerFsm.Singleton.transform.forward * (momentum * 0.1f);
         var down = PlayerFsm.Singleton.transform.up * (yVelocity * 0.5f);;
+        Debug.DrawRay(transform.position, down, Color.magenta, 1f);
         _rigidBody.AddForce(down, ForceMode.Impulse);
         
     }
