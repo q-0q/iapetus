@@ -34,6 +34,8 @@ public class GravityFsmSpringCollider : MonoBehaviour
         {
             var offsetY = PlayerFsm.Singleton.StateMapConfig.TightropeLineYOffset.Get(PlayerFsm.Singleton);
             var offset = PlayerFsm.Singleton.transform.up * offsetY;
+
+            // var pos = Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), _owner.transform.position + offset, Time.deltaTime * 30f);
             tightropeController.lineRenderer.SetPosition(1, _owner.transform.position + offset);
         }
     }
