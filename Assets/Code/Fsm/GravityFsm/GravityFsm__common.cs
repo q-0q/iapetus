@@ -15,7 +15,7 @@ public abstract partial class GravityFsm
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
     protected Quaternion _previousParentRotation;
-    protected GravityFsmSpringCollider _springCollider;
+    public GravityFsmSpringCollider springCollider;
     
     private const float GroundedYPositionLerpStrength = 50f;
     protected const float GroundedRaycastLength = 0.5f;
@@ -127,8 +127,8 @@ public abstract partial class GravityFsm
     {
         var springColliderPrefab = Resources.Load("Prefab/Fsm/GravityFsmSpringCollider") as GameObject;
         var springCollider = Instantiate(springColliderPrefab, transform.position, Quaternion.identity);
-        _springCollider = springCollider.GetComponentInChildren<GravityFsmSpringCollider>();
-        _springCollider.SetOwner(this);
+        this.springCollider = springCollider.GetComponentInChildren<GravityFsmSpringCollider>();
+        this.springCollider.SetOwner(this);
     }
 
     protected virtual void OnParentTransformChanged(Transform t) { }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Wasp;
+using Random = UnityEngine.Random;
 
 public abstract class Fsm : MonoBehaviour
 {
@@ -70,6 +71,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.IsAbstract = new StateMap<bool>(false);
         StateMapConfig.AnimationTrigger = new StateMap<string>("");
         StateMapConfig.LockSpringCollider = new StateMap<bool>(false);
+        StateMapConfig.TightropeLineYOffset = new StateMap<float>(1f);
     }
 
     public virtual void SetupMachine()

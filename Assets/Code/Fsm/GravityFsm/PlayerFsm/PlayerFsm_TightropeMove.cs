@@ -5,8 +5,8 @@ public partial class PlayerFsm
 {
     private void TightropeMoveOnUpdate()
     {
-        var tightropeStart = _springCollider.tightropeController.transform;
-        var tightropeEnd = _springCollider.tightropeController.end;
+        var tightropeStart = springCollider.tightropeController.transform;
+        var tightropeEnd = springCollider.tightropeController.end;
         var v3 = GetInputMovementVector3();
         
         if (v3.magnitude < InputMagnitudeThreshhold) v3 = transform.forward;
@@ -20,9 +20,9 @@ public partial class PlayerFsm
         HandleInputMomentumChange();
         SetAnimatorMomentum();
 
-        var collisionMove = ComputeCollisionMove(((target.position - Vector3.up * GravityFsmSpringCollider.Sag) - _springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
+        var collisionMove = ComputeCollisionMove(((target.position - Vector3.up * GravityFsmSpringCollider.Sag) - springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
         
-        _springCollider.transform.parent.position += collisionMove;
+        springCollider.transform.parent.position += collisionMove;
         
 
         var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
@@ -35,6 +35,8 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove,
+                @params => !IsTightropeTrigger(@params))
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             // .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)

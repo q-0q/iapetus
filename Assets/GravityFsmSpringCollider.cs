@@ -32,7 +32,9 @@ public class GravityFsmSpringCollider : MonoBehaviour
         UpdateTransform();
         if (PlayerFsm.Singleton.parentTransform == transform && PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
         {
-            tightropeController.lineRenderer.SetPosition(1, _owner.transform.position);
+            var offsetY = PlayerFsm.Singleton.StateMapConfig.TightropeLineYOffset.Get(PlayerFsm.Singleton);
+            var offset = PlayerFsm.Singleton.transform.up * offsetY;
+            tightropeController.lineRenderer.SetPosition(1, _owner.springCollider.transform.position + offset);
         }
     }
 
@@ -88,11 +90,11 @@ public class GravityFsmSpringCollider : MonoBehaviour
         
         if (t != transform) return;
 
+        
         var forward = PlayerFsm.Singleton.transform.forward * (momentum * 0.1f);
         var down = PlayerFsm.Singleton.transform.up * (yVelocity * 0.5f);;
-        Debug.DrawRay(transform.position, down, Color.magenta, 1f);
+        _rigidBody.velocity = Vector3.zero;
         _rigidBody.AddForce(down, ForceMode.Impulse);
-        
     }
 
     private void OnEnable()
