@@ -93,7 +93,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
             }
         }
 
-        if (closestNeighbor != null && closestPosition.y < _owner.transform.position.y + 1f)
+        if (closestNeighbor != null && closestPosition.y < _owner.transform.position.y + 2f)
         {
             target.position = closestPosition;
             closestNeighbor.transform.parent.TryGetComponent(out TightropeController controller);
