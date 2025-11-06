@@ -52,6 +52,11 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
+            })
+            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
+            {
+                if (GetInputMovementVector3().magnitude < InputMagnitudeThreshhold) return;
+                _momentum = Mathf.Min(MaxMomentum, _momentum + 5f);
             });
     }
 }
