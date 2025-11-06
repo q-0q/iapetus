@@ -13,10 +13,13 @@ public partial class PlayerFsm
         var angle = Vector3.Angle(v3, tightropeStart.position - transform.position);
         var target = angle < 90f ? tightropeStart : tightropeEnd;
         var targetRotation = Quaternion.LookRotation(target.position - transform.position, Vector3.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 20f);
-
-
-
+        // transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 5f);
+        
+        HandleTurning();
+        var clamp = Mathf.Lerp(0f, MaxMomentum, Mathf.InverseLerp(20f, 90f, Mathf.Abs(angle - 90f)));
+        var desiredMomentum = Mathf.Min(_momentum, clamp);
+        _momentum = Mathf.Lerp(_momentum, desiredMomentum, Time.deltaTime * 20f);
+        
         HandleInputMomentumChange();
         SetAnimatorMomentum();
 
