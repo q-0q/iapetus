@@ -32,8 +32,8 @@ public class GravityFsmSpringCollider : MonoBehaviour
         UpdateTransform();
         if (_owner.parentTransform == transform && _owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
         {
-            var offsetY = _owner.StateMapConfig.TightropeLineYOffset.Get(_owner);
-            var offset = _owner.transform.up * offsetY;
+            var offsetV = _owner.StateMapConfig.TightropeLineOffset.Get(_owner);
+            var offset = _owner.transform.rotation * offsetV;
             var position = _owner.transform.position + offset;
             var strength = _owner.StateMapConfig.TightropeLineYLerpStrength.Get(_owner);
             tightropeController.lineRenderer.SetPosition(1, strength < 0f ? position : Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), position, Time.deltaTime * strength) );

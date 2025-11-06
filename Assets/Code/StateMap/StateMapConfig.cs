@@ -8,6 +8,6 @@ public class StateMapConfig
     public StateMap<bool> IsAbstract;
     public StateMap<string> AnimationTrigger;
     public StateMap<bool> LockSpringCollider;
-    public StateMap<float> TightropeLineYOffset;
+    public StateMap<Vector3> TightropeLineOffset;
     public StateMap<float> TightropeLineYLerpStrength;
 }

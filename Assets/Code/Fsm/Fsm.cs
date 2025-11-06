@@ -71,8 +71,8 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.IsAbstract = new StateMap<bool>(false);
         StateMapConfig.AnimationTrigger = new StateMap<string>("");
         StateMapConfig.LockSpringCollider = new StateMap<bool>(false);
-        StateMapConfig.TightropeLineYOffset = new StateMap<float>(0f);
-        StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(-1f);
+        StateMapConfig.TightropeLineOffset = new StateMap<Vector3>(Vector3.zero);
+        StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(50f);
     }
 
     public virtual void SetupMachine()
