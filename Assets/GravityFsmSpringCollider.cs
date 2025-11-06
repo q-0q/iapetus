@@ -80,10 +80,23 @@ public class GravityFsmSpringCollider : MonoBehaviour
         var neighbors = Physics.OverlapSphere(_owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
         if (_owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform)) return;
         var target = transform.parent;
+        var closestPosition = Vector3.zero;
+        Collider closestNeighbor = null;
         foreach (var neighbor in neighbors)
         {
-            target.position = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation) - Vector3.up * Sag;
-            neighbor.transform.parent.TryGetComponent(out TightropeController controller);
+            var pos = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation) - Vector3.up * Sag;
+            if (Vector3.Distance(pos, _owner.transform.position) <
+                Vector3.Distance(closestPosition, _owner.transform.position))
+            {
+                closestNeighbor = neighbor;
+                closestPosition = pos;
+            }
+        }
+
+        if (closestNeighbor != null)
+        {
+            target.position = closestPosition;
+            closestNeighbor.transform.parent.TryGetComponent(out TightropeController controller);
             tightropeController = controller;
             target.rotation = controller.GetAlignmentRotation();
             _collider.enabled = true;
