@@ -69,7 +69,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
         Vector3 totalForce = springForce - dampingForce;
 
         // Apply the force to the Rigidbody
-        _rigidBody.AddForce(totalForce * Time.deltaTime * 40f, ForceMode.Force);
+        _rigidBody.AddForce(totalForce * (Time.deltaTime * 40f), ForceMode.Force);
         transform.localPosition = new Vector3(0, transform.localPosition.y, 0);
 
     }

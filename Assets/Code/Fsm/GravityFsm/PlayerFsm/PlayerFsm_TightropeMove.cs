@@ -20,9 +20,11 @@ public partial class PlayerFsm
         HandleInputMomentumChange();
         SetAnimatorMomentum();
 
-        var collisionMove = ComputeCollisionMove(((target.position - Vector3.up * GravityFsmSpringCollider.Sag) - springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
-        
-        springCollider.transform.parent.position += collisionMove;
+        var collisionPlayerMove = ComputeCollisionMove(((target.position - Vector3.up * GravityFsmSpringCollider.Sag) - springCollider.transform.position).normalized * ComputeDesiredMove().magnitude);
+        springCollider.transform.parent.position += collisionPlayerMove;
+        var collisionAlignmentMove = ComputeCollisionMove((springCollider.tightropeController.ClosestPointOnLine(transform.position) -
+                                                           transform.position) * (Time.deltaTime * 5f));
+        springCollider.transform.parent.position += collisionAlignmentMove;
         
 
         var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
