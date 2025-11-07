@@ -42,10 +42,13 @@ public abstract partial class GravityFsm
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         var f = 1f;
+        var minDistance = 0.1f;
         if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-            return true;
+
+            // return true;
+            return (transform.position.y - hit.point.y) < minDistance;
         }
 
         // print("failed ground check");
