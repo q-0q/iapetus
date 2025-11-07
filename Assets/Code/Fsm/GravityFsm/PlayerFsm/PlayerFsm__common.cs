@@ -103,7 +103,7 @@ public partial class PlayerFsm
     private const float VaultTurningMultiplier = 0.75f;
     private const float VaultMinimumAnimatorSpeedMod = 0.5f;
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
-    private const float VaultLedgeLerpStrength = -1f;
+    private const float VaultLedgeLerpStrength = 35f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 2f;

@@ -94,6 +94,12 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
         }
+
+        if (!Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward,
+                out hit, (forwardRaycastDistance + skew * 2f) + 0.25f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        {
+            Machine.Fire(PlayerFsmTrigger.FaceOpenLenient);
+        }
         
         Debug.DrawRay(transform.position + Vector3.up * (FaceWallHeight  + GetCurrentDashRaycastHeightOffset()), transform.forward *
             (forwardRaycastDistance + skew * 2f), Color.red);

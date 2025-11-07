@@ -8,12 +8,13 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            // .Permit(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall)
+            // .Permit(PlayerFsmTrigger.FaceOpenLenient, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep,
                 _ => TimeInCurrentState() > WallstepMinimumDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
+                LastUpwardsY = transform.position.y;
                 _wallsquattedSinceLeavingGround = true;
             })
             .OnExit(_ =>

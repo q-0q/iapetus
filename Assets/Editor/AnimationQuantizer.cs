@@ -71,6 +71,6 @@ namespace SomeNamespace
     /// </summary>
     public static class AnimationQuantizerSettings
     {
-        public static bool Enabled = true;
+        public static bool Enabled = false;
     }
 }

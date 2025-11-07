@@ -73,6 +73,7 @@ public partial class PlayerFsm : GravityFsm
         public static int FaceWall;
         public static int FaceWallStrict;
         public static int FaceOpen;
+        public static int FaceOpenLenient;
         public static int FlankWall;
         public static int FlankOpen;
         public static int Dash;
