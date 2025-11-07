@@ -121,6 +121,8 @@ public partial class PlayerFsm
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.SlowVaultHang, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.SlowVaultFinish, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Vault, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.HardLand, true);
+        StateMapConfig.LockSpringCollider.Add(PlayerFsmState.HardLandRoll, true);
         
         StateMapConfig.TightropeLineOffset.Add(PlayerFsmState.VaultHang, new Vector3(0, 2.5f, 1.0f));
         StateMapConfig.TightropeLineOffset.Add(PlayerFsmState.Wallsquat, new Vector3(0, 2.5f, 1.0f));

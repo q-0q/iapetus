@@ -30,6 +30,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     void Update()
     {
         UpdateTransform();
+        if (tightropeController is null) return;
         if (_owner.parentTransform == transform && _owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
         {
             var offsetV = _owner.StateMapConfig.TightropeLineOffset.Get(_owner);
@@ -129,11 +130,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     {
         PlayerFsm.OnPlayerParentTransformChanged -= OnPlayerParentTransformChanged;
     }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawSphere(tightropeController.lineRenderer.GetPosition(1), 1);
-    }
+    
     
     
 }
