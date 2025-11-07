@@ -10,10 +10,13 @@ public class TightropeController : MonoBehaviour
     private CapsuleCollider _capsuleCollider;
     public Transform end;
     private Transform _player;
+
+    public GravityFsmSpringCollider currentSpringCollider;
     
     // Start is called before the first frame update
     void Start()
     {
+        currentSpringCollider = null;
         end = transform.Find("End");
         TryGetComponent(out lineRenderer);
         transform.Find("Trigger").TryGetComponent(out _capsuleCollider);
@@ -31,6 +34,23 @@ public class TightropeController : MonoBehaviour
         lineRenderer.SetPosition(2, end.transform.position);
         
         ConfigureCapsuleBetweenPoints(_capsuleCollider, transform.position, end.transform.position, CheckCapsuleRadius);
+        
+        if (currentSpringCollider != null && currentSpringCollider.owner.parentTransform == currentSpringCollider.transform && currentSpringCollider.owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
+        {
+            var offsetV = currentSpringCollider.owner.StateMapConfig.TightropeLineOffset.Get(currentSpringCollider.owner);
+            var offset = currentSpringCollider.owner.transform.rotation * offsetV;
+            var position = currentSpringCollider.owner.transform.position + offset;
+            var strength = currentSpringCollider.owner.StateMapConfig.TightropeLineYLerpStrength.Get(currentSpringCollider.owner);
+            lineRenderer.SetPosition(1, strength < 0f ? position : Vector3.Lerp(lineRenderer.GetPosition(1), position, Time.deltaTime * strength) );
+        }
+        else
+        {
+            var strength = 10f;
+            var position = ClosestPointOnLine(lineRenderer.GetPosition(1));
+            lineRenderer.SetPosition(1,
+                Vector3.Lerp(lineRenderer.GetPosition(1), position,
+                    Time.deltaTime * strength));
+        }
     }
     
     public static void ConfigureCapsuleBetweenPoints(CapsuleCollider capsule, Vector3 pointA, Vector3 pointB, float radius)

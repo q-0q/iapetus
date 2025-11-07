@@ -9,7 +9,7 @@ using UnityEngine.Serialization;
 
 public class GravityFsmSpringCollider : MonoBehaviour
 {
-    private GravityFsm _owner;
+    public GravityFsm owner;
     private Collider _collider;
     public TightropeController tightropeController;
     private Rigidbody _rigidBody;
@@ -17,7 +17,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
 
     public void SetOwner(GravityFsm owner)
     {
-        _owner = owner; 
+        this.owner = owner; 
     }
     // Start is called before the first frame update
     void Start()
@@ -30,23 +30,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
     void Update()
     {
         UpdateTransform();
-        if (tightropeController is null) return;
-        if (_owner.parentTransform == transform && _owner.Machine.IsInState(GravityFsm.GravityFsmState.RespectParentTransform))
-        {
-            var offsetV = _owner.StateMapConfig.TightropeLineOffset.Get(_owner);
-            var offset = _owner.transform.rotation * offsetV;
-            var position = _owner.transform.position + offset;
-            var strength = _owner.StateMapConfig.TightropeLineYLerpStrength.Get(_owner);
-            tightropeController.lineRenderer.SetPosition(1, strength < 0f ? position : Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), position, Time.deltaTime * strength) );
-        }
-        else
-        {
-            var strength = 10f;
-            var position = tightropeController.ClosestPointOnLine(tightropeController.lineRenderer.GetPosition(1));
-            tightropeController.lineRenderer.SetPosition(1,
-                Vector3.Lerp(tightropeController.lineRenderer.GetPosition(1), position,
-                    Time.deltaTime * strength));
-        }
+
     }
 
     public Vector3 anchorPoint; // The point where the spring is anchored
@@ -78,34 +62,38 @@ public class GravityFsmSpringCollider : MonoBehaviour
     private void UpdateTransform()
     {
         var mask = LayerMask.GetMask("TightropeTrigger");
-        var neighbors = Physics.OverlapSphere(_owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
-        if (_owner.StateMapConfig.LockSpringCollider.Get(_owner)) return;
+        var neighbors = Physics.OverlapSphere(owner.transform.position, 6.5f, mask, QueryTriggerInteraction.Collide);
+        if (owner.StateMapConfig.LockSpringCollider.Get(owner)) return;
         var target = transform.parent;
         var closestPosition = Vector3.zero;
         Collider closestNeighbor = null;
         foreach (var neighbor in neighbors)
         {
-            var pos = Physics.ClosestPoint(_owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation) - Vector3.up * Sag;
-            if (Vector3.Distance(pos, _owner.transform.position) <
-                Vector3.Distance(closestPosition, _owner.transform.position))
+            var pos = Physics.ClosestPoint(owner.transform.position, neighbor, neighbor.transform.position, neighbor.transform.rotation) - Vector3.up * Sag;
+            if (Vector3.Distance(pos, owner.transform.position) <
+                Vector3.Distance(closestPosition, owner.transform.position))
             {
                 closestNeighbor = neighbor;
                 closestPosition = pos;
             }
         }
 
-        if (closestNeighbor != null && closestPosition.y < _owner.transform.position.y + 2f)
+        if (tightropeController != null) tightropeController.currentSpringCollider = null;
+        
+        if (closestNeighbor != null && closestPosition.y < owner.transform.position.y + 2f)
         {
             target.position = closestPosition;
             closestNeighbor.transform.parent.TryGetComponent(out TightropeController controller);
             tightropeController = controller;
+            controller.currentSpringCollider = this;
             target.rotation = controller.GetAlignmentRotation();
             _collider.enabled = true;
             return;
         }
 
-        target.rotation = _owner.transform.rotation;
-        target.position = _owner.transform.position;
+        
+        target.rotation = owner.transform.rotation;
+        target.position = owner.transform.position;
         _collider.enabled = false;
     }
 
