@@ -8,8 +8,9 @@ public partial class CrumbleFsm
             .Permit(CrumbleFsmTrigger.PlayerSetAsParent, CrumbleFsmState.Breaking1)
             .OnEntryFrom(FsmTrigger.Timeout, _ =>
             {
+                _renderer.material.SetFloat("_Glow", 0f);
                 _renderer.material.SetFloat("_CrackAmount",0);
-                transform.DOShakePosition(0.5f, 0.5f);
+                // transform.DOShakePosition(0.6f, 0.2f);
                 _collider.enabled = true;
                 _renderer.enabled = true;
             });

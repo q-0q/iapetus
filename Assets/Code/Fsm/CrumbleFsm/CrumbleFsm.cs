@@ -32,6 +32,7 @@ public partial class CrumbleFsm : Fsm
         TryGetComponent(out _collider);
         TryGetComponent(out _renderer);
         transform.Find("ReformParticles").TryGetComponent(out _reformParticleSystem);
+        transform.Find("CrumbleParticles").TryGetComponent(out _crumbleParticleSystem);
     }
     
     public override void OnUpdate()
@@ -41,6 +42,10 @@ public partial class CrumbleFsm : Fsm
         if (Machine.IsInState(CrumbleFsmState.Breaking2))
         {
             Breaking2OnUpdate();
+        }
+        if (Machine.IsInState(CrumbleFsmState.Breaking3))
+        {
+            Breaking3OnUpdate();
         }
     }
 

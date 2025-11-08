@@ -10,4 +10,5 @@ public partial class CrumbleFsm
     private Vector3 _initLocalPosition;
 
     private ParticleSystem _reformParticleSystem;
+    private ParticleSystem _crumbleParticleSystem;
 }

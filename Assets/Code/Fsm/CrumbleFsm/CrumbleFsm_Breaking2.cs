@@ -13,10 +13,13 @@ public partial class CrumbleFsm
     {
         Machine.Configure(CrumbleFsmState.Breaking2)
             .Permit(FsmTrigger.Timeout, CrumbleFsmState.Breaking3)
+            .PermitIf(FsmTrigger.Timeout, CrumbleFsmState.Idle, _ => PlayerFsm.Singleton.parentTransform != transform, 1)
             .OnEntry(_ =>
             {
+                _crumbleParticleSystem.Play();
                 _renderer.material.SetFloat("_CrackAmount", 0.45f);
-                transform.DOShakePosition(0.3f, 0.5f);
+                transform.DOShakePosition(0.3f, 0.2f);
+                // transform.DOShakePosition(2f, 0.15f);
             });
     }
 }

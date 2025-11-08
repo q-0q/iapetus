@@ -47,6 +47,10 @@ public  abstract partial class GravityFsm : Fsm
         {
             RespectParentTransformOnUpdate();
         }
+        else
+        {
+            parentTransform = null;
+        }
         
         if (!Machine.IsInState(GravityFsmState.IgnoreDepenetration))
         {
