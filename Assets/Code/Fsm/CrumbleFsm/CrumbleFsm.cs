@@ -8,9 +8,11 @@ public partial class CrumbleFsm : Fsm
     public class CrumbleFsmState : FsmState
     {
         public static int Idle;
-        public static int Breaking;
+        public static int Breaking1;
+        public static int Breaking2;
         public static int Broken;
         public static int Forming;
+        public static int Breaking3;
     }
 
     public class CrumbleFsmTrigger : FsmTrigger
@@ -29,11 +31,17 @@ public partial class CrumbleFsm : Fsm
         InitState = CrumbleFsmState.Idle;
         TryGetComponent(out _collider);
         TryGetComponent(out _renderer);
+        transform.Find("ReformParticles").TryGetComponent(out _reformParticleSystem);
     }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
+
+        if (Machine.IsInState(CrumbleFsmState.Breaking2))
+        {
+            Breaking2OnUpdate();
+        }
     }
 
     private void OnEnable()

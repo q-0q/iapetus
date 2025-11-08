@@ -5,7 +5,9 @@ public partial class CrumbleFsm
     {
         base.SetupMachine();
         IdleConfigure();
-        BreakingConfigure();
+        Breaking1Configure();
+        Breaking2Configure();
+        Breaking3Configure();
         BrokenConfigure();
         FormingConfigure();
     }
@@ -14,7 +16,6 @@ public partial class CrumbleFsm
     {
         base.SetupStateMaps();
         
-        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking, 2f);
         
     }
 }

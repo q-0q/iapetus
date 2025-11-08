@@ -10,7 +10,7 @@ public partial class CrumbleFsm
             .Permit(FsmTrigger.Timeout, CrumbleFsmState.Forming)
             .OnEntry(_ =>
             {
-                transform.DOShakePosition(0.5f, 0.3f);
+                transform.DOShakePosition(1f, 0.6f);
                 _collider.enabled = false;
                 _renderer.enabled = false;
             });
