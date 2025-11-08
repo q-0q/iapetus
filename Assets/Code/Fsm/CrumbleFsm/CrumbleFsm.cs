@@ -39,6 +39,10 @@ public partial class CrumbleFsm : Fsm
     {
         base.OnUpdate();
 
+        if (Machine.IsInState(CrumbleFsmState.Idle))
+        {
+            IdleOnUpdate();
+        }
         if (Machine.IsInState(CrumbleFsmState.Breaking2))
         {
             Breaking2OnUpdate();
