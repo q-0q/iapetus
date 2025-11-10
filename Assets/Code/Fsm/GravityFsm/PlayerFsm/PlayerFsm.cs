@@ -121,7 +121,7 @@ public partial class PlayerFsm : GravityFsm
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         // QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        // Application.targetFrameRate = 30;
+        // Application.targetFrameRate = 60;
 
     }
     

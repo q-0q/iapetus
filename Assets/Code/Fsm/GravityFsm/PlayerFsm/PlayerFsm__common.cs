@@ -114,7 +114,7 @@ public partial class PlayerFsm
     private const float WallstepMinimumDuration = 0.25f;
     private const float ForceWallRotationSpeed = 3f;
     private const float WallRunMinimumEntryMomentum = 9f;
-    private const float WallRunMinimumMomentum = 9f;
+    private const float WallRunMinimumMomentum = 7f;
     private const float
         WallRunMinimumYVelocity = 13f; // It's pretty important that this value is larger than WallsquatMinimumYVelocity
 
@@ -178,7 +178,7 @@ public partial class PlayerFsm
         var distance = DistanceFromPointToPlane(transform.position, hit.point, hit.normal);
         var angle = Vector3.Angle(transform.right * flipMod, hit.normal);
         
-        return distance < 1.5f && angle < FlankMaximumAngle;;
+        return distance < 2.0f && angle < FlankMaximumAngle;;
     }
 
     private float ComputeDynamicForwardRaycastDistance()

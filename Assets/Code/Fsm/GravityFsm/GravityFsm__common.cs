@@ -37,7 +37,7 @@ public abstract partial class GravityFsm
 
     
     
-    protected bool GetGroundedRaycastHit(out RaycastHit hit)
+    protected bool GetGroundedRaycastHit(out RaycastHit hit, float distanceOffset = 0f)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());

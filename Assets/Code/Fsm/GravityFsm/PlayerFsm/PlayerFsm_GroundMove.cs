@@ -5,7 +5,7 @@ public partial class PlayerFsm
     private void GroundMoveOnUpdate()
     { 
         HandleInputMomentumChange();
-        HandleTurning(1f, true);
+        HandleTurning(1f);
         HandleCollisionMove();
 
         SetAnimatorMomentum();
