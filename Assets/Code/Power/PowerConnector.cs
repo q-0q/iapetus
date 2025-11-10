@@ -17,6 +17,7 @@ public class PowerConnector : MonoBehaviour
     private PowerLamp _powerLamp;
 
     public bool Disabled = false;
+    public bool RequireAllInputs = false;
     private bool _powered;
     
     void Awake()

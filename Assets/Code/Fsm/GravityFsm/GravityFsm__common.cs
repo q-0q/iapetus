@@ -24,7 +24,7 @@ public abstract partial class GravityFsm
     private const float GroundedRaycastMaximumAngle = 65f;
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
-    private const float GroundCollisionMoveSphereCastHeight = 0.95f;
+    private const float GroundCollisionMoveSphereCastHeight = 1.15f;
     private const float FallingCollisionMoveSphereCastHeight = -0.5f;
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
@@ -39,7 +39,7 @@ public abstract partial class GravityFsm
     
     protected bool GetGroundedRaycastHit(out RaycastHit hit, float distanceOffset = 0f)
     {
-        var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
+        var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier() + distanceOffset;
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         var f = 1f;
         var minDistance = 0.1f;
