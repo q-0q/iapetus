@@ -30,6 +30,9 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+                _wallsquattedSinceLeavingGround = false;
             });
     }
 }
