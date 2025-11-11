@@ -11,4 +11,5 @@ public partial class CrumbleFsm
 
     private ParticleSystem _reformParticleSystem;
     private ParticleSystem _crumbleParticleSystem;
+    private ParticleSystem _breakParticleSystem;
 }

@@ -10,8 +10,10 @@ public partial class CrumbleFsm
             .Permit(FsmTrigger.Timeout, CrumbleFsmState.Forming)
             .OnEntry(_ =>
             {
-                _renderer.material.SetFloat("_Glow", 0f);
-                _renderer.material.SetFloat("_CrackAmount",0);
+                _breakParticleSystem.Play();
+                // _crumbleParticleSystem.Play();
+                _renderer.material.SetFloat("_Glow", 0.1f);
+                _renderer.material.SetFloat("_CrackAmount", 1.5f);
                 transform.DOShakePosition(1f, 0.6f);
                 _collider.enabled = false;
                 _renderer.enabled = false;

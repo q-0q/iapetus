@@ -17,7 +17,7 @@ public class TightropeController : MonoBehaviour
     void Start()
     {
         currentSpringCollider = null;
-        end = transform.Find("End");
+        if (end == null) end = transform.Find("End");
         TryGetComponent(out lineRenderer);
         transform.Find("Trigger").TryGetComponent(out _capsuleCollider);
         _player = PlayerFsm.Singleton.transform;
