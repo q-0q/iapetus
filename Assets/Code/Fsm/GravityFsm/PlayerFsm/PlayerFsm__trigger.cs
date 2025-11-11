@@ -43,7 +43,7 @@ public partial class PlayerFsm
         
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
-        if (angle > HardTurnMinimumAngle && _momentum > HardTurnMinimumMomentum)
+        if (angle > HardTurnMinimumAngle)
         {
             Machine.Fire(PlayerFsmTrigger.HardTurn);
         }
@@ -121,6 +121,7 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Right;
+            _currentWallrunTransform = hit.transform;
             Animator.SetFloat("Flip", 0);
 
         } else if 
@@ -131,6 +132,7 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Left;
+            _currentWallrunTransform = hit.transform;
             Animator.SetFloat("Flip", 1);
         }
         else if (!Physics.Raycast(flankRaycastOrigin + (Vector3.up * FlankWallOpenYOffset), transform.right,

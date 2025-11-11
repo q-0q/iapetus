@@ -22,6 +22,7 @@ public partial class PlayerFsm
     private float _stateEntryMomentum = 0f;
     private Vector3 _currentLedgePosition;
     private Vector3 _currentFlankWallNormal;
+    private Transform _currentWallrunTransform;
     private FlankType _currentFlankType;
     private FlankType _previousWallrunSide;
     private Vector3 _checkpointVector3;

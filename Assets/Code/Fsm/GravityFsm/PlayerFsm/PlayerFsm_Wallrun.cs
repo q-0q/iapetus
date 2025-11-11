@@ -4,6 +4,17 @@ public partial class PlayerFsm
 {
     private void WallrunOnUpdate()
     {
+        
+
+        if (_currentWallrunTransform != parentTransform)
+        {
+            parentTransform = _currentWallrunTransform;
+            _previousParentTransformPosition = parentTransform.position;
+            _previousParentRotation = parentTransform.rotation;
+            OnParentTransformChanged(parentTransform);
+        }
+        
+        
         SetAnimatorMomentum();
         HandleFlankAlignment();
         HandleCollisionMove(0.25f);
@@ -20,6 +31,7 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)
+            .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
