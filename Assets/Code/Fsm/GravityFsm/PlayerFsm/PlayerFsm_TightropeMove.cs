@@ -59,6 +59,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {

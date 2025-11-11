@@ -21,7 +21,7 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
-            .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn)
+            .PermitIf(PlayerFsmTrigger.HardTurn, PlayerFsmState.HardTurn, _=> _momentum > HardTurnMinimumMomentum)
             // .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleGround, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
@@ -30,9 +30,11 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
                 _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
             });
     }
 }

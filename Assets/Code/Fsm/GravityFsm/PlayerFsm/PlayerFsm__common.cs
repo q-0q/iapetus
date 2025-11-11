@@ -35,6 +35,7 @@ public partial class PlayerFsm
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
+    private bool _dashSinceLeavingGround;
     public static PlayerFsm Singleton;
     private HashSet<Interactable> _interactables;
     public Interactable currentPotentialInteractable;
@@ -337,6 +338,7 @@ public partial class PlayerFsm
     
     public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
     {
+        print("player invoke checkpoint");
         _checkpointVector3 = position;
         _checkpointQuaternion = rotation;
     }
@@ -406,7 +408,7 @@ public partial class PlayerFsm
     
     private bool CanDash(TriggerParams? triggerParams)
     {
-        return YVelocity < 6f;
+        return YVelocity < 6f && !_dashSinceLeavingGround;
     }
 
     private void OnContactHitboxCollide()

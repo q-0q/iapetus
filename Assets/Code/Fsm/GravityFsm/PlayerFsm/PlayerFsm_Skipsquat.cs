@@ -10,6 +10,15 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Skipsquat)
             .SubstateOf(GravityFsmState.Grounded)
             // .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Skip);
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Skip)
+            .OnEntry(_ =>
+            {
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+            });
     }
 }

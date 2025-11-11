@@ -60,6 +60,13 @@ public class PowerConnector : MonoBehaviour
 
     public bool IsPowered()
     {
+        if (RequireAllInputs)
+        {
+            foreach (var input in _inputs)
+            {
+                if (!input.IsPowered()) return false;
+            }
+        }
         HashSet<PowerConnector> visited = new HashSet<PowerConnector>();
         return IsPoweredRecursive(this, visited);
     }

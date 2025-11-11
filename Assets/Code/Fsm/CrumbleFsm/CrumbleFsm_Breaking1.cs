@@ -14,7 +14,7 @@ public partial class CrumbleFsm
             {
                 _crumbleParticleSystem.Play();
                 _renderer.material.SetFloat("_CrackAmount", 0.25f);
-                transform.DOShakePosition(0.2f, 0.5f);
+                // transform.DOShakePosition(0.2f, 0.5f);
             });
     }
 }
