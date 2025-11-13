@@ -37,9 +37,9 @@ public abstract partial class GravityFsm
 
     
     
-    protected bool GetGroundedRaycastHit(out RaycastHit hit, float distanceOffset = 0f)
+    protected bool GetGroundedRaycastHit(out RaycastHit hit)
     {
-        var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier() + distanceOffset;
+        var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         var f = 1f;
         var minDistance = 0.1f;
@@ -47,8 +47,8 @@ public abstract partial class GravityFsm
                 raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
 
-            // return true;
-            return (transform.position.y - hit.point.y) < minDistance;
+            var slopeMinDistanceOffset = Mathf.Lerp(0, 5f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.normal, Vector3.up)));
+            return (transform.position.y - hit.point.y) < minDistance + slopeMinDistanceOffset;
         }
         
         return false;

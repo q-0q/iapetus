@@ -8,7 +8,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            // .Permit(PlayerFsmTrigger.FaceOpenLenient, PlayerFsmState.Fall)
+            .PermitIf(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall, _ => TimeInCurrentState() > 0.2f)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep,
                 _ => TimeInCurrentState() > WallstepMinimumDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)

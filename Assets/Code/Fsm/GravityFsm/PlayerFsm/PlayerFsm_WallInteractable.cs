@@ -10,6 +10,8 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity && !_wallsquattedSinceLeavingGround)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.MediumVaultHang,
+                IsTightropeTrigger, 1)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
