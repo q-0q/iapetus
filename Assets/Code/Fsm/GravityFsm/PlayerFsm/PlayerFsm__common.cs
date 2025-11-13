@@ -221,7 +221,7 @@ public partial class PlayerFsm
     }
 
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false,
-        float momentumDecayMultiplier = 1f)
+        float momentumDecayMultiplier = 1f, bool ignoreTurnAnimationLayer = false)
     {
         
         var v3 = GetInputMovementVector3();
@@ -233,19 +233,24 @@ public partial class PlayerFsm
             inputVector3 = transform.forward;
         }
         
-        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3);
+        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3, ignoreTurnAnimationLayer);
     }
 
-    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction)
+    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction, bool ignoreTurnAnimationLayer = false)
     {
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(direction.normalized, transform.forward.normalized, Vector3.up);
-        var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
-        animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
-        var turnAmount = Animator.GetFloat("TurnAmount");
-        var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
-        Animator.SetFloat("TurnAmount", Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * turnLerpSpeed));
-        Animator.SetLayerWeight(1, Mathf.Abs(turnAmount) * momentumWeight);
+        
+        if (!ignoreTurnAnimationLayer)
+        {
+            var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
+            animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
+            var turnAmount = Animator.GetFloat("TurnAmount");
+            var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
+            Animator.SetFloat("TurnAmount",
+                Mathf.Lerp(turnAmount, animationDesiredTurnAmount, Time.deltaTime * turnLerpSpeed));
+            Animator.SetLayerWeight(1, Mathf.Abs(turnAmount) * momentumWeight);
+        }
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);

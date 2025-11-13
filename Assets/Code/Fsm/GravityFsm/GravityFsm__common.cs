@@ -25,7 +25,7 @@ public abstract partial class GravityFsm
     
     private const float CollisionMoveSphereCastRadius = 0.4f;
     private const float GroundCollisionMoveSphereCastHeight = 1.15f;
-    private const float FallingCollisionMoveSphereCastHeight = -0.5f;
+    private const float FallingCollisionMoveSphereCastHeight = 1.15f;
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
     
