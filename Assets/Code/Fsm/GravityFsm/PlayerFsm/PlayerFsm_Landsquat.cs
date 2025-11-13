@@ -8,6 +8,10 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .OnEntry(_ =>
+            {
+                Animator.SetLayerWeight(1, 0);
+            })
             .OnExit(_ =>
             {
                 _wallsquattedSinceLeavingGround = false;
@@ -16,6 +20,7 @@ public partial class PlayerFsm
                 _currentFlankType = FlankType.None;
                 _movementAnimationMirror = !_movementAnimationMirror;
                 var flip = _movementAnimationMirror ? 0 : 1f;
+                
                 Animator.SetFloat("Flip", flip);
             });
 

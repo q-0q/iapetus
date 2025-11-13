@@ -9,6 +9,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Jump)
             .OnEntry(_ =>
             {
+                Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Jump");
             })
             .OnExitFrom(FsmTrigger.Timeout, _ => { YVelocity = JumpYVelocity; });

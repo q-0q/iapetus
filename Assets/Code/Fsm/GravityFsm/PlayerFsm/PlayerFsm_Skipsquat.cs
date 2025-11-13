@@ -2,7 +2,7 @@ public partial class PlayerFsm
 {
     private void SkipsquatOnUpdate()
     {
-        HandleCollisionMove(0.25f);
+        HandleCollisionMove(0.25f, false);
     }
     
     private void SkipsquatConfigure()

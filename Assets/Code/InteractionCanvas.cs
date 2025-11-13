@@ -23,7 +23,7 @@ public class InteractionCanvas : MonoBehaviour
         if (interactable is not null)
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.deltaTime * 15f);
-            _tmp.text = "[E] " + interactable.text;
+            _tmp.text = "[E / West Button] " + interactable.text;
         }
         else
         {

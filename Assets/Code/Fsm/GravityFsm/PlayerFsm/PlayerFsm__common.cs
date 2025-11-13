@@ -113,7 +113,7 @@ public partial class PlayerFsm
     private const float WallSquatMinimumMomentum = 0f;
     private const float WallstepMinimumYVelocityGain = 12f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
-    private const float WallstepMinimumDuration = 0.25f;
+    private const float WallstepMinimumDuration = 0.35f;
     private const float ForceWallRotationSpeed = 3f;
     private const float WallRunMinimumEntryMomentum = 9f;
     private const float WallRunMinimumMomentum = 7f;
@@ -315,7 +315,7 @@ public partial class PlayerFsm
         Animator.SetFloat("Momentum", ComputeMomentumWeight());
     }
 
-    private void HandleCollisionMove(float modifier = 1f)
+    private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
     {
         var desiredMove = ComputeDesiredMove();
         var collisionMove = ComputeCollisionMove(desiredMove);
@@ -327,7 +327,7 @@ public partial class PlayerFsm
         if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity > WallsquatMinimumYVelocity - 1f) return;
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
-        _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
+        if (updateMomentum) _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
     }
 
     public void InvokeBoost(bool jump, float momentumWeight)
@@ -338,7 +338,6 @@ public partial class PlayerFsm
     
     public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
     {
-        print("player invoke checkpoint");
         _checkpointVector3 = position;
         _checkpointQuaternion = rotation;
     }

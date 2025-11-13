@@ -16,8 +16,6 @@ public partial class PlayerFsm
 
         currentInteractable = currentPotentialInteractable;
         if(currentPotentialInteractable is null) return;
-        print("boo");
-        print(currentPotentialInteractable.name);
     }
 
     private void InteractableConfigure()

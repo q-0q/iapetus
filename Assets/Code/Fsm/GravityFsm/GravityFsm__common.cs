@@ -50,8 +50,7 @@ public abstract partial class GravityFsm
             // return true;
             return (transform.position.y - hit.point.y) < minDistance;
         }
-
-        // print("failed ground check");
+        
         return false;
     }
 
