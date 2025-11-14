@@ -107,7 +107,7 @@ public partial class PlayerFsm
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
     private const float VaultLedgeLerpStrength = 35f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
-    private const float SlowVaultFinishLedgeLerpStrength = 25f;
+    private const float SlowVaultFinishLedgeLerpStrength = 35f;
     private const float SlowVaultFinishForwardSpeed = 2f;
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
@@ -135,7 +135,7 @@ public partial class PlayerFsm
     
     private const float HardTurnMinimumAngle = 130f;
     private const float HardTurnMinimumMomentum = 12.5f;
-    private const float HardTurnMomentumLossModifier = 1.25f;
+    private const float HardTurnMomentumLossModifier = 1.5f;
     
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;

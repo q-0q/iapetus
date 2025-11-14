@@ -97,6 +97,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LandsquatAfterDash, "LandsquatAfterDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DashVault, "DashVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Slide, "Slide");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

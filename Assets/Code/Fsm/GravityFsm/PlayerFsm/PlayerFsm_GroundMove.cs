@@ -36,5 +36,8 @@ public partial class PlayerFsm
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
             });
+
+        Machine.Configure(PlayerFsmState.GroundMoveAfterVault)
+            .SubstateOf(PlayerFsmState.GroundMove);
     }
 }
