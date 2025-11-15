@@ -111,6 +111,7 @@ public partial class PlayerFsm
     private const float SlowVaultFinishForwardSpeed = 2f;
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
+    public const float WallsquatMinimumDuration = 0.2f;
     private const float WallstepMinimumYVelocityGain = 12f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
     private const float WallstepMinimumDuration = 0.35f;
@@ -166,6 +167,7 @@ public partial class PlayerFsm
 
     private const float KiMomentumThreshhold = 11.5f;
     
+
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
     {
