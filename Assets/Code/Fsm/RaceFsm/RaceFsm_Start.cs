@@ -10,6 +10,7 @@ public partial class RaceFsm
         Machine.Configure(RaceFsmState.Start)
             .Permit(RaceFsmTrigger.StartNotTriggered, RaceFsmState.Active)
             .Permit(RaceFsmTrigger.Toggle, RaceFsmState.Disabled)
+            .Permit(RaceFsmTrigger.Reset, RaceFsmState.Inactive)
             .OnEntry(_ =>
             {
                 UiTimer.Singleton._timer = 0;

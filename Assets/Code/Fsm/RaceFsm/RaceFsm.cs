@@ -19,6 +19,7 @@ public partial class RaceFsm : Fsm
         public static int StartTriggered;
         public static int StartNotTriggered;
         public static int Toggle;
+        public static int Reset;
     }
 
     protected override void OnAwake()
@@ -29,8 +30,8 @@ public partial class RaceFsm : Fsm
     protected override void OnStart()
     {
         base.OnStart();
-        InitState = RaceFsmState.Disabled;
-        DisabledOnEnter();
+        InitState = RaceFsmState.Inactive;
+        InactiveOnEnter();
     }
     
     public override void OnUpdate()
@@ -68,6 +69,7 @@ public partial class RaceFsm : Fsm
         RaceTrigger.OnTrigger += OnRaceTrigger;
         RaceTrigger.OnNotTrigger += OnNotRaceTrigger;
         PlayerFsm.OnPlayerRacePressed += OnPlayerRacePressed;
+        PlayerFsm.OnPlayerReset += OnPlayerReset;
     }
 
     private void OnDisable()
@@ -75,5 +77,6 @@ public partial class RaceFsm : Fsm
         RaceTrigger.OnTrigger -= OnRaceTrigger;
         RaceTrigger.OnNotTrigger -= OnNotRaceTrigger;
         PlayerFsm.OnPlayerRacePressed -= OnPlayerRacePressed;
+        PlayerFsm.OnPlayerReset -= OnPlayerReset;
     }
 }

@@ -66,8 +66,8 @@ public partial class PlayerFsm
     private const float FaceWallStrictMaximumAngle = 20f;
     private const float FaceRaycastSkew = 0.1f;
     private const float MaximumFlankWallDistance = 7.5f;
-    private const float FlankWallHeight = 3f;
-    private const float FlankWallOpenYOffset = -2f;
+    private const float FlankWallHeight = 2f;
+    private const float FlankWallOpenYOffset = -1.5f;
     private const float FlankMaximumAngle = 40f;
     private const float ForceWallRotationRaycastDistance = 3f;
     private const float DashForwardRaycastDistanceOffset = 0.5f;
@@ -88,7 +88,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.25f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -426,6 +426,7 @@ public partial class PlayerFsm
 
 
 
+    public static event Action OnPlayerReset;
     private void Reset()
     {
         parentTransform = null;
@@ -434,6 +435,7 @@ public partial class PlayerFsm
         transform.rotation = _checkpointQuaternion;
         _momentum = 0;
         YVelocity = 0;
+        OnPlayerReset?.Invoke();
     }
     
     private void HandleKiEffects()

@@ -24,7 +24,7 @@ public partial class RaceFsm
         
         if (_currentTriggerId == id - 1 || (_currentTriggerId == Triggers.Count - 1 && id == 0))
         {
-            if (id == 0)
+            if (id == 0 || (id == Triggers.Count - 1 && !RequireReturnToStart))
             {
                 Machine.Fire(RaceFsmTrigger.StartTriggered);
             }
