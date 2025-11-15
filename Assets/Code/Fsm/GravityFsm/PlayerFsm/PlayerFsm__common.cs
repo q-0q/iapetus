@@ -78,13 +78,13 @@ public partial class PlayerFsm
     private const float RotationSpeed = 3f;
     private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 15f;
-    private const float MomentumLossRate = 15f;
-    private const float MomentumTurnLoss = 5f;
+    private const float MomentumLossRate = 25f;
+    private const float MomentumTurnLoss = 3f;
     private const float NoMomentumThreshold = 0.25f;
-    private const float LowMomentumThreshhold = 4.75f;
-    private const float LowMomentumRotationMod = 3f;
+    private const float LowMomentumThreshhold = 6.75f;
+    private const float LowMomentumRotationMod = 4.25f;
     private const float LowMomentumMomentumGainMod = 1.15f;
-    private const float LowMomentumMomentumLossMod = 1.25f;
+    private const float LowMomentumMomentumLossMod = 1.05f;
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.5f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
@@ -261,7 +261,9 @@ public partial class PlayerFsm
         
         var quaternion = Quaternion.LookRotation(direction.normalized, Vector3.up);
         
-        var lowMomentumRotationMod = _momentum < LowMomentumThreshhold ? LowMomentumRotationMod : 1f;
+        // var lowMomentumRotationMod = _momentum < LowMomentumThreshhold ? LowMomentumRotationMod : 1f;
+        var lowMomentumRotationMod = Mathf.Lerp(LowMomentumRotationMod, 1f,
+            Mathf.InverseLerp(LowMomentumThreshhold - 1f, LowMomentumThreshhold, _momentum));
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
     }
 
