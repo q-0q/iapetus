@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -10,8 +11,30 @@ public class CameraFollow : MonoBehaviour
     private Vector3 _playerPos;
     private Vector3 _playerWeaponPos;
     private float _biasTowardsWeapon = 0.0f;
+    private static CinemachineFreeLook _freeLook;
+
+    private void Start()
+    {
+        _freeLook = FindObjectOfType<CinemachineFreeLook>();
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        _freeLook.m_RecenterToTargetHeading.m_enabled = true;
+        other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
+        if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookAtPoint) transform.rotation =
+            Quaternion.LookRotation(cameraBehaviorZone.InputVector3 + other.transform.position - transform.position,
+                Vector3.up);
+        if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookInDirection) transform.rotation =
+            Quaternion.LookRotation(cameraBehaviorZone.InputVector3,
+                Vector3.up);
+    }
     
-    
+    private void OnTriggerExit(Collider other)
+    {
+        _freeLook.m_RecenterToTargetHeading.m_enabled = false;
+    }
+
     private void OnEnable()
     {
         PlayerFsm.OnPlayerPositionUpdated += UpdatePlayerPosition;
