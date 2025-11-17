@@ -11,6 +11,9 @@ public class CameraBehaviorZone : MonoBehaviour
     public CameraBehavior cameraBehavior;
     public Vector3 InputVector3;
     
+    public float waitTimeModifier = 1.0f;
+    public float centeringTimeModifier = 1.0f;
+    
     public enum CameraBehavior
     {
         LookAtPoint,

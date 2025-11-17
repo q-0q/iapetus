@@ -12,10 +12,14 @@ public class CameraFollow : MonoBehaviour
     private Vector3 _playerWeaponPos;
     private float _biasTowardsWeapon = 0.0f;
     private static CinemachineFreeLook _freeLook;
+    private static float _baseWaitTime;
+    private static float _baseCenteringTime;
 
     private void Start()
     {
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
+        _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
+        _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
     }
 
     private void OnTriggerStay(Collider other)
@@ -28,11 +32,19 @@ public class CameraFollow : MonoBehaviour
         if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookInDirection) transform.rotation =
             Quaternion.LookRotation(cameraBehaviorZone.InputVector3,
                 Vector3.up);
+
+        _freeLook.m_RecenterToTargetHeading.m_RecenteringTime =
+            _baseCenteringTime * cameraBehaviorZone.centeringTimeModifier;
+        
+        _freeLook.m_RecenterToTargetHeading.m_WaitTime =
+            _baseWaitTime * cameraBehaviorZone.waitTimeModifier;
     }
     
     private void OnTriggerExit(Collider other)
     {
         _freeLook.m_RecenterToTargetHeading.m_enabled = false;
+        _freeLook.m_RecenterToTargetHeading.m_RecenteringTime = _baseCenteringTime;
+        _freeLook.m_RecenterToTargetHeading.m_WaitTime = _baseWaitTime;
     }
 
     private void OnEnable()
