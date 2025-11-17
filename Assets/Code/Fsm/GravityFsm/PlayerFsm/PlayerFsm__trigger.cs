@@ -23,18 +23,6 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.Attack);
         }
         
-        // if (_inputBuffer.IsBuffered("Interact"))
-        // {
-        //     var neighbors = Physics.OverlapSphere(transform.position, InteractionDistance,
-        //         LayerMask.GetMask("Interactable"), QueryTriggerInteraction.Collide);
-        //     foreach (var neighbor in neighbors)
-        //     {
-        //         var deltaY = neighbor.transform.position.y - transform.position.y;
-        //         neighbor.TryGetComponent(out Interactable interactionCollider);
-        //         var param = new InteractableParam() { Interactable = interactionCollider };
-        //         Machine.Fire(PlayerFsmTrigger.InteractWithSwitch, param);
-        //     }
-        // }
         
         if (_inputBuffer.IsBuffered("Dash"))
         {

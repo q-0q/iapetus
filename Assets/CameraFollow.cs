@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -17,6 +18,7 @@ public class CameraFollow : MonoBehaviour
 
     private void Start()
     {
+        transform.position = PlayerFsm.Singleton.transform.position;
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
         _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
         _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
@@ -72,7 +74,8 @@ public class CameraFollow : MonoBehaviour
         pos = new Vector3(pos.x, PlayerFsm.Singleton.transform.position.y, pos.z);
         _playerWeaponPos = Vector3.Lerp(_playerWeaponPos, pos, Time.deltaTime * 5f);
     }
-
+    
+    
     private void Update()
     {
         transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));

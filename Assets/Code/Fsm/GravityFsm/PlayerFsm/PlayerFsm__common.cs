@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Wasp;
 
@@ -426,17 +428,6 @@ public partial class PlayerFsm
 
 
 
-    public static event Action OnPlayerReset;
-    private void Reset()
-    {
-        parentTransform = null;
-        Machine.Jump(PlayerFsmState.GroundMove);
-        transform.position = _checkpointVector3;
-        transform.rotation = _checkpointQuaternion;
-        _momentum = 0;
-        YVelocity = 0;
-        OnPlayerReset?.Invoke();
-    }
     
     private void HandleKiEffects()
     {
@@ -485,4 +476,21 @@ public partial class PlayerFsm
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }
+    
+    
+    public static event Action OnPlayerReset;
+    private void Reset()
+    {
+        // parentTransform = null;
+        // Machine.Jump(PlayerFsmState.GroundMove);
+        // transform.position = _checkpointVector3;
+        // transform.rotation = _checkpointQuaternion;
+        // _momentum = 0;
+        // YVelocity = 0;
+        // OnPlayerReset?.Invoke();
+        
+        SceneLoader.Singleton.LoadScene("Crumble");
+    }
+    
+
 }
