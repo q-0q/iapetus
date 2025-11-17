@@ -58,6 +58,7 @@ public partial class PlayerFsm
         if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetDistance)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);
+            Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged);
         } else if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetRangedDistance)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged);

@@ -55,6 +55,10 @@ public class DialogueController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToDialoguePosition) &&
+            !PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dialogue))
+        {
+            DialogueCanvas.Singleton.EndDialogue();
+        }
     }
 }

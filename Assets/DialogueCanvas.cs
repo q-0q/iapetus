@@ -50,10 +50,16 @@ public class DialogueCanvas : MonoBehaviour
         _currentTextIndex++;
         if (currentDialogueController != null && _currentTextIndex + currentDialogueController.textStartOffset >= currentDialogueController.dialogues[currentDialogueController.currentDialogueIndex].texts.Count)
         {
-            currentDialogueController.Completed();
-            currentDialogueController = null;
-            PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.EndDialogue);
+            EndDialogue();
         }
+    }
+
+    public void EndDialogue()
+    {
+        if (currentDialogueController is null) return;
+        currentDialogueController.Completed();
+        currentDialogueController = null;
+        PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.EndDialogue);
     }
 
     public void StartDialogue(DialogueController controller)
