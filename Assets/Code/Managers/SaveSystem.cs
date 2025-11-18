@@ -8,12 +8,12 @@ public static class SaveSystem
     {
         public float[] checkpointPosition;
 
-        public SaveData(PlayerFsm playerFsm)
+        public SaveData(Vector3 gamePosition)
         {
             checkpointPosition = new float[3];
-            checkpointPosition[0] = playerFsm.transform.position.x;
-            checkpointPosition[1] = playerFsm.transform.position.y;
-            checkpointPosition[2] = playerFsm.transform.position.z;
+            checkpointPosition[0] = gamePosition.x;
+            checkpointPosition[1] = gamePosition.y;
+            checkpointPosition[2] = gamePosition.z;
         }
     }
 
@@ -27,13 +27,13 @@ public static class SaveSystem
         return Path.Combine(GetDirectory(), id + ".json");
     }
 
-    public static void WriteSaveData(PlayerFsm playerFsm, int id)
+    public static void WriteSaveData(Vector3 gamePosition, int id)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
-
-        SaveData data = new SaveData(playerFsm);
+        
+        SaveData data = new SaveData(gamePosition);
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(id), json);
@@ -45,7 +45,6 @@ public static class SaveSystem
         string path = GetPath(id);
         if (!File.Exists(path))
         {
-            Debug.LogWarning("Save not found at " + path);
             return null;
         }
 

@@ -118,6 +118,9 @@ public partial class PlayerFsm : GravityFsm
             _interactables.Add(interactable);
         }
 
+        var saveData = SaveSystem.LoadSaveData(0);
+        transform.position = new Vector3(saveData.checkpointPosition[0], saveData.checkpointPosition[1], saveData.checkpointPosition[2]);
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.

@@ -349,10 +349,7 @@ public partial class PlayerFsm
     
     public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
     {
-        _checkpointVector3 = position;
-        _checkpointQuaternion = rotation;
-        
-        SaveSystem.WriteSaveData(this, 0);
+        SaveSystem.WriteSaveData(transform.position, 0);
     }
     
     public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)
