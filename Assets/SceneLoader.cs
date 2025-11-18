@@ -15,8 +15,9 @@ public class SceneLoader : MonoBehaviour
     private CanvasGroup _canvasGroup;
     private RectTransform _rawImageRectTransform;
 
-    private const float InDuration = 0.3f;
-    private const float OutDuration = 1f;
+    private const float InDuration = 0.5f;
+    private const float HoldDuration = 0.2f;
+    private const float OutDuration = 0.3f;
 
     private void Awake()
     {
@@ -37,16 +38,26 @@ public class SceneLoader : MonoBehaviour
 
     IEnumerator OnStart()
     {
+        _rawImageRectTransform.anchorMin = Vector2.zero;
+        _rawImageRectTransform.anchorMax = Vector2.one;
+        _rawImageRectTransform.offsetMin = Vector2.zero;
+        _rawImageRectTransform.offsetMax = Vector2.zero;
         Vector2 startPos = _rawImageRectTransform.anchoredPosition;
         float width = _rawImageRectTransform.rect.width;
         Vector2 endPos = startPos - new Vector2(width, 0);
 
         float elapsed = 0f;
-
-        while (elapsed < InDuration)
+        while (elapsed < HoldDuration)
         {
             elapsed += Time.deltaTime;
-            float t = SmoothLerp01(elapsed / InDuration);
+            yield return null;
+        }
+
+        elapsed = 0f;
+        while (elapsed < OutDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = SmoothLerp01(elapsed / OutDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;
         }
