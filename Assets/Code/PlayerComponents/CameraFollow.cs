@@ -19,6 +19,7 @@ public class CameraFollow : MonoBehaviour
     private void Start()
     {
         transform.position = PlayerFsm.Singleton.transform.position;
+        transform.rotation = PlayerFsm.Singleton.transform.rotation;
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
         _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
         _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
