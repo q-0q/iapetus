@@ -1,13 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using DG.Tweening.Plugins.Core.PathCore;
 using UnityEngine;
 
 public static class SaveSystem
 {
-
+    [System.Serializable]
     public class SaveData
     {
         public float[] checkpointPosition;
@@ -21,30 +17,40 @@ public static class SaveSystem
         }
     }
 
+    private static string GetDirectory()
+    {
+        return Path.Combine(Application.persistentDataPath, "saves");
+    }
+
+    private static string GetPath(int id)
+    {
+        return Path.Combine(GetDirectory(), id + ".json");
+    }
+
     public static void WriteSaveData(PlayerFsm playerFsm, int id)
     {
-        var formatter = new BinaryFormatter();
-        var path = System.IO.Path.Combine(Application.persistentDataPath, "saves", id.ToString());
-        var stream = new FileStream(path, FileMode.Create);
-        var saveData = new SaveData(playerFsm);
-        formatter.Serialize(stream, saveData);
-        stream.Close();
+        string directory = GetDirectory();
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        SaveData data = new SaveData(playerFsm);
+        string json = JsonUtility.ToJson(data, true);
+
+        File.WriteAllText(GetPath(id), json);
+        Debug.Log("Saved file to: " + GetPath(id));
     }
 
     public static SaveData LoadSaveData(int id)
     {
-        
-        var path = System.IO.Path.Combine(Application.persistentDataPath, "saves", id.ToString());
+        string path = GetPath(id);
         if (!File.Exists(path))
         {
-            Debug.LogError("LoadSaveData failed: no file found at " + path);
+            Debug.LogWarning("Save not found at " + path);
             return null;
         }
-        
-        var formatter = new BinaryFormatter();
-        var stream = new FileStream(path, FileMode.Open);
-        var saveData = formatter.Deserialize(stream) as SaveData;
-        stream.Close();
-        return saveData;
+
+        string json = File.ReadAllText(path);
+        SaveData data = JsonUtility.FromJson<SaveData>(json);
+        return data;
     }
 }

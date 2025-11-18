@@ -351,6 +351,8 @@ public partial class PlayerFsm
     {
         _checkpointVector3 = position;
         _checkpointQuaternion = rotation;
+        
+        SaveSystem.WriteSaveData(this, 0);
     }
     
     public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)
@@ -481,14 +483,6 @@ public partial class PlayerFsm
     public static event Action OnPlayerReset;
     private void Reset()
     {
-        // parentTransform = null;
-        // Machine.Jump(PlayerFsmState.GroundMove);
-        // transform.position = _checkpointVector3;
-        // transform.rotation = _checkpointQuaternion;
-        // _momentum = 0;
-        // YVelocity = 0;
-        // OnPlayerReset?.Invoke();
-        
         SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
     }
     
