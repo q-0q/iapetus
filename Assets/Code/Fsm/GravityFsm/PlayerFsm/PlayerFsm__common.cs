@@ -489,7 +489,7 @@ public partial class PlayerFsm
         // YVelocity = 0;
         // OnPlayerReset?.Invoke();
         
-        SceneLoader.Singleton.LoadScene("Crumble");
+        SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
     }
     
 
