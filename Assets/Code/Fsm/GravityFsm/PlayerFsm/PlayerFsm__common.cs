@@ -43,6 +43,7 @@ public partial class PlayerFsm
     public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
     private TightropeController _currentTightropeController;
+    private Vector3 _defaultScenePosition;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -349,7 +350,7 @@ public partial class PlayerFsm
     
     public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
     {
-        SaveSystem.WriteSaveData(transform.position, 0);
+        SaveSystem.WriteSaveData(new float[] { transform.position.x, transform.position.y, transform.position.z }, 0);
     }
     
     public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)

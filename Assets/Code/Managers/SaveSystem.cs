@@ -1,19 +1,26 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public static class SaveSystem
 {
     [System.Serializable]
     public class SaveData
     {
-        public float[] checkpointPosition;
+        public float[] playerInGamePosition;
 
-        public SaveData(Vector3 gamePosition)
+        public SaveData(float[] gamePosition)
         {
-            checkpointPosition = new float[3];
-            checkpointPosition[0] = gamePosition.x;
-            checkpointPosition[1] = gamePosition.y;
-            checkpointPosition[2] = gamePosition.z;
+            playerInGamePosition = new float[3];
+            if (gamePosition == null)
+            {
+                Debug.Log("It's null baby!");
+                playerInGamePosition = null;
+                return;
+            }
+            playerInGamePosition[0] = gamePosition[0];
+            playerInGamePosition[1] = gamePosition[1];
+            playerInGamePosition[2] = gamePosition[2];
         }
     }
 
@@ -27,7 +34,7 @@ public static class SaveSystem
         return Path.Combine(GetDirectory(), id + ".json");
     }
 
-    public static void WriteSaveData(Vector3 gamePosition, int id)
+    public static void WriteSaveData(float[] gamePosition, int id)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))

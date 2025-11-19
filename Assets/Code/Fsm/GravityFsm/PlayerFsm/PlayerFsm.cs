@@ -113,13 +113,21 @@ public partial class PlayerFsm : GravityFsm
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         _interactables = new HashSet<Interactable>();
+        _defaultScenePosition = transform.position;
         foreach (var interactable in FindObjectsByType<Interactable>(FindObjectsSortMode.None))
         {
             _interactables.Add(interactable);
         }
 
         var saveData = SaveSystem.LoadSaveData(0);
-        transform.position = new Vector3(saveData.checkpointPosition[0], saveData.checkpointPosition[1], saveData.checkpointPosition[2]);
+        if (saveData != null )
+        {
+            if (saveData.playerInGamePosition.Length != 0)
+            {
+                transform.position = new Vector3(saveData.playerInGamePosition[0], saveData.playerInGamePosition[1],
+                    saveData.playerInGamePosition[2]);
+            }
+        }
 
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
@@ -306,6 +314,12 @@ public partial class PlayerFsm : GravityFsm
         {
             Reset();
             OnPlayerRacePressed?.Invoke();
+        }
+        
+        if (_playerInput.actions["Menu"].WasPerformedThisFrame())
+        {
+            SaveSystem.WriteSaveData(null, 0);
+            SceneLoader.Singleton.LoadScene("MainMenu");
         }
 
         HandleSlopeTimer();

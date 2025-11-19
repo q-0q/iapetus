@@ -16,6 +16,9 @@ public class MainMenu : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.Confined;
+        
         _main = transform.Find("Main").gameObject;
         _back = transform.Find("Back").gameObject;
         _levelSelect = transform.Find("LevelSelect").gameObject;
