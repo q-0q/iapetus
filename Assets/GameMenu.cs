@@ -13,7 +13,8 @@ public class GameMenu : MonoBehaviour
     private PlayerInput _playerInput;
     private GameObject _menu;
     private CinemachineFreeLook _freeLook;
-    private CinemachineBrain _brain;
+    private GameObject _settings;
+    private GameObject _buttons;
 
     private void Awake()
     {
@@ -29,8 +30,9 @@ public class GameMenu : MonoBehaviour
     {
         TryGetComponent(out _playerInput);
         _menu = transform.Find("Menu").gameObject;
+        _settings = transform.Find("Menu").Find("SettingsMenu").gameObject;
+        _buttons = transform.Find("Menu").Find("Buttons").gameObject;
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
-        _brain = FindObjectOfType<CinemachineBrain>();
     }
 
     private void Update()
@@ -50,6 +52,28 @@ public class GameMenu : MonoBehaviour
                 Time.timeScale = 0.000001f;
             }
         }
+    }
+
+    private void OnEnable()
+    {
+        SettingsMenu.OnSettingsMenuClosed += OnSettingsClosed;
+    }
+    
+    private void OnDisable()
+    {
+        SettingsMenu.OnSettingsMenuClosed -= OnSettingsClosed;
+    }
+
+    private void OnSettingsClosed()
+    {
+        _buttons.SetActive(true);
+        _settings.SetActive(false);
+    }
+
+    public void OnSettingsClicked()
+    {
+        _buttons.SetActive(false);
+        _settings.SetActive(true);
     }
 
     public void OnMenuClosed()
