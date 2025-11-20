@@ -99,7 +99,7 @@ public partial class PlayerFsm
     private const float AirControlTurningMomentumDecayModifier = 0.15f;
     private const float AirControlMomentumDecayModifier = 0.35f;
     
-    private const float UpdateLedgePositionEpsilon = 3f;
+    private const float UpdateLedgePositionEpsilon = 2f;
     private const float VaultMinimumYVelocity = -2f;
     private const float VaultMinimumMomentum = 6f;
     private const float VaultMinimumMomentumOnUpdate = 6f;
@@ -110,7 +110,7 @@ public partial class PlayerFsm
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
     private const float VaultLedgeLerpStrength = 35f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
-    private const float SlowVaultFinishLedgeLerpStrength = 35f;
+    private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 2f;
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
@@ -204,7 +204,8 @@ public partial class PlayerFsm
 
     private bool UpdateLedgePosition(float ledgeHeight)
     {
-        var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward * ComputeDynamicForwardRaycastDistance();
+        var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
+            (ComputeDynamicForwardRaycastDistance() + 1f);
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
