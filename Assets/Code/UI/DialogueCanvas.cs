@@ -33,15 +33,15 @@ public class DialogueCanvas : MonoBehaviour
     void Update()
     {
         
-        if (currentDialogueController != null)
+        if (currentDialogueController != null && !GameMenu.Singleton.IsMenuOpen())
         {
-            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.deltaTime * 15f);
+            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 15f);
             _tmpText.text = currentDialogueController.dialogues[currentDialogueController.currentDialogueIndex].texts[_currentTextIndex + currentDialogueController.textStartOffset];
             _tmpName.text = currentDialogueController.DialogueName;
         }
         else
         {
-            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 0, Time.deltaTime * 40f);
+            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 0, Time.unscaledDeltaTime * 40f);
         }
     }
 

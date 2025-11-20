@@ -20,14 +20,14 @@ public class InteractionCanvas : MonoBehaviour
     void Update()
     {
         var interactable = PlayerFsm.Singleton.currentPotentialInteractable;
-        if (interactable is not null)
+        if (interactable is not null && !GameMenu.Singleton.IsMenuOpen())
         {
-            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.deltaTime * 15f);
+            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 15f);
             _tmp.text = "[E / West Button] " + interactable.text;
         }
         else
         {
-            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 0, Time.deltaTime * 40f);
+            _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 0, Time.unscaledDeltaTime * 40f);
         }
     }
 }

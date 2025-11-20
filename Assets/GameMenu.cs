@@ -38,11 +38,7 @@ public class GameMenu : MonoBehaviour
         {
             if (_menu.activeInHierarchy)
             {
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-                _freeLook.m_RecenterToTargetHeading.CancelRecentering();
-                _menu.SetActive(false);
-                Time.timeScale = 1f;
+                OnMenuClosed();
             }
             else
             {
@@ -53,5 +49,20 @@ public class GameMenu : MonoBehaviour
                 Time.timeScale = 0.000001f;
             }
         }
+    }
+
+    public void OnMenuClosed()
+    {
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        _freeLook.m_RecenterToTargetHeading.CancelRecentering();
+        _menu.SetActive(false);
+        Time.timeScale = 1f;
+    }
+    
+    public void OnQuitToMain()
+    {
+        SaveSystem.WriteSaveData(null, 0);
+        SceneLoader.Singleton.LoadScene("MainMenu");
     }
 }
