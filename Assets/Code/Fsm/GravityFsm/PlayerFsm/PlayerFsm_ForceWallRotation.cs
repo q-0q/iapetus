@@ -5,7 +5,7 @@ public partial class PlayerFsm
     private void ForceWallRotationOnUpdate()
     {
         Animator.SetLayerWeight(1, 0);
-        if (Physics.Raycast(transform.position, transform.forward, out var hit,
+        if (Physics.Raycast(transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, out var hit,
                 ForceWallRotationRaycastDistance * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             var quaternion = Quaternion.LookRotation(-hit.normal, Vector3.up);
