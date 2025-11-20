@@ -97,7 +97,8 @@ public partial class PlayerFsm : GravityFsm
         base.OnStart();
         Singleton = this;
         InitState = PlayerFsmState.GroundMove;
-        
+
+        Time.timeScale = 1f;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);

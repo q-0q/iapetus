@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GameMenu : MonoBehaviour
 {
@@ -48,6 +49,7 @@ public class GameMenu : MonoBehaviour
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.Confined;
                 _menu.SetActive(true);
+                _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
                 Time.timeScale = 0.000001f;
             }
         }
