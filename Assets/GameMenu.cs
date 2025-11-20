@@ -66,6 +66,7 @@ public class GameMenu : MonoBehaviour
 
     private void OnSettingsClosed()
     {
+        _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
         _buttons.SetActive(true);
         _settings.SetActive(false);
     }

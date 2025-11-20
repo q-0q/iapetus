@@ -48,6 +48,7 @@ public class MainMenu : MonoBehaviour
         _main.SetActive(false);
         _credits.SetActive(true);
         _back.SetActive(true);
+        _back.GetComponent<Button>().Select();
     }
     
     private void OnEnable()
