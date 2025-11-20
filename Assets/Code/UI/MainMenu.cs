@@ -21,8 +21,10 @@ public class MainMenu : MonoBehaviour
         _back = transform.Find("Back").gameObject;
         _levelSelect = transform.Find("LevelSelect").gameObject;
         _settings = transform.Find("SettingsMenu").gameObject;
-        // _credits = transform.Find("Credits").gameObject;
+        _credits = transform.Find("Credits").gameObject;
         
+        _settings.SetActive(false);
+        _credits.SetActive(false);
         _levelSelect.SetActive(false);
         _back.SetActive(false);
     }
@@ -43,7 +45,9 @@ public class MainMenu : MonoBehaviour
     
     public void OnCreditsClicked()
     {
-        
+        _main.SetActive(false);
+        _credits.SetActive(true);
+        _back.SetActive(true);
     }
     
     private void OnEnable()
@@ -65,6 +69,7 @@ public class MainMenu : MonoBehaviour
     {
         _back.SetActive(false);
         _levelSelect.SetActive(false);
+        _credits.SetActive(false);
         _main.SetActive(true);
         _main.transform.Find("Buttons").Find("Play").GetComponent<Button>().Select();
     }
