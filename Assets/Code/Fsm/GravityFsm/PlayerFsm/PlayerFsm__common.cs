@@ -483,6 +483,12 @@ public partial class PlayerFsm
     {
         SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
     }
+
+    private void ApplyMetaSaveData(MetaSaveSystem.MetaSaveData metaSaveData)
+    {
+        CameraLookSensitivityProcessor.SetSensitivityModifier(metaSaveData.cameraSensitivityModifier);
+        transform.Find("AmbientParticles").gameObject.SetActive(metaSaveData.enableAmbientParticles);
+    }
     
 
 }

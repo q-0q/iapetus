@@ -46,6 +46,7 @@ public class SettingsMenu : MonoBehaviour
     {
         var cameraSensitivityModifier = Mathf.Lerp(0.25f, 1.75f, _cameraSensitivitySlider.normalizedValue);
         MetaSaveSystem.WriteMetaSaveData(0, cameraSensitivityModifier, _ambientParticlesToggle.isOn, _fpsToggle.isOn);
+        OnBackClicked();
     }
     
     public void OnResetClicked()

@@ -130,6 +130,7 @@ public partial class PlayerFsm : GravityFsm
             }
         }
 
+        ApplyMetaSaveData(MetaSaveSystem.LoadMetaSaveData());
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
@@ -348,10 +349,12 @@ public partial class PlayerFsm : GravityFsm
     private void OnEnable()
     {
         PlayerContactCollider.OnPlayerContactHitboxCollision += OnContactHitboxCollide;
+        MetaSaveSystem.OnMetaSaveDataWritten += ApplyMetaSaveData;
     }
     
     private void OnDisable()
     {
         PlayerContactCollider.OnPlayerContactHitboxCollision -= OnContactHitboxCollide;
+        MetaSaveSystem.OnMetaSaveDataWritten -= ApplyMetaSaveData;
     }
 }
