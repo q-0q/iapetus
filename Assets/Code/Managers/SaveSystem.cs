@@ -1,9 +1,12 @@
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public static class SaveSystem
 {
+    
+    
     [System.Serializable]
     public class SaveData
     {
@@ -62,6 +65,8 @@ public static class SaveSystem
 
 public static class MetaSaveSystem
 {
+    public static event Action<MetaSaveSystem.MetaSaveData> OnMetaSaveDataWritten;
+        
     [System.Serializable]
     public class MetaSaveData
     {
@@ -90,17 +95,18 @@ public static class MetaSaveSystem
         return Path.Combine(GetDirectory(), "meta.json");
     }
 
-    public static void WriteMetaSaveData()
+    public static void WriteMetaSaveData(int saveId, float cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         
-        MetaSaveData data = new MetaSaveData(0, 1f, true, true);
+        MetaSaveData data = new MetaSaveData(saveId, cameraSensitivityModifier, enableAmbientParticles, enableFpsDisplay);
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(), json);
         Debug.Log("Saved file to: " + GetPath());
+        OnMetaSaveDataWritten?.Invoke(data);
     }
 
     public static MetaSaveData LoadMetaSaveData()
