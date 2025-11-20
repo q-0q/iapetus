@@ -49,14 +49,14 @@ public class SceneLoader : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < HoldDuration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             yield return null;
         }
 
         elapsed = 0f;
         while (elapsed < OutDuration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = SmoothLerp01(elapsed / OutDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;
@@ -73,7 +73,7 @@ public class SceneLoader : MonoBehaviour
         float elapsed = 0f;
         while (elapsed < InDuration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float t = SmoothLerp01(elapsed / InDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;

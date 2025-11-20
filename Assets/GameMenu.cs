@@ -1,0 +1,55 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Cinemachine;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class GameMenu : MonoBehaviour
+{
+    public static GameMenu Singleton;
+    private PlayerInput _playerInput;
+    private GameObject _menu;
+    private CinemachineFreeLook _freeLook;
+    private CinemachineBrain _brain;
+
+    private void Awake()
+    {
+        Singleton = this;
+    }
+
+    public bool IsMenuOpen()
+    {
+        return _menu.activeInHierarchy;
+    }
+
+    private void Start()
+    {
+        TryGetComponent(out _playerInput);
+        _menu = transform.Find("Menu").gameObject;
+        _freeLook = FindObjectOfType<CinemachineFreeLook>();
+        _brain = FindObjectOfType<CinemachineBrain>();
+    }
+
+    private void Update()
+    {
+        if (_playerInput.actions["Menu"].WasPressedThisFrame())
+        {
+            if (_menu.activeInHierarchy)
+            {
+                Cursor.visible = false;
+                Cursor.lockState = CursorLockMode.Locked;
+                _freeLook.m_RecenterToTargetHeading.CancelRecentering();
+                _menu.SetActive(false);
+                Time.timeScale = 1f;
+            }
+            else
+            {
+                Cursor.visible = true;
+                Cursor.lockState = CursorLockMode.Confined;
+                _menu.SetActive(true);
+                Time.timeScale = 0.000001f;
+            }
+        }
+    }
+}

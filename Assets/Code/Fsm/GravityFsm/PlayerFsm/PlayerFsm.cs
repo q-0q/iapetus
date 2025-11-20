@@ -316,11 +316,11 @@ public partial class PlayerFsm : GravityFsm
             OnPlayerRacePressed?.Invoke();
         }
         
-        if (_playerInput.actions["Menu"].WasPerformedThisFrame())
-        {
-            SaveSystem.WriteSaveData(null, 0);
-            SceneLoader.Singleton.LoadScene("MainMenu");
-        }
+        // if (_playerInput.actions["Menu"].WasPerformedThisFrame())
+        // {
+        //     SaveSystem.WriteSaveData(null, 0);
+        //     SceneLoader.Singleton.LoadScene("MainMenu");
+        // }
 
         HandleSlopeTimer();
         HandleKiEffects();
