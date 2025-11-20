@@ -478,7 +478,6 @@ public partial class PlayerFsm
     }
     
     
-    public static event Action OnPlayerReset;
     private void Reset()
     {
         SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);

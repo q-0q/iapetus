@@ -69,7 +69,6 @@ public partial class RaceFsm : Fsm
         RaceTrigger.OnTrigger += OnRaceTrigger;
         RaceTrigger.OnNotTrigger += OnNotRaceTrigger;
         PlayerFsm.OnPlayerRacePressed += OnPlayerRacePressed;
-        PlayerFsm.OnPlayerReset += OnPlayerReset;
     }
 
     private void OnDisable()
@@ -77,6 +76,5 @@ public partial class RaceFsm : Fsm
         RaceTrigger.OnTrigger -= OnRaceTrigger;
         RaceTrigger.OnNotTrigger -= OnNotRaceTrigger;
         PlayerFsm.OnPlayerRacePressed -= OnPlayerRacePressed;
-        PlayerFsm.OnPlayerReset -= OnPlayerReset;
     }
 }

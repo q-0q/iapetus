@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameMenu : MonoBehaviour
@@ -64,5 +65,10 @@ public class GameMenu : MonoBehaviour
     {
         SaveSystem.WriteSaveData(null, 0);
         SceneLoader.Singleton.LoadScene("MainMenu");
+    }
+
+    public void OnReset()
+    {
+        SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
