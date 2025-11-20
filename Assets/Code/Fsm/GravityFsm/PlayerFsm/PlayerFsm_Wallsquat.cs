@@ -18,7 +18,7 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall, _ => TimeInCurrentState() > WallsquatMinimumDuration)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep,
-                _ => TimeInCurrentState() > WallstepMinimumDuration, 1)
+                _ => TimeInCurrentState() > WallstepMinimumDuration && _momentum > 6f, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
