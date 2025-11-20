@@ -14,7 +14,6 @@ public static class SaveSystem
             playerInGamePosition = new float[3];
             if (gamePosition == null)
             {
-                Debug.Log("It's null baby!");
                 playerInGamePosition = null;
                 return;
             }
@@ -23,7 +22,7 @@ public static class SaveSystem
             playerInGamePosition[2] = gamePosition[2];
         }
     }
-
+    
     private static string GetDirectory()
     {
         return Path.Combine(Application.persistentDataPath, "saves");
@@ -57,6 +56,63 @@ public static class SaveSystem
 
         string json = File.ReadAllText(path);
         SaveData data = JsonUtility.FromJson<SaveData>(json);
+        return data;
+    }
+}
+
+public static class MetaSaveSystem
+{
+    [System.Serializable]
+    public class MetaSaveData
+    {
+
+        public int saveId;
+        public float cameraSensitivityModifier;
+        public bool enableAmbientParticles;
+        public bool enableFpsDisplay;
+        
+        public MetaSaveData(int saveId, float cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay)
+        {
+            this.saveId = saveId;
+            this.cameraSensitivityModifier = cameraSensitivityModifier;
+            this.enableAmbientParticles = enableAmbientParticles;
+            this.enableFpsDisplay = enableFpsDisplay;
+        }
+    }
+    
+    private static string GetDirectory()
+    {
+        return Path.Combine(Application.persistentDataPath);
+    }
+
+    private static string GetPath()
+    {
+        return Path.Combine(GetDirectory(), "meta.json");
+    }
+
+    public static void WriteMetaSaveData()
+    {
+        string directory = GetDirectory();
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+        
+        MetaSaveData data = new MetaSaveData(0, 1f, true, true);
+        string json = JsonUtility.ToJson(data, true);
+
+        File.WriteAllText(GetPath(), json);
+        Debug.Log("Saved file to: " + GetPath());
+    }
+
+    public static MetaSaveData LoadMetaSaveData()
+    {
+        string path = GetPath();
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        string json = File.ReadAllText(path);
+        MetaSaveData data = JsonUtility.FromJson<MetaSaveData>(json);
         return data;
     }
 }
