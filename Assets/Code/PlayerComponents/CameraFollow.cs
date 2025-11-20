@@ -8,7 +8,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
-    private float YLerpRate = 2.75f;
+    private float YLerpRate = 5.75f;
     private Vector3 _playerPos;
     private Vector3 _playerWeaponPos;
     private float _biasTowardsWeapon = 0.0f;

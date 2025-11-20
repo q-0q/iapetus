@@ -9,9 +9,7 @@ public class MainMenu : MonoBehaviour
     private GameObject _levelSelect;
     private GameObject _settings;
     private GameObject _credits;
-
     private GameObject _current;
-
     private GameObject _back;
     // Start is called before the first frame update
     void Start()
@@ -22,7 +20,7 @@ public class MainMenu : MonoBehaviour
         _main = transform.Find("Main").gameObject;
         _back = transform.Find("Back").gameObject;
         _levelSelect = transform.Find("LevelSelect").gameObject;
-        // _settings = transform.Find("Settings").gameObject;
+        _settings = transform.Find("SettingsMenu").gameObject;
         // _credits = transform.Find("Credits").gameObject;
         
         _levelSelect.SetActive(false);
@@ -39,12 +37,28 @@ public class MainMenu : MonoBehaviour
     
     public void OnSettingsClicked()
     {
-        
+        _main.SetActive(false);
+        _settings.SetActive(true);
     }
     
     public void OnCreditsClicked()
     {
         
+    }
+    
+    private void OnEnable()
+    {
+        SettingsMenu.OnSettingsMenuClosed += OnSettingsClosed;
+    }
+    
+    private void OnDisable()
+    {
+        SettingsMenu.OnSettingsMenuClosed -= OnSettingsClosed;
+    }
+
+    private void OnSettingsClosed()
+    {
+        OnBackClicked();
     }
 
     public void OnBackClicked()
