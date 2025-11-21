@@ -349,12 +349,12 @@ public partial class PlayerFsm : GravityFsm
     private void OnEnable()
     {
         PlayerContactCollider.OnPlayerContactHitboxCollision += OnContactHitboxCollide;
-        MetaSaveSystem.OnMetaSaveDataWritten += ApplyMetaSaveData;
+        MetaSaveSystem.OnMetaSaveDataUpdated += ApplyMetaSaveData;
     }
     
     private void OnDisable()
     {
         PlayerContactCollider.OnPlayerContactHitboxCollision -= OnContactHitboxCollide;
-        MetaSaveSystem.OnMetaSaveDataWritten -= ApplyMetaSaveData;
+        MetaSaveSystem.OnMetaSaveDataUpdated -= ApplyMetaSaveData;
     }
 }

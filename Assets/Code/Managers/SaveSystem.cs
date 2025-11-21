@@ -65,7 +65,7 @@ public static class SaveSystem
 
 public static class MetaSaveSystem
 {
-    public static event Action<MetaSaveSystem.MetaSaveData> OnMetaSaveDataWritten;
+    public static event Action<MetaSaveSystem.MetaSaveData> OnMetaSaveDataUpdated;
         
     [System.Serializable]
     public class MetaSaveData
@@ -106,7 +106,7 @@ public static class MetaSaveSystem
 
         File.WriteAllText(GetPath(), json);
         Debug.Log("Saved file to: " + GetPath());
-        OnMetaSaveDataWritten?.Invoke(data);
+        OnMetaSaveDataUpdated?.Invoke(data);
     }
 
     public static MetaSaveData LoadMetaSaveData()
@@ -119,6 +119,7 @@ public static class MetaSaveSystem
 
         string json = File.ReadAllText(path);
         MetaSaveData data = JsonUtility.FromJson<MetaSaveData>(json);
+        OnMetaSaveDataUpdated?.Invoke(data);
         return data;
     }
 }

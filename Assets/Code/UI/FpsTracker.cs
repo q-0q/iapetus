@@ -1,4 +1,5 @@
 
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -18,5 +19,20 @@ public class FpsTracker
         float newFPS = 1.0f / Time.unscaledDeltaTime;
         fps = Mathf.Lerp(fps, newFPS, 0.005f);
         _tmp.text = "FPS: " + ((int)fps);
+    }
+
+    private void OnEnable()
+    {
+        MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
+    }
+
+    private void OnDisable()
+    {
+        MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
+    }
+
+    private void OnMetaSaveDataUpdated(MetaSaveSystem.MetaSaveData metaSaveData)
+    {
+        _tmp.enabled = metaSaveData.enableFpsDisplay;
     }
 }
