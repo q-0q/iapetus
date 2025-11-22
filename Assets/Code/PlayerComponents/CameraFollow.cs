@@ -8,7 +8,7 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
 
-    private float YLerpRate = 5.75f;
+    private float YLerpRate = 2.75f;
     private Vector3 _playerPos;
     private Vector3 _playerWeaponPos;
     private float _biasTowardsWeapon = 0.0f;
@@ -30,10 +30,10 @@ public class CameraFollow : MonoBehaviour
         _freeLook.m_RecenterToTargetHeading.m_enabled = true;
         other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
         if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookAtPoint) transform.rotation =
-            Quaternion.LookRotation(cameraBehaviorZone.InputVector3 + other.transform.position - transform.position,
+            Quaternion.LookRotation((cameraBehaviorZone.InputVector3 + other.transform.position - transform.position) * (cameraBehaviorZone.invertDirection ? -1f : 1f),
                 Vector3.up);
         if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookInDirection) transform.rotation =
-            Quaternion.LookRotation(cameraBehaviorZone.InputVector3,
+            Quaternion.LookRotation((cameraBehaviorZone.InputVector3 * (cameraBehaviorZone.invertDirection ? -1f : 1f)),
                 Vector3.up);
 
         _freeLook.m_RecenterToTargetHeading.m_RecenteringTime =

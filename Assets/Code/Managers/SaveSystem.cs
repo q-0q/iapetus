@@ -95,7 +95,7 @@ public static class MetaSaveSystem
         return Path.Combine(GetDirectory(), "meta.json");
     }
 
-    public static void WriteMetaSaveData(int saveId, float cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay)
+    public static MetaSaveData WriteMetaSaveData(int saveId, float cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
@@ -107,6 +107,7 @@ public static class MetaSaveSystem
         File.WriteAllText(GetPath(), json);
         Debug.Log("Saved file to: " + GetPath());
         OnMetaSaveDataUpdated?.Invoke(data);
+        return data;
     }
 
     public static MetaSaveData LoadMetaSaveData()
@@ -114,12 +115,17 @@ public static class MetaSaveSystem
         string path = GetPath();
         if (!File.Exists(path))
         {
-            return null;
+            return WriteDefaultMetaSaveData();
         }
 
         string json = File.ReadAllText(path);
         MetaSaveData data = JsonUtility.FromJson<MetaSaveData>(json);
         OnMetaSaveDataUpdated?.Invoke(data);
         return data;
+    }
+
+    public static MetaSaveData WriteDefaultMetaSaveData()
+    {
+        return WriteMetaSaveData(0, 1f, true, true);
     }
 }

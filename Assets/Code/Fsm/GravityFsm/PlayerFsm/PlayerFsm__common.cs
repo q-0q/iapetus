@@ -325,7 +325,8 @@ public partial class PlayerFsm
 
     private void SetAnimatorMomentum()
     {
-        Animator.SetFloat("Momentum", ComputeMomentumWeight());
+        var currentMomentumFloat = Animator.GetFloat("Momentum");
+        Animator.SetFloat("Momentum", Mathf.Lerp(currentMomentumFloat, ComputeMomentumWeight(), Time.deltaTime * 10f));
     }
 
     private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)

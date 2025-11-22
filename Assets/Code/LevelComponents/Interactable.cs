@@ -12,15 +12,7 @@ public class Interactable : MonoBehaviour
     public event Action OnInteracted;
     public event Action OnHardInteracted;
     private Collider _collider;
-
-    public Type type;
     
-    public enum Type
-    {
-        Switch,
-        Dialogue
-    }
-
     private void Awake()
     {
         TryGetComponent(out _collider);

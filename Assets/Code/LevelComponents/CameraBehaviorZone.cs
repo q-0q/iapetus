@@ -13,6 +13,7 @@ public class CameraBehaviorZone : MonoBehaviour
     
     public float waitTimeModifier = 1.0f;
     public float centeringTimeModifier = 1.0f;
+    public bool invertDirection = false;
     
     public enum CameraBehavior
     {
