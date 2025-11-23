@@ -99,7 +99,7 @@ public partial class PlayerFsm
     private const float AirControlTurningMomentumDecayModifier = 0.15f;
     private const float AirControlMomentumDecayModifier = 0.35f;
     
-    private const float UpdateLedgePositionEpsilon = 2f;
+    private const float UpdateLedgePositionEpsilon = 3f;
     private const float VaultMinimumYVelocity = -2f;
     private const float VaultMinimumMomentum = 6f;
     private const float VaultMinimumMomentumOnUpdate = 6f;
