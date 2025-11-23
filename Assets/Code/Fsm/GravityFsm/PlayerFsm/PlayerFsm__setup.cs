@@ -109,7 +109,7 @@ public partial class PlayerFsm
 
         // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
-        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.55f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.45f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
         
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);

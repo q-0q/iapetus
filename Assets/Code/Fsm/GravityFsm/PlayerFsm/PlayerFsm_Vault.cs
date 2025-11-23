@@ -33,6 +33,13 @@ public partial class PlayerFsm
                 Animator.SetFloat("Flip", flip);
                 UpdateLedgePosition(FaceLedgeHeight);
                 YVelocity = 0;
+                
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
             })
             .OnExit(_ =>
             {
