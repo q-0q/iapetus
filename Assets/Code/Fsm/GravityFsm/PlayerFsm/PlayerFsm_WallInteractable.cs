@@ -17,7 +17,7 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun,
-                _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity && _playerInput.actions["Jump"].IsPressed());
+                _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity);
     }
 
     private bool CanVault(TriggerParams t)

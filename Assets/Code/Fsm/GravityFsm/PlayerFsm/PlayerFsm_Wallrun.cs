@@ -40,7 +40,6 @@ public partial class PlayerFsm
                 _ => _momentum > WallSquatMinimumMomentum)
             .OnEntry(_ =>
             {
-                _inputBuffer.ConsumeBuffer("Jump");
                 _dashSinceLeavingGround = false;
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
                 ReplaceAnimatorTrigger("Wallrun");
