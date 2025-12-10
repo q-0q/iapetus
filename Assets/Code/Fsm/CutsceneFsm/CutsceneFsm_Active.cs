@@ -1,9 +1,9 @@
-public partial class CutsceneFsm
+public abstract partial class CutsceneFsm
 {
 
     private void OnConfigure()
     {
         Machine.Configure(CutsceneFsmState.Active)
-            .Permit(CutsceneFsmTrigger.End, CutsceneFsmState.Inactive);
+            .Permit(CutsceneFsmTrigger.EndCutscene, CutsceneFsmState.Inactive);
     }
 }

@@ -3,7 +3,7 @@ using Code.TriggerParams;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public partial class CutsceneFsm
+public abstract partial class CutsceneFsm
 {
     
 }

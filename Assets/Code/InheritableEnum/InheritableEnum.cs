@@ -32,7 +32,7 @@ public abstract class InheritableEnum
     {
         if (!lineageCounters.ContainsKey(subclass))
         {
-            lineageCounters[subclass] = 0; // Start counting from 0 for each lineage
+            lineageCounters[subclass] = 0; // StartCutscene counting from 0 for each lineage
         }
 
         // Find all fields (including inherited ones) and order them by class hierarchy (base class first, then subclasses)

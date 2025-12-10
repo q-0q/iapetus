@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public partial class CutsceneFsm : Fsm
+public abstract partial class CutsceneFsm : Fsm
 {
     public class CutsceneFsmState : FsmState
     {
@@ -13,8 +13,8 @@ public partial class CutsceneFsm : Fsm
 
     public class CutsceneFsmTrigger : FsmTrigger
     {
-        public static int Start;
-        public static int End;
+        public static int StartCutscene;
+        public static int EndCutscene;
     }
 
     protected override void OnAwake()

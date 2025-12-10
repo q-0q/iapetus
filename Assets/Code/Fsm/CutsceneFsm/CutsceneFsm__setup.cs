@@ -1,4 +1,4 @@
-public partial class CutsceneFsm
+public abstract partial class CutsceneFsm
 {
 
     public override void SetupMachine()
@@ -12,7 +12,5 @@ public partial class CutsceneFsm
     {
         base.SetupStateMaps();
         
-        StateMapConfig.AnimationTrigger.Add(CutsceneFsmState.Active, "Active");
-        StateMapConfig.AnimationTrigger.Add(CutsceneFsmState.Inactive, "Inactive");
     }
 }

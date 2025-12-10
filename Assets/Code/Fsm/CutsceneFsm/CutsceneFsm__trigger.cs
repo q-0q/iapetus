@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public partial class CutsceneFsm
+public abstract partial class CutsceneFsm
 {
 
     public override void OnFireTriggers()
@@ -11,6 +11,6 @@ public partial class CutsceneFsm
 
     private void OnToggle()
     {
-        Machine.Fire(CutsceneFsmTrigger.Start);
+        Machine.Fire(CutsceneFsmTrigger.StartCutscene);
     }
 }
