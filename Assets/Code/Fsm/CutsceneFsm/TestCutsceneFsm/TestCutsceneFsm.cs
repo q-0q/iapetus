@@ -21,19 +21,23 @@ public partial class TestCutsceneFsm : CutsceneFsm
     protected override void OnAwake()
     {
         base.OnAwake();
+        TryGetComponent(out _interactable);
     }
 
     protected override void OnStart()
     {
         base.OnStart();
         InitState = TestCutsceneFsmState.Inactive;
-        TryGetComponent(out _interactable);
     }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
-        
+
+        if (Machine.IsInState(TestCutsceneFsmState.MoveCubeForward))
+        {
+            cube.transform.position += cube.forward * (Time.deltaTime * 10f);
+        }
     }
 
     private void OnEnable()
