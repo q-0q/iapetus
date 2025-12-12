@@ -8,7 +8,7 @@ public class CutsceneManager : MonoBehaviour
 
     public static CutsceneManager Singleton;
 
-    private GameObject _activeCutscene;
+    private CutsceneFsm _activeCutscene;
 
     private void Awake()
     {
@@ -16,7 +16,7 @@ public class CutsceneManager : MonoBehaviour
         _activeCutscene = null;
     }
 
-    public void SetActiveCutscene(GameObject activeCutscene)
+    public void SetActiveCutscene(CutsceneFsm activeCutscene)
     {
         _activeCutscene = activeCutscene;
     }
