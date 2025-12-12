@@ -14,7 +14,6 @@ public abstract partial class CutsceneFsm : Fsm
     public class CutsceneFsmTrigger : FsmTrigger
     {
         public static int StartCutscene;
-        public static int EndCutscene;
     }
 
     protected override void OnAwake()
