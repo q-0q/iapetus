@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using UnityEngine;
 
 public partial class TestCutsceneFsm : CutsceneFsm
@@ -28,6 +29,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
     {
         base.OnStart();
         InitState = TestCutsceneFsmState.Inactive;
+        _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
     }
     
     public override void OnUpdate()

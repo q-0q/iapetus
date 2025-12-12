@@ -10,7 +10,11 @@ public partial class TestCutsceneFsm
 
         Machine.Configure(TestCutsceneFsmState.AlignCamera)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.MoveCubeForward)
-            .SubstateOf(CutsceneFsmState.Active);
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _virtualCamera.Priority = 20;
+            });
         
         Machine.Configure(TestCutsceneFsmState.MoveCubeForward)
             .Permit(FsmTrigger.Timeout, CutsceneFsmState.Inactive)
