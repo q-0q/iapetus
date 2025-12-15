@@ -293,6 +293,11 @@ public partial class PlayerFsm
     
     private Vector2 GetInputMovementVector2()
     {
+        if (CutsceneManager.Singleton.IsCutscenePlayerDisabled())
+        {
+            return Vector3.zero;
+        }
+        
         return _playerInput.actions["Move"].ReadValue<Vector2>();
     }
     

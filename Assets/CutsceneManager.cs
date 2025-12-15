@@ -30,4 +30,10 @@ public class CutsceneManager : MonoBehaviour
     {
         return _activeCutscene != null;
     }
+
+    public bool IsCutscenePlayerDisabled()
+    {
+        if (_activeCutscene == null) return false;
+        return _activeCutscene.StateMapConfig.CutscenePlayerDisabled.Get(_activeCutscene);
+    }
 }

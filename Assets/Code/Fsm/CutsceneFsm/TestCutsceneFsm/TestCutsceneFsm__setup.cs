@@ -6,6 +6,10 @@ public partial class TestCutsceneFsm
         base.SetupMachine();
 
         Machine.Configure(CutsceneFsmState.Inactive)
+            .OnEntry(_ =>
+            {
+                _virtualCamera.Priority = 0;
+            })
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
 
         Machine.Configure(TestCutsceneFsmState.AlignCamera)

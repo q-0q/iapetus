@@ -73,6 +73,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.LockSpringCollider = new StateMap<bool>(false);
         StateMapConfig.TightropeLineOffset = new StateMap<Vector3>(Vector3.zero);
         StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(50f);
+        StateMapConfig.CutscenePlayerDisabled = new StateMap<bool>(true);
     }
 
     public virtual void SetupMachine()

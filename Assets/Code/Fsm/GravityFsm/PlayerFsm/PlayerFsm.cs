@@ -142,13 +142,17 @@ public partial class PlayerFsm : GravityFsm
     public override void OnUpdate()
     {
         if (HitstopOnUpdate()) return;
+
+        var isCutscenePlayerDisabled = CutsceneManager.Singleton.IsCutscenePlayerDisabled();
+        if (!isCutscenePlayerDisabled)
+        {
+            _inputBuffer.OnUpdate();
+        }
         
-        _inputBuffer.OnUpdate();
         OnPlayerMomentumUpdated?.Invoke(_momentum);
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
-
         _timeSinceDashFinished += Time.deltaTime;
         
         if (Machine.IsInState(PlayerFsmState.GroundMove))
@@ -281,7 +285,7 @@ public partial class PlayerFsm : GravityFsm
             SkipOnUpdate();
         }
 
-        if (Machine.IsInState(PlayerFsmState.Interactable))
+        if (Machine.IsInState(PlayerFsmState.Interactable) && !isCutscenePlayerDisabled)
         {
             InteractableOnUpdate();
         }
