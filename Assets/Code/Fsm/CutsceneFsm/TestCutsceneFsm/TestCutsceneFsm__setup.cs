@@ -1,4 +1,5 @@
 using DG.Tweening;
+using UnityEngine;
 
 public partial class TestCutsceneFsm
 {
@@ -10,6 +11,7 @@ public partial class TestCutsceneFsm
         Machine.Configure(CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             {
+                Time.timeScale = 1f;
                 _virtualCamera.Priority = 0;
             })
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
@@ -19,6 +21,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                _canvasGroup.alpha = 1f;
                 _virtualCamera.Priority = 20;
             });
         
@@ -47,19 +50,25 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                Time.timeScale = 0.5f;
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Jumpsquat);
             });
 
         Machine.Configure(TestCutsceneFsmState.MoveCubeDown2)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.Shake2)
-            .SubstateOf(CutsceneFsmState.Active);
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                Time.timeScale = 1f;
+            });
         
         Machine.Configure(TestCutsceneFsmState.Shake2)
             .Permit(TestCutsceneFsmTrigger.Timeout, TestCutsceneFsmState.Inactive)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                cube.DOShakePosition(1.5f, 1.5f);
+                // HitstopManager.Singleton.StartHitstop(0.2f);
+                cube.DOShakePosition(1.5f, 1f);
             });
 
     }
@@ -71,6 +80,9 @@ public partial class TestCutsceneFsm
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.65f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.4f);
+        
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.MoveCubeDown2, false);
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.Shake2, false);
         
     }
 }

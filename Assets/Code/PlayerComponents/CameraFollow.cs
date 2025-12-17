@@ -65,7 +65,10 @@ public class CameraFollow : MonoBehaviour
     void UpdatePlayerPosition(Vector3 pos, bool grounded)
     {
         pos = CameraFollowTarget.Singleton.transform.position;
-        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * YLerpRate);
+        var yLerp = CutsceneManager.Singleton.IsCutscenePlayerDisabled() && PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.Grounded)
+            ? YLerpRate * 4f
+            : YLerpRate;
+        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
         _playerPos = new Vector3(pos.x, newY, pos.z);
     }
     

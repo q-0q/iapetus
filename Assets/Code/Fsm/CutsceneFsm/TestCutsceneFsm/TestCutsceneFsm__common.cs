@@ -11,4 +11,5 @@ public partial class TestCutsceneFsm
     private Interactable _interactable;
     private CinemachineVirtualCamera _virtualCamera;
     [SerializeField] private Transform cube;
+    private CanvasGroup _canvasGroup;
 }

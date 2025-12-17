@@ -37,6 +37,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         PlayerFsm.Singleton.gameObject.TryGetComponent(out _playerInput);
         InitState = TestCutsceneFsmState.Inactive;
         _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+        _canvasGroup = GetComponentInChildren<CanvasGroup>();
     }
     
     public override void OnUpdate()
@@ -46,16 +47,23 @@ public partial class TestCutsceneFsm : CutsceneFsm
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeForward))
         {
             cube.transform.position += cube.forward * (Time.deltaTime * 10f);
+            _canvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, 3f, TimeInCurrentState()));
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown1))
         {
             cube.transform.position += cube.up * (TimeInCurrentState() * TimeInCurrentState() * -100f * Time.deltaTime);
+            Time.timeScale = Mathf.Lerp(1f, 0.01f, Mathf.InverseLerp(0.55f, 0.65f, TimeInCurrentState()));
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown2))
         {
             cube.transform.position += cube.up * (-60f * Time.deltaTime);
+        }
+
+        if (Machine.IsInState(TestCutsceneFsmState.Shake2))
+        {
+            
         }
     }
 

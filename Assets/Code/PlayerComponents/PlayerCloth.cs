@@ -18,6 +18,7 @@ public class PlayerCloth : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // return;
         transform.position = transform.parent.position;
         _segments = new List<GameObject>();
         _segmentPrefab = Resources.Load("Prefab/PlayerClothSegment") as GameObject;
@@ -49,6 +50,7 @@ public class PlayerCloth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // return;
         for (int i = 0; i < SegmentCount + 1; i++)
         {
             var pos = i == 0 ? root.position : _segments[i - 1].transform.position;
@@ -58,6 +60,8 @@ public class PlayerCloth : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // return;
+        
         for (int i = 0; i < SegmentCount; i++)
         {
             _segments[i].TryGetComponent(out Rigidbody rigidbody);
