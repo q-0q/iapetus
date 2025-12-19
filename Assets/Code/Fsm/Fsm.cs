@@ -40,7 +40,9 @@ public abstract class Fsm : MonoBehaviour
         SetupStateMaps();
         _timeInCurrentState = 0;
         TryGetComponent(out Animator);
+        OnStartComplete();
     }
+
 
     private void Update()
     {
@@ -49,8 +51,9 @@ public abstract class Fsm : MonoBehaviour
     }
 
     protected virtual void OnAwake() { }
-
     protected virtual void OnStart() { }
+    protected virtual void OnStartComplete() { }
+
     
     public virtual void OnUpdate()
     {
