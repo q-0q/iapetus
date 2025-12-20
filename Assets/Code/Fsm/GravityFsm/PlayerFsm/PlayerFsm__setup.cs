@@ -46,6 +46,7 @@ public partial class PlayerFsm
         DialogueConfigure();
         SlideConfigure();
         TightropeMoveConfigure();
+        CutsceneConfigure();
         
     }
 
@@ -98,6 +99,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DashVault, "DashVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Slide, "Slide");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

@@ -61,6 +61,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
                 innerCube.DOShakePosition(0.75f, 0.5f);
             });
         
@@ -103,7 +104,7 @@ public partial class TestCutsceneFsm
         
         StateMapConfig.Duration.Add(TestCutsceneFsmState.TextFade, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, 9f);
-        StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 2f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.55f);
         
