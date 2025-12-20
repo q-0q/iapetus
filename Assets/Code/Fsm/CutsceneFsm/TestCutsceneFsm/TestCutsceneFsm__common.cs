@@ -17,6 +17,8 @@ public partial class TestCutsceneFsm
     private CanvasGroup _mainCanvasGroup;
     private CanvasGroup _textCanvasGroup;
     private TextMeshProUGUI _textTmp;
+    private bool _moveCubeForwardShake1 = false;
+    private bool _moveCubeForwardShake2 = false;
     private float _textClock;
 
     private int _currentTextId;

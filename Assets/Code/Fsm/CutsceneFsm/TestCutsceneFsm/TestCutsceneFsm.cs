@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -84,12 +85,26 @@ public partial class TestCutsceneFsm : CutsceneFsm
         {
             gondola.transform.position += gondola.forward * (Time.deltaTime * 10f);
             _mainCanvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, 5f, TimeInCurrentState()));
+
+            if (TimeInCurrentState() > 3f && !_moveCubeForwardShake1)
+            {
+                _moveCubeForwardShake1 = true;
+                innerCube.DOShakePosition(3.75f, 0.25f);
+                innerCube.DOShakeRotation(3.75f, 0.5f);
+            }
+            
+            if (TimeInCurrentState() > 5f && !_moveCubeForwardShake2)
+            {
+                _moveCubeForwardShake2 = true;
+                innerCube.DOShakePosition(3.75f, 0.25f);
+                innerCube.DOShakeRotation(3.75f, 0.5f);
+            }
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown1))
         {
             gondola.transform.position += gondola.up * (TimeInCurrentState() * TimeInCurrentState() * -100f * Time.deltaTime);
-            Time.timeScale = Mathf.Lerp(1f, 0.01f, Mathf.InverseLerp(0.55f, 0.65f, TimeInCurrentState()));
+            Time.timeScale = Mathf.Lerp(1f, 0.01f, Mathf.InverseLerp(0.55f, 0.725f, TimeInCurrentState()));
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown2))
