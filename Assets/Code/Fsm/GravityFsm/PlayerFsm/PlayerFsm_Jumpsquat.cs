@@ -13,5 +13,6 @@ public partial class PlayerFsm
                 _inputBuffer.ConsumeBuffer("Jump");
             })
             .OnExitFrom(FsmTrigger.Timeout, _ => { YVelocity = JumpYVelocity; });
+        
     }
 }

@@ -45,6 +45,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         transform.Find("IntroCutsceneCanvas").Find("TextCanvasGroup").TryGetComponent(out _textCanvasGroup);
         _playerTransformOnStart = transform.Find("PlayerTransformOnStart");
         _textTmp = GetComponentInChildren<TextMeshProUGUI>();
+        transform.Find("ImpactParticles").TryGetComponent(out _impactParticles);
     }
     
     public override void OnUpdate()
@@ -119,7 +120,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
 
         if (Machine.IsInState(TestCutsceneFsmState.Shake2))
         {
-            
+            // Time.timeScale = Mathf.Lerp(0.5f, 1f, Mathf.InverseLerp(0.2f, 0.5f, TimeInCurrentState()));
         }
     }
 

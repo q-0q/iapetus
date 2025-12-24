@@ -91,7 +91,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                // HitstopManager.Singleton.StartHitstop(0.2f);
+                _impactParticles.Play(true);
                 innerCube.DOShakePosition(1.5f, 1f);
                 gondola.DOShakePosition(1.5f, 1f);
             });
@@ -106,7 +106,7 @@ public partial class TestCutsceneFsm
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, 9f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
-        StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.55f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.625f);
         
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.MoveCubeDown2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.Shake2, false);

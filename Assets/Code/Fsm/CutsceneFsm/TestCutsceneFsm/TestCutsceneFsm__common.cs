@@ -20,7 +20,8 @@ public partial class TestCutsceneFsm
     private bool _moveCubeForwardShake1 = false;
     private bool _moveCubeForwardShake2 = false;
     private float _textClock;
-
+    private ParticleSystem _impactParticles;
+    
     private int _currentTextId;
     private List<string> texts = new List<string>()
     {
