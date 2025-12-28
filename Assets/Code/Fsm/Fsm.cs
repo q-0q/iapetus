@@ -106,7 +106,7 @@ public abstract class Fsm : MonoBehaviour
         return _timeInCurrentState;
     }
     
-    private void OnStateChanged(TriggerParams? triggerParams)
+    protected virtual void OnStateChanged(TriggerParams? triggerParams)
     {
         _timeInCurrentState = 0;
     }

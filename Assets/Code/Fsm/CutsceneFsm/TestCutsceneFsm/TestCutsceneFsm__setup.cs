@@ -36,10 +36,12 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.TextFade)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.MoveCubeForward)
+            // .Permit(CutsceneFsmTrigger.Skip, TestCutsceneFsmState.Shake2)
             .SubstateOf(CutsceneFsmState.Active);
 
         Machine.Configure(TestCutsceneFsmState.MoveCubeForward)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.Shake1)
+            .Permit(CutsceneFsmTrigger.Skip, TestCutsceneFsmState.Shake2)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
@@ -91,9 +93,11 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                _mainCanvasGroup.alpha = 0f;
                 _impactParticles.Play(true);
                 innerCube.DOShakePosition(1.5f, 1f);
                 gondola.DOShakePosition(1.5f, 1f);
+                gondola.transform.position = _endPosition.position;
             });
 
     }
@@ -103,7 +107,7 @@ public partial class TestCutsceneFsm
         base.SetupStateMaps();
         
         StateMapConfig.Duration.Add(TestCutsceneFsmState.TextFade, 3f);
-        StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, 9f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, +_moveCubeForwardDuration);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.625f);

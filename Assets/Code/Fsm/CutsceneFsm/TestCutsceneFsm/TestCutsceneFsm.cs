@@ -5,6 +5,7 @@ using Cinemachine;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using Wasp;
 
 public partial class TestCutsceneFsm : CutsceneFsm
 {
@@ -46,6 +47,9 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _playerTransformOnStart = transform.Find("PlayerTransformOnStart");
         _textTmp = GetComponentInChildren<TextMeshProUGUI>();
         transform.Find("ImpactParticles").TryGetComponent(out _impactParticles);
+        _endPosition = transform.Find("EndPosition");
+        _endPosition.SetParent(null);
+        _stateGondolaStartingPosition = transform.position;
     }
     
     public override void OnUpdate()
@@ -80,31 +84,45 @@ public partial class TestCutsceneFsm : CutsceneFsm
         if (Machine.IsInState(TestCutsceneFsmState.TextFade))
         {
             _textCanvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, 2f, TimeInCurrentState()));
+            if (_playerInput.actions["Interact"].WasPressedThisFrame())
+            {
+                Machine.Fire(CutsceneFsmTrigger.Skip);
+            }
         }
 
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeForward))
         {
-            gondola.transform.position += gondola.forward * (Time.deltaTime * 10f);
+            var position = _endPosition.position;
+            gondola.transform.position = Vector3.Lerp(_stateGondolaStartingPosition,
+                new Vector3(position.x, _stateGondolaStartingPosition.y,
+                    position.z), Mathf.InverseLerp(0, _moveCubeForwardDuration, TimeInCurrentState()));
+            
             _mainCanvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, 5f, TimeInCurrentState()));
 
-            if (TimeInCurrentState() > 3f && !_moveCubeForwardShake1)
+            if (_playerInput.actions["Interact"].WasPressedThisFrame())
+            {
+                Machine.Fire(CutsceneFsmTrigger.Skip);
+            }
+
+                
+            if (TimeInCurrentState() > 6f && !_moveCubeForwardShake1)
             {
                 _moveCubeForwardShake1 = true;
-                innerCube.DOShakePosition(3.75f, 0.25f);
-                innerCube.DOShakeRotation(3.75f, 0.5f);
+                innerCube.DOShakePosition(6.75f, 0.25f);
+                innerCube.DOShakeRotation(6.75f, 0.5f);
             }
             
-            if (TimeInCurrentState() > 5f && !_moveCubeForwardShake2)
+            if (TimeInCurrentState() > 12f && !_moveCubeForwardShake2)
             {
                 _moveCubeForwardShake2 = true;
-                innerCube.DOShakePosition(3.75f, 0.25f);
-                innerCube.DOShakeRotation(3.75f, 0.5f);
+                innerCube.DOShakePosition(6.75f, 0.25f);
+                innerCube.DOShakeRotation(6.75f, 0.5f);
             }
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.Shake1))
         {
-            gondola.transform.position += gondola.forward * (Mathf.Lerp(10f, 0f, Mathf.InverseLerp(0, 1.5f, TimeInCurrentState())) * Time.deltaTime);
+            // gondola.transform.position += gondola.forward * (Mathf.Lerp(10f, 0f, Mathf.InverseLerp(0, 1.5f, TimeInCurrentState())) * Time.deltaTime);
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown1))
@@ -128,6 +146,12 @@ public partial class TestCutsceneFsm : CutsceneFsm
     {
         base.OnStartComplete();
         Machine.Fire(CutsceneFsmTrigger.StartCutscene);
+    }
+
+    protected override void OnStateChanged(TriggerParams triggerParams)
+    {
+        base.OnStateChanged(triggerParams);
+        _stateGondolaStartingPosition = gondola.position;
     }
 
     private void OnEnable()
