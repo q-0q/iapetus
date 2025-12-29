@@ -17,6 +17,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
+                impactEventInstance.start();
                 _momentum = HardLandExitMomentum;
             });
     }

@@ -25,6 +25,8 @@ public partial class PlayerFsm
                 YVelocity = 0;
                 LastUpwardsY = transform.position.y;
                 _wallsquattedSinceLeavingGround = true;
+
+                landEventInstance.start();
             })
             .OnExit(_ =>
             {

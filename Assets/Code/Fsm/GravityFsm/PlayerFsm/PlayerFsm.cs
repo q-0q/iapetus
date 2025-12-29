@@ -138,6 +138,20 @@ public partial class PlayerFsm : GravityFsm
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         Application.targetFrameRate = 240;
 
+        jumpEventInstance = FMODUnity.RuntimeManager.CreateInstance(jumpFmodEvent);
+        landEventInstance = FMODUnity.RuntimeManager.CreateInstance(landFmodEvent);
+        impactEventInstance = FMODUnity.RuntimeManager.CreateInstance(impactFmodEvent);
+        skipEventInstance = FMODUnity.RuntimeManager.CreateInstance(skipFmodEvent);
+        dashEventInstance = FMODUnity.RuntimeManager.CreateInstance(dashFmodEvent);
+        climbEventInstance = FMODUnity.RuntimeManager.CreateInstance(climbFmodEvent);
+        
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(jumpEventInstance, gameObject);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(landEventInstance, gameObject);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(impactEventInstance, gameObject);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(skipEventInstance, gameObject);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(dashEventInstance, gameObject);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(climbEventInstance, gameObject);
+        
     }
     
 

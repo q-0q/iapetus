@@ -24,6 +24,8 @@ public partial class PlayerFsm
                     ComputeMomentumWeight());
                 Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
                 _momentum = 0;
+                
+                jumpEventInstance.start();
             });
     }
 }

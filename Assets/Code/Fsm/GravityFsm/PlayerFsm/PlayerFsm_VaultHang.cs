@@ -20,6 +20,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 if (!UpdateLedgePosition(FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset())) UpdateLedgePosition(FaceLedgeHeight);
+
             })
             .OnExit(_ =>
             {

@@ -25,6 +25,7 @@ public partial class PlayerFsm
             {
                 _inputBuffer.ConsumeBuffer("Jump");
                 YVelocity = 0;
+                
             })
             .OnExit(_ => { 
                 _momentum = 5f;

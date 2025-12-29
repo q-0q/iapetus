@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FMOD.Studio;
+using FMODUnity;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -169,6 +171,20 @@ public partial class PlayerFsm
     private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
 
     private const float KiMomentumThreshhold = 11.5f;
+    
+    public EventReference jumpFmodEvent;
+    public EventReference landFmodEvent;
+    public EventReference impactFmodEvent;
+    public EventReference skipFmodEvent;
+    public EventReference dashFmodEvent;
+    public EventReference climbFmodEvent;
+
+    private EventInstance jumpEventInstance;
+    private EventInstance landEventInstance;
+    private EventInstance impactEventInstance;
+    private EventInstance skipEventInstance;
+    private EventInstance dashEventInstance;
+    private EventInstance climbEventInstance;
     
 
 

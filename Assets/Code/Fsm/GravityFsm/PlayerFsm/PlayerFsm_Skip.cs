@@ -22,6 +22,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Jump");
+                skipEventInstance.start();
             })
             .OnEntryFrom(FsmTrigger.Timeout, _ => { YVelocity = SkipYVelocity; });
     }

@@ -18,6 +18,7 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
+                impactEventInstance.start();
                 LastUpwardsY = transform.position.y;
                 _momentum = HardLandRollExitMomentum;
             });

@@ -11,6 +11,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
+                landEventInstance.start();
             })
             .OnExit(_ =>
             {
