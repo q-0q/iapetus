@@ -37,7 +37,7 @@ public abstract partial class GravityFsm
 
     
     
-    protected bool GetGroundedRaycastHit(out RaycastHit hit)
+    protected bool GetGroundedRaycastHit(out RaycastHit hit, bool debug = false)
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
@@ -46,11 +46,12 @@ public abstract partial class GravityFsm
         if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up, out hit,
                 raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-
+            
             var slopeMinDistanceOffset = Mathf.Lerp(0, 5f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.normal, Vector3.up)));
-            return (transform.position.y - hit.point.y) < minDistance + slopeMinDistanceOffset;
+            return Mathf.Abs(transform.position.y - hit.point.y) < minDistance;
         }
         
+        if (debug) Debug.Log("GetGrounded Spherecast failed");
         return false;
     }
 
