@@ -12,6 +12,7 @@ public partial class PlayerFsm
             {
                 Animator.SetLayerWeight(1, 0);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(landFmodEvent, gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
             })
             .OnExit(_ =>
             {

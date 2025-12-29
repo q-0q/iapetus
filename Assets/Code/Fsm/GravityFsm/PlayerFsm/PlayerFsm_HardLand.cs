@@ -18,6 +18,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
                 _momentum = HardLandExitMomentum;
             });
     }

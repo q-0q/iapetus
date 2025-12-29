@@ -42,6 +42,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
             })
             .OnExit(_ =>
             {

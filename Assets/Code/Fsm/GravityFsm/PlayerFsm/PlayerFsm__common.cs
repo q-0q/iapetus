@@ -178,15 +178,8 @@ public partial class PlayerFsm
     public EventReference skipFmodEvent;
     public EventReference dashFmodEvent;
     public EventReference climbFmodEvent;
-
-    private EventInstance jumpEventInstance;
-    private EventInstance landEventInstance;
-    private EventInstance impactEventInstance;
-    private EventInstance skipEventInstance;
-    private EventInstance dashEventInstance;
-    private EventInstance climbEventInstance;
+    public EventReference snowFootstepFmodEvent;
     
-
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
     {
@@ -511,6 +504,11 @@ public partial class PlayerFsm
         CameraLookSensitivityProcessor.SetSensitivityModifier(metaSaveData.cameraSensitivityModifier);
         transform.Find("AmbientParticles").gameObject.SetActive(metaSaveData.enableAmbientParticles);
     }
-    
 
+
+    private void OnPlayerFootstep()
+    {
+        if (!Machine.IsInState(PlayerFsmState.GroundMove)) return;
+        FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
+    }
 }
