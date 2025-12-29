@@ -26,7 +26,7 @@ public partial class PlayerFsm
                 YVelocity = 0;
                 YVelocity = Mathf.Max(YVelocity, 15f);
                 _dashSinceLeavingGround = true;
-                dashEventInstance.start();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(dashFmodEvent, gameObject);
             })
             .OnExit(_ =>
             {

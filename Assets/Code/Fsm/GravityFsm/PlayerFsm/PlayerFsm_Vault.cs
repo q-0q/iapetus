@@ -41,7 +41,7 @@ public partial class PlayerFsm
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 
-                jumpEventInstance.start();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
             })
             .OnExit(_ =>
             {

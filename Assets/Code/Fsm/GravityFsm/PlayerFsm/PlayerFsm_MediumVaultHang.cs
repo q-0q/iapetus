@@ -7,7 +7,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.VaultHang)
             .OnEntry(_ =>
             {
-                impactEventInstance.start();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
             });
     }
 }

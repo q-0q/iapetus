@@ -22,7 +22,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _inputBuffer.ConsumeBuffer("Jump");
-                skipEventInstance.start();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(skipFmodEvent, gameObject);
             })
             .OnEntryFrom(FsmTrigger.Timeout, _ => { YVelocity = SkipYVelocity; });
     }

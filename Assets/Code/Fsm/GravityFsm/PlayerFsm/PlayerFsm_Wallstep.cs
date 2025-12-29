@@ -25,7 +25,7 @@ public partial class PlayerFsm
                 Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
                 _momentum = 0;
                 
-                jumpEventInstance.start();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
             });
     }
 }

@@ -6,7 +6,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.VaultHang)
             .OnEntry(_ =>
             {
-                climbEventInstance.start();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(climbFmodEvent, gameObject);
             });
     }
 }
