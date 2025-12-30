@@ -104,7 +104,7 @@ public partial class PlayerFsm
     private const float UpdateLedgePositionEpsilon = 3f;
     private const float VaultMinimumYVelocity = -2f;
     private const float VaultMinimumMomentum = 6f;
-    private const float VaultMinimumMomentumOnUpdate = 6f;
+    private const float VaultMinimumMomentumOnUpdate = 8f;
     private const float VaultHangLedgeYOffset = -2.5f;
     private const float VaultHangLedgeLerpStrength = 60f;
     private const float VaultTurningMultiplier = 0.75f;

@@ -64,6 +64,7 @@ public partial class PlayerFsm : GravityFsm
         public static int GroundMoveAfterVault;
 
         public static int CutsceneWary;
+        public static int CutsceneIdle;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

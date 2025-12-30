@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
@@ -33,6 +34,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadScene(string scene)
     {
+        FMODUnity.RuntimeManager.GetBus("Bus:/").stopAllEvents(STOP_MODE.IMMEDIATE);
         StartCoroutine(LoadYourAsyncScene(scene));
     }
 

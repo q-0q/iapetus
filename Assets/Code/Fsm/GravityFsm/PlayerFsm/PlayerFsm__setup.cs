@@ -100,6 +100,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Slide, "Slide");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "GroundMove");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

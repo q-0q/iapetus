@@ -42,6 +42,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
         {
+            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneIdle);
             _creakEventInstance = FMODUnity.RuntimeManager.CreateInstance(gondolaCreakEventReference);
             FMODUnity.RuntimeManager.AttachInstanceToGameObject(_creakEventInstance, gondola.gameObject);
             _creakEventInstance.start();
@@ -105,6 +106,12 @@ public partial class TestCutsceneFsm
             .OnEntry(_ =>
             {
                 FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaCrashEventReference, gondola.gameObject);
+
+                if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneIdle))
+                {
+                    PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
+                }
+                
                 _creakEventInstance.stop(STOP_MODE.IMMEDIATE);
                 _mainCanvasGroup.alpha = 0f;
                 _impactParticles.Play(true);
