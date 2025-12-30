@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Cinemachine;
 using Code.TriggerParams;
+using FMOD.Studio;
+using FMODUnity;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -24,7 +26,16 @@ public partial class TestCutsceneFsm
 
     private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
+
+    public EventReference musicEventReference;
+    public EventReference windEventReference;
     
+    public EventReference gondolaCreakEventReference;
+    public EventReference gondolaMinorBangEventReference;
+    public EventReference gondolaBreakEventReference;
+    public EventReference gondolaCrashEventReference;
+    private EventInstance _creakEventInstance;
+
     private int _currentTextId;
     private List<string> texts = new List<string>()
     {

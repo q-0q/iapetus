@@ -108,6 +108,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
             if (TimeInCurrentState() > 6f && !_moveCubeForwardShake1)
             {
                 _moveCubeForwardShake1 = true;
+                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
                 innerCube.DOShakePosition(6.75f, 0.25f);
                 innerCube.DOShakeRotation(6.75f, 0.5f);
             }
@@ -115,6 +116,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
             if (TimeInCurrentState() > 12f && !_moveCubeForwardShake2)
             {
                 _moveCubeForwardShake2 = true;
+                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
                 innerCube.DOShakePosition(6.75f, 0.25f);
                 innerCube.DOShakeRotation(6.75f, 0.5f);
             }
