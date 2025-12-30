@@ -16,17 +16,16 @@ namespace Code.PlayerComponents
 
         private void Update()
         {
-            var playerPosY = PlayerFsm.Singleton.transform.position.y;
-            var yDelta = playerPosY - transform.position.y;
-            var prevYDelta = playerPosY - _previousPosition.y;
-            // print(yDelta +  ", " + prevYDelta);
-            if (yDelta < YPosTriggerThreshold &&
-                prevYDelta >= YPosTriggerThreshold)
-            {
-                print("wahoo!");
-                OnPlayerFootstep?.Invoke();
-            }
-            _previousPosition = transform.position;
+            // var playerPosY = PlayerFsm.Singleton.transform.position.y;
+            // var yDelta = playerPosY - transform.position.y;
+            // var prevYDelta = playerPosY - _previousPosition.y;
+            // // print(yDelta +  ", " + prevYDelta);
+            // if (yDelta < YPosTriggerThreshold &&
+            //     prevYDelta >= YPosTriggerThreshold)
+            // {
+            //     OnPlayerFootstep?.Invoke();
+            // }
+            // _previousPosition = transform.position;
         }
         
     }

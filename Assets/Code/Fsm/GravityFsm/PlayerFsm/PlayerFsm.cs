@@ -159,6 +159,8 @@ public partial class PlayerFsm : GravityFsm
                                                             YVelocity < -6f);
         _timeSinceDashFinished += Time.deltaTime;
         
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
+        
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             GroundMoveOnUpdate();
