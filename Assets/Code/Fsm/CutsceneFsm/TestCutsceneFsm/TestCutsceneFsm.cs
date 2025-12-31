@@ -21,6 +21,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int WaitForJumpsquat;
         public static int MoveCubeDown2;
         public static int Shake2;
+        public static int FinalCamera;
+
     }
 
     public class TestCutsceneFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
@@ -41,7 +43,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
         base.OnStart();
         PlayerFsm.Singleton.gameObject.TryGetComponent(out _playerInput);
         InitState = TestCutsceneFsmState.Inactive;
-        _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+        transform.Find("TestCutsceneVirtualCamera").TryGetComponent(out _virtualCamera);
+        transform.Find("TestCutsceneFinalVirtualCamera").TryGetComponent(out _finalVirtualCamera);
         transform.Find("IntroCutsceneCanvas").TryGetComponent(out _mainCanvasGroup);
         transform.Find("IntroCutsceneCanvas").Find("TextCanvasGroup").TryGetComponent(out _textCanvasGroup);
         _playerTransformOnStart = transform.Find("PlayerTransformOnStart");
@@ -84,7 +87,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         if (Machine.IsInState(TestCutsceneFsmState.TextFade))
         {
             _textCanvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, 2f, TimeInCurrentState()));
-            if (_playerInput.actions["Interact"].WasPressedThisFrame())
+            if (_playerInput.actions["Interact"].WasPressedThisFrame() && TimeInCurrentState() > 0.1f)
             {
                 Machine.Fire(CutsceneFsmTrigger.Skip);
             }
@@ -131,11 +134,14 @@ public partial class TestCutsceneFsm : CutsceneFsm
         {
             gondola.transform.position += gondola.up * (TimeInCurrentState() * TimeInCurrentState() * -100f * Time.deltaTime);
             Time.timeScale = Mathf.Lerp(1f, 0.01f, Mathf.InverseLerp(0.55f, 0.725f, TimeInCurrentState()));
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", Mathf.Lerp(1f, 0.01f, Mathf.InverseLerp(0, 0.725f, TimeInCurrentState())));
+
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown2))
         {
             gondola.transform.position += gondola.up * (-60f * Time.deltaTime);
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", Mathf.Lerp(0.01f, 1f, Mathf.InverseLerp(0, 0.125f, TimeInCurrentState())));
         }
 
         if (Machine.IsInState(TestCutsceneFsmState.Shake2))

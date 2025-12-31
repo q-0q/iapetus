@@ -14,6 +14,7 @@ public partial class TestCutsceneFsm
             {
                 Time.timeScale = 1f;
                 _virtualCamera.Priority = 0;
+                _finalVirtualCamera.Priority = 0;
             })
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
 
@@ -38,7 +39,7 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.TextFade)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.MoveCubeForward)
-            // .Permit(CutsceneFsmTrigger.Skip, TestCutsceneFsmState.Shake2)
+            .Permit(CutsceneFsmTrigger.Skip, TestCutsceneFsmState.Shake2)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
         {
@@ -97,7 +98,9 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                Time.timeScale = 1f;
+                _finalVirtualCamera.Priority = 20;
+                _virtualCamera.Priority = 0;
+                Time.timeScale = 0.65f;
             });
         
         Machine.Configure(TestCutsceneFsmState.Shake2)
@@ -111,7 +114,9 @@ public partial class TestCutsceneFsm
                 {
                     PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
                 }
-                
+                // _finalVirtualCamera.Priority = 0;
+                // _virtualCamera.Priority = 20;
+                Time.timeScale = 1f;
                 _creakEventInstance.stop(STOP_MODE.IMMEDIATE);
                 _mainCanvasGroup.alpha = 0f;
                 _impactParticles.Play(true);
@@ -119,7 +124,18 @@ public partial class TestCutsceneFsm
                 gondola.DOShakePosition(1.5f, 1f);
                 gondola.transform.position = _endPosition.position;
                 FMODUnity.RuntimeManager.PlayOneShotAttached(musicEventReference, gondola.gameObject);
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
             });
+        
+        // Machine.Configure(TestCutsceneFsmState.FinalCamera)
+        //     .Permit(TestCutsceneFsmTrigger.Timeout, TestCutsceneFsmState.Inactive)
+        //     .SubstateOf(CutsceneFsmState.Active)
+        //     .OnEntry(_ =>
+        //     {
+        //         _virtualCamera.Priority = 0;
+        //         _finalVirtualCamera.Priority = 20;
+        //
+        //     });
 
     }
 
@@ -130,11 +146,12 @@ public partial class TestCutsceneFsm
         StateMapConfig.Duration.Add(TestCutsceneFsmState.TextFade, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, +_moveCubeForwardDuration);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake2, 2f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.625f);
         
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.MoveCubeDown2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.Shake2, false);
-        
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.FinalCamera, false);
     }
 }

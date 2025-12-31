@@ -46,4 +46,5 @@ public partial class TestCutsceneFsm
     };
 
     private float _moveCubeForwardDuration = 20f;
+    private CinemachineVirtualCamera _finalVirtualCamera;
 }
