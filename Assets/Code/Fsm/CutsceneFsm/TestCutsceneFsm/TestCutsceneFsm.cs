@@ -72,13 +72,11 @@ public partial class TestCutsceneFsm : CutsceneFsm
                 if (textCharId < text.Length) _textClock = 100f;
                 else if (_currentTextId < texts.Count - 1)
                 {
-                    print("a");
                     _currentTextId++;
                     _textClock = 0f;
                 }
                 else
                 {
-                    print("b");
                     Machine.Fire(TestCutsceneFsmTrigger.TextComplete);
                 }
             }

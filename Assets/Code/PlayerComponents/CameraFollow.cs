@@ -16,6 +16,8 @@ public class CameraFollow : MonoBehaviour
     private static float _baseWaitTime;
     private static float _baseCenteringTime;
 
+    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay; 
+
     private void Start()
     {
         transform.position = PlayerFsm.Singleton.transform.position;
@@ -23,31 +25,19 @@ public class CameraFollow : MonoBehaviour
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
         _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
         _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
+        
     }
 
     private void OnTriggerStay(Collider other)
     {
-        _freeLook.m_RecenterToTargetHeading.m_enabled = true;
         other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
-        if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookAtPoint) transform.rotation =
-            Quaternion.LookRotation((cameraBehaviorZone.InputVector3 + other.transform.position - transform.position) * (cameraBehaviorZone.invertDirection ? -1f : 1f),
-                Vector3.up);
-        if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookInDirection) transform.rotation =
-            Quaternion.LookRotation((cameraBehaviorZone.InputVector3 * (cameraBehaviorZone.invertDirection ? -1f : 1f)),
-                Vector3.up);
-
-        _freeLook.m_RecenterToTargetHeading.m_RecenteringTime =
-            _baseCenteringTime * cameraBehaviorZone.centeringTimeModifier;
+        OnCameraFollowTriggerStay?.Invoke(cameraBehaviorZone);
         
-        _freeLook.m_RecenterToTargetHeading.m_WaitTime =
-            _baseWaitTime * cameraBehaviorZone.waitTimeModifier;
     }
     
     private void OnTriggerExit(Collider other)
     {
-        _freeLook.m_RecenterToTargetHeading.m_enabled = false;
-        _freeLook.m_RecenterToTargetHeading.m_RecenteringTime = _baseCenteringTime;
-        _freeLook.m_RecenterToTargetHeading.m_WaitTime = _baseWaitTime;
+        OnCameraFollowTriggerStay?.Invoke(null);
     }
 
     private void OnEnable()
