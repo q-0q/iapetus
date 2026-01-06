@@ -71,21 +71,12 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         if (_timeSincePlayerLookInput < _recenterTime) return;
         if (_currentCameraBehaviorZone == null) return;
         
-        var newForward = transform.forward;
+        var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position);
+        var angle = Vector3.SignedAngle(Vector3.forward, newForward, transform.up);
         
-        if (_currentCameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookAtPoint)
-        {
-            newForward = (_currentCameraBehaviorZone.InputVector3 + _currentCameraBehaviorZone.transform.position - PlayerFsm.Singleton.transform.position) * (_currentCameraBehaviorZone.invertDirection ? -1f : 1f);
-        }
-        
-        if (_currentCameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookInDirection)
-        {
-            newForward = (_currentCameraBehaviorZone.InputVector3) * (_currentCameraBehaviorZone.invertDirection ? -1f : 1f);
-        }
-        
-        var angle = Vector3.SignedAngle(Vector3.forward, newForward, Vector3.up);
-        // _freeLook.m_XAxis.m_InputAxisValue = angle * 0.1f;
-        
-        _freeLook.m_XAxis.Value = Mathf.Lerp(_freeLook.m_XAxis.Value, angle, Time.deltaTime * 10f);
+        // converting to quats prevents wraparound issues
+        var oldQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
+        var newQuat = Quaternion.Euler(0, angle, 0);
+        _freeLook.m_XAxis.Value = Quaternion.Lerp(oldQuat, newQuat, Time.deltaTime * 10f).eulerAngles.y;
     }
 }
