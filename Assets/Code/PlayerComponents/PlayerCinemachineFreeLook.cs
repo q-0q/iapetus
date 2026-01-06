@@ -12,9 +12,11 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private float _baseXSpeed;
     private float _baseYSpeed;
     private float _timeSincePlayerLookInput;
+    private float _timeSinceRecenter;
     private float _recenterTime;
 
     private CameraBehaviorZone _currentCameraBehaviorZone;
+    private float _rampUpTime;
 
     void Awake()
     {
@@ -27,7 +29,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         PlayerFsm.Singleton.gameObject.TryGetComponent(out _playerInput);
         _timeSincePlayerLookInput = 0f;
-        _recenterTime = 0.5f;
+        _recenterTime = 1f;
+        _rampUpTime = 6f;
     }
 
     private void Update()
@@ -37,8 +40,14 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>();
         _timeSincePlayerLookInput += Time.deltaTime;
+        _timeSinceRecenter += Time.deltaTime;
+        if (_currentCameraBehaviorZone == null) _timeSinceRecenter = 0f;
         if (lookVector2.magnitude < 0.01f && _timeSincePlayerLookInput > _recenterTime) return;
-        if (lookVector2.magnitude > 0.01f) _timeSincePlayerLookInput = 0f;
+        if (lookVector2.magnitude > 0.01f)
+        {
+            _timeSincePlayerLookInput = 0f;
+            _timeSinceRecenter = 0f;
+        }
         _freeLook.m_XAxis.m_InputAxisValue = lookVector2.x;
         _freeLook.m_YAxis.m_InputAxisValue = lookVector2.y;
     }
@@ -77,6 +86,9 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         // converting to quats prevents wraparound issues
         var oldQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
         var newQuat = Quaternion.Euler(0, angle, 0);
-        _freeLook.m_XAxis.Value = Quaternion.Lerp(oldQuat, newQuat, Time.deltaTime * 10f).eulerAngles.y;
+
+        
+        var lerp = Mathf.Lerp(1f, 7f, Mathf.InverseLerp(_recenterTime, _recenterTime + _rampUpTime, _timeSinceRecenter));
+        _freeLook.m_XAxis.Value = Quaternion.Lerp(oldQuat, newQuat, Time.deltaTime * lerp).eulerAngles.y;
     }
 }
