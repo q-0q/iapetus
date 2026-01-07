@@ -72,7 +72,17 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     
     private void OnCameraFollowTriggerStay(CameraBehaviorZone cameraBehaviorZone)
     {
-        _currentCameraBehaviorZone = cameraBehaviorZone;
+        if (cameraBehaviorZone == null || _currentCameraBehaviorZone == null)
+        {
+            _currentCameraBehaviorZone = cameraBehaviorZone;
+            return;
+        }
+        
+        if (cameraBehaviorZone.priority > _currentCameraBehaviorZone.priority)
+        {
+            _timeSinceRecenter = 0f;
+            _currentCameraBehaviorZone = cameraBehaviorZone;
+        };
     }
 
     private void HandleCameraBehaviorZone()

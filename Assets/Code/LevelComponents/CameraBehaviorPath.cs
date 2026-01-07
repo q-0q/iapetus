@@ -7,68 +7,56 @@ public class CameraBehaviorPath : CameraBehaviorZone
 
     public override Vector3 GetCameraForward(Vector3 inputPosition)
     {
-        if (keyFrames == null || keyFrames.Count < 2)
-            return Vector3.zero;
+        if (keyFrames == null || keyFrames.Count == 0)
+            return Vector3.forward;
 
-        // Track the two closest samples
-        float bestDist1 = float.PositiveInfinity;
-        float bestDist2 = float.PositiveInfinity;
+        if (keyFrames.Count == 1)
+            return keyFrames[0].forward;
 
-        Vector3 forward1 = Vector3.zero;
-        Vector3 forward2 = Vector3.zero;
+        // Find the two closest keyframes
+        Transform closestA = null;
+        Transform closestB = null;
 
-        for (int i = 0; i < keyFrames.Count - 1; i++)
+        float distA = float.MaxValue;
+        float distB = float.MaxValue;
+
+        foreach (var kf in keyFrames)
         {
-            Vector3 a = keyFrames[i].position;
-            Vector3 b = keyFrames[i + 1].position;
+            float d = Vector3.Distance(inputPosition, kf.position);
 
-            Vector3 ab = b - a;
-            float abSqrMag = ab.sqrMagnitude;
-
-            if (abSqrMag < Mathf.Epsilon)
-                continue;
-
-            float t = Vector3.Dot(inputPosition - a, ab) / abSqrMag;
-            t = Mathf.Clamp01(t);
-
-            Vector3 closestPoint = a + t * ab;
-            float dist = Vector3.Distance(inputPosition, closestPoint);
-
-            Quaternion interpolatedRotation = Quaternion.Slerp(
-                keyFrames[i].rotation,
-                keyFrames[i + 1].rotation,
-                t);
-
-            Vector3 forward = interpolatedRotation * Vector3.forward;
-
-            // Insert into best two
-            if (dist < bestDist1)
+            if (d < distA)
             {
-                bestDist2 = bestDist1;
-                forward2 = forward1;
+                distB = distA;
+                closestB = closestA;
 
-                bestDist1 = dist;
-                forward1 = forward;
+                distA = d;
+                closestA = kf;
             }
-            else if (dist < bestDist2)
+            else if (d < distB)
             {
-                bestDist2 = dist;
-                forward2 = forward;
+                distB = d;
+                closestB = kf;
             }
         }
 
-        // If only one valid point was found
-        if (bestDist2 == float.PositiveInfinity)
-            return forward1.normalized;
+        // Safety fallback
+        if (closestA == null || closestB == null)
+            return closestA != null ? closestA.forward : Vector3.forward;
 
-        // Distance-based weighting (inverse distance)
-        const float epsilon = 0.0001f;
-        float w1 = 1f / (bestDist1 + epsilon);
-        float w2 = 1f / (bestDist2 + epsilon);
+        // Compute interpolation factor based on relative distance
+        float t = distA / (distA + distB);
+        t = SmoothLerp01(t);
 
-        Vector3 blendedForward =
-            (forward1 * w1 + forward2 * w2) / (w1 + w2);
+        // Interpolate rotation and return forward
+        Quaternion blendedRotation =
+            Quaternion.Slerp(closestA.rotation, closestB.rotation, t);
 
-        return blendedForward.normalized;
+        return blendedRotation * Vector3.forward;
+    }
+
+    public static float SmoothLerp01(float t)
+    {
+        t = Mathf.Clamp01(t);
+        return t * t * (3f - 2f * t);
     }
 }
