@@ -7,6 +7,7 @@ public class SceneAmbientParticles : MonoBehaviour
     void Start()
     {
         transform.SetParent(PlayerFsm.Singleton.transform);
+        transform.localPosition = Vector3.zero;
     }
     
 }

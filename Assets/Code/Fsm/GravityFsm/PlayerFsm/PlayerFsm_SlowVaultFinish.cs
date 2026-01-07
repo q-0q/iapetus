@@ -5,11 +5,16 @@ public partial class PlayerFsm
     private void SlowVaultFinishOnUpdate()
     {
         HandleTurning(VaultTurningMultiplier, true);
+        bool setLedgePosition = false;
         if (!UpdateLedgePosition(FaceHighLedgeHeight))
         {
-            UpdateLedgePosition(0f);
+            setLedgePosition = UpdateLedgePosition(0f);
         }
-        MoveYOntoLedge(0f, SlowVaultFinishLedgeLerpStrength);
+        else
+        {
+            setLedgePosition = true;
+        }
+        if (setLedgePosition) MoveYOntoLedge(0f, SlowVaultFinishLedgeLerpStrength);
         transform.position += transform.forward * (SlowVaultFinishForwardSpeed * Time.deltaTime);
     }
 
