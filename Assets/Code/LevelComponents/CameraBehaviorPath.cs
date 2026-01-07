@@ -13,46 +13,47 @@ public class CameraBehaviorPath : CameraBehaviorZone
         if (keyFrames.Count == 1)
             return keyFrames[0].forward;
 
-        // Find the two closest keyframes
-        Transform closestA = null;
-        Transform closestB = null;
+        float closestSqrDistance = float.PositiveInfinity;
+        int bestSegmentIndex = 0;
+        float bestT = 0f;
 
-        float distA = float.MaxValue;
-        float distB = float.MaxValue;
-
-        foreach (var kf in keyFrames)
+        // Find the closest sequential segment
+        for (int i = 0; i < keyFrames.Count - 1; i++)
         {
-            float d = Vector3.Distance(inputPosition, kf.position);
+            Vector3 a = keyFrames[i].position;
+            Vector3 b = keyFrames[i + 1].position;
+            Vector3 ab = b - a;
 
-            if (d < distA)
-            {
-                distB = distA;
-                closestB = closestA;
+            float abSqrMag = ab.sqrMagnitude;
+            if (abSqrMag < Mathf.Epsilon)
+                continue;
 
-                distA = d;
-                closestA = kf;
-            }
-            else if (d < distB)
+            // Project inputPosition onto the segment
+            float t = Vector3.Dot(inputPosition - a, ab) / abSqrMag;
+            t = Mathf.Clamp01(t);
+
+            Vector3 closestPoint = a + ab * t;
+            float sqrDistance = (inputPosition - closestPoint).sqrMagnitude;
+
+            if (sqrDistance < closestSqrDistance)
             {
-                distB = d;
-                closestB = kf;
+                closestSqrDistance = sqrDistance;
+                bestSegmentIndex = i;
+                bestT = t;
             }
         }
 
-        // Safety fallback
-        if (closestA == null || closestB == null)
-            return closestA != null ? closestA.forward : Vector3.forward;
+        // Smooth the interpolation parameter
+        float smoothT = SmoothLerp01(bestT);
 
-        // Compute interpolation factor based on relative distance
-        float t = distA / (distA + distB);
-        t = SmoothLerp01(t);
+        // Blend rotations and return forward direction
+        Quaternion rotA = keyFrames[bestSegmentIndex].rotation;
+        Quaternion rotB = keyFrames[bestSegmentIndex + 1].rotation;
 
-        // Interpolate rotation and return forward
-        Quaternion blendedRotation =
-            Quaternion.Slerp(closestA.rotation, closestB.rotation, t);
-
+        Quaternion blendedRotation = Quaternion.Slerp(rotA, rotB, smoothT);
         return blendedRotation * Vector3.forward;
     }
+
 
     public static float SmoothLerp01(float t)
     {
