@@ -90,7 +90,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         if (_timeSincePlayerLookInput < _recenterTime) return;
         if (_currentCameraBehaviorZone == null) return;
         
-        var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position);
+        var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
         var xAngle = Vector3.SignedAngle(Vector3.forward, newForward, transform.up);
         
         // converting to quats prevents wraparound issues
@@ -101,7 +101,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         var lerpStrength = Mathf.Lerp(1f, 4f, Mathf.InverseLerp(_recenterTime, _recenterTime + _rampUpTime, _timeSinceRecenter));
         
         _freeLook.m_XAxis.Value = Quaternion.Lerp(oldXQuat, newXQuat, Time.deltaTime * lerpStrength).eulerAngles.y;
-        _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, 0.7f, Time.deltaTime * lerpStrength);
+        _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * lerpStrength);
 
 
     }

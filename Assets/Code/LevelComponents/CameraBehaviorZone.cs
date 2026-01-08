@@ -30,8 +30,10 @@ public class CameraBehaviorZone : MonoBehaviour
         Gizmos.DrawSphere(transform.position + InputVector3, 1f);
     }
 
-    public virtual Vector3 GetCameraForward(Vector3 position)
+    public virtual Vector3 GetCameraForward(Vector3 position, out float y)
     {
+        y = 0.7f;
+        
         switch (cameraBehavior)
         {
             case CameraBehavior.LookAtPoint:
