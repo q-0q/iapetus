@@ -53,6 +53,12 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _endPosition = transform.Find("EndPosition");
         _endPosition.SetParent(null);
         _stateGondolaStartingPosition = transform.position;
+
+        var cameraFollow = FindObjectOfType<CameraFollow>().transform;
+        _virtualCamera.Follow = cameraFollow;
+        _virtualCamera.LookAt = cameraFollow;
+        _finalVirtualCamera.Follow = cameraFollow;
+        _finalVirtualCamera.LookAt = cameraFollow;
     }
     
     public override void OnUpdate()
