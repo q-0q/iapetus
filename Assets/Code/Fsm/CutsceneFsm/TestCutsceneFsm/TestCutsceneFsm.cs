@@ -59,6 +59,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _virtualCamera.LookAt = cameraFollow;
         _finalVirtualCamera.Follow = cameraFollow;
         _finalVirtualCamera.LookAt = cameraFollow;
+        
+
     }
     
     public override void OnUpdate()
@@ -157,6 +159,14 @@ public partial class TestCutsceneFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
+        FMODUnity.RuntimeManager.PlayOneShotAttached(windEventReference, gondola.gameObject);
+        var saveData = SaveSystem.LoadSaveData(0);
+        if (saveData.persistentEvents.Contains(CutscenePersistentEvent))
+        {
+            Machine.Jump(CutsceneFsmState.Inactive);
+            FMODUnity.RuntimeManager.PlayOneShot(musicEventReference);
+            return;
+        }
         Machine.Fire(CutsceneFsmTrigger.StartCutscene);
     }
 

@@ -15,6 +15,8 @@ public partial class TestCutsceneFsm
                 Time.timeScale = 1f;
                 _virtualCamera.Priority = 0;
                 _finalVirtualCamera.Priority = 0;
+                _mainCanvasGroup.alpha = 0f;
+                gondola.transform.position = _endPosition.position;
             })
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
 
@@ -30,7 +32,6 @@ public partial class TestCutsceneFsm
                 _currentTextId = 0;
                 _moveCubeForwardShake1 = false;
                 _moveCubeForwardShake2 = false;
-                FMODUnity.RuntimeManager.PlayOneShotAttached(windEventReference, gondola.gameObject);
             });
         
         Machine.Configure(TestCutsceneFsmState.ShowText)
@@ -125,6 +126,8 @@ public partial class TestCutsceneFsm
                 gondola.transform.position = _endPosition.position;
                 FMODUnity.RuntimeManager.PlayOneShotAttached(musicEventReference, gondola.gameObject);
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
+                SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
+                SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, 0f, 0);
             });
         
         // Machine.Configure(TestCutsceneFsmState.FinalCamera)

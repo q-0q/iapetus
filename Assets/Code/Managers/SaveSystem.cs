@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -12,11 +13,14 @@ public static class SaveSystem
     {
         public float[] playerInGamePosition;
         public float playerInGameYAngle;
+        public List<string> persistentEvents; 
+            
 
         public SaveData()
         {
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
+            persistentEvents = new List<string>();
         }
     }
     
@@ -30,11 +34,19 @@ public static class SaveSystem
         return Path.Combine(GetDirectory(), id + ".json");
     }
     
-    public static void WritePlayerInGamePosition(float[] gamePosition, float yAngle, int id)
+    public static void WritePlayerInGamePosition(Vector3 gamePosition, float yAngle, int id)
     {
         SaveData data = LoadSaveData(id);
-        data.playerInGamePosition = gamePosition;
+        data.playerInGamePosition = new []{ gamePosition.x, gamePosition.y, gamePosition.z};
         data.playerInGameYAngle = yAngle;
+        WriteSaveData(data, id);
+    }
+    
+    public static void WritePersistentEvent(string persistentEvent, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        if (data.persistentEvents.Contains(persistentEvent)) return;
+        data.persistentEvents.Add(persistentEvent);
         WriteSaveData(data, id);
     }
 

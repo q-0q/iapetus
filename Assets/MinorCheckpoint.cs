@@ -91,12 +91,7 @@ public class MinorCheckpoint : MonoBehaviour
         _light.enabled = true;
         
         _seekParticles.Stop();
-        SaveSystem.WritePlayerInGamePosition(new[]
-            {
-                _playerSpawnTransform.position.x,
-                _playerSpawnTransform.position.y,
-                _playerSpawnTransform.position.z
-            },
+        SaveSystem.WritePlayerInGamePosition(_playerSpawnTransform.position,
             _playerSpawnTransform.rotation.eulerAngles.y, 
             0);
 

@@ -99,10 +99,13 @@ public partial class PlayerFsm : GravityFsm
         {
             if (saveData.playerInGamePosition != null)
             {
-                transform.position = new Vector3(saveData.playerInGamePosition[0], saveData.playerInGamePosition[1],
-                    saveData.playerInGamePosition[2]);
+                if (saveData.playerInGamePosition.Length != 0)
+                {
+                    transform.position = new Vector3(saveData.playerInGamePosition[0], saveData.playerInGamePosition[1],
+                        saveData.playerInGamePosition[2]);
 
-                transform.rotation = Quaternion.Euler(0, saveData.playerInGameYAngle, 0);
+                    transform.rotation = Quaternion.Euler(0, saveData.playerInGameYAngle, 0);
+                }
             }
         }
 
@@ -314,8 +317,7 @@ public partial class PlayerFsm : GravityFsm
             SlideOnUpdate();
         }
 
-
-
+        
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
         {
             Reset();
@@ -326,11 +328,6 @@ public partial class PlayerFsm : GravityFsm
             Reset();
         }
         
-        if (_playerInput.actions["Race"].WasPerformedThisFrame())
-        {
-            Reset();
-            OnPlayerRacePressed?.Invoke();
-        }
 
         HandleSlopeTimer();
         HandleKiEffects();

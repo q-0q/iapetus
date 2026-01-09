@@ -20,9 +20,12 @@ public class SceneLoader : MonoBehaviour
     private const float HoldDuration = 0.2f;
     private const float OutDuration = 0.3f;
 
+    private bool _mutex;
+
     private void Awake()
     {
         Singleton = this;
+        _mutex = false;
     }
 
     private void Start()
@@ -69,6 +72,9 @@ public class SceneLoader : MonoBehaviour
     
     IEnumerator LoadYourAsyncScene(string scene)
     {
+        if (_mutex) yield break;
+        _mutex = true;
+        print("async coroutine invoked");
         float width = _rawImageRectTransform.rect.width;
         Vector2 startPos = new Vector2(width, 0);
         Vector2 endPos = startPos - new Vector2(width, 0);
@@ -90,6 +96,7 @@ public class SceneLoader : MonoBehaviour
             yield return null;
         }
         _canvasGroup.alpha = 0f;
+        _mutex = false;
     }
     
     public static float SmoothLerp01(float t)

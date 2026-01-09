@@ -23,6 +23,7 @@ public partial class TestCutsceneFsm
     private bool _moveCubeForwardShake2 = false;
     private float _textClock;
     private ParticleSystem _impactParticles;
+    private const string CutscenePersistentEvent = "IntroCutsceneCompleted"; 
 
     private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
