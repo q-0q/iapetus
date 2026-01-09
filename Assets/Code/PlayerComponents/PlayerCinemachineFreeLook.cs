@@ -101,12 +101,19 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         if (_timeSincePlayerLookInput < _recenterTime) return;
         if (_currentCameraBehaviorZone == null) return;
-        
         var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
+
+        var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
+        
+        // if the player is facing away from the newForward and the camera is also pointed
+        // roughly in that direction then we assume the player "knows what theyre doing" and we dont autocam
+        var playerDesiredAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, newForward);
+        var playerCurrentAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, oldXQuat * Vector3.forward);
+        if (playerDesiredAngleDelta > 100f && playerCurrentAngleDelta < 45f && PlayerFsm.Singleton.GetMomentum() > 2f) return;
+        
         var xAngle = Vector3.SignedAngle(Vector3.forward, newForward, transform.up);
         
         // converting to quats prevents wraparound issues
-        var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
         var newXQuat = Quaternion.Euler(0, xAngle, 0);
         
         

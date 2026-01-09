@@ -508,4 +508,9 @@ public partial class PlayerFsm
         if (!Machine.IsInState(PlayerFsmState.GroundMove)) return;
         FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
     }
+
+    public float GetMomentum()
+    {
+        return _momentum;
+    }
 }
