@@ -29,8 +29,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         PlayerFsm.Singleton.gameObject.TryGetComponent(out _playerInput);
         _timeSincePlayerLookInput = 0f;
-        _recenterTime = 1f;
-        _rampUpTime = 6f;
+        _recenterTime = 1.5f;
+        _rampUpTime = 8f;
     }
 
     private void Update()

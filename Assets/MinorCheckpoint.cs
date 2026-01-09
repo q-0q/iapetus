@@ -73,13 +73,13 @@ public class MinorCheckpoint : MonoBehaviour
     {
         _seekParticles.Play();
         var seekParticlesStartPosition = PlayerFsm.Singleton.transform.position + Vector3.up * 3f;
-        var seekParticlesEndPosition = transform.position + Vector3.up * 1f;
+        var seekParticlesEndPosition = transform.position + Vector3.up * 0.1f;
         float t = 0f;
-        var duration = 0.7f;
+        var duration = 1;
         while (t < duration)
         {
             var w = t / duration;
-            _seekParticles.transform.position = LerpWithArc(seekParticlesStartPosition, seekParticlesEndPosition, w, 2f);
+            _seekParticles.transform.position = LerpWithArc(seekParticlesStartPosition, seekParticlesEndPosition, w, 3f);
             t += Time.deltaTime;
             yield return null;
         }
