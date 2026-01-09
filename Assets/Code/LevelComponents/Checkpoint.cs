@@ -28,6 +28,6 @@ public class Checkpoint : MonoBehaviour
     private void OnInteracted()
     {
         _invokeParticles.Play();
-        PlayerFsm.Singleton.InvokeCheckpoint(PlayerFsm.Singleton.transform.position, PlayerFsm.Singleton.transform.rotation);
+        // PlayerFsm.Singleton.InvokeCheckpoint(PlayerFsm.Singleton.transform.position, PlayerFsm.Singleton.transform.rotation);
     }
 }

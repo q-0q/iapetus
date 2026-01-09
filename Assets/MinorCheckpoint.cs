@@ -11,6 +11,7 @@ public class MinorCheckpoint : MonoBehaviour
     private ParticleSystem _activeParticles;
     private ParticleSystem _triggerParticles;
     private ParticleSystem _seekParticles;
+    private Transform _playerSpawnTransform;
     private Light _light;
 
 
@@ -54,6 +55,7 @@ public class MinorCheckpoint : MonoBehaviour
         transform.Find("TriggerParticles").TryGetComponent(out _triggerParticles);
         transform.Find("ActiveParticles").TryGetComponent(out _activeParticles);
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
+        _playerSpawnTransform = transform.Find("PlayerSpawnTransform");
         _light = GetComponentInChildren<Light>();
         _currentMinorCheckpoint = null;
     }
@@ -75,7 +77,7 @@ public class MinorCheckpoint : MonoBehaviour
         var seekParticlesStartPosition = PlayerFsm.Singleton.transform.position + Vector3.up * 3f;
         var seekParticlesEndPosition = transform.position + Vector3.up * 0.1f;
         float t = 0f;
-        var duration = 1;
+        var duration = 0.75f;
         while (t < duration)
         {
             var w = t / duration;
@@ -89,6 +91,15 @@ public class MinorCheckpoint : MonoBehaviour
         _light.enabled = true;
         
         _seekParticles.Stop();
+        SaveSystem.WritePlayerInGamePosition(new[]
+            {
+                _playerSpawnTransform.position.x,
+                _playerSpawnTransform.position.y,
+                _playerSpawnTransform.position.z
+            },
+            _playerSpawnTransform.rotation.eulerAngles.y, 
+            0);
+
     }
     
     public static Vector3 LerpWithArc(Vector3 start, Vector3 end, float t, float height)

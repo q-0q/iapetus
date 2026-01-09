@@ -88,7 +88,7 @@ public class GameMenu : MonoBehaviour
     
     public void OnQuitToMain()
     {
-        SaveSystem.WriteSaveData(null, 0);
+        SaveSystem.WritePlayerInGamePosition(null, 0f, 0);
         SceneLoader.Singleton.LoadScene("MainMenu");
     }
 

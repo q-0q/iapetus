@@ -11,18 +11,12 @@ public static class SaveSystem
     public class SaveData
     {
         public float[] playerInGamePosition;
+        public float playerInGameYAngle;
 
-        public SaveData(float[] gamePosition)
+        public SaveData()
         {
-            playerInGamePosition = new float[3];
-            if (gamePosition == null)
-            {
-                playerInGamePosition = null;
-                return;
-            }
-            playerInGamePosition[0] = gamePosition[0];
-            playerInGamePosition[1] = gamePosition[1];
-            playerInGamePosition[2] = gamePosition[2];
+            playerInGamePosition = null;
+            playerInGameYAngle = 0f;
         }
     }
     
@@ -35,14 +29,22 @@ public static class SaveSystem
     {
         return Path.Combine(GetDirectory(), id + ".json");
     }
+    
+    public static void WritePlayerInGamePosition(float[] gamePosition, float yAngle, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        data.playerInGamePosition = gamePosition;
+        data.playerInGameYAngle = yAngle;
+        WriteSaveData(data, id);
+    }
 
-    public static void WriteSaveData(float[] gamePosition, int id)
+    private static void WriteSaveData(SaveData saveData, int id)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         
-        SaveData data = new SaveData(gamePosition);
+        SaveData data = saveData;
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(id), json);
@@ -54,7 +56,7 @@ public static class SaveSystem
         string path = GetPath(id);
         if (!File.Exists(path))
         {
-            return null;
+            return new SaveData();
         }
 
         string json = File.ReadAllText(path);

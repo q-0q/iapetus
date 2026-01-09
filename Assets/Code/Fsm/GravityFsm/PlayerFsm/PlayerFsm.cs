@@ -127,10 +127,12 @@ public partial class PlayerFsm : GravityFsm
         var saveData = SaveSystem.LoadSaveData(0);
         if (saveData != null )
         {
-            if (saveData.playerInGamePosition.Length != 0)
+            if (saveData.playerInGamePosition != null)
             {
                 transform.position = new Vector3(saveData.playerInGamePosition[0], saveData.playerInGamePosition[1],
                     saveData.playerInGamePosition[2]);
+
+                transform.rotation = Quaternion.Euler(0, saveData.playerInGameYAngle, 0);
             }
         }
 

@@ -364,10 +364,7 @@ public partial class PlayerFsm
         _momentum = MaxMomentum * momentumWeight;
     }
     
-    public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
-    {
-        SaveSystem.WriteSaveData(new float[] { transform.position.x, transform.position.y, transform.position.z }, 0);
-    }
+
     
     public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)
     {
