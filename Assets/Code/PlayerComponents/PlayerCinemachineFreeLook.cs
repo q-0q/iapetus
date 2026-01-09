@@ -56,12 +56,14 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
+        CameraFollow.OnCameraFollowTriggerStart += OnCameraFollowTriggerStart;
     }
 
     private void OnDisable()
     {
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
+        CameraFollow.OnCameraFollowTriggerStart -= OnCameraFollowTriggerStart;
     }
     
     private void OnMetaSaveDataUpdated(MetaSaveSystem.MetaSaveData metaSaveData)
@@ -82,7 +84,17 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         {
             _timeSinceRecenter = 0f;
             _currentCameraBehaviorZone = cameraBehaviorZone;
+            
         };
+    }
+    
+    private void OnCameraFollowTriggerStart(CameraBehaviorZone cameraBehaviorZone)
+    {
+        print("start invoked: " + cameraBehaviorZone.name);
+        var newForward = cameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
+        var xAngle = Vector3.SignedAngle(Vector3.forward, newForward, transform.up);
+        _freeLook.m_XAxis.Value = xAngle;
+        _freeLook.m_YAxis.Value = y;
     }
 
     private void HandleCameraBehaviorZone()

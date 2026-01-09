@@ -51,7 +51,7 @@ public abstract partial class GravityFsm
             return Mathf.Abs(transform.position.y - hit.point.y) < minDistance;
         }
         
-        if (debug) Debug.Log("GetGrounded Spherecast failed");
+        // if (debug) Debug.Log("GetGrounded Spherecast failed");
         return false;
     }
 

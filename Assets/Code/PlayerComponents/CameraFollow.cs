@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Unity.VisualScripting;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -16,15 +17,26 @@ public class CameraFollow : MonoBehaviour
     private static float _baseWaitTime;
     private static float _baseCenteringTime;
 
-    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay; 
+    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
+    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart; 
 
     private void Start()
     {
+        _playerPos = PlayerFsm.Singleton.transform.position;
         transform.position = PlayerFsm.Singleton.transform.position;
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
         _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
         _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
+        
+        var neighbors =Physics.OverlapCapsule(transform.position, transform.position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"));
+        foreach (var neighbor in neighbors)
+        {
+            neighbor.TryGetComponent(out CameraBehaviorZone _cameraBehaviorZone);
+            if (_cameraBehaviorZone == null) continue;
+            OnCameraFollowTriggerStart?.Invoke(_cameraBehaviorZone);
+            break;
+        }
         
     }
 

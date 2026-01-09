@@ -93,6 +93,24 @@ public partial class PlayerFsm : GravityFsm
     protected override void OnAwake()
     {
         Singleton = this;
+        
+        var saveData = SaveSystem.LoadSaveData(0);
+        if (saveData != null )
+        {
+            if (saveData.playerInGamePosition != null)
+            {
+                transform.position = new Vector3(saveData.playerInGamePosition[0], saveData.playerInGamePosition[1],
+                    saveData.playerInGamePosition[2]);
+
+                transform.rotation = Quaternion.Euler(0, saveData.playerInGameYAngle, 0);
+            }
+        }
+
+        ApplyMetaSaveData(MetaSaveSystem.LoadMetaSaveData());
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
+        Application.targetFrameRate = 240;
     }
     
     protected override void OnStart()
@@ -124,23 +142,7 @@ public partial class PlayerFsm : GravityFsm
             _interactables.Add(interactable);
         }
 
-        var saveData = SaveSystem.LoadSaveData(0);
-        if (saveData != null )
-        {
-            if (saveData.playerInGamePosition != null)
-            {
-                transform.position = new Vector3(saveData.playerInGamePosition[0], saveData.playerInGamePosition[1],
-                    saveData.playerInGamePosition[2]);
 
-                transform.rotation = Quaternion.Euler(0, saveData.playerInGameYAngle, 0);
-            }
-        }
-
-        ApplyMetaSaveData(MetaSaveSystem.LoadMetaSaveData());
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 240;
         
     }
     
@@ -354,7 +356,7 @@ public partial class PlayerFsm : GravityFsm
     
     private void OnStateChangedCompleted(TriggerParams obj)
     {
-        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        // print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
         ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 
