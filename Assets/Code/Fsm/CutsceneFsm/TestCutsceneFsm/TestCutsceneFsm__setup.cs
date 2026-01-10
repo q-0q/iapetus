@@ -124,7 +124,7 @@ public partial class TestCutsceneFsm
                 innerCube.DOShakePosition(1.5f, 1f);
                 gondola.DOShakePosition(1.5f, 1f);
                 gondola.transform.position = _endPosition.position;
-                FMODUnity.RuntimeManager.PlayOneShotAttached(musicEventReference, gondola.gameObject);
+                FMODUnity.RuntimeManager.PlayOneShot(musicEventReference);
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
                 SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
                 SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, 0f, 0);
