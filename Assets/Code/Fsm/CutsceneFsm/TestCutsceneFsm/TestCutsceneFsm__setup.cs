@@ -1,6 +1,7 @@
 using DG.Tweening;
 using FMOD.Studio;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public partial class TestCutsceneFsm
 {
@@ -124,7 +125,7 @@ public partial class TestCutsceneFsm
                 innerCube.DOShakePosition(1.5f, 1f);
                 gondola.DOShakePosition(1.5f, 1f);
                 gondola.transform.position = _endPosition.position;
-                FMODUnity.RuntimeManager.PlayOneShot(musicEventReference);
+                FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.Ch1Music);
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
                 SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
                 SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, 0f, 0);

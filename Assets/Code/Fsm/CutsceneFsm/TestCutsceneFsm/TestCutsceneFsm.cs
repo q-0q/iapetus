@@ -5,6 +5,7 @@ using Cinemachine;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Wasp;
 
 public partial class TestCutsceneFsm : CutsceneFsm
@@ -159,12 +160,12 @@ public partial class TestCutsceneFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
-        FMODUnity.RuntimeManager.PlayOneShotAttached(windEventReference, gondola.gameObject);
+        FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.WindAmbience);
         var saveData = SaveSystem.LoadSaveData(0);
         if (saveData.persistentEvents.Contains(CutscenePersistentEvent))
         {
             Machine.Jump(CutsceneFsmState.Inactive);
-            FMODUnity.RuntimeManager.PlayOneShot(musicEventReference);
+            FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.Ch1Music);
             return;
         }
         Machine.Fire(CutsceneFsmTrigger.StartCutscene);

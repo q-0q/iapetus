@@ -1,25 +1,18 @@
 using System.Collections.Generic;
+using FMOD.Studio;
+using FMODUnity;
 using UnityEngine;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public class FMODSceneManager : MonoBehaviour
 {
+    public enum FMODSceneEvent
+    {
+        Ch1Music,
+        WindAmbience,
+    }
     
-    private static readonly Dictionary<string, string> MusicEventPath =
-        new()
-        {
-            {"Cutscene", "event:/CH1_Music"}
-        };
-    
-    private static readonly Dictionary<string, HashSet<string>> AmbienceEventPaths =
-        new()
-        {
-            {
-                "Cutscene", new HashSet<string>
-                {
-                    "event:/WindAmbience"
-                }
-            }
-        };
+    private static Dictionary<FMODSceneEvent, EventInstance> _eventInstances;
     
     private static FMODSceneManager _singleton;
     public static FMODSceneManager Singleton
@@ -45,11 +38,32 @@ public class FMODSceneManager : MonoBehaviour
 
         _singleton = this;
         DontDestroyOnLoad(gameObject);
+
+        _eventInstances = new Dictionary<FMODSceneEvent, EventInstance>
+        {
+            [FMODSceneEvent.Ch1Music] = RuntimeManager.CreateInstance(EventReference.Find("event:/CH1_Music")),
+            [FMODSceneEvent.WindAmbience] = RuntimeManager.CreateInstance(EventReference.Find("event:/WindAmbience"))
+        };
     }
 
-    public void Foo()
+    public void Play(FMODSceneEvent fmodSceneEvent)
     {
-        print("foo");
+        if (PlaybackState(_eventInstances[fmodSceneEvent]) == PLAYBACK_STATE.PLAYING) return;
+        _eventInstances[fmodSceneEvent].start();
+    }
+    
+    public void Stop(FMODSceneEvent fmodSceneEvent)
+    {
+        _eventInstances[fmodSceneEvent].stop(STOP_MODE.ALLOWFADEOUT);
+    }
+    
+    
+    
+    FMOD.Studio.PLAYBACK_STATE PlaybackState(FMOD.Studio.EventInstance instance) 
+    {
+        FMOD.Studio.PLAYBACK_STATE pS;
+        instance.getPlaybackState(out pS);
+        return pS;
     }
 }
 

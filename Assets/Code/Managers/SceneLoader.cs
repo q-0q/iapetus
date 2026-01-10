@@ -37,7 +37,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadScene(string scene)
     {
-        FMODUnity.RuntimeManager.GetBus("Bus:/").stopAllEvents(STOP_MODE.IMMEDIATE);
+        // FMODUnity.RuntimeManager.GetBus("Bus:/").stopAllEvents(STOP_MODE.IMMEDIATE);
         StartCoroutine(LoadYourAsyncScene(scene));
     }
 
