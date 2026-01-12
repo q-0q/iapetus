@@ -9,13 +9,13 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity && !_wallsquattedSinceLeavingGround)
+                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.MediumVaultHang,
                 IsTightropeTrigger, 1)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity && !_wallsquattedSinceLeavingGround)
+                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && YVelocity < WallsquatMinimumYVelocity && !_wallsquattedSinceLeavingGround)
+                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun,
                 _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity);
     }
@@ -23,5 +23,10 @@ public partial class PlayerFsm
     private bool CanVault(TriggerParams t)
     {
         return (YVelocity > VaultMinimumYVelocity && _momentum > VaultMinimumMomentum);
+    }
+
+    private bool WallsquatVelocityChecker()
+    {
+        return YVelocity < WallsquatMinimumYVelocity || GustYVelocityBonus > 10f;
     }
 }

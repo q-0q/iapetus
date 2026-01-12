@@ -59,7 +59,7 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.StartUpdraft);
         }
-        else
+        if (GustYVelocityBonus < UpdraftGustYVelocityThreshold + 10f)
         {
             Machine.Fire(PlayerFsmTrigger.EndUpdraft);
         }

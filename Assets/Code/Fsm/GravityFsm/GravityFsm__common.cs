@@ -133,6 +133,7 @@ public abstract partial class GravityFsm
 
     private void HandleGust()
     {
+        if (Machine.IsInState(GravityFsmState.DontApplyGustYVelocity)) return;
         bool gusted = false;
         var neighbors =Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f, LayerMask.GetMask("Gust"), QueryTriggerInteraction.Collide);
         foreach (var neighbor in neighbors)

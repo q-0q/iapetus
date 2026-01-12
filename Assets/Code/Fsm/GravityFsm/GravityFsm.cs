@@ -10,6 +10,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int DontApplyYVelocity;
         public static int RespectParentTransform;
         public static int IgnoreDepenetration;
+        public static int DontApplyGustYVelocity;
     }
 
     public class GravityFsmTrigger : FsmTrigger

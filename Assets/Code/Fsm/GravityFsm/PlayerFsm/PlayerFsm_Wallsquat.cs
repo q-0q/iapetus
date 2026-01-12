@@ -13,6 +13,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Wallsquat)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
+            .SubstateOf(PlayerFsmState.DontApplyGustYVelocity)
             // .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
@@ -23,6 +24,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 YVelocity = 0;
+                GustYVelocityBonus = 0;
                 LastUpwardsY = transform.position.y;
                 _wallsquattedSinceLeavingGround = true;
 

@@ -16,7 +16,15 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Updraft)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.AirControl)
+            .SubstateOf(PlayerFsmState.WallInteractable)
+            .SubstateOf(PlayerFsmState.Landable)
             .Permit(PlayerFsmTrigger.EndUpdraft, PlayerFsmState.Fall)
-            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash);
+            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
+            .OnEntry(_ =>
+            {
+                // _movementAnimationMirror = !_movementAnimationMirror;
+                // var flip = _movementAnimationMirror ? 0 : 1f;
+                // Animator.SetFloat("Flip", flip);
+            });
     }
 }
