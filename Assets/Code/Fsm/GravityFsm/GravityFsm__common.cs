@@ -11,6 +11,9 @@ public abstract partial class GravityFsm
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
+    protected float GustYVelocityBonus;
+    private const float MaxGustYVelocityBonus = 70f;
+    private const float GustYVelocityBonusGainRate = 250f;
 
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
@@ -66,7 +69,9 @@ public abstract partial class GravityFsm
     private void UpdateYVelocityMetadata()
     {
         YVelocity = Mathf.Max(YVelocity, MinYVelocity);
-        if (YVelocity > 0 || Machine.IsInState(GravityFsmState.Grounded)) LastUpwardsY = transform.position.y;
+        GustYVelocityBonus = Mathf.Min(GustYVelocityBonus, MaxGustYVelocityBonus);
+        GustYVelocityBonus = Mathf.Max(GustYVelocityBonus, 0);
+        if (YVelocity + GustYVelocityBonus > 0 || Machine.IsInState(GravityFsmState.Grounded)) LastUpwardsY = transform.position.y;
     }
     
     protected Vector3 ComputeCollisionMove(Vector3 desiredMove)
@@ -124,6 +129,24 @@ public abstract partial class GravityFsm
                 transform.position += direction * distance;
             };
         }
+    }
+
+    private void HandleGust()
+    {
+        bool gusted = false;
+        var neighbors =Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f, LayerMask.GetMask("Gust"), QueryTriggerInteraction.Collide);
+        foreach (var neighbor in neighbors)
+        {
+            gusted = true;
+            GustYVelocityBonus += Time.deltaTime * GustYVelocityBonusGainRate;
+        }
+
+        // if (!gusted)
+        // {
+        //     GustYVelocityBonus -= Time.deltaTime * GustYVelocityBonusLossRate;
+        // }
+        //
+        // GustYVelocityBonus = Mathf.Max(0, Mathf.Min(MaxGustYVelocityBonus, GustYVelocityBonus));
     }
 
 

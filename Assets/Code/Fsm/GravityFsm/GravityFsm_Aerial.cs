@@ -5,11 +5,13 @@ public abstract partial class GravityFsm
     private void AerialOnUpdate()
     {
         if (Machine.IsInState(GravityFsmState.DontApplyYVelocity)) return;
-        var v3 = new Vector3(0, YVelocity * Time.deltaTime, 0);
+        var v3 = new Vector3(0, (YVelocity + GustYVelocityBonus) * Time.deltaTime, 0);
         transform.position += v3;
         YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime * StateMapConfig.GravityStrengthMod.Get(this));
+        GustYVelocityBonus -= (GravityStrength * GravityStrength * Time.deltaTime * StateMapConfig.GravityStrengthMod.Get(this));
         TimeInAir += Time.deltaTime;
         UpdateYVelocityMetadata();
+        HandleGust();
     }
 
     private void AerialConfigure()
