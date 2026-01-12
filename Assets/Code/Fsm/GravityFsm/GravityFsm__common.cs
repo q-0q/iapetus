@@ -13,7 +13,7 @@ public abstract partial class GravityFsm
     private Collider _depenetrationCollider;
     protected float GustYVelocityBonus;
     private const float MaxGustYVelocityBonus = 70f;
-    private const float GustYVelocityBonusGainRate = 250f;
+    private const float GustYVelocityBonusGainRate = 200f;
 
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;

@@ -65,6 +65,7 @@ public partial class PlayerFsm : GravityFsm
 
         public static int CutsceneWary;
         public static int CutsceneIdle;
+        public static int Updraft;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -88,6 +89,9 @@ public partial class PlayerFsm : GravityFsm
         public static int ArriveAtWalkToPositionTargetRanged;
         public static int StartDialogue;
         public static int EndDialogue;
+        
+        public static int StartUpdraft;
+        public static int EndUpdraft;
     }
     
     protected override void OnAwake()
@@ -315,6 +319,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Slide))
         {
             SlideOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Updraft))
+        {
+            UpdraftOnUpdate();
         }
 
         

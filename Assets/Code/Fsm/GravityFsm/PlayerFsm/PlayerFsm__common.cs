@@ -179,7 +179,8 @@ public partial class PlayerFsm
     public EventReference dashFmodEvent;
     public EventReference climbFmodEvent;
     public EventReference snowFootstepFmodEvent;
-    
+    private const float UpdraftGustYVelocityThreshold = 20f;
+
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
     {

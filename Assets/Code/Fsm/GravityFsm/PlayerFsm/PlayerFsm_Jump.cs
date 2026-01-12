@@ -15,6 +15,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.WallInteractable)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
+            .Permit(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft)
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash);
     }
 }
