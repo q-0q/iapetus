@@ -59,7 +59,7 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.StartUpdraft);
         }
-        else
+        else if (!IsInGust)
         {
             Machine.Fire(PlayerFsmTrigger.EndUpdraft);
         }

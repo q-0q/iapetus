@@ -431,7 +431,7 @@ public partial class PlayerFsm
     
     private bool CanDash(TriggerParams? triggerParams)
     {
-        return YVelocity < 6f && !_dashSinceLeavingGround;
+        return (YVelocity < 6f || IsInGust) && !_dashSinceLeavingGround;
     }
 
     private void OnContactHitboxCollide()
