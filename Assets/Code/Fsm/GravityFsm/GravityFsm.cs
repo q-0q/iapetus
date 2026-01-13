@@ -27,6 +27,7 @@ public  abstract partial class GravityFsm : Fsm
         GustYVelocityBonus = 0;
         GravityStrength = 9.8f;
         transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
+        _currentGustYVelocityBonusLossModifier = 1f;
 
         InstantiateSpringCollider();
     }
