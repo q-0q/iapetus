@@ -4,7 +4,7 @@ public abstract partial class GravityFsm
 {
     private void AerialOnUpdate()
     {
-        GustYVelocityBonus -= (GravityStrength * GravityStrength * Time.deltaTime * 0.75f);
+        GustYVelocityBonus -= (GravityStrength * GravityStrength * Time.deltaTime * 0.5f);
         if (Machine.IsInState(GravityFsmState.DontApplyYVelocity)) return;
         var total = Mathf.Min(YVelocity + GustYVelocityBonus, 45f);
         

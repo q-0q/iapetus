@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -70,6 +71,8 @@ public class CameraFollow : MonoBehaviour
         var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)
             ? YLerpRate * 4f
             : YLerpRate;
+
+        yLerp = Mathf.Lerp(yLerp, yLerp * 1.25f, Mathf.InverseLerp(-5f, -30f, PlayerFsm.Singleton.GetSummedYVelocity()));
         var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
         _playerPos = new Vector3(pos.x, newY, pos.z);
     }

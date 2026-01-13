@@ -140,6 +140,7 @@ public abstract partial class GravityFsm
         {
             gusted = true;
             GustYVelocityBonus += Time.deltaTime * GustYVelocityBonusGainRate;
+            break;
         }
 
         // if (!gusted)
@@ -160,4 +161,9 @@ public abstract partial class GravityFsm
     }
 
     protected virtual void OnParentTransformChanged(Transform t) { }
+
+    public float GetSummedYVelocity()
+    {
+        return YVelocity + GustYVelocityBonus;
+    }
 }
