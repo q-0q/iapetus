@@ -15,6 +15,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Updraft)
             .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(GravityFsmState.DontLoseYVelocity)
             .SubstateOf(PlayerFsmState.AirControl)
             .SubstateOf(PlayerFsmState.WallInteractable)
             .SubstateOf(PlayerFsmState.Landable)

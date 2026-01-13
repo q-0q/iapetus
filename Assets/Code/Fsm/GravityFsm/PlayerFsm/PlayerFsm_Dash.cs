@@ -23,7 +23,6 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, IsRaycastHitParamSteep, 5)
             .OnEntry(_ =>
             {
-                GustYVelocityBonus = 0;
                 YVelocity = 0;
                 YVelocity = Mathf.Max(YVelocity, 15f);
                 _dashSinceLeavingGround = true;

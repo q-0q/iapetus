@@ -55,11 +55,11 @@ public partial class PlayerFsm
         FireFaceTriggers();
         FireFlankTriggers();
 
-        if (GustYVelocityBonus > UpdraftGustYVelocityThreshold)
+        if (IsInGust)
         {
             Machine.Fire(PlayerFsmTrigger.StartUpdraft);
         }
-        if (GustYVelocityBonus < UpdraftGustYVelocityThreshold + 10f)
+        else
         {
             Machine.Fire(PlayerFsmTrigger.EndUpdraft);
         }

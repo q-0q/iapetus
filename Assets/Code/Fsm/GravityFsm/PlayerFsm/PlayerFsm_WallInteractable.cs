@@ -27,6 +27,6 @@ public partial class PlayerFsm
 
     private bool WallsquatVelocityChecker()
     {
-        return YVelocity < WallsquatMinimumYVelocity || GustYVelocityBonus > 10f;
+        return YVelocity < WallsquatMinimumYVelocity;
     }
 }

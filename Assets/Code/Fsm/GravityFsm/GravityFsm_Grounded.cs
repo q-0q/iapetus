@@ -6,7 +6,6 @@ public abstract partial class GravityFsm
     private void GroundedOnUpdate()
     {
         YVelocity = 0;
-        GustYVelocityBonus = 0;
         if (GetGroundedRaycastHit(out var hit))
         {
             var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * GroundedYPositionLerpStrength);

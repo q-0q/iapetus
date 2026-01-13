@@ -8,6 +8,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int Grounded;
         public static int Aerial;
         public static int DontApplyYVelocity;
+        public static int DontLoseYVelocity;
         public static int RespectParentTransform;
         public static int IgnoreDepenetration;
         public static int DontApplyGustYVelocity;
@@ -24,10 +25,8 @@ public  abstract partial class GravityFsm : Fsm
     {
         base.OnStart();
         YVelocity = 0;
-        GustYVelocityBonus = 0;
         GravityStrength = 9.8f;
         transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
-        _currentGustYVelocityBonusLossModifier = 1f;
 
         InstantiateSpringCollider();
     }

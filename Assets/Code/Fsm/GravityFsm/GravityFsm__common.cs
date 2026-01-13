@@ -11,10 +11,7 @@ public abstract partial class GravityFsm
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
-    protected float GustYVelocityBonus;
-    private const float MaxGustYVelocityBonus = 70f;
-    private const float GustYVelocityBonusGainRate = 170f;
-    private float _currentGustYVelocityBonusLossModifier;
+    protected bool IsInGust = false;
 
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
@@ -69,9 +66,7 @@ public abstract partial class GravityFsm
     private void UpdateYVelocityMetadata()
     {
         YVelocity = Mathf.Max(YVelocity, MinYVelocity);
-        GustYVelocityBonus = Mathf.Min(GustYVelocityBonus, MaxGustYVelocityBonus);
-        GustYVelocityBonus = Mathf.Max(GustYVelocityBonus, 0);
-        if (YVelocity + GustYVelocityBonus > 0 || Machine.IsInState(GravityFsmState.Grounded))
+        if (YVelocity > 0 || Machine.IsInState(GravityFsmState.Grounded))
             LastUpwardsY = transform.position.y;
     }
 
@@ -146,24 +141,17 @@ public abstract partial class GravityFsm
             LayerMask.GetMask("Gust"), QueryTriggerInteraction.Collide);
         foreach (var neighbor in neighbors)
         {
+            IsInGust = true;
             var localYToGustCollider = transform.position.y - neighbor.transform.position.y;
             var falloffWindowSize = 20f;
             var gustMaxY = neighbor.transform.lossyScale.y * 0.5f;
-            var strengthModifier = Mathf.InverseLerp(gustMaxY, gustMaxY - falloffWindowSize, localYToGustCollider);
-            if (strengthModifier < 1f)
-            {
-                _currentGustYVelocityBonusLossModifier = 0.15f;
-            }
-            else
-            {
-                _currentGustYVelocityBonusLossModifier = 1f;
-            }
-            
-            GustYVelocityBonus += Time.deltaTime * GustYVelocityBonusGainRate * strengthModifier;
+            var offset = Mathf.Lerp(0, -10f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time * 3f)));
+            var strengthModifier = Mathf.InverseLerp(gustMaxY, gustMaxY - falloffWindowSize, localYToGustCollider + 5f);
+            YVelocity = Mathf.Lerp(YVelocity, Mathf.Lerp(0, 50f, strengthModifier) + offset, Time.deltaTime * 2f);
             return;
         }
-        
-        _currentGustYVelocityBonusLossModifier = 1f;
+
+        IsInGust = false;
     }
 
 
@@ -181,6 +169,6 @@ public abstract partial class GravityFsm
 
     public float GetSummedYVelocity()
     {
-        return YVelocity + GustYVelocityBonus;
+        return YVelocity;
     }
 }
