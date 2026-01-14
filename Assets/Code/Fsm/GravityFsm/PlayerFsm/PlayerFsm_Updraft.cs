@@ -2,7 +2,7 @@ public partial class PlayerFsm
 {
     private void UpdraftOnUpdate()
     {
-        if (TimeInCurrentState() > 0.65f)
+        if (TimeInCurrentState() > 0.45f)
         {
             _dashSinceLeavingGround = false;
             _wallsquattedSinceLeavingGround = false;

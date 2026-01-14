@@ -43,8 +43,8 @@ public class CameraFollow : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
-        OnCameraFollowTriggerStay?.Invoke(cameraBehaviorZone);
+        // other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
+        // OnCameraFollowTriggerStay?.Invoke(cameraBehaviorZone);
         
     }
     
@@ -72,6 +72,11 @@ public class CameraFollow : MonoBehaviour
             ? YLerpRate * 4f
             : YLerpRate;
 
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))
+        {
+            pos -= Vector3.up * 3f;
+        }
+
         yLerp = Mathf.Lerp(yLerp, yLerp * 1.25f, Mathf.InverseLerp(-5f, -30f, PlayerFsm.Singleton.GetSummedYVelocity()));
         var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
         _playerPos = new Vector3(pos.x, newY, pos.z);
@@ -88,5 +93,14 @@ public class CameraFollow : MonoBehaviour
     private void Update()
     {
         transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));
+        
+        var neighbors = Physics.OverlapSphere(PlayerFsm.Singleton.transform.position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
+            QueryTriggerInteraction.Collide);
+        foreach (var neighbor in neighbors)
+        {
+            OnCameraFollowTriggerStay?.Invoke(neighbor.GetComponent<CameraBehaviorZone>());
+            break;
+        }
+        
     }
 }
