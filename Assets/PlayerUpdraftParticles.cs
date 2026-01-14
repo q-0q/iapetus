@@ -29,13 +29,13 @@ public class PlayerUpdraftParticles : MonoBehaviour
         _particleSystem.Play();
     }
 
-    private void OnEnable()
-    {
-        PlayerFsm.OnPlayerEnterUpdraft += OnPlayerEnterUpdraft;
-    }
-
-    private void OnDisable()
-    {
-        PlayerFsm.OnPlayerEnterUpdraft -= OnPlayerEnterUpdraft;
-    }
+    // private void OnEnable()
+    // {
+    //     PlayerFsm.OnPlayerEnterUpdraft += OnPlayerEnterUpdraft;
+    // }
+    //
+    // private void OnDisable()
+    // {
+    //     PlayerFsm.OnPlayerEnterUpdraft -= OnPlayerEnterUpdraft;
+    // }
 }

@@ -12,7 +12,6 @@ public abstract partial class GravityFsm
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
     protected bool IsInGust = false;
-    protected float CurrentUpdraftAmount;
     private float _timeOfLastGustSinOffset;
 
     public Transform parentTransform;
@@ -153,7 +152,6 @@ public abstract partial class GravityFsm
             YVelocity = Mathf.Lerp(YVelocity, Mathf.Lerp(0, 60f, strengthModifier) + offset, Time.deltaTime * 1.5f);
             
             var f = 10;
-            CurrentUpdraftAmount = YVelocity;
             return;
         }
 

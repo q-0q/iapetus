@@ -11,7 +11,7 @@ public partial class PlayerFsm
             _dashSinceLeavingGround = false;
             _wallsquattedSinceLeavingGround = false;
         }
-        Animator.SetFloat("UpdraftAmount", CurrentUpdraftAmount);
+        Animator.SetFloat("UpdraftAmount", YVelocity);
     }
     private void UpdraftConfigure()
     {
