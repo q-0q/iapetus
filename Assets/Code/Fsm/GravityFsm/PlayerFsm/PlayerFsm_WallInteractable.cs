@@ -17,7 +17,7 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FlankWall, PlayerFsmState.Wallrun,
-                _ => _momentum > WallRunMinimumMomentum && YVelocity < WallRunMinimumYVelocity);
+                _ => WallrunVelocityChecker());
     }
 
     private bool CanVault(TriggerParams t)
@@ -28,5 +28,10 @@ public partial class PlayerFsm
     private bool WallsquatVelocityChecker()
     {
         return YVelocity < WallsquatMinimumYVelocity;
+    }
+    
+    private bool WallrunVelocityChecker()
+    {
+        return _momentum > WallRunMinimumMomentum && (YVelocity < WallRunMinimumYVelocity || IsInGust);
     }
 }

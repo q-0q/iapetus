@@ -12,6 +12,8 @@ public abstract partial class GravityFsm
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
     protected bool IsInGust = false;
+    protected float CurrentUpdraftAmount;
+    private float _timeOfLastGustSinOffset;
 
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
@@ -145,14 +147,19 @@ public abstract partial class GravityFsm
             var localYToGustCollider = transform.position.y - neighbor.transform.position.y;
             var falloffWindowSize = 20f;
             var gustMaxY = neighbor.transform.lossyScale.y * 0.5f;
-            var offset = Mathf.Lerp(0, -30f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time * 3.5f)));
+            if (YVelocity < -10f) _timeOfLastGustSinOffset = Time.time;
+            var offset = Mathf.Lerp(0, -30f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time - _timeOfLastGustSinOffset * 3.5f)));
             var strengthModifier = Mathf.InverseLerp(gustMaxY, gustMaxY - falloffWindowSize, localYToGustCollider + 5f);
             YVelocity = Mathf.Lerp(YVelocity, Mathf.Lerp(0, 60f, strengthModifier) + offset, Time.deltaTime * 1.5f);
+
+            CurrentUpdraftAmount = Mathf.InverseLerp(15f, 0, YVelocity);
             return;
         }
 
         IsInGust = false;
     }
+
+    
 
 
     private void InstantiateSpringCollider()

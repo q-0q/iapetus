@@ -10,7 +10,7 @@ public partial class PlayerFsm
         var increaseMultiplier = 0.1f;
         if (Machine.IsInState(PlayerFsmState.Updraft))
         {
-            increaseMultiplier = 0.4f;
+            increaseMultiplier = 0.75f;
         }
         HandleInputMomentumChange(increaseMultiplier, AirControlMomentumDecayModifier);
     }

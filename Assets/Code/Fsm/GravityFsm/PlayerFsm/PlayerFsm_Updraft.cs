@@ -2,14 +2,12 @@ public partial class PlayerFsm
 {
     private void UpdraftOnUpdate()
     {
-        if (TimeInCurrentState() > 0.25f)
+        if (TimeInCurrentState() > 0.65f)
         {
-            _wallsquattedSinceLeavingGround = false;
             _dashSinceLeavingGround = false;
-            _previousWallrunSide = FlankType.None;
-            _currentFlankType = FlankType.None;
             _wallsquattedSinceLeavingGround = false;
         }
+        Animator.SetFloat("UpdraftAmount", CurrentUpdraftAmount);
     }
     private void UpdraftConfigure()
     {
@@ -26,6 +24,9 @@ public partial class PlayerFsm
                 // _movementAnimationMirror = !_movementAnimationMirror;
                 // var flip = _movementAnimationMirror ? 0 : 1f;
                 // Animator.SetFloat("Flip", flip);
+                
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
             });
     }
 }

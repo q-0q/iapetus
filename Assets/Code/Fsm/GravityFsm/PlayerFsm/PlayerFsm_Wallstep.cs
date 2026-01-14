@@ -20,9 +20,17 @@ public partial class PlayerFsm
             {
                 Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Jump");
-                YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain,
-                    ComputeMomentumWeight());
-                Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
+                if (IsInGust)
+                {
+                    YVelocity = WallstepMaximumYVelocityGain;
+                    Animator.SetFloat("VerticalMomentum", 1f);
+                }
+                else
+                {
+                    YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain,
+                        ComputeMomentumWeight());
+                    Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
+                }
                 _momentum = 0;
                 
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
