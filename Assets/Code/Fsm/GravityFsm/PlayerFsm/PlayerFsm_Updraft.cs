@@ -1,5 +1,9 @@
+using System;
+
 public partial class PlayerFsm
 {
+
+    public static event Action OnPlayerEnterUpdraft;
     private void UpdraftOnUpdate()
     {
         if (TimeInCurrentState() > 0.45f)
@@ -24,7 +28,7 @@ public partial class PlayerFsm
                 // _movementAnimationMirror = !_movementAnimationMirror;
                 // var flip = _movementAnimationMirror ? 0 : 1f;
                 // Animator.SetFloat("Flip", flip);
-                
+                OnPlayerEnterUpdraft?.Invoke();
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
             });

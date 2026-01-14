@@ -139,7 +139,7 @@ public partial class PlayerFsm : GravityFsm
         _previousWallrunSide = FlankType.None;
         _checkpointVector3 = transform.position;
         _checkpointQuaternion = transform.rotation;
-        _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().ToList();
+        _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().Where(d => d.name == "PlayerFootParticles").ToList();
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         _interactables = new HashSet<Interactable>();
@@ -339,7 +339,7 @@ public partial class PlayerFsm : GravityFsm
         
 
         HandleSlopeTimer();
-        HandleKiEffects();
+         HandleKiEffects();
         
         base.OnUpdate();
         
