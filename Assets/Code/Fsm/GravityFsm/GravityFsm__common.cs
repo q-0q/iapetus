@@ -13,11 +13,13 @@ public abstract partial class GravityFsm
     private Collider _depenetrationCollider;
     protected bool IsInGust = false;
     private float _timeOfLastGustSinOffset;
+    private float _timeAtTopOfGust;
 
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
     protected Quaternion _previousParentRotation;
     public GravityFsmSpringCollider springCollider;
+    
 
     private const float GroundedYPositionLerpStrength = 50f;
     protected const float GroundedRaycastLength = 0.5f;
@@ -143,18 +145,33 @@ public abstract partial class GravityFsm
         foreach (var neighbor in neighbors)
         {
             IsInGust = true;
+            
+            // Calculate strengthModifier based on y position of player. Goes from 1 -> 0 as the player
+            // approaches the top of the gust trigger.
             var localYToGustCollider = transform.position.y - neighbor.transform.position.y;
             var falloffWindowSize = 20f;
             var gustMaxY = neighbor.transform.lossyScale.y * 0.5f;
-            // if (YVelocity < 0.1f) _timeOfLastGustSinOffset = Time.time;
-            var offset = Mathf.Lerp(0, -30f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time * 3.5f)));
             var strengthModifier = Mathf.InverseLerp(gustMaxY, gustMaxY - falloffWindowSize, localYToGustCollider + 5f);
-            YVelocity = Mathf.Lerp(YVelocity, Mathf.Lerp(0, 60f, strengthModifier) + offset, Time.deltaTime * 1.5f);
             
-            var f = 10;
+            // Calculate the sin-based offset which gives a bobbing effect. Increases in strength as long as the player
+            // remains near the top of the gust collider. This is to prevent the bobbing from interfering with player
+            // motion when traveling upwards through the gust, giving better consistency.
+            if (strengthModifier <= 0.5f) _timeAtTopOfGust += Time.deltaTime;
+            else _timeAtTopOfGust = 0;
+            var offsetModifier = Mathf.InverseLerp(0, 2f, _timeAtTopOfGust);
+            print(offsetModifier);
+            var offset = Mathf.Lerp(0, -15f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time * 2.5f))) * offsetModifier;
+            
+            // Set Y velocity as a function of the strength modifier and the offset. Less aggressive
+            // when accelerating, more aggressive when decelerating.
+            var desiredYVelocity = Mathf.Lerp(0, 60f, strengthModifier) + offset;
+            var lerpStrength = YVelocity < desiredYVelocity ? 1f : 3.5f;
+            YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity, Time.deltaTime * lerpStrength);
+            
             return;
         }
 
+        _timeAtTopOfGust = 0f;
         IsInGust = false;
     }
 
