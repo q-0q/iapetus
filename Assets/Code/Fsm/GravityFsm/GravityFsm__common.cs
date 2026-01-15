@@ -1,4 +1,5 @@
 
+using System.Linq;
 using UnityEngine;
 
 
@@ -140,6 +141,16 @@ public abstract partial class GravityFsm
     private void HandleGust()
     {
         if (Machine.IsInState(GravityFsmState.DontApplyGustYVelocity)) return;
+        
+        var masks = Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f,
+            LayerMask.GetMask("GustMask"), QueryTriggerInteraction.Collide);
+        if (masks.Any())
+        {
+            _timeAtTopOfGust = 0f;
+            IsInGust = false;
+            return;
+        }
+        
         var neighbors = Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f,
             LayerMask.GetMask("Gust"), QueryTriggerInteraction.Collide);
         foreach (var neighbor in neighbors)
@@ -190,7 +201,7 @@ public abstract partial class GravityFsm
     {
     }
 
-    public float GetSummedYVelocity()
+    public float GetYVelocity()
     {
         return YVelocity;
     }
