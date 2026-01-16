@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class Gust : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        var trigger = GetComponentInChildren<ParticleSystem>().trigger;
+        foreach (var collider in GustMaskRegistry.Colliders)
+        {
+            trigger.AddCollider(collider);
+        }
     }
 }
