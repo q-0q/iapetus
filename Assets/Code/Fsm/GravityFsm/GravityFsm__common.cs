@@ -176,8 +176,10 @@ public abstract partial class GravityFsm
             // Set Y velocity as a function of the strength modifier and the offset. Less aggressive
             // when accelerating, more aggressive when decelerating.
             var desiredYVelocity = Mathf.Lerp(0, 60f, strengthModifier) + offset;
-            var lerpStrength = YVelocity < desiredYVelocity ? 2.5f : 4.5f;
-            YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity, Time.deltaTime * lerpStrength);
+            // var lerpStrength = YVelocity < desiredYVelocity ? 2.5f : 4.5f;
+            var lerpStrength = Mathf.Lerp(4.5f, 1f, strengthModifier);
+            var lerpStrengthFallMod = Mathf.Lerp(1f, 0.6f, Mathf.InverseLerp(0, -10f, YVelocity));
+            YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity, Time.deltaTime * lerpStrength * lerpStrengthFallMod);
             
             return;
         }
