@@ -142,7 +142,7 @@ public abstract partial class GravityFsm
     {
         if (Machine.IsInState(GravityFsmState.DontApplyGustYVelocity)) return;
         
-        var masks = Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f,
+        var masks = Physics.OverlapSphere(transform.position, 0.5f,
             LayerMask.GetMask("GustMask"), QueryTriggerInteraction.Collide);
         if (masks.Any())
         {
@@ -151,7 +151,7 @@ public abstract partial class GravityFsm
             return;
         }
         
-        var neighbors = Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f,
+        var neighbors = Physics.OverlapSphere(transform.position, 1f,
             LayerMask.GetMask("Gust"), QueryTriggerInteraction.Collide);
         foreach (var neighbor in neighbors)
         {
@@ -169,19 +169,20 @@ public abstract partial class GravityFsm
             // motion when traveling upwards through the gust, giving better consistency.
             if (strengthModifier <= 0.5f) _timeAtTopOfGust += Time.deltaTime;
             else _timeAtTopOfGust = 0;
-            var offsetModifier = Mathf.InverseLerp(0, 2f, _timeAtTopOfGust);
+            var offsetModifier = Mathf.InverseLerp(0, 0.2f, _timeAtTopOfGust);
             print(offsetModifier);
             var offset = Mathf.Lerp(0, -15f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time * 2.5f))) * offsetModifier;
             
             // Set Y velocity as a function of the strength modifier and the offset. Less aggressive
             // when accelerating, more aggressive when decelerating.
             var desiredYVelocity = Mathf.Lerp(0, 60f, strengthModifier) + offset;
-            var lerpStrength = YVelocity < desiredYVelocity ? 1f : 3.5f;
+            var lerpStrength = YVelocity < desiredYVelocity ? 2.5f : 4.5f;
             YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity, Time.deltaTime * lerpStrength);
             
             return;
         }
-
+        
+        print("wee");
         _timeAtTopOfGust = 0f;
         IsInGust = false;
     }
