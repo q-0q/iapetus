@@ -178,7 +178,7 @@ public abstract partial class GravityFsm
             var desiredYVelocity = Mathf.Lerp(0, 60f, strengthModifier) + offset;
             // var lerpStrength = YVelocity < desiredYVelocity ? 2.5f : 4.5f;
             var lerpStrength = Mathf.Lerp(4.5f, 1f, strengthModifier);
-            var lerpStrengthFallMod = Mathf.Lerp(1f, 0.6f, Mathf.InverseLerp(0, -10f, YVelocity));
+            var lerpStrengthFallMod = Mathf.Lerp(1f, 0.6f, Mathf.InverseLerp(-10f, -20f, YVelocity));
             YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity, Time.deltaTime * lerpStrength * lerpStrengthFallMod);
             
             return;
