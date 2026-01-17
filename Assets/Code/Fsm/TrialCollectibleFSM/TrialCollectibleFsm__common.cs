@@ -7,6 +7,7 @@ using UnityEngine.Serialization;
 public partial class TrialCollectibleFsm
 {
     [SerializeField] private List<TrialCollectibleKeyframe> _keyframes;
+    [SerializeField] private string _id;
     private int _currentKeyframeIndex;
     private float _timeOnCurrentKeyframe;
 
