@@ -21,6 +21,7 @@ public partial class TrialCollectibleFsm : Fsm
         public static int PlayerEnteredStartingZone;
         public static int PlayerExitedStartingZone;
         public static int PlayerEnteredEndingZone;
+        public static int KeyframeTimeout;
     }
 
     protected override void OnAwake()
@@ -40,6 +41,11 @@ public partial class TrialCollectibleFsm : Fsm
     public override void OnUpdate()
     {
         base.OnUpdate();
+
+        if (Machine.IsInState(TrialCollectibleFsmState.Active))
+        {
+            ActiveOnUpdate();
+        }
         
     }
 }

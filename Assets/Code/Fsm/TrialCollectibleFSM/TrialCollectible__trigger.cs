@@ -16,6 +16,11 @@ public partial class TrialCollectibleFsm
         {
             Machine.Fire(TrialCollectibleFsmTrigger.PlayerEnteredEndingZone);
         }
+        
+        else if (_timeOnCurrentKeyframe > _keyframes[_currentKeyframeIndex].duration)
+        {
+            Machine.Fire(TrialCollectibleFsmTrigger.KeyframeTimeout);
+        }
     }
     
     
