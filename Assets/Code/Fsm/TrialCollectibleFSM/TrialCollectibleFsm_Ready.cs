@@ -4,5 +4,11 @@ public partial class TrialCollectibleFsm
     {
         Machine.Configure(TrialCollectibleFsmState.Ready)
             .Permit(TrialCollectibleFsmTrigger.PlayerEnteredStartingZone, TrialCollectibleFsmState.Start);
+
+        Machine.Configure(TrialCollectibleFsmState.ReadyUntaken)
+            .SubstateOf(TrialCollectibleFsmState.Ready);
+        
+        Machine.Configure(TrialCollectibleFsmState.ReadyTaken)
+            .SubstateOf(TrialCollectibleFsmState.Ready);
     }
 }

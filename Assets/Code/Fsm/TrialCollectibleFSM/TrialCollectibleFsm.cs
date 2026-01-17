@@ -32,6 +32,9 @@ public partial class TrialCollectibleFsm : Fsm
     {
         base.OnStart();
         InitState = TrialCollectibleFsmState.ReadyUntaken;
+        _currentKeyframeIndex = 0;
+        _timeOnCurrentKeyframe = 0f;
+        _marker = transform.Find("Marker");
     }
     
     public override void OnUpdate()
