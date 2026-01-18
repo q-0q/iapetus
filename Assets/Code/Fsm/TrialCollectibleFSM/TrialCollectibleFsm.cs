@@ -36,6 +36,7 @@ public partial class TrialCollectibleFsm : Fsm
         _currentKeyframeIndex = 0;
         _timeOnCurrentKeyframe = 0f;
         _marker = transform.Find("Marker");
+        transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
     }
     
     public override void OnUpdate()
@@ -46,6 +47,7 @@ public partial class TrialCollectibleFsm : Fsm
         {
             ActiveOnUpdate();
         }
-        
     }
+    
+    
 }

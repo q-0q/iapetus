@@ -33,6 +33,7 @@ public partial class TrialCollectibleFsm
 
     private void OnCurrentKeyframeUpdated()
     {
+        StartCoroutine(InvokeSeekParticles());
         _timeOnCurrentKeyframe = 0f;
         _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
     }
