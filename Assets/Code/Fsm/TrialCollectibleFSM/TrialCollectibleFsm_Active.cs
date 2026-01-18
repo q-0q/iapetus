@@ -7,8 +7,7 @@ public partial class TrialCollectibleFsm
     {
         if (Physics.CheckSphere(_keyframes[_currentKeyframeIndex].transform.position, 2f, LayerMask.GetMask("Player")))
         {
-            _currentKeyframeIndex++;
-            if (_currentKeyframeIndex <= _keyframes.Count - 1) OnCurrentKeyframeUpdated();
+            IncrementKeyframeIndex();
         }
 
         _timeOnCurrentKeyframe += Time.deltaTime;
@@ -27,14 +26,16 @@ public partial class TrialCollectibleFsm
             .Permit(TrialCollectibleFsmTrigger.KeyframeTimeout, TrialCollectibleFsmState.ReadyUntaken)
             .OnEntry(_ =>
             {
-                OnCurrentKeyframeUpdated();
+                IncrementKeyframeIndex();
             });
     }
 
-    private void OnCurrentKeyframeUpdated()
+    private void IncrementKeyframeIndex()
     {
+        _currentKeyframeIndex++;
+        if (_currentKeyframeIndex > _keyframes.Count - 1) return; 
+        _marker.gameObject.SetActive(false);
         StartCoroutine(InvokeSeekParticles());
         _timeOnCurrentKeyframe = 0f;
-        _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
     }
 }

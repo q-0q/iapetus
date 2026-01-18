@@ -11,7 +11,7 @@ public partial class TrialCollectibleFsm
             {
                 _currentKeyframeIndex = 0;
                 _timeOnCurrentKeyframe = 0;
-                _marker.position = transform.position + Vector3.up * 3f;
+                _marker.position = _keyframes[0].transform.position + Vector3.up * 3f;
             });
     }
 }

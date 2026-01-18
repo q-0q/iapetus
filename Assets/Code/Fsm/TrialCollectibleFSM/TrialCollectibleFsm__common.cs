@@ -30,6 +30,8 @@ public partial class TrialCollectibleFsm
             t += Time.deltaTime;
             yield return null;
         }
+        _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
+        _marker.gameObject.SetActive(true);
         _seekParticles.Stop();
     }
     
