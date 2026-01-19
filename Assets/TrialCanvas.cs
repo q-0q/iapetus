@@ -13,11 +13,13 @@ public class TrialCanvas : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _playerTimeTmp;
     [SerializeField] private TextMeshProUGUI _recordTmp;
     [SerializeField] private TextMeshProUGUI _goldTimeTmp;
-    
+
+    private CanvasGroup _canvasGroup;
     // Start is called before the first frame update
     void Start()
     {
-        
+        TryGetComponent(out _canvasGroup);
+        _canvasGroup.alpha
     }
 
     // Update is called once per frame
