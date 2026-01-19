@@ -21,9 +21,6 @@ public partial class TrialCollectibleFsm
     private Material _beaconMaterial;
     
     private CameraBehaviorZone _initialCameraBehaviorZone;
-    private CameraBehaviorZone _activeCameraBehaviorZone;
-    
-    
     
     IEnumerator InvokeSeekParticles()
     {
@@ -90,5 +87,13 @@ public partial class TrialCollectibleFsm
         position += Vector3.up * arc;
 
         return position;
+    }
+
+    private void DisableAllKeyframeCameraZones()
+    {
+        foreach (var keyframe in _keyframes)
+        {
+            keyframe.DisableCameraZone();
+        }
     }
 }

@@ -19,7 +19,7 @@ public class TrialCanvas : MonoBehaviour
     void Start()
     {
         TryGetComponent(out _canvasGroup);
-        _canvasGroup.alpha
+        _canvasGroup.alpha = 0f;
     }
 
     // Update is called once per frame

@@ -44,7 +44,7 @@ public partial class TrialCollectibleFsm
                 UiTimer.Singleton._timer = 0;
                 UiTimer.Singleton._display = true;
                 UiTimer.Singleton._active = true;
-                _activeCameraBehaviorZone.gameObject.SetActive(true);
+                _keyframes[0].EnableCameraZone();
                 _initialCameraBehaviorZone.gameObject.SetActive(false);
                 _activeParticles.Play();
                 IncrementKeyframeIndex();

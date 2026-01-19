@@ -44,8 +44,6 @@ public partial class TrialCollectibleFsm : Fsm
         _beaconMaterial.SetFloat("_Opacity", 0);
         _readyParticles.Play();
         _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
-        _activeCameraBehaviorZone = transform.Find("ActiveCameraZone").GetComponentInChildren<CameraBehaviorZone>();
-        _activeCameraBehaviorZone.gameObject.SetActive(false);
         _initialCameraBehaviorZone.gameObject.SetActive(true);
         _seeking = false;
     }
