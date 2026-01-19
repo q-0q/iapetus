@@ -40,8 +40,11 @@ public partial class TrialCollectibleFsm : Fsm
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
         _marker.Find("ActiveParticles").transform.Find("Nucleus").TryGetComponent(out _activeNucleusParticles);
         _marker.Find("ActiveParticles").transform.Find("Halo").TryGetComponent(out _activeHaloParticles);
-        _activeNucleusParticlesBaseRadius = _activeNucleusParticles.shape.radius;
-        _activeHaloParticlesBaseRadius = _activeHaloParticles.shape.radius;
+        _marker.Find("ReadyParticles").TryGetComponent(out _readyParticles);
+        _beaconMaterial = _marker.Find("Beacon").Find("Plane").GetComponent<Renderer>().material;
+        _beaconMaterial.SetFloat("_Opacity", 0);
+        _readyParticles.Play();
+        _seeking = false;
     }
     
     public override void OnUpdate()
@@ -52,6 +55,7 @@ public partial class TrialCollectibleFsm : Fsm
         {
             ActiveOnUpdate();
         }
+        
     }
     
     

@@ -11,23 +11,34 @@ public partial class TrialCollectibleFsm
     [SerializeField] private string _id;
     private int _currentKeyframeIndex;
     private float _timeOnCurrentKeyframe;
+    private bool _seeking;
 
     private Transform _marker;
     private ParticleSystem _seekParticles;
     private ParticleSystem _activeNucleusParticles;
     private ParticleSystem _activeHaloParticles;
-    private float _activeNucleusParticlesBaseRadius;
-    private float _activeHaloParticlesBaseRadius;
+    
+    private ParticleSystem _readyParticles;
+    private Material _beaconMaterial;
+    
     
     
     IEnumerator InvokeSeekParticles()
     {
         _seekParticles.Play();
+        _seeking = true;
         var seekParticlesStartPosition = _currentKeyframeIndex > 0 ? _keyframes[_currentKeyframeIndex - 1].transform.position : transform
             .position;
         var seekParticlesEndPosition = _keyframes[_currentKeyframeIndex].transform.position;
         float t = 0f;
-        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.02f;
+        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.03f;
+        // var seekMain = _seekParticles.main;
+        // var curve = seekMain.startLifetime;
+        // curve.constantMax = duration;
+        // curve.constantMin = duration;
+        // seekMain.startLifetime = curve;
+        
+        
         while (t < duration)
         {
             var w = t / duration;
@@ -41,6 +52,7 @@ public partial class TrialCollectibleFsm
             } else if (w > 1f - haloScaleDuration)
             {
                 _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
+                // _marker.rotation = _keyframes[_currentKeyframeIndex].transform.rotation;
                 haloScaleW = Mathf.InverseLerp(1f - haloScaleDuration, 1f, w);
             }
 
@@ -59,6 +71,7 @@ public partial class TrialCollectibleFsm
         
         // _marker.gameObject.SetActive(true);
         _seekParticles.Stop();
+        _seeking = false;
     }
     
     public static Vector3 LerpWithArc(Vector3 start, Vector3 end, float t, float height)

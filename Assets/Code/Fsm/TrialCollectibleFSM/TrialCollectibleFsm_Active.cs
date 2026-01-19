@@ -12,10 +12,16 @@ public partial class TrialCollectibleFsm
 
         _timeOnCurrentKeyframe += Time.deltaTime;
 
-        if (_currentKeyframeIndex <= _keyframes.Count - 1)
+        if (_seeking)
         {
-            var t = _timeOnCurrentKeyframe / _keyframes[_currentKeyframeIndex].duration;
-            
+            _beaconMaterial.SetFloat("_Opacity", 0);
+        }
+        else if (_currentKeyframeIndex <= _keyframes.Count - 1)
+        {
+            var newOpacity = Mathf.InverseLerp(25f, 35f,
+                Vector3.Distance(_keyframes[_currentKeyframeIndex].transform.position,
+                    PlayerFsm.Singleton.transform.position));
+            _beaconMaterial.SetFloat("_Opacity", newOpacity);
         }
     }
     
@@ -28,11 +34,19 @@ public partial class TrialCollectibleFsm
             {
                 UiTimer.Singleton._display = false;
             })
+            .OnExit(_ =>
+            {
+                _activeHaloParticles.Stop();
+                _activeHaloParticles.Clear();
+                _activeNucleusParticles.Stop();
+            })
             .OnEntry(_ =>
             {
                 UiTimer.Singleton._timer = 0;
                 UiTimer.Singleton._display = true;
                 UiTimer.Singleton._active = true;
+                _activeHaloParticles.Play();
+                _activeNucleusParticles.Play();
                 IncrementKeyframeIndex();
             });
     }

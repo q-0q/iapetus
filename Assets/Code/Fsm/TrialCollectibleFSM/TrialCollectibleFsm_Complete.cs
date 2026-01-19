@@ -15,6 +15,7 @@ public partial class TrialCollectibleFsm
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
                 PlayerFsm.Singleton.transform.position = _keyframes[0].transform.position + Vector3.forward * 5f;
+                UiTimer.Singleton._display = false;
             });
     }
 }

@@ -12,7 +12,12 @@ public partial class TrialCollectibleFsm
                 _marker.position = _keyframes[0].transform.position;
                 // _marker.gameObject.SetActive(true);
                 _currentKeyframeIndex = 0;
-                print("set");
+                _readyParticles.Play();
+                _beaconMaterial.SetFloat("_Opacity", 0);
+            })
+            .OnExit(_ =>
+            {
+                _readyParticles.Stop();
             });
 
         Machine.Configure(TrialCollectibleFsmState.ReadyUntaken)
