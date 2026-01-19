@@ -11,6 +11,7 @@ public partial class TrialCollectibleFsm
                 _marker.localScale = Vector3.one * 2f;
                 _marker.position = _keyframes[0].transform.position;
                 _marker.gameObject.SetActive(true);
+                _currentKeyframeIndex = 0;
                 print("set");
             });
 

@@ -22,7 +22,7 @@ public partial class TrialCollectibleFsm
             .position;
         var seekParticlesEndPosition = _keyframes[_currentKeyframeIndex].transform.position;
         float t = 0f;
-        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.05f;
+        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.025f;
         while (t < duration)
         {
             var w = t / duration;

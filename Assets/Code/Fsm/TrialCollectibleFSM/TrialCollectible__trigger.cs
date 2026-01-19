@@ -8,11 +8,11 @@ public partial class TrialCollectibleFsm
     {
         base.OnFireTriggers();
 
-        Machine.Fire(Physics.CheckSphere(_keyframes[0].transform.position, 2f, LayerMask.GetMask("Player"))
+        Machine.Fire(Physics.CheckSphere(_keyframes[0].transform.position, 3f, LayerMask.GetMask("Player"))
             ? TrialCollectibleFsmTrigger.PlayerEnteredStartingZone
             : TrialCollectibleFsmTrigger.PlayerExitedStartingZone);
 
-        if (_currentKeyframeIndex == _keyframes.Count)
+        if (_currentKeyframeIndex >= _keyframes.Count)
         {
             Machine.Fire(TrialCollectibleFsmTrigger.PlayerEnteredEndingZone);
         }
