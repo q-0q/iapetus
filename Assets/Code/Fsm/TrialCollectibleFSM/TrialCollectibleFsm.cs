@@ -38,12 +38,15 @@ public partial class TrialCollectibleFsm : Fsm
         _marker = transform.Find("Marker");
         _marker.position = _keyframes[0].transform.position;
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
-        _marker.Find("ActiveParticles").transform.Find("Nucleus").TryGetComponent(out _activeNucleusParticles);
-        _marker.Find("ActiveParticles").transform.Find("Halo").TryGetComponent(out _activeHaloParticles);
+        _marker.Find("ActiveParticles").TryGetComponent(out _activeParticles);
         _marker.Find("ReadyParticles").TryGetComponent(out _readyParticles);
         _beaconMaterial = _marker.Find("Beacon").Find("Plane").GetComponent<Renderer>().material;
         _beaconMaterial.SetFloat("_Opacity", 0);
         _readyParticles.Play();
+        _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
+        _activeCameraBehaviorZone = transform.Find("ActiveCameraZone").GetComponentInChildren<CameraBehaviorZone>();
+        _activeCameraBehaviorZone.gameObject.SetActive(false);
+        _initialCameraBehaviorZone.gameObject.SetActive(true);
         _seeking = false;
     }
     
@@ -54,6 +57,11 @@ public partial class TrialCollectibleFsm : Fsm
         if (Machine.IsInState(TrialCollectibleFsmState.Active))
         {
             ActiveOnUpdate();
+        }
+
+        if (Machine.IsInState(TrialCollectibleFsmState.Complete))
+        {
+            CompleteOnUpdate();
         }
         
     }

@@ -36,17 +36,17 @@ public partial class TrialCollectibleFsm
             })
             .OnExit(_ =>
             {
-                _activeHaloParticles.Stop();
-                _activeHaloParticles.Clear();
-                _activeNucleusParticles.Stop();
+                _activeParticles.Stop();
+                _activeParticles.Clear();
             })
             .OnEntry(_ =>
             {
                 UiTimer.Singleton._timer = 0;
                 UiTimer.Singleton._display = true;
                 UiTimer.Singleton._active = true;
-                _activeHaloParticles.Play();
-                _activeNucleusParticles.Play();
+                _activeCameraBehaviorZone.gameObject.SetActive(true);
+                _initialCameraBehaviorZone.gameObject.SetActive(false);
+                _activeParticles.Play();
                 IncrementKeyframeIndex();
             });
     }

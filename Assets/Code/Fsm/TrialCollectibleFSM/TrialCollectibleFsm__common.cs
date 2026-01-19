@@ -15,11 +15,13 @@ public partial class TrialCollectibleFsm
 
     private Transform _marker;
     private ParticleSystem _seekParticles;
-    private ParticleSystem _activeNucleusParticles;
-    private ParticleSystem _activeHaloParticles;
+    private ParticleSystem _activeParticles;
     
     private ParticleSystem _readyParticles;
     private Material _beaconMaterial;
+    
+    private CameraBehaviorZone _initialCameraBehaviorZone;
+    private CameraBehaviorZone _activeCameraBehaviorZone;
     
     
     
@@ -57,8 +59,7 @@ public partial class TrialCollectibleFsm
             }
 
             var haloScale = Mathf.Lerp(0f, 1f, haloScaleW);
-            _activeHaloParticles.transform.localScale = Vector3.one * haloScale;
-            _activeNucleusParticles.transform.localScale = Vector3.one * haloScale;
+            _activeParticles.transform.localScale = Vector3.one * haloScale;
             
             // var nucleusShape = _activeNucleusParticles.shape;
             // nucleusShape.radius = Mathf.Lerp(0, _activeNucleusParticlesBaseRadius, t);
