@@ -10,6 +10,7 @@ public partial class TrialCollectibleFsm
             .OnEntry(_ =>
             {
                 _marker.position += Vector3.up * 3f;
+                UiTimer.Singleton._active = false;
             })
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {

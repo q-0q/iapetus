@@ -5,7 +5,7 @@ public partial class TrialCollectibleFsm
 
     private void ActiveOnUpdate()
     {
-        if (Physics.CheckSphere(_keyframes[_currentKeyframeIndex].transform.position, 2f, LayerMask.GetMask("Player")))
+        if (Physics.CheckSphere(_keyframes[_currentKeyframeIndex].transform.position, 3f, LayerMask.GetMask("Player")))
         {
             IncrementKeyframeIndex();
         }
@@ -14,8 +14,8 @@ public partial class TrialCollectibleFsm
 
         if (_currentKeyframeIndex <= _keyframes.Count - 1)
         {
-            _marker.localScale = Vector3.Lerp(Vector3.one * 2f, Vector3.zero,
-                _timeOnCurrentKeyframe / _keyframes[_currentKeyframeIndex].duration);
+            var t = _timeOnCurrentKeyframe / _keyframes[_currentKeyframeIndex].duration;
+            
         }
     }
     
@@ -24,8 +24,15 @@ public partial class TrialCollectibleFsm
         Machine.Configure(TrialCollectibleFsmState.Active)
             .Permit(TrialCollectibleFsmTrigger.PlayerEnteredEndingZone, TrialCollectibleFsmState.Complete)
             .Permit(TrialCollectibleFsmTrigger.KeyframeTimeout, TrialCollectibleFsmState.ReadyUntaken)
+            .OnExitFrom(TrialCollectibleFsmTrigger.KeyframeTimeout, _ =>
+            {
+                UiTimer.Singleton._display = false;
+            })
             .OnEntry(_ =>
             {
+                UiTimer.Singleton._timer = 0;
+                UiTimer.Singleton._display = true;
+                UiTimer.Singleton._active = true;
                 IncrementKeyframeIndex();
             });
     }
@@ -34,7 +41,7 @@ public partial class TrialCollectibleFsm
     {
         _currentKeyframeIndex++;
         if (_currentKeyframeIndex > _keyframes.Count - 1) return; 
-        _marker.gameObject.SetActive(false);
+        // _marker.gameObject.SetActive(false);
         StartCoroutine(InvokeSeekParticles());
         _timeOnCurrentKeyframe = 0f;
     }

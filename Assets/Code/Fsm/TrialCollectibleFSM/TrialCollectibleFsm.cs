@@ -38,6 +38,10 @@ public partial class TrialCollectibleFsm : Fsm
         _marker = transform.Find("Marker");
         _marker.position = _keyframes[0].transform.position;
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
+        _marker.Find("ActiveParticles").transform.Find("Nucleus").TryGetComponent(out _activeNucleusParticles);
+        _marker.Find("ActiveParticles").transform.Find("Halo").TryGetComponent(out _activeHaloParticles);
+        _activeNucleusParticlesBaseRadius = _activeNucleusParticles.shape.radius;
+        _activeHaloParticlesBaseRadius = _activeHaloParticles.shape.radius;
     }
     
     public override void OnUpdate()

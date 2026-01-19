@@ -14,6 +14,11 @@ public partial class TrialCollectibleFsm
 
     private Transform _marker;
     private ParticleSystem _seekParticles;
+    private ParticleSystem _activeNucleusParticles;
+    private ParticleSystem _activeHaloParticles;
+    private float _activeNucleusParticlesBaseRadius;
+    private float _activeHaloParticlesBaseRadius;
+    
     
     IEnumerator InvokeSeekParticles()
     {
@@ -22,23 +27,44 @@ public partial class TrialCollectibleFsm
             .position;
         var seekParticlesEndPosition = _keyframes[_currentKeyframeIndex].transform.position;
         float t = 0f;
-        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.025f;
+        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.02f;
         while (t < duration)
         {
             var w = t / duration;
             _seekParticles.transform.position = LerpWithArc(seekParticlesStartPosition, seekParticlesEndPosition, w, 3f);
+
+            var haloScaleW = 0f;
+            var haloScaleDuration = 0.1f;
+            if (w < haloScaleDuration)
+            {
+                haloScaleW = Mathf.InverseLerp(haloScaleDuration, 0, w);
+            } else if (w > 1f - haloScaleDuration)
+            {
+                _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
+                haloScaleW = Mathf.InverseLerp(1f - haloScaleDuration, 1f, w);
+            }
+
+            var haloScale = Mathf.Lerp(0f, 1f, haloScaleW);
+            _activeHaloParticles.transform.localScale = Vector3.one * haloScale;
+            _activeNucleusParticles.transform.localScale = Vector3.one * haloScale;
+            
+            // var nucleusShape = _activeNucleusParticles.shape;
+            // nucleusShape.radius = Mathf.Lerp(0, _activeNucleusParticlesBaseRadius, t);
+            // var haloShape = _activeHaloParticles.shape;
+            // haloShape.radius = Mathf.Lerp(0, _activeHaloParticlesBaseRadius, t);
+            
             t += Time.deltaTime;
             yield return null;
         }
-        _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
-        _marker.gameObject.SetActive(true);
+        
+        // _marker.gameObject.SetActive(true);
         _seekParticles.Stop();
     }
     
     public static Vector3 LerpWithArc(Vector3 start, Vector3 end, float t, float height)
     {
         // Clamp t for safety
-        t = Mathf.Clamp01(t) * 0.9f;
+        t = Mathf.Clamp01(t) * 0.8f;
 
         // Base linear interpolation
         Vector3 position = Vector3.Lerp(start, end, t);
