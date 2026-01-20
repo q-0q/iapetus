@@ -13,6 +13,7 @@ public partial class TrialCollectibleFsm
             .Permit(FsmTrigger.Timeout, TrialCollectibleFsmState.ReadyTaken)
             .OnEntry(_ =>
             {
+                OnPlayerCompletedTrial?.Invoke(this, _completionTime);
                 _marker.position += Vector3.up * 3f;
                 UiTimer.Singleton._active = false;
             })

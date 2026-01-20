@@ -14,6 +14,7 @@ public partial class TrialCollectibleFsm
 
         if (_currentKeyframeIndex >= _keyframes.Count)
         {
+            _completionTime = TimeInCurrentState();
             Machine.Fire(TrialCollectibleFsmTrigger.PlayerEnteredEndingZone);
         }
         

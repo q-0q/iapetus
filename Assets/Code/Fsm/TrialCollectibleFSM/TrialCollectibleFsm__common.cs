@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Code.Fsm.TrialCollectibleFSM;
@@ -7,11 +8,14 @@ using UnityEngine.Serialization;
 
 public partial class TrialCollectibleFsm
 {
-    [SerializeField] private List<TrialCollectibleKeyframe> _keyframes;
-    [SerializeField] private string _id;
+    [SerializeField] private List<TrialCollectibleKeyframe> _keyframes; 
+    [SerializeField] private string metaName;
+    public string displayName;
     private int _currentKeyframeIndex;
     private float _timeOnCurrentKeyframe;
     private bool _seeking;
+    private float _completionTime;
+    public static event Action<TrialCollectibleFsm, float> OnPlayerCompletedTrial;
 
     private Transform _marker;
     private ParticleSystem _seekParticles;

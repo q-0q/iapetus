@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -26,5 +27,35 @@ public class TrialCanvas : MonoBehaviour
     void Update()
     {
         
+    }
+
+    private void OnPlayerCompletedTrial(TrialCollectibleFsm trial, float playerTime)
+    {
+        StartCoroutine(Open(trial, playerTime));
+    }
+
+    private IEnumerator Open(TrialCollectibleFsm trial, float playerTime)
+    {
+        _nameTmp.text = trial.displayName;
+        _playerTimeTmp.text = playerTime.ToString("F2");
+        var duration = 0.25f;
+        var t = 0f;
+        while (t < duration)
+        {
+            _canvasGroup.alpha = t / duration;
+            t += Time.deltaTime;
+            yield return null;
+        }
+        yield break;
+    }
+
+    private void OnEnable()
+    {
+        TrialCollectibleFsm.OnPlayerCompletedTrial += OnPlayerCompletedTrial;
+    }
+
+    private void OnDisable()
+    {
+        TrialCollectibleFsm.OnPlayerCompletedTrial -= OnPlayerCompletedTrial;
     }
 }
