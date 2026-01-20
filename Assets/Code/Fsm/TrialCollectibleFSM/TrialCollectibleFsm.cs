@@ -45,6 +45,7 @@ public partial class TrialCollectibleFsm : Fsm
         _readyParticles.Play();
         _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
         _initialCameraBehaviorZone.gameObject.SetActive(true);
+        DisableAllKeyframeCameraZones();
         _seeking = false;
     }
     

@@ -97,11 +97,21 @@ public class CameraFollow : MonoBehaviour
         
         var neighbors = Physics.OverlapSphere(PlayerFsm.Singleton.transform.position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
             QueryTriggerInteraction.Collide);
+
+        CameraBehaviorZone highestPriorityZone = null;
         foreach (var neighbor in neighbors)
         {
-            OnCameraFollowTriggerStay?.Invoke(neighbor.GetComponent<CameraBehaviorZone>());
-            break;
+            var cameraBehaviorZone = neighbor.GetComponent<CameraBehaviorZone>();
+            if (highestPriorityZone == null)
+            {
+                highestPriorityZone = cameraBehaviorZone;
+            } else if (highestPriorityZone.priority < cameraBehaviorZone.priority)
+            {
+                highestPriorityZone = cameraBehaviorZone;
+            }
+            
         }
+        OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);
         
     }
 }

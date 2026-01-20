@@ -53,8 +53,10 @@ public partial class TrialCollectibleFsm
 
     private void IncrementKeyframeIndex()
     {
+        _keyframes[_currentKeyframeIndex].DisableCameraZone();
         _currentKeyframeIndex++;
         if (_currentKeyframeIndex > _keyframes.Count - 1) return; 
+        _keyframes[_currentKeyframeIndex].EnableCameraZone();
         // _marker.gameObject.SetActive(false);
         StartCoroutine(InvokeSeekParticles());
         _timeOnCurrentKeyframe = 0f;

@@ -8,6 +8,8 @@ namespace Code.Fsm.TrialCollectibleFSM
     {
         public float duration = 5f;
         public CameraBehaviorZone attachedCameraBehaviorZone;
+        public static event Action OnTrialCollectibleCameraZoneUpdated;
+        public bool preservePreviousKeyframeCameraZone = false;
         
         // public CameraZoneDisableMode cameraZoneDisableMode;
         // private int _attachedCameraBehaciorZoneBasePriority;
@@ -27,13 +29,17 @@ namespace Code.Fsm.TrialCollectibleFSM
         public void EnableCameraZone()
         {
             if (attachedCameraBehaviorZone == null) return;
-            attachedCameraBehaviorZone.enabled = true;
+            attachedCameraBehaviorZone.gameObject.SetActive(true);
             attachedCameraBehaviorZone.priority = 100;
+            print("enabled " + attachedCameraBehaviorZone.name);
+            OnTrialCollectibleCameraZoneUpdated?.Invoke();
         }
         
         public void DisableCameraZone()
         {
             if (attachedCameraBehaviorZone == null) return;
-            attachedCameraBehaviorZone.enabled = false;}
+            print("DISABLED");
+            attachedCameraBehaviorZone.gameObject.SetActive(false);
         }
+    }
 }

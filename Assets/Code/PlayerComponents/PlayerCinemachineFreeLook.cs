@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Code.Fsm.TrialCollectibleFSM;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -57,6 +58,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
         CameraFollow.OnCameraFollowTriggerStart += OnCameraFollowTriggerStart;
+        TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated += ForceRecenter;
     }
 
     private void OnDisable()
@@ -64,6 +66,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
         CameraFollow.OnCameraFollowTriggerStart -= OnCameraFollowTriggerStart;
+        TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated -= ForceRecenter;
     }
     
     private void OnMetaSaveDataUpdated(MetaSaveSystem.MetaSaveData metaSaveData)
@@ -82,7 +85,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         if (cameraBehaviorZone.priority > _currentCameraBehaviorZone.priority)
         {
-            _timeSinceRecenter = 0f;
+            // _timeSinceRecenter = 0f;
             _currentCameraBehaviorZone = cameraBehaviorZone;
             
         };
@@ -123,5 +126,10 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * lerpStrength);
 
 
+    }
+
+    private void ForceRecenter()
+    {
+        // _timeSinceRecenter = _recenterTime + _rampUpTime;
     }
 }

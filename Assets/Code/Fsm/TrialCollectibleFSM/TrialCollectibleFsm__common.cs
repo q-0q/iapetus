@@ -93,6 +93,7 @@ public partial class TrialCollectibleFsm
     {
         foreach (var keyframe in _keyframes)
         {
+            
             keyframe.DisableCameraZone();
         }
     }

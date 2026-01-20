@@ -170,7 +170,6 @@ public abstract partial class GravityFsm
             if (strengthModifier <= 0.5f) _timeAtTopOfGust += Time.deltaTime;
             else _timeAtTopOfGust = 0;
             var offsetModifier = Mathf.InverseLerp(0, 0.2f, _timeAtTopOfGust);
-            print(offsetModifier);
             var offset = Mathf.Lerp(0, -15f, Mathf.InverseLerp(-1f, 1f, Mathf.Sin(Time.time * 2.5f))) * offsetModifier;
             
             // Set Y velocity as a function of the strength modifier and the offset. Less aggressive
@@ -184,7 +183,6 @@ public abstract partial class GravityFsm
             return;
         }
         
-        print("wee");
         _timeAtTopOfGust = 0f;
         IsInGust = false;
     }
