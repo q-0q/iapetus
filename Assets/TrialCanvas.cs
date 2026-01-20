@@ -87,7 +87,7 @@ public class TrialCanvas : MonoBehaviour
     
     private IEnumerator Close()
     {
-        if (_canvasGroup.alpha < 0.1f) yield break;
+        if (_canvasGroup.alpha < 0.99f) yield break;
         var duration = 0.45f;
         var t = 0f;
         while (t < duration)
