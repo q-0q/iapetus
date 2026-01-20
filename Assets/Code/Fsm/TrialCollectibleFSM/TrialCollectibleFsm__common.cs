@@ -16,6 +16,7 @@ public partial class TrialCollectibleFsm
     private bool _seeking;
     private float _completionTime;
     public static event Action<TrialCollectibleFsm, float> OnPlayerCompletedTrial;
+    public static event Action OnPlayerBeganTrial;
 
     private float _cachedPlayerRecordTime;
 

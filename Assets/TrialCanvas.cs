@@ -36,6 +36,11 @@ public class TrialCanvas : MonoBehaviour
     {
         StartCoroutine(Open(trial, playerTime));
     }
+    
+    private void OnPlayerBeganTrial()
+    {
+        StartCoroutine(Close());
+    }
 
     private IEnumerator Open(TrialCollectibleFsm trial, float playerTime)
     {
@@ -65,17 +70,47 @@ public class TrialCanvas : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
+        _canvasGroup.alpha = 1;
         SaveSystem.WriteTrialCompletion(trial.metaName, playerTime, 0);
+
+        duration = 4f;
+        t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        StartCoroutine(Close());
+        yield break;
+    }
+    
+    private IEnumerator Close()
+    {
+        if (_canvasGroup.alpha < 0.1f) yield break;
+        var duration = 0.45f;
+        var t = 0f;
+        while (t < duration)
+        {
+            _canvasGroup.alpha = Mathf.Lerp(1f, 0, t / duration);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        _canvasGroup.alpha = 0;
         yield break;
     }
 
     private void OnEnable()
     {
         TrialCollectibleFsm.OnPlayerCompletedTrial += OnPlayerCompletedTrial;
+        TrialCollectibleFsm.OnPlayerBeganTrial += OnPlayerBeganTrial;
+        
     }
 
     private void OnDisable()
     {
         TrialCollectibleFsm.OnPlayerCompletedTrial -= OnPlayerCompletedTrial;
+        TrialCollectibleFsm.OnPlayerBeganTrial -= OnPlayerBeganTrial;
     }
 }

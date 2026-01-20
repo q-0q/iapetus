@@ -48,6 +48,7 @@ public partial class TrialCollectibleFsm
                 _initialCameraBehaviorZone.gameObject.SetActive(false);
                 _activeParticles.Play();
                 IncrementKeyframeIndex();
+                OnPlayerBeganTrial?.Invoke();
             });
     }
 

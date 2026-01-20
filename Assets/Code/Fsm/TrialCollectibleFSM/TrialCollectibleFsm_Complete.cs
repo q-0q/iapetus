@@ -5,7 +5,7 @@ public partial class TrialCollectibleFsm
 
     private void CompleteOnUpdate()
     {
-        Time.timeScale = Mathf.Lerp(0.35f, 1f, Mathf.InverseLerp(0.2f, 0.4f, TimeInCurrentState()));
+        Time.timeScale = Mathf.Lerp(0.35f, 1f, Mathf.InverseLerp(0.55f, 0.7f, TimeInCurrentState()));
     }
     private void CompleteConfigure()
     {
