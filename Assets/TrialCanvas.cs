@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class TrialCanvas : MonoBehaviour
 {
@@ -12,7 +13,9 @@ public class TrialCanvas : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _clearedTmp;
     [SerializeField] private TextMeshProUGUI _nameTmp;
     [SerializeField] private TextMeshProUGUI _playerTimeTmp;
-    [SerializeField] private TextMeshProUGUI _recordTmp;
+    [SerializeField] private TextMeshProUGUI _newRecordTmp;
+    [SerializeField] private TextMeshProUGUI _previousRecordTmp;
+    [SerializeField] private TextMeshProUGUI _bestTmp;
     [SerializeField] private TextMeshProUGUI _goldTimeTmp;
 
     private CanvasGroup _canvasGroup;
@@ -36,6 +39,7 @@ public class TrialCanvas : MonoBehaviour
 
     private IEnumerator Open(TrialCollectibleFsm trial, float playerTime)
     {
+        _previousRecordTmp.text = SaveSystem.GetTrialCompletion(trial.metaName, 0).ToString("F2");
         _nameTmp.text = trial.displayName;
         _playerTimeTmp.text = playerTime.ToString("F2");
         var duration = 0.25f;
@@ -46,6 +50,7 @@ public class TrialCanvas : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
+        SaveSystem.WriteTrialCompletion(trial.metaName, playerTime, 0);
         yield break;
     }
 

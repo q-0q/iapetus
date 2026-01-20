@@ -9,13 +9,15 @@ using UnityEngine.Serialization;
 public partial class TrialCollectibleFsm
 {
     [SerializeField] private List<TrialCollectibleKeyframe> _keyframes; 
-    [SerializeField] private string metaName;
+    [SerializeField] public string metaName;
     public string displayName;
     private int _currentKeyframeIndex;
     private float _timeOnCurrentKeyframe;
     private bool _seeking;
     private float _completionTime;
     public static event Action<TrialCollectibleFsm, float> OnPlayerCompletedTrial;
+
+    private float _cachedPlayerRecordTime;
 
     private Transform _marker;
     private ParticleSystem _seekParticles;

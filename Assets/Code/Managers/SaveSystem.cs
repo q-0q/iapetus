@@ -1,19 +1,28 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public static class SaveSystem
 {
     
+    [System.Serializable]
+    public class TrialCompletionEntry
+    {
+        public string metaName;
+        public float time;
+    }
+
     
     [System.Serializable]
     public class SaveData
     {
         public float[] playerInGamePosition;
         public float playerInGameYAngle;
-        public List<string> persistentEvents; 
+        public List<string> persistentEvents;
+        public List<TrialCompletionEntry> trialCompletions;
             
 
         public SaveData()
@@ -21,6 +30,7 @@ public static class SaveSystem
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
             persistentEvents = new List<string>();
+            trialCompletions = new List<TrialCompletionEntry>();
         }
     }
     
@@ -49,6 +59,38 @@ public static class SaveSystem
         data.persistentEvents.Add(persistentEvent);
         WriteSaveData(data, id);
     }
+
+    public static void WriteTrialCompletion(string metaName, float time, int id)
+    {
+        SaveData data = LoadSaveData(id);
+
+        var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
+
+        if (entry != null)
+        {
+            if (entry.time > time) return;
+            entry.time = time;
+        }
+        else
+        {
+            data.trialCompletions.Add(new TrialCompletionEntry
+            {
+                metaName = metaName,
+                time = time
+            });
+        }
+
+        WriteSaveData(data, id);
+    }
+
+    
+    public static float GetTrialCompletion(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
+        return entry?.time ?? -1f;
+    }
+
 
     private static void WriteSaveData(SaveData saveData, int id)
     {

@@ -46,6 +46,7 @@ public partial class TrialCollectibleFsm : Fsm
         _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
         _initialCameraBehaviorZone.gameObject.SetActive(true);
         DisableAllKeyframeCameraZones();
+        _cachedPlayerRecordTime = SaveSystem.GetTrialCompletion(metaName, 0);
         _seeking = false;
     }
     
