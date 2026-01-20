@@ -39,7 +39,22 @@ public class TrialCanvas : MonoBehaviour
 
     private IEnumerator Open(TrialCollectibleFsm trial, float playerTime)
     {
-        _previousRecordTmp.text = SaveSystem.GetTrialCompletion(trial.metaName, 0).ToString("F2");
+        var previousRecordTime = SaveSystem.GetTrialCompletion(trial.metaName, 0);
+        _previousRecordTmp.text = previousRecordTime.ToString("F2");
+        if (previousRecordTime > playerTime)
+        {
+            // new record
+            _newRecordTmp.gameObject.SetActive(true);
+            _previousRecordTmp.gameObject.SetActive(false);
+            _bestTmp.gameObject.SetActive(false);
+        }
+        else
+        {
+            _newRecordTmp.gameObject.SetActive(false);
+            _previousRecordTmp.gameObject.SetActive(true);
+            _bestTmp.gameObject.SetActive(true);
+        }
+        
         _nameTmp.text = trial.displayName;
         _playerTimeTmp.text = playerTime.ToString("F2");
         var duration = 0.25f;
