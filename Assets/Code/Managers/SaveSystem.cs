@@ -68,7 +68,7 @@ public static class SaveSystem
 
         if (entry != null)
         {
-            if (entry.time > time) return;
+            if (entry.time < time) return;
             entry.time = time;
         }
         else
