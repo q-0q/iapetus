@@ -22,6 +22,7 @@ public partial class TrialCollectibleFsm
                 Vector3.Distance(_keyframes[_currentKeyframeIndex].transform.position,
                     PlayerFsm.Singleton.transform.position));
             _beaconMaterial.SetFloat("_Opacity", newOpacity);
+            
         }
     }
     
