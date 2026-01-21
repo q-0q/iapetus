@@ -9,6 +9,7 @@ public class TrialCanvas : MonoBehaviour
 {
 
     [SerializeField] private Color _goldColor;
+    private float _brightnessMod = 0.85f;
 
     [SerializeField] private TextMeshProUGUI _clearedTmp;
     [SerializeField] private TextMeshProUGUI _nameTmp;
@@ -44,20 +45,50 @@ public class TrialCanvas : MonoBehaviour
 
     private IEnumerator Open(TrialCollectibleFsm trial, float playerTime)
     {
-        var previousRecordTime = SaveSystem.GetTrialCompletion(trial.metaName, 0);
+        var playerAlreadyCompletedTrial = SaveSystem.GetTrialCompletion(trial.metaName, out var previousRecordTime, 0);
         _previousRecordTmp.text = previousRecordTime.ToString("F2");
-        if (previousRecordTime > playerTime)
+        _goldTimeTmp.text = trial.goldTime.ToString("F2");
+        _goldTimeTmp.color = _goldColor * _brightnessMod;
+        if (previousRecordTime > playerTime || !playerAlreadyCompletedTrial)
         {
             // new record
             _newRecordTmp.gameObject.SetActive(true);
             _previousRecordTmp.gameObject.SetActive(false);
             _bestTmp.gameObject.SetActive(false);
+            trial.SetRecordTime(playerTime);
         }
         else
         {
             _newRecordTmp.gameObject.SetActive(false);
             _previousRecordTmp.gameObject.SetActive(true);
             _bestTmp.gameObject.SetActive(true);
+        }
+
+        if (playerTime < trial.goldTime)
+        {
+            _playerTimeTmp.color = _goldColor;
+            _newRecordTmp.color = _goldColor;
+        }
+        else
+        {
+            _playerTimeTmp.color = Color.white;
+            _newRecordTmp.color = Color.white;
+        }
+
+        if (previousRecordTime < trial.goldTime)
+        {
+            _previousRecordTmp.color = _goldColor * _brightnessMod;
+            _bestTmp.color = _goldColor * _brightnessMod;
+        }
+        else
+        {
+            _previousRecordTmp.color = Color.white * _brightnessMod;
+            _bestTmp.color = Color.white * _brightnessMod;
+        }
+
+        if (playerTime < trial.goldTime || previousRecordTime < trial.goldTime)
+        {
+            _goldTimeTmp.text = "<s>" + trial.goldTime.ToString("F2") + "</s>";
         }
         
         _nameTmp.text = trial.displayName;

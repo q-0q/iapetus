@@ -84,11 +84,13 @@ public static class SaveSystem
     }
 
     
-    public static float GetTrialCompletion(string metaName, int id)
+    public static bool GetTrialCompletion(string metaName, out float playerRecordTime, int id)
     {
+        playerRecordTime = -1f;
         SaveData data = LoadSaveData(id);
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
-        return entry?.time ?? -1f;
+        if (entry != null) playerRecordTime = entry.time;
+        return entry != null;
     }
 
 

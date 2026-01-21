@@ -10,6 +10,7 @@ public partial class TrialCollectibleFsm
 {
     [SerializeField] private List<TrialCollectibleKeyframe> _keyframes; 
     [SerializeField] public string metaName;
+    [SerializeField] public float goldTime = 10f;
     public string displayName;
     private int _currentKeyframeIndex;
     private float _timeOnCurrentKeyframe;
