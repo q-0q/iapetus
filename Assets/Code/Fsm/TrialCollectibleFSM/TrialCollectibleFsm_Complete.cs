@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public partial class TrialCollectibleFsm
 {
@@ -6,6 +7,7 @@ public partial class TrialCollectibleFsm
     private void CompleteOnUpdate()
     {
         Time.timeScale = Mathf.Lerp(0.35f, 1f, Mathf.InverseLerp(0.55f, 0.7f, TimeInCurrentState()));
+        
     }
     private void CompleteConfigure()
     {
@@ -23,7 +25,8 @@ public partial class TrialCollectibleFsm
             })
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
-                PlayerFsm.Singleton.transform.position = _keyframes[0].transform.position + Vector3.forward * 5f;
+                PlayerFsm.Singleton.SetTeleportDestination(_playerReturnTransform.position, _playerReturnTransform.forward);
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.TrialTeleport);
                 UiTimer.Singleton._display = false;
             });
     }

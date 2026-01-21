@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerCinemachineFreeLook : MonoBehaviour
 {
+    public static PlayerCinemachineFreeLook Singleton;
     private CinemachineFreeLook _freeLook;
     private PlayerInput _playerInput;
     private float _baseXSpeed;
@@ -18,9 +19,17 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private CameraBehaviorZone _currentCameraBehaviorZone;
     private float _rampUpTime;
+    
+    
+
+    private bool _scriptActive;
+    private Vector3 _scriptTargetDirection;
+    private float _scriptDuration;
+    private float _timeInScript;
 
     void Awake()
     {
+        Singleton = this;
         TryGetComponent(out _freeLook);
         _baseXSpeed = _freeLook.m_XAxis.m_MaxSpeed;
         _baseYSpeed = _freeLook.m_YAxis.m_MaxSpeed;
@@ -36,7 +45,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private void Update()
     {
-
+        if (_scriptActive) return;
+        
         HandleCameraBehaviorZone();
         
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>();
@@ -131,5 +141,29 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private void ForceRecenter()
     {
         // _timeSinceRecenter = _recenterTime + _rampUpTime;
+    }
+
+    public void OnPlayerCinemachineFreeLookScript(Vector3 direction, float duration)
+    {
+        if (_scriptActive) return;
+        StartCoroutine(InvokeScript(direction, duration));
+        IEnumerator InvokeScript(Vector3 direction, float duration)
+        {
+            direction = new Vector3(direction.x, 0f, direction.z);
+            var xAngle = Vector3.SignedAngle(Vector3.forward, direction, transform.up);
+            var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
+            var newXQuat = Quaternion.Euler(0, xAngle, 0);
+            _scriptActive = true;
+            
+            float t = 0;
+            while (t < duration)
+            {
+                _freeLook.m_XAxis.Value = Quaternion.Lerp(oldXQuat, newXQuat, t / duration).eulerAngles.y;
+                t += Time.deltaTime;
+                yield return null;
+            }
+            _scriptActive = false;  
+        }
+        
     }
 }

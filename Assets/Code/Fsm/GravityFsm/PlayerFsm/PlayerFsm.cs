@@ -66,6 +66,8 @@ public partial class PlayerFsm : GravityFsm
         public static int CutsceneWary;
         public static int CutsceneIdle;
         public static int Updraft;
+
+        public static int TrialTeleport;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -141,6 +143,7 @@ public partial class PlayerFsm : GravityFsm
         _checkpointQuaternion = transform.rotation;
         _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().Where(d => d.name == "PlayerFootParticles").ToList();
         // transform.Find("KiIndicatorParticles").SetParent(null);
+        _renderers = GetComponentsInChildren<Renderer>().ToList();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         _interactables = new HashSet<Interactable>();
         _defaultScenePosition = transform.position;
@@ -324,6 +327,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Updraft))
         {
             UpdraftOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.TrialTeleport))
+        {
+            TrialTeleportOnUpdate();
         }
 
         

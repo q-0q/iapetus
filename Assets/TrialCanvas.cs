@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class TrialCanvas : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class TrialCanvas : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _previousRecordTmp;
     [SerializeField] private TextMeshProUGUI _bestTmp;
     [SerializeField] private TextMeshProUGUI _goldTimeTmp;
+    [SerializeField] private Image _goldSymbol;
 
     private CanvasGroup _canvasGroup;
     // Start is called before the first frame update
@@ -49,6 +51,7 @@ public class TrialCanvas : MonoBehaviour
         _previousRecordTmp.text = previousRecordTime.ToString("F2");
         _goldTimeTmp.text = trial.goldTime.ToString("F2");
         _goldTimeTmp.color = _goldColor * _brightnessMod;
+        _goldSymbol.color = _goldColor * _brightnessMod;
         if (previousRecordTime > playerTime || !playerAlreadyCompletedTrial)
         {
             // new record
@@ -68,11 +71,15 @@ public class TrialCanvas : MonoBehaviour
         {
             _playerTimeTmp.color = _goldColor;
             _newRecordTmp.color = _goldColor;
+            _clearedTmp.color = _goldColor;
+            _clearedTmp.text = "Complete!";
         }
         else
         {
             _playerTimeTmp.color = Color.white;
             _newRecordTmp.color = Color.white;
+            _clearedTmp.color = Color.white;
+            _clearedTmp.text = "Cleared";
         }
 
         if (previousRecordTime < trial.goldTime)
@@ -86,7 +93,7 @@ public class TrialCanvas : MonoBehaviour
             _bestTmp.color = Color.white * _brightnessMod;
         }
 
-        if (playerTime < trial.goldTime || previousRecordTime < trial.goldTime)
+        if (playerTime < trial.goldTime || (previousRecordTime < trial.goldTime && playerAlreadyCompletedTrial))
         {
             _goldTimeTmp.text = "<s>" + trial.goldTime.ToString("F2") + "</s>";
         }

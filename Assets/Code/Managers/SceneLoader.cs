@@ -9,6 +9,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
+using Util = Code.Misc.Util;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -62,7 +63,7 @@ public class SceneLoader : MonoBehaviour
         while (elapsed < OutDuration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = SmoothLerp01(elapsed / OutDuration);
+            float t = Util.SmoothLerp01(elapsed / OutDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;
         }
@@ -82,7 +83,7 @@ public class SceneLoader : MonoBehaviour
         while (elapsed < InDuration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = SmoothLerp01(elapsed / InDuration);
+            float t = Util.SmoothLerp01(elapsed / InDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;
         }
@@ -97,12 +98,6 @@ public class SceneLoader : MonoBehaviour
         }
         _canvasGroup.alpha = 0f;
         _mutex = false;
-    }
-    
-    public static float SmoothLerp01(float t)
-    {
-        t = Mathf.Clamp01(t);
-        return t * t * (3f - 2f * t);
     }
 
 }

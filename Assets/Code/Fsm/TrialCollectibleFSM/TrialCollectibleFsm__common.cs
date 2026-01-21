@@ -22,6 +22,7 @@ public partial class TrialCollectibleFsm
     private float _cachedPlayerRecordTime;
 
     private Transform _marker;
+    private Transform _playerReturnTransform;
     private ParticleSystem _seekParticles;
     private ParticleSystem _activeParticles;
     

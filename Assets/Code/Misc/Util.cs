@@ -33,5 +33,12 @@ namespace Code.Misc
                 return result.normal;
             }
         }
+        
+        public static float SmoothLerp01(float t)
+        {
+            t = Mathf.Clamp01(t);
+            return t * t * (3f - 2f * t);
+        }
+        
     }
 }

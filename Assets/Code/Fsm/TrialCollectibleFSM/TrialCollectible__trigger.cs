@@ -8,9 +8,12 @@ public partial class TrialCollectibleFsm
     {
         base.OnFireTriggers();
 
-        Machine.Fire(Physics.CheckSphere(_keyframes[0].transform.position, 2f, LayerMask.GetMask("Player"))
-            ? TrialCollectibleFsmTrigger.PlayerEnteredStartingZone
-            : TrialCollectibleFsmTrigger.PlayerExitedStartingZone);
+        if (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
+        {
+            Machine.Fire(Physics.CheckSphere(_keyframes[0].transform.position, 2f, LayerMask.GetMask("Player"))
+                ? TrialCollectibleFsmTrigger.PlayerEnteredStartingZone
+                : TrialCollectibleFsmTrigger.PlayerExitedStartingZone);
+        }
 
         if (_currentKeyframeIndex >= _keyframes.Count)
         {

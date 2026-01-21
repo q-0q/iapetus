@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Code.Misc;
 using UnityEngine;
 
 public class CameraBehaviorPath : CameraBehaviorZone
@@ -46,7 +47,7 @@ public class CameraBehaviorPath : CameraBehaviorZone
         }
 
         // Smooth the interpolation parameter
-        float smoothT = SmoothLerp01(bestT);
+        float smoothT = Util.SmoothLerp01(bestT);
 
         // Blend rotations and return forward direction
         Quaternion rotA = keyFrames[bestSegmentIndex].transform.rotation;
@@ -56,11 +57,5 @@ public class CameraBehaviorPath : CameraBehaviorZone
         y = Mathf.Lerp(keyFrames[bestSegmentIndex].y, keyFrames[bestSegmentIndex + 1].y, smoothT);
         return blendedRotation * Vector3.forward;
     }
-
-
-    public static float SmoothLerp01(float t)
-    {
-        t = Mathf.Clamp01(t);
-        return t * t * (3f - 2f * t);
-    }
+    
 }

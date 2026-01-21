@@ -19,7 +19,7 @@ public class CameraFollow : MonoBehaviour
     private static float _baseCenteringTime;
 
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
-    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart; 
+    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart;
 
     private void Start()
     {
@@ -93,12 +93,28 @@ public class CameraFollow : MonoBehaviour
     
     private void Update()
     {
+        // if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
+        // {
+        //     if (PlayerFsm.Singleton.TimeInCurrentState() > 0.5f)
+        //     {
+        //         transform.position = Vector3.Lerp(transform.position, PlayerFsm.Singleton.GetTeleportDestination(),
+        //             Time.deltaTime * 3f);
+        //         return;
+        //     }
+        // }
+        
+        
         transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));
         
         var neighbors = Physics.OverlapSphere(PlayerFsm.Singleton.transform.position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
             QueryTriggerInteraction.Collide);
 
         CameraBehaviorZone highestPriorityZone = null;
+        
+        
+
+        
+        
         foreach (var neighbor in neighbors)
         {
             var cameraBehaviorZone = neighbor.GetComponent<CameraBehaviorZone>();

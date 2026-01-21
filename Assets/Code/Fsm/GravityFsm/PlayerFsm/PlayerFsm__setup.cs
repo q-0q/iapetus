@@ -48,7 +48,7 @@ public partial class PlayerFsm
         TightropeMoveConfigure();
         CutsceneConfigure();
         UpdraftConfigure();
-        
+        TrialTeleportConfigure();
     }
 
     public override void SetupStateMaps()
@@ -74,6 +74,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.265f);
         StateMapConfig.Duration.Add(PlayerFsmState.InteractWithSwitch, 0.65f);
         StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.185f);
+        StateMapConfig.Duration.Add(PlayerFsmState.TrialTeleport, TrialTeleportDuration);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");

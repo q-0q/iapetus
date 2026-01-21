@@ -36,6 +36,7 @@ public partial class TrialCollectibleFsm : Fsm
         _currentKeyframeIndex = 0;
         _timeOnCurrentKeyframe = 0f;
         _marker = transform.Find("Marker");
+        _playerReturnTransform = transform.Find("PlayerReturnTransform");
         _marker.position = _keyframes[0].transform.position;
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
         _marker.Find("ActiveParticles").TryGetComponent(out _activeParticles);

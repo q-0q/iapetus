@@ -33,6 +33,7 @@ public partial class PlayerFsm
     private Quaternion _checkpointQuaternion;
     private Vector3 _walkToPositionTarget;
     private List<ParticleSystem> _kiIndicatorParticles;
+    private List<Renderer> _renderers;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
     private float _slopeTimer = 0f;
@@ -46,6 +47,9 @@ public partial class PlayerFsm
     public Interactable currentInteractable;
     private TightropeController _currentTightropeController;
     private Vector3 _defaultScenePosition;
+    private Vector3 _teleportDestination;
+    private Vector3 _teleportOrigin;
+    private Vector3 _teleportDirection;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -169,6 +173,9 @@ public partial class PlayerFsm
     private const float WalkToPositionMomentumLerpStrength = 9f;
     private const float ArriveAtWalkPositionTargetDistance = 1.5f;
     private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
+
+    private const float TrialTeleportStartupDuration = 0.5f;
+    private const float TrialTeleportDuration = 2f;
 
     private const float KiMomentumThreshhold = 11.5f;
     
@@ -512,5 +519,16 @@ public partial class PlayerFsm
     public float GetMomentum()
     {
         return _momentum;
+    }
+
+    public void SetTeleportDestination(Vector3 destination, Vector3 direction)
+    {
+        _teleportDestination = destination;
+        _teleportDirection = direction;
+    }
+
+    public Vector3 GetTeleportDestination()
+    {
+        return _teleportDestination;
     }
 }
