@@ -13,7 +13,8 @@ public partial class TrialCollectibleFsm
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
-        
+
+        StateMapConfig.Duration.Add(TrialCollectibleFsmState.Complete, 0.3f);
 
     }
 }

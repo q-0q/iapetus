@@ -9,7 +9,9 @@ public partial class PlayerFsm
     {
         var w = Mathf.InverseLerp(TrialTeleportStartupDuration, TrialTeleportDuration - TrialTeleportStartupDuration, TimeInCurrentState());
         w = Util.SmoothLerp01(w);
-        transform.position = Vector3.Lerp(_teleportOrigin, _teleportDestination, w);
+        transform.position = LerpWithArc(_teleportOrigin, _teleportDestination, w, 2f);
+        
+        print(w);
         
         if (TimeInCurrentState() > TrialTeleportStartupDuration && PreviousTimeInCurrentState() < TrialTeleportStartupDuration)
         {
@@ -24,20 +26,45 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .OnEntry(_ =>
             {
+                YVelocity = 0;
+                _momentum = 0;
+                Animator.SetFloat("Momentum",0);
                 _teleportOrigin = transform.position;
+                _teleportParticles.transform.position = transform.position;
+                _teleportParticles.Play();
                 foreach (var r in _renderers)
                 {
+                    if (r.name == "TeleportParticles") continue;
                     r.enabled = false;
                 }
             })
             .OnExit(_ =>
             {
-                YVelocity = 0;
-                _momentum = 0;
+                transform.position = _teleportDestination;
+                transform.rotation = Quaternion.LookRotation(_teleportDirection, Vector3.up);
+                _teleportParticles.transform.position = transform.position;
+                _teleportParticles.Play();
                 foreach (var r in _renderers)
                 {
                     r.enabled = true;
                 }
             });
+    }
+    
+    public static Vector3 LerpWithArc(Vector3 start, Vector3 end, float t, float height)
+    {
+        // Clamp t for safety
+        t = Mathf.Clamp01(t);
+
+        // Base linear interpolation
+        Vector3 position = Vector3.Lerp(start, end, t);
+
+        // Quadratic arc: peaks at t = 0.5, zero at t = 0 and t = 1
+        float arc = 4f * height * t * (1f - t);
+
+        // Apply arc in the world-up direction
+        position += Vector3.up * arc;
+
+        return position;
     }
 }

@@ -142,6 +142,8 @@ public partial class PlayerFsm : GravityFsm
         _checkpointVector3 = transform.position;
         _checkpointQuaternion = transform.rotation;
         _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().Where(d => d.name == "PlayerFootParticles").ToList();
+        _teleportParticles = transform.Find("TeleportParticles").GetComponent<ParticleSystem>();
+        _teleportParticles.transform.SetParent(null);
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _renderers = GetComponentsInChildren<Renderer>().ToList();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;

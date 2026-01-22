@@ -37,6 +37,7 @@ public partial class PlayerFsm
     private Material _material;
     private float _timeSinceDashFinished = 0f;
     private float _slopeTimer = 0f;
+    private ParticleSystem _teleportParticles;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -50,6 +51,7 @@ public partial class PlayerFsm
     private Vector3 _teleportDestination;
     private Vector3 _teleportOrigin;
     private Vector3 _teleportDirection;
+    
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -174,7 +176,7 @@ public partial class PlayerFsm
     private const float ArriveAtWalkPositionTargetDistance = 1.5f;
     private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
 
-    private const float TrialTeleportStartupDuration = 0.5f;
+    private const float TrialTeleportStartupDuration = 0.7f;
     private const float TrialTeleportDuration = 2f;
 
     private const float KiMomentumThreshhold = 11.5f;

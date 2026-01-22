@@ -27,6 +27,7 @@ public partial class TrialCollectibleFsm : Fsm
     protected override void OnAwake()
     {
         base.OnAwake();
+        DisableAllKeyframeCameraZones();
     }
 
     protected override void OnStart()
@@ -46,7 +47,7 @@ public partial class TrialCollectibleFsm : Fsm
         _readyParticles.Play();
         _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
         _initialCameraBehaviorZone.gameObject.SetActive(true);
-        DisableAllKeyframeCameraZones();
+        
         SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime, 0);
         _seeking = false;
     }
