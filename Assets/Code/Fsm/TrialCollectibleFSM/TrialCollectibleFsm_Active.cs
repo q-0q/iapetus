@@ -39,6 +39,8 @@ public partial class TrialCollectibleFsm
             {
                 _activeParticles.Stop();
                 _activeParticles.Clear();
+                _activeFinalParticles.Stop();
+                _activeFinalParticles.Clear();
             })
             .OnEntry(_ =>
             {
@@ -48,6 +50,8 @@ public partial class TrialCollectibleFsm
                 _keyframes[0].EnableCameraZone();
                 _initialCameraBehaviorZone.gameObject.SetActive(false);
                 _activeParticles.Play();
+                _activeFinalParticles.Play();
+                _activeFinalParticles.transform.localScale = Vector3.zero;
                 IncrementKeyframeIndex();
                 OnPlayerBeganTrial?.Invoke();
             });
@@ -56,6 +60,7 @@ public partial class TrialCollectibleFsm
     private void IncrementKeyframeIndex()
     {
         _keyframes[_currentKeyframeIndex].DisableCameraZone();
+        _keyframeTriggerParticles.Play();
         _currentKeyframeIndex++;
         if (_currentKeyframeIndex > _keyframes.Count - 1) return; 
         _keyframes[_currentKeyframeIndex].EnableCameraZone();

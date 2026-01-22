@@ -18,6 +18,8 @@ public partial class TrialCollectibleFsm
     private float _completionTime;
     public static event Action<TrialCollectibleFsm, float> OnPlayerCompletedTrial;
     public static event Action OnPlayerBeganTrial;
+    private Light _light;
+    private float _baseLightIntensity;
 
     private float _cachedPlayerRecordTime;
 
@@ -25,6 +27,8 @@ public partial class TrialCollectibleFsm
     private Transform _playerReturnTransform;
     private ParticleSystem _seekParticles;
     private ParticleSystem _activeParticles;
+    private ParticleSystem _activeFinalParticles;
+    private ParticleSystem _keyframeTriggerParticles;
     
     private ParticleSystem _readyParticles;
     private Material _beaconMaterial;
@@ -51,6 +55,7 @@ public partial class TrialCollectibleFsm
         {
             var w = t / duration;
             _seekParticles.transform.position = LerpWithArc(seekParticlesStartPosition, seekParticlesEndPosition, w, 3f);
+            var particleTransform = _activeParticles.transform;
 
             var haloScaleW = 0f;
             var haloScaleDuration = 0.1f;
@@ -60,17 +65,14 @@ public partial class TrialCollectibleFsm
             } else if (w > 1f - haloScaleDuration)
             {
                 _marker.position = _keyframes[_currentKeyframeIndex].transform.position;
+                if (_currentKeyframeIndex == _keyframes.Count - 1) particleTransform = _activeFinalParticles.transform;
                 // _marker.rotation = _keyframes[_currentKeyframeIndex].transform.rotation;
                 haloScaleW = Mathf.InverseLerp(1f - haloScaleDuration, 1f, w);
             }
 
             var haloScale = Mathf.Lerp(0f, 1f, haloScaleW);
-            _activeParticles.transform.localScale = Vector3.one * haloScale;
+            particleTransform.localScale = Vector3.one * haloScale;
             
-            // var nucleusShape = _activeNucleusParticles.shape;
-            // nucleusShape.radius = Mathf.Lerp(0, _activeNucleusParticlesBaseRadius, t);
-            // var haloShape = _activeHaloParticles.shape;
-            // haloShape.radius = Mathf.Lerp(0, _activeHaloParticlesBaseRadius, t);
             
             t += Time.deltaTime;
             yield return null;

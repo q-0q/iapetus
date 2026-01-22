@@ -11,11 +11,10 @@ public partial class PlayerFsm
         w = Util.SmoothLerp01(w);
         transform.position = LerpWithArc(_teleportOrigin, _teleportDestination, w, 2f);
         
-        print(w);
         
         if (TimeInCurrentState() > TrialTeleportStartupDuration && PreviousTimeInCurrentState() < TrialTeleportStartupDuration)
         {
-            PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(_teleportDirection, TrialTeleportDuration - TrialTeleportStartupDuration * 2f);
+            PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(_teleportDirection, TrialTeleportDuration - TrialTeleportStartupDuration);
         }
     }
     

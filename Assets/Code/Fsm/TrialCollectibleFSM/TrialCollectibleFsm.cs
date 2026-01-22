@@ -41,6 +41,8 @@ public partial class TrialCollectibleFsm : Fsm
         _marker.position = _keyframes[0].transform.position;
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
         _marker.Find("ActiveParticles").TryGetComponent(out _activeParticles);
+        _marker.Find("ActiveFinalParticles").TryGetComponent(out _activeFinalParticles);
+        _marker.Find("KeyframeTriggerParticles").TryGetComponent(out _keyframeTriggerParticles);
         _marker.Find("ReadyParticles").TryGetComponent(out _readyParticles);
         _beaconMaterial = _marker.Find("Beacon").Find("Plane").GetComponent<Renderer>().material;
         _beaconMaterial.SetFloat("_Opacity", 0);

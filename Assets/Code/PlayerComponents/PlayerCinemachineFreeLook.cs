@@ -151,14 +151,15 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         {
             direction = new Vector3(direction.x, 0f, direction.z);
             var xAngle = Vector3.SignedAngle(Vector3.forward, direction, transform.up);
-            var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
             var newXQuat = Quaternion.Euler(0, xAngle, 0);
             _scriptActive = true;
             
             float t = 0;
             while (t < duration)
             {
-                _freeLook.m_XAxis.Value = Quaternion.Lerp(oldXQuat, newXQuat, t / duration).eulerAngles.y;
+                var w = t / duration;
+                var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
+                _freeLook.m_XAxis.Value = Quaternion.Slerp(oldXQuat, newXQuat, Time.deltaTime * 6f).eulerAngles.y;
                 t += Time.deltaTime;
                 yield return null;
             }

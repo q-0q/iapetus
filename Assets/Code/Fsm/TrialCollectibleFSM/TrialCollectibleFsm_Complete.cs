@@ -16,7 +16,7 @@ public partial class TrialCollectibleFsm
             .OnEntry(_ =>
             {
                 OnPlayerCompletedTrial?.Invoke(this, _completionTime);
-                _marker.position += Vector3.up * 3f;
+                _marker.position += Vector3.up;
                 UiTimer.Singleton._active = false;
             })
             .OnExit(_ =>
