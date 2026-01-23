@@ -86,14 +86,14 @@ public partial class PlayerFsm
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
     private const float MaximumMomentumSpeedMod = 3.5f;
-    private const float RotationSpeed = 3f;
+    private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 13f;
     private const float MomentumLossRate = 25f;
     private const float MomentumTurnLoss = 3f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 6.75f;
-    private const float LowMomentumRotationMod = 4.25f;
+    private const float LowMomentumRotationMod = 5.25f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.05f;
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;

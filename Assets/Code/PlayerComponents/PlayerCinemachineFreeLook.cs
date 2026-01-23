@@ -46,6 +46,11 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private void Update()
     {
         if (_scriptActive) return;
+
+        if (_currentCameraBehaviorZone != null)
+        {
+            if (!_currentCameraBehaviorZone.gameObject.activeInHierarchy) OnCameraFollowTriggerStay(null);
+        }
         
         HandleCameraBehaviorZone();
         

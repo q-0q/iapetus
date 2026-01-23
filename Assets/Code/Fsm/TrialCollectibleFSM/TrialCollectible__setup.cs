@@ -14,7 +14,7 @@ public partial class TrialCollectibleFsm
     {
         base.SetupStateMaps();
 
-        StateMapConfig.Duration.Add(TrialCollectibleFsmState.Complete, 0.3f);
+        StateMapConfig.Duration.Add(TrialCollectibleFsmState.Complete, 0.4f);
 
     }
 }
