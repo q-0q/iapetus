@@ -58,6 +58,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Dialogue;
         public static int WalkToDialoguePosition;
         public static int Interactable;
+        public static int Climb;
         
         public static int Slide;
         public static int TightropeMove;
@@ -334,6 +335,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.TrialTeleport))
         {
             TrialTeleportOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.Climb))
+        {
+            ClimbOnUpdate();
         }
 
         
