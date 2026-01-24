@@ -16,6 +16,7 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang,
                 _ => YVelocity > MediumVaultHangMinimumYVelocity, 1)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.PitonFlipsquat) // TODO
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);

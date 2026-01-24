@@ -28,11 +28,11 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.PitonFlip)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.Landable)
-            // .SubstateOf(PlayerFsmState.WallInteractable)
+            .SubstateOf(PlayerFsmState.WallInteractable)
             .OnEntry(_ =>
             {
                 _momentum = MaxMomentum;
-                YVelocity = 10;
+                YVelocity = 35;
             });
     }
 }

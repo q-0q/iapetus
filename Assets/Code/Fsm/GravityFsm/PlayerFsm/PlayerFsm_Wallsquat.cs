@@ -21,7 +21,7 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep,
                 _ => TimeInCurrentState() > WallstepMinimumDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
-            .Permit(PlayerFsmTrigger.Dash, PlayerFsmState.Climb) // TODO
+
             .OnEntry(_ =>
             {
                 YVelocity = 0;
