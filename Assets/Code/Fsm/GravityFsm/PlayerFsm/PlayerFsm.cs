@@ -59,6 +59,10 @@ public partial class PlayerFsm : GravityFsm
         public static int WalkToDialoguePosition;
         public static int Interactable;
         public static int Climb;
+        public static int PitonHoming;
+        public static int Pitonsquat;
+        public static int PitonFlipsquat;
+        public static int PitonFlip;
         
         public static int Slide;
         public static int TightropeMove;
@@ -95,6 +99,8 @@ public partial class PlayerFsm : GravityFsm
         
         public static int StartUpdraft;
         public static int EndUpdraft;
+
+        public static int ArriveAtPiton;
     }
     
     protected override void OnAwake()

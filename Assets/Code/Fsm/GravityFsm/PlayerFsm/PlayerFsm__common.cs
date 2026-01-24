@@ -51,6 +51,7 @@ public partial class PlayerFsm
     private Vector3 _teleportDestination;
     private Vector3 _teleportOrigin;
     private Vector3 _teleportDirection;
+    private Transform _currentPitonTransform;
     
 
     public static event Action<float> OnPlayerMomentumUpdated;

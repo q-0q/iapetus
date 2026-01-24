@@ -50,6 +50,7 @@ public partial class PlayerFsm
         UpdraftConfigure();
         TrialTeleportConfigure();
         ClimbConfigure();
+        PitonConfigure();
     }
 
     public override void SetupStateMaps()
@@ -76,6 +77,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.InteractWithSwitch, 0.65f);
         StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.185f);
         StateMapConfig.Duration.Add(PlayerFsmState.TrialTeleport, TrialTeleportDuration);
+        StateMapConfig.Duration.Add(PlayerFsmState.PitonFlipsquat, 0.265f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -107,6 +109,8 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Updraft, "Updraft");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TrialTeleport, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Climb, "Climb");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.PitonFlipsquat, "GrappleFlipsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.PitonFlip, "GrappleFlip");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

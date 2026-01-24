@@ -14,6 +14,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(PlayerFsmState.DontApplyGustYVelocity)
+            .SubstateOf(PlayerFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .PermitIf(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall, _ => TimeInCurrentState() > WallsquatMinimumDuration)
