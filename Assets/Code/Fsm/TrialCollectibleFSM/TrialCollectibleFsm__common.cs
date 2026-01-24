@@ -20,7 +20,7 @@ public partial class TrialCollectibleFsm
     public static event Action OnPlayerBeganTrial;
     private Light _light;
     private float _baseLightIntensity;
-
+    private Transform _finishLine;
     private float _cachedPlayerRecordTime;
 
     private Transform _marker;
@@ -34,6 +34,8 @@ public partial class TrialCollectibleFsm
     private Material _beaconMaterial;
     
     private CameraBehaviorZone _initialCameraBehaviorZone;
+
+    
     
     IEnumerator InvokeSeekParticles()
     {
@@ -106,6 +108,24 @@ public partial class TrialCollectibleFsm
         {
             
             keyframe.DisableCameraZone();
+        }
+    }
+    
+    private void NormalizeKeyframeHeights()
+    {
+        for (int i = 0; i < _keyframes.Count; i ++)
+        {
+            var keyframe = _keyframes[i];
+            
+            if (Physics.Raycast(keyframe.transform.position, Vector3.down, out var hit, 5f, GetEnvironmentalLayermask()))
+            {
+                keyframe.transform.position = hit.point + Vector3.up * 1f;
+
+                if (i == _keyframes.Count - 1)
+                {
+                    transform.Find("FinishLine").transform.position = hit.point;
+                }
+            }
         }
     }
 }

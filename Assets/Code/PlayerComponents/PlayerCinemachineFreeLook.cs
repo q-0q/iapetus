@@ -100,7 +100,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         if (cameraBehaviorZone.priority > _currentCameraBehaviorZone.priority)
         {
-            // _timeSinceRecenter = 0f;
+            _timeSinceRecenter = 0f;
             _currentCameraBehaviorZone = cameraBehaviorZone;
             
         };

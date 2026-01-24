@@ -49,11 +49,17 @@ public partial class TrialCollectibleFsm : Fsm
         _readyParticles.Play();
         _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
         _initialCameraBehaviorZone.gameObject.SetActive(true);
+
+
+        
+        NormalizeKeyframeHeights();
         
         SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime, 0);
         _seeking = false;
     }
-    
+
+
+
     public override void OnUpdate()
     {
         base.OnUpdate();

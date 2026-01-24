@@ -34,6 +34,7 @@ public partial class PlayerFsm
                 foreach (var r in _renderers)
                 {
                     if (r.name == "TeleportParticles") continue;
+                    if (r.name.Contains("AmbientParticles")) continue;
                     r.enabled = false;
                 }
             })
