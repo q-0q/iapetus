@@ -101,6 +101,7 @@ public partial class PlayerFsm : GravityFsm
         public static int EndUpdraft;
 
         public static int ArriveAtPiton;
+        public static int EnterPitonTrigger;
     }
     
     protected override void OnAwake()
@@ -346,6 +347,16 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Climb))
         {
             ClimbOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.PitonHoming))
+        {
+            PitonHomingOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.Pitonsquat))
+        {
+            PitonsquatOnUpdate();
         }
 
         

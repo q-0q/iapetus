@@ -1,8 +1,16 @@
+using DG.Tweening;
 using UnityEngine;
 using Wasp;
 
 public partial class PlayerFsm
 {
+    
+    private void PitonHomingOnUpdate()
+    {
+        transform.position = Vector3.Lerp(transform.position, _currentPitonTransform.position + PitonTargetOffset, Time.deltaTime * 10f);
+        
+        if (Mathf.Abs(transform.position.y - (_currentPitonTransform.position.y + PitonTargetOffset.y)) < 0.5f) Machine.Fire(PlayerFsmTrigger.ArriveAtPiton);
+    }
 
     private void PitonsquatOnUpdate()
     {
@@ -13,7 +21,13 @@ public partial class PlayerFsm
     {
 
         Machine.Configure(PlayerFsmState.PitonHoming)
-            .Permit(PlayerFsmTrigger.ArriveAtPiton, PlayerFsmState.Pitonsquat);
+            .Permit(PlayerFsmTrigger.ArriveAtPiton, PlayerFsmState.PitonFlipsquat)
+            .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
+            .SubstateOf(GravityFsmState.RespectParentTransform);
 
         Machine.Configure(PlayerFsmState.Pitonsquat)
             .SubstateOf(GravityFsmState.Aerial)
@@ -23,17 +37,24 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.PitonFlipsquat)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.PitonFlip);
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.PitonFlip)
+            .OnEntry(_ =>
+            {
+                _currentPitonTransform.DOShakePosition(0.1f, 0.15f, 20);
+            });
         
         Machine.Configure(PlayerFsmState.PitonFlip)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.Landable)
+            .SubstateOf(PlayerFsmState.AirControl)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
+            .Permit(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming) // TODO
             // .SubstateOf(PlayerFsmState.WallInteractable)
             .OnEntry(_ =>
             {
                 _momentum = 5;
                 YVelocity = 33;
+                _currentPitonTransform.DOShakePosition(0.5f, 0.25f, 20);
             });
     }
 }

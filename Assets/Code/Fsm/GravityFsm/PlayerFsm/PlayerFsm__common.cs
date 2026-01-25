@@ -52,7 +52,8 @@ public partial class PlayerFsm
     private Vector3 _teleportOrigin;
     private Vector3 _teleportDirection;
     private Transform _currentPitonTransform;
-    
+    private static readonly Vector3 PitonTargetOffset = Vector3.up * -3f;
+
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;

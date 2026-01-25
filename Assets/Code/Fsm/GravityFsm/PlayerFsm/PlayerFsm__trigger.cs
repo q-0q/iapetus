@@ -63,6 +63,13 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.EndUpdraft);
         }
+
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2f, LayerMask.GetMask("Piton"), QueryTriggerInteraction.Collide))
+        {
+            if (((neighbor.transform.position + PitonTargetOffset).y - 1f < ((transform.position).y)) && YVelocity >= 5f) continue;
+            _currentPitonTransform = neighbor.transform.parent;
+            Machine.Fire(PlayerFsmTrigger.EnterPitonTrigger);
+        }
     }
 
     private void FireFaceTriggers()
