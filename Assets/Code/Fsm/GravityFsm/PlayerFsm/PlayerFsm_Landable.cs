@@ -14,7 +14,7 @@ public partial class PlayerFsm
                 _ => CurrentFallDistance() < HardLandAirDiff,
                 2)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
-                _ => (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum) || Machine.IsInState(PlayerFsmState.PitonFlip), 4)
+                _ => (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum), 4)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5);
 
     }

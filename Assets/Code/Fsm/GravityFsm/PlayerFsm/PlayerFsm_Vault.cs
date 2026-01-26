@@ -47,6 +47,7 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 _momentum = Mathf.Min(MaxMomentum, _momentum + 2f);
+                if (_inputBuffer.IsBuffered("Jump")) Machine.Jump(PlayerFsmState.Jumpsquat);
             });
         
         Machine.Configure(PlayerFsmState.DashVault)

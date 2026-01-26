@@ -41,6 +41,10 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _currentPitonTransform.DOShakePosition(0.1f, 0.15f, 20);
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
             });
         
         Machine.Configure(PlayerFsmState.PitonFlip)
@@ -48,12 +52,13 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(PlayerFsmState.AirControl)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
-            .Permit(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming) // TODO
+            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
+            // .Permit(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming) // TODO
             // .SubstateOf(PlayerFsmState.WallInteractable)
             .OnEntry(_ =>
             {
                 _momentum = 5;
-                YVelocity = 33;
+                YVelocity = 36f;
                 _currentPitonTransform.DOShakePosition(0.5f, 0.25f, 20);
             });
     }

@@ -78,7 +78,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.185f);
         StateMapConfig.Duration.Add(PlayerFsmState.TrialTeleport, TrialTeleportDuration);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlipsquat, 0.225f);
-        StateMapConfig.Duration.Add(PlayerFsmState.PitonFlip, 0.95f);
+        StateMapConfig.Duration.Add(PlayerFsmState.PitonFlip, 0.9f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
