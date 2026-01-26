@@ -4,15 +4,23 @@ using Wasp;
 
 public partial class PlayerFsm
 {
+
+    private void ForcePitonRotation()
+    {
+        var quaternion = Quaternion.LookRotation(_currentPitonTransform.forward, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, quaternion,
+            RotationSpeed * Time.deltaTime * ForceWallRotationSpeed);
+    }
     
     private void PitonHomingOnUpdate()
     {
-        transform.position = Vector3.Lerp(transform.position, _currentPitonTransform.position + PitonTargetOffset, Time.deltaTime * 4f);
+        ForcePitonRotation();
+        transform.position = Vector3.Lerp(transform.position, _currentPitonTransform.position + PitonTargetOffset, Time.deltaTime * 8f);
     }
 
     private void PitonsquatOnUpdate()
     {
-        transform.position = _currentPitonTransform.position;
+        
     }
 
     private void PitonConfigure()
@@ -22,7 +30,8 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.PitonFlipsquat)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterPitonHoming)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.PitonFlipsquat, _ => TimeInCurrentState() > 0.25f)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .OnEntry(@params =>
@@ -30,7 +39,13 @@ public partial class PlayerFsm
                 if (@params is not PitonParam pitonParam) return;
                 _currentPitonTransform.DOShakePosition(0.175f, 0.3f, 20);
                 _currentPitonTransform = pitonParam.Piton;
-            } );
+                _wallsquattedSinceLeavingGround = true;
+                YVelocity = 0f;
+            } )
+            .OnExit(_ =>
+            {
+                // transform.position = _currentPitonTransform.position + PitonTargetOffset;
+            });
 
         Machine.Configure(PlayerFsmState.Pitonsquat)
             .SubstateOf(GravityFsmState.Aerial)
@@ -60,18 +75,22 @@ public partial class PlayerFsm
             // .SubstateOf(PlayerFsmState.WallInteractable)
             .OnEntry(_ =>
             {
-                _momentum = 5;
+                _momentum = 5f;
                 YVelocity = 36f;
                 _currentPitonTransform.DOShakePosition(1f, 0.4f, 20);
             });
 
         Machine.Configure(PlayerFsmState.PitonInteractable)
-            .PermitIf(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming, _ =>
+            .PermitIf(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming, @params =>
             {
-                var velocityThreshhold = 10f;
-                // if (Machine.IsInState(PlayerFsmState.PitonFlip)) velocityThreshhold = 10f;
-                return YVelocity < velocityThreshhold;
+                if (@params is not PitonParam pitonParam) return false;
+                if (Vector3.Angle(transform.forward, pitonParam.Piton.forward) >= 100f) return false;
+                if (Machine.IsInState(PlayerFsmState.FallAfterPitonHoming) && TimeInCurrentState() < 0.5f) return false;
+                return YVelocity < 10f;
             });
-        
+
+        Machine.Configure(PlayerFsmState.FallAfterPitonHoming)
+            .SubstateOf(PlayerFsmState.Fall);
+
     }
 }

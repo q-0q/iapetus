@@ -28,6 +28,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Wallrun)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(PlayerFsmState.PitonInteractable)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)
