@@ -79,6 +79,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.TrialTeleport, TrialTeleportDuration);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlipsquat, 0.225f);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlip, 0.9f);
+        StateMapConfig.Duration.Add(PlayerFsmState.PitonHoming, 0.25f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -112,6 +113,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Climb, "Climb");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.PitonFlipsquat, "PitonFlipsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.PitonFlip, "PitonFlip");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.PitonHoming, "Wallstep");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
@@ -125,7 +127,7 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.45f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
-        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.PitonFlip, 0.7f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.PitonFlip, 0.75f);
         
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);

@@ -63,6 +63,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Pitonsquat;
         public static int PitonFlipsquat;
         public static int PitonFlip;
+        public static int PitonInteractable;
         
         public static int Slide;
         public static int TightropeMove;

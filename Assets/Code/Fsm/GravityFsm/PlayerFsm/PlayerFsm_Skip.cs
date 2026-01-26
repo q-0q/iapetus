@@ -16,6 +16,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(PlayerFsmState.AirControl)
             .SubstateOf(PlayerFsmState.WallInteractable)
+            .SubstateOf(PlayerFsmState.PitonInteractable)
             .PermitIf(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft, _ => TimeInCurrentState() > 0.35f)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
