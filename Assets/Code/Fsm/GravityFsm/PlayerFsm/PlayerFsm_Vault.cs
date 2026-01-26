@@ -26,6 +26,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Jumpsquat, _ => _inputBuffer.IsBuffered("Jump"), 1)
             .OnEntry(_ =>
             {
                 _movementAnimationMirror = !_movementAnimationMirror;
@@ -47,11 +48,10 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 _momentum = Mathf.Min(MaxMomentum, _momentum + 2f);
-                if (_inputBuffer.IsBuffered("Jump")) Machine.Jump(PlayerFsmState.Jumpsquat);
             });
         
         Machine.Configure(PlayerFsmState.DashVault)
-            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump"), 1)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump"), 2)
             .SubstateOf(PlayerFsmState.Vault);
     }
     

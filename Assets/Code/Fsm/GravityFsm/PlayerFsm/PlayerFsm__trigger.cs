@@ -67,8 +67,8 @@ public partial class PlayerFsm
         foreach (var neighbor in Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Piton"), QueryTriggerInteraction.Collide))
         {
             var yDelta = neighbor.transform.position.y - transform.position.y;
-            if (yDelta > 6f) continue;
-            if (yDelta < -6f) continue;
+            if (yDelta > 3f) continue;
+            if (yDelta < -3f) continue;
 
             var param = new PitonParam() { Piton = neighbor.transform.parent};
             Machine.Fire(PlayerFsmTrigger.EnterPitonTrigger, param);

@@ -7,7 +7,7 @@ public partial class PlayerFsm
     
     private void PitonHomingOnUpdate()
     {
-        transform.position = Vector3.Lerp(transform.position, _currentPitonTransform.position + PitonTargetOffset, Time.deltaTime * 5f);
+        transform.position = Vector3.Lerp(transform.position, _currentPitonTransform.position + PitonTargetOffset, Time.deltaTime * 4f);
     }
 
     private void PitonsquatOnUpdate()
@@ -19,17 +19,16 @@ public partial class PlayerFsm
     {
 
         Machine.Configure(PlayerFsmState.PitonHoming)
-            .Permit(PlayerFsmTrigger.ArriveAtPiton, PlayerFsmState.PitonFlipsquat)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.PitonFlipsquat)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .OnEntry(@params =>
             {
                 if (@params is not PitonParam pitonParam) return;
+                _currentPitonTransform.DOShakePosition(0.175f, 0.3f, 20);
                 _currentPitonTransform = pitonParam.Piton;
             } );
 
@@ -45,7 +44,6 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 // transform.position = _currentPitonTransform.position;
-                _currentPitonTransform.DOShakePosition(0.1f, 0.15f, 20);
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
@@ -64,11 +62,16 @@ public partial class PlayerFsm
             {
                 _momentum = 5;
                 YVelocity = 36f;
-                _currentPitonTransform.DOShakePosition(0.5f, 0.25f, 20);
+                _currentPitonTransform.DOShakePosition(1f, 0.4f, 20);
             });
 
         Machine.Configure(PlayerFsmState.PitonInteractable)
-            .PermitIf(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming, _=> YVelocity < 20f);
+            .PermitIf(PlayerFsmTrigger.EnterPitonTrigger, PlayerFsmState.PitonHoming, _ =>
+            {
+                var velocityThreshhold = 10f;
+                // if (Machine.IsInState(PlayerFsmState.PitonFlip)) velocityThreshhold = 10f;
+                return YVelocity < velocityThreshhold;
+            });
         
     }
 }
