@@ -30,14 +30,8 @@ public class CameraFollow : MonoBehaviour
         _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
         _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
         
-        var neighbors =Physics.OverlapCapsule(transform.position, transform.position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"));
-        foreach (var neighbor in neighbors)
-        {
-            neighbor.TryGetComponent(out CameraBehaviorZone _cameraBehaviorZone);
-            if (_cameraBehaviorZone == null) continue;
-            OnCameraFollowTriggerStart?.Invoke(_cameraBehaviorZone);
-            break;
-        }
+        var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
+        OnCameraFollowTriggerStart?.Invoke(highestPriorityZone);
         
     }
 
@@ -107,14 +101,17 @@ public class CameraFollow : MonoBehaviour
         
         transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));
         
-        var neighbors = Physics.OverlapSphere(PlayerFsm.Singleton.transform.position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
+        var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
+        OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);
+        
+    }
+
+    private static CameraBehaviorZone HighestPriorityZoneAtPosition(Vector3 position)
+    {
+        var neighbors = Physics.OverlapSphere(position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
             QueryTriggerInteraction.Collide);
 
         CameraBehaviorZone highestPriorityZone = null;
-        
-        
-
-        
         
         foreach (var neighbor in neighbors)
         {
@@ -128,7 +125,7 @@ public class CameraFollow : MonoBehaviour
             }
             
         }
-        OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);
-        
+
+        return highestPriorityZone;
     }
 }

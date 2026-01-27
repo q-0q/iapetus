@@ -21,6 +21,10 @@ public partial class PlayerFsm
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
                 
+                _movementAnimationMirror = !_movementAnimationMirror;
+                var flip = _movementAnimationMirror ? 0 : 1f;
+                Animator.SetFloat("Flip", flip);
+                
             });
 
         Machine.Configure(PlayerFsmState.LandsquatAfterDash)

@@ -13,9 +13,7 @@ public partial class PlayerFsm
                 _inputBuffer.ConsumeBuffer("Jump");
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
                 
-                _movementAnimationMirror = !_movementAnimationMirror;
-                var flip = _movementAnimationMirror ? 0 : 1f;
-                Animator.SetFloat("Flip", flip);
+
             })
             .OnExitFrom(FsmTrigger.Timeout, _ => { YVelocity = JumpYVelocity; });
         
