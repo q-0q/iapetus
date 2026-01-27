@@ -31,6 +31,7 @@ public partial class PlayerFsm
 
     private bool IsRaycastHitParamSteep(TriggerParams triggerParams)
     {
+        return false;
         if (triggerParams is not RaycastHitParam raycastHitParam) return false;
         if (!raycastHitParam.Hit.collider.Raycast(new Ray(raycastHitParam.Hit.point + Vector3.up, -Vector3.up),
             out var hit, 2f)) return false;

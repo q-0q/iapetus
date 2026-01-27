@@ -24,7 +24,7 @@ public class ButtonInvokeDrawer : PropertyDrawer
         {
             if (GUI.Button(position, buttonLabel))
             {
-                mb.SendMessage(settings.methodName, settings.methodParameter);
+                mb.SendMessage(settings.methodName, settings.methodParameter, SendMessageOptions.DontRequireReceiver);
             }
         }
     }

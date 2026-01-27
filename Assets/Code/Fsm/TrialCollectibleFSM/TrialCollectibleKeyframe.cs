@@ -31,14 +31,12 @@ namespace Code.Fsm.TrialCollectibleFSM
             if (attachedCameraBehaviorZone == null) return;
             attachedCameraBehaviorZone.gameObject.SetActive(true);
             attachedCameraBehaviorZone.priority = 100;
-            print("enabled " + attachedCameraBehaviorZone.name);
             OnTrialCollectibleCameraZoneUpdated?.Invoke();
         }
         
         public void DisableCameraZone()
         {
             if (attachedCameraBehaviorZone == null) return;
-            print("DISABLED");
             attachedCameraBehaviorZone.gameObject.SetActive(false);
         }
     }

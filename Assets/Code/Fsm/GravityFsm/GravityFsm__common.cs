@@ -15,6 +15,7 @@ public abstract partial class GravityFsm
     protected bool IsInGust = false;
     private float _timeOfLastGustSinOffset;
     private float _timeAtTopOfGust;
+    private float _currentSlopeCastMinimumDistanceOffset;
 
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
@@ -59,10 +60,13 @@ public abstract partial class GravityFsm
                 sphereCastMaxDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             var slopeMinDistanceOffset =
-                Mathf.Lerp(0, 5f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.normal, Vector3.up)));
+                Mathf.Lerp(0, 2f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.normal, Vector3.up)));
+
+            _currentSlopeCastMinimumDistanceOffset = slopeMinDistanceOffset > _currentSlopeCastMinimumDistanceOffset
+                ? slopeMinDistanceOffset
+                : Mathf.Lerp(_currentSlopeCastMinimumDistanceOffset, slopeMinDistanceOffset, Time.deltaTime * 5f);
             
-            
-            return transform.position.y - hit.point.y < minDistance + slopeMinDistanceOffset;
+            return transform.position.y - hit.point.y < minDistance + _currentSlopeCastMinimumDistanceOffset;
         }
 
         return false;

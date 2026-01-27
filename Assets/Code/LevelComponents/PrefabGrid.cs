@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
+
+[ExecuteAlways]
 public class PrefabGrid : MonoBehaviour
 {
     [SerializeField] private GameObject prefab;
@@ -28,10 +34,11 @@ public class PrefabGrid : MonoBehaviour
 
     private void Bake()
     {
-        for (int i = 0; i < transform.childCount; i++)
+        while (transform.childCount > 0)
         {
-            DestroyImmediate(transform.GetChild(i).gameObject);
+            DestroyImmediate(transform.GetChild(0).gameObject);
         }
+
         
         var x = sizeX;
         var z = sizeZ;
@@ -40,7 +47,15 @@ public class PrefabGrid : MonoBehaviour
             for (float j = -z * 0.5f + transform.position.z; j < z * 0.5f + transform.position.z; j += density)
             {
                 var pos = new Vector3(i + UnityEngine.Random.Range(-maxPositionOffset, maxPositionOffset), transform.position.y,  j + UnityEngine.Random.Range(-maxPositionOffset, maxPositionOffset));
-                var obj = Instantiate(prefab, pos, Quaternion.identity);
+                
+                
+                #if UNITY_EDITOR
+                var obj = (GameObject)PrefabUtility.InstantiatePrefab(prefab, transform);
+                obj.transform.position = pos;
+                #else
+                var obj = Instantiate(prefab, pos, Quaternion.identity, transform);
+                #endif
+                
                 obj.transform.rotation = Quaternion.Euler(0, UnityEngine.Random.Range(minRotation, maxRotation), 0f);
                 var s = UnityEngine.Random.Range(minScale, maxScale);
                 obj.transform.SetParent(transform);

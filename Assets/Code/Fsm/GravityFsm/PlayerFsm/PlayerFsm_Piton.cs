@@ -30,10 +30,11 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterPitonHoming)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.PitonFlipsquat, _ => TimeInCurrentState() > 0.25f)
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
-            .SubstateOf(GravityFsmState.RespectParentTransform)
             .OnEntry(@params =>
             {
                 if (@params is not PitonParam pitonParam) return;
@@ -41,6 +42,14 @@ public partial class PlayerFsm
                 _currentPitonTransform = pitonParam.Piton;
                 _wallsquattedSinceLeavingGround = true;
                 YVelocity = 0f;
+                
+                if (_currentPitonTransform != parentTransform)
+                {
+                    parentTransform = _currentPitonTransform;
+                    _previousParentTransformPosition = parentTransform.position;
+                    _previousParentRotation = parentTransform.rotation;
+                    OnParentTransformChanged(parentTransform);
+                }
             } )
             .OnExit(_ =>
             {
@@ -50,11 +59,13 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Pitonsquat)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.PitonFlipsquat)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall);
 
         Machine.Configure(PlayerFsmState.PitonFlipsquat)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.PitonFlip)
             .OnEntry(_ =>
             {
@@ -72,7 +83,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.PitonInteractable)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
-            // .SubstateOf(PlayerFsmState.WallInteractable)
+            .SubstateOf(PlayerFsmState.WallInteractable)
             .OnEntry(_ =>
             {
                 _momentum = 5f;
@@ -86,7 +97,7 @@ public partial class PlayerFsm
                 if (@params is not PitonParam pitonParam) return false;
                 if (Vector3.Angle(transform.forward, pitonParam.Piton.forward) >= 100f) return false;
                 if (Machine.IsInState(PlayerFsmState.FallAfterPitonHoming) && TimeInCurrentState() < 0.5f) return false;
-                return YVelocity < 10f;
+                return YVelocity < 20f;
             });
 
         Machine.Configure(PlayerFsmState.FallAfterPitonHoming)

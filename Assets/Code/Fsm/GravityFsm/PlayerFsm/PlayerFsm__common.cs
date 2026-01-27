@@ -181,6 +181,8 @@ public partial class PlayerFsm
     private const float TrialTeleportStartupDuration = 0.7f;
     private const float TrialTeleportDuration = 2f;
 
+    private const float PitonMaximumWallInteractYVelocity = 5f;
+
     private const float KiMomentumThreshhold = 11.5f;
     
     public EventReference jumpFmodEvent;
@@ -222,10 +224,10 @@ public partial class PlayerFsm
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
-    private bool UpdateLedgePosition(float ledgeHeight)
+    private bool UpdateLedgePosition(float ledgeHeight, float forwardOffset = 0.25f)
     {
         var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
-            (ComputeDynamicForwardRaycastDistance() + 1f);
+            (ComputeDynamicForwardRaycastDistance() + forwardOffset);
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
