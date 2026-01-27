@@ -47,16 +47,24 @@ public abstract partial class GravityFsm
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         var f = 1f;
         var minDistance = 0.1f;
-        if (Physics.SphereCast(transform.position + Vector3.up * (f * raycastLength) + forward, 0.35f, -Vector3.up,
+        
+        var sphereCastOrigin = transform.position + Vector3.up * (f * raycastLength) + forward;
+        var sphereCastMaxDistance = raycastLength * f * 2f;
+        var sphereSpherecastDirection = -Vector3.up;
+        
+        Debug.DrawRay(sphereCastOrigin, sphereSpherecastDirection * sphereCastMaxDistance, Color.red);
+        
+        if (Physics.SphereCast(sphereCastOrigin, 0.35f, sphereSpherecastDirection,
                 out hit,
-                raycastLength * f * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+                sphereCastMaxDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             var slopeMinDistanceOffset =
                 Mathf.Lerp(0, 5f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.normal, Vector3.up)));
-            return Mathf.Abs(transform.position.y - hit.point.y) < minDistance;
+            
+            
+            return transform.position.y - hit.point.y < minDistance + slopeMinDistanceOffset;
         }
 
-        // if (debug) Debug.Log("GetGrounded Spherecast failed");
         return false;
     }
 

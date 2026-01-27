@@ -106,7 +106,7 @@ public class CameraFollow : MonoBehaviour
         
     }
 
-    private static CameraBehaviorZone HighestPriorityZoneAtPosition(Vector3 position)
+    public static CameraBehaviorZone HighestPriorityZoneAtPosition(Vector3 position)
     {
         var neighbors = Physics.OverlapSphere(position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
             QueryTriggerInteraction.Collide);
