@@ -543,7 +543,7 @@ public partial class PlayerFsm
         Shader.SetGlobalVector("_PlayerWorldPosition", transform.position);
 
         var shaderGrounded = Shader.GetGlobalFloat("_PlayerGrounded");
-        shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(GravityFsmState.Grounded) ? 1f : -1f);
+        shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(GravityFsmState.Grounded) ? 2f : -0.5f);
         shaderGrounded = Mathf.Clamp(shaderGrounded, 0f, 1f);
         Shader.SetGlobalFloat("_PlayerGrounded", shaderGrounded);
     }
