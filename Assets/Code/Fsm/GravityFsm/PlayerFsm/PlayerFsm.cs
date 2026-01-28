@@ -186,8 +186,8 @@ public partial class PlayerFsm : GravityFsm
         _timeSinceDashFinished += Time.deltaTime;
         
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
-        Shader.SetGlobalVector("_PlayerWorldPosition", transform.position);
-        
+        UpdateShaderGlobals();
+
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             GroundMoveOnUpdate();
