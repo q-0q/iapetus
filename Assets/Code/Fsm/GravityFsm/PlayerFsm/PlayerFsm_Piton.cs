@@ -38,8 +38,10 @@ public partial class PlayerFsm
             .OnEntry(@params =>
             {
                 if (@params is not PitonParam pitonParam) return;
-                _currentPitonTransform.DOShakePosition(0.175f, 0.3f, 20);
+                _currentPitonTransform.DOShakeRotation(0.175f, 0.3f, 10);
+                _currentPitonTransform.DOShakePosition(0.175f, 0.3f, 10);
                 _currentPitonTransform = pitonParam.Piton;
+                _currentPitonTransform.GetComponent<PitonController>().Rotate = true;
                 _wallsquattedSinceLeavingGround = true;
                 YVelocity = 0f;
                 
@@ -53,7 +55,8 @@ public partial class PlayerFsm
             } )
             .OnExit(_ =>
             {
-                // transform.position = _currentPitonTransform.position + PitonTargetOffset;
+                _currentPitonTransform.GetComponent<PitonController>().Rotate = false;
+                
             });
 
         Machine.Configure(PlayerFsmState.Pitonsquat)
@@ -69,7 +72,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.PitonFlip)
             .OnEntry(_ =>
             {
-                // transform.position = _currentPitonTransform.position;
+                transform.position = _currentPitonTransform.position + PitonTargetOffset;
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
@@ -88,6 +91,7 @@ public partial class PlayerFsm
             {
                 _momentum = 5f;
                 YVelocity = 36f;
+                _currentPitonTransform.DOShakeRotation(1f, 0.4f, 20);
                 _currentPitonTransform.DOShakePosition(1f, 0.4f, 20);
             });
 
@@ -97,6 +101,7 @@ public partial class PlayerFsm
                 if (@params is not PitonParam pitonParam) return false;
                 if (Vector3.Angle(transform.forward, pitonParam.Piton.forward) >= 100f) return false;
                 if (Machine.IsInState(PlayerFsmState.FallAfterPitonHoming) && TimeInCurrentState() < 0.5f) return false;
+                if (Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.1f) return false;
                 return YVelocity < 20f;
             });
 
