@@ -34,6 +34,7 @@ public partial class PlayerFsm
                 }
                 _momentum = 0;
                 
+                OnPlayerFootstep();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
             });
     }

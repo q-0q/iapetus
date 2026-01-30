@@ -522,27 +522,36 @@ public partial class PlayerFsm
     {
         StartCoroutine(QueueFootstep());
         
-        IEnumerator QueueFootstep()
-        {
-            var maximumWaitTime = 0.5f;
-            var t = 0f;
-            while (t < maximumWaitTime)
-            {
-                if (parentTransform != null)
-                {
-                    var fmodMaterialLabel = "Stone";
-                    var parentMaterialName = parentTransform.GetComponentInChildren<MeshRenderer>().material.name;
-                    if (parentMaterialName.Contains("Snow")) fmodMaterialLabel = "Snow";
-                    if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
-                    FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
-                    FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
-                    yield break;
-                }
-                t += Time.deltaTime;
-                yield return null;
-            }
-        }
+    }
 
+    private void OnPlayerFootstepDelay(float delay)
+    {
+        StartCoroutine(QueueFootstep(delay));
+    }
+    
+    private IEnumerator QueueFootstep(float minimumDelay = 0)
+    {
+        
+        yield return new WaitForFixedUpdate(); // basically just delay a frame to handle race conditions between the updating of the parent transform and the entry of some substate
+        var maximumWaitTime = 0.5f;
+        var t = 0f;
+        while (t < maximumWaitTime)
+        {
+            if (parentTransform != null && t > minimumDelay)
+            {
+                var fmodMaterialLabel = "Stone";
+                var renderer = parentTransform.GetComponentInChildren<MeshRenderer>();
+                if (renderer == null) yield break;
+                var parentMaterialName = renderer.material.name;
+                if (parentMaterialName.Contains("Snow")) fmodMaterialLabel = "Snow";
+                if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
+                yield break;
+            }
+            t += Time.deltaTime;
+            yield return null;
+        }
     }
 
     public float GetMomentum()

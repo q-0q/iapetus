@@ -27,7 +27,7 @@ public partial class PlayerFsm
                 YVelocity = 0;
                 LastUpwardsY = transform.position.y;
                 _wallsquattedSinceLeavingGround = true;
-
+                OnPlayerFootstep();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(landFmodEvent, gameObject);
             })
             .OnExit(_ =>

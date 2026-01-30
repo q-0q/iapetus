@@ -21,7 +21,6 @@ public abstract partial class GravityFsm
                 OnParentTransformChanged(parentTransform);
             }
             
-            print("Grounded OnEntry");
         }
         UpdateYVelocityMetadata();
     }
