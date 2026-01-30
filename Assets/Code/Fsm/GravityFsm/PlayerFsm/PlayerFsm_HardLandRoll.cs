@@ -19,7 +19,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
-                FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
+                OnPlayerFootstep();
                 LastUpwardsY = transform.position.y;
                 _momentum = HardLandRollExitMomentum;
             });

@@ -43,7 +43,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
-                FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
+                OnPlayerFootstep();
             })
             .OnExit(_ =>
             {

@@ -499,13 +499,7 @@ public partial class PlayerFsm
 
     protected override void OnParentTransformChanged(Transform t)
     {
-        var fmodMaterialLabel = "Stone";
-        var parentMaterialName = t.GetComponentInChildren<MeshRenderer>().material.name;
-        if (parentMaterialName.Contains("Snow")) fmodMaterialLabel = "Snow";
-        if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
-        FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
-        
-        print(fmodMaterialLabel);
+
         
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
@@ -526,8 +520,29 @@ public partial class PlayerFsm
 
     private void OnPlayerFootstep()
     {
-        if (!Machine.IsInState(PlayerFsmState.GroundMove)) return;
-        FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
+        StartCoroutine(QueueFootstep());
+        
+        IEnumerator QueueFootstep()
+        {
+            var maximumWaitTime = 0.5f;
+            var t = 0f;
+            while (t < maximumWaitTime)
+            {
+                if (parentTransform != null)
+                {
+                    var fmodMaterialLabel = "Stone";
+                    var parentMaterialName = parentTransform.GetComponentInChildren<MeshRenderer>().material.name;
+                    if (parentMaterialName.Contains("Snow")) fmodMaterialLabel = "Snow";
+                    if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
+                    FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
+                    FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
+                    yield break;
+                }
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
+
     }
 
     public float GetMomentum()
