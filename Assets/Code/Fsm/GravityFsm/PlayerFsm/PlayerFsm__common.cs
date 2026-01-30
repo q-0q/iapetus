@@ -191,7 +191,7 @@ public partial class PlayerFsm
     public EventReference skipFmodEvent;
     public EventReference dashFmodEvent;
     public EventReference climbFmodEvent;
-    public EventReference snowFootstepFmodEvent;
+    public EventReference footstepFmodEvent;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -499,6 +499,14 @@ public partial class PlayerFsm
 
     protected override void OnParentTransformChanged(Transform t)
     {
+        var fmodMaterialLabel = "Stone";
+        var parentMaterialName = t.GetComponentInChildren<MeshRenderer>().material.name;
+        if (parentMaterialName.Contains("Snow")) fmodMaterialLabel = "Snow";
+        if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
+        
+        print(fmodMaterialLabel);
+        
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }
@@ -519,7 +527,7 @@ public partial class PlayerFsm
     private void OnPlayerFootstep()
     {
         if (!Machine.IsInState(PlayerFsmState.GroundMove)) return;
-        FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
+        FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
     }
 
     public float GetMomentum()

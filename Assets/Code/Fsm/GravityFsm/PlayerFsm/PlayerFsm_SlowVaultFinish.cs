@@ -30,7 +30,7 @@ public partial class PlayerFsm
             {
                 _inputBuffer.ConsumeBuffer("Jump");
                 YVelocity = 0;
-                FMODUnity.RuntimeManager.PlayOneShotAttached(snowFootstepFmodEvent, gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
             })
             .OnExit(_ => { 
                 _momentum = 5f;
