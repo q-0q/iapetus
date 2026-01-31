@@ -7,7 +7,7 @@ public class PlayerCloth : MonoBehaviour
 {
 
     private const int SegmentCount = 4;
-    private const float SegmentDistance = 0.125f;
+    private const float SegmentDistance = 0.025f;
     private const float SegmentScale = 1f;
     private List<GameObject> _segments;
     private LineRenderer _lineRenderer;
@@ -19,7 +19,7 @@ public class PlayerCloth : MonoBehaviour
     void Start()
     {
         // return;
-        transform.position = transform.parent.position;
+        // transform.position = transform.parent.position;
         _segments = new List<GameObject>();
         _segmentPrefab = Resources.Load("Prefab/PlayerClothSegment") as GameObject;
         var connectedObject = gameObject;
@@ -65,7 +65,7 @@ public class PlayerCloth : MonoBehaviour
         for (int i = 0; i < SegmentCount; i++)
         {
             _segments[i].TryGetComponent(out Rigidbody rigidbody);
-            rigidbody.AddForce(Vector3.down * (3000f * Time.fixedDeltaTime));
+            rigidbody.AddForce(Vector3.down * (30000f * Time.fixedDeltaTime));
         }
     }
 

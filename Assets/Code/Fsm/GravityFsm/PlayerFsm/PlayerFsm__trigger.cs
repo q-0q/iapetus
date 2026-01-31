@@ -24,7 +24,7 @@ public partial class PlayerFsm
         }
         
         
-        if (_inputBuffer.IsBuffered("Dash"))
+        if (_inputBuffer.IsBuffered("Jump"))
         {
             Machine.Fire(PlayerFsmTrigger.Dash);
         }

@@ -101,7 +101,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3.4f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.45f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
