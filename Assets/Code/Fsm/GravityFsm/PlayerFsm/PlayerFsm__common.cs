@@ -310,6 +310,8 @@ public partial class PlayerFsm
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
             _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
         }
+
+        _momentum = Mathf.Min(MaxMomentum * 0.6f, _momentum);
     }
     
     
