@@ -16,17 +16,12 @@ public partial class PlayerFsm
         if (_inputBuffer.IsBuffered("Jump"))
         {
             Machine.Fire(PlayerFsmTrigger.Jump);
+            Machine.Fire(PlayerFsmTrigger.Dash);
         }
         
         if (_inputBuffer.IsBuffered("Attack"))
         {
             Machine.Fire(PlayerFsmTrigger.Attack);
-        }
-        
-        
-        if (_inputBuffer.IsBuffered("Jump"))
-        {
-            Machine.Fire(PlayerFsmTrigger.Dash);
         }
         
         var v3 = GetInputMovementVector3();

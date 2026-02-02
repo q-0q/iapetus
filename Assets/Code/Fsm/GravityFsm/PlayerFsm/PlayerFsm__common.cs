@@ -97,11 +97,14 @@ public partial class PlayerFsm
     private const float LowMomentumThreshhold = 6.75f;
     private const float LowMomentumRotationMod = 5.25f;
     private const float LowMomentumMomentumGainMod = 1.15f;
-    private const float LowMomentumMomentumLossMod = 1.05f;
-    private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
-    private const float GroundMoveMaximumAnimatorSpeedMod = 3.4f;
+    private const float LowMomentumMomentumLossMod = 1.25f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 0.6f;
+    private const float GroundMoveMaximumAnimatorSpeedMod = 3f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.45f;
+    private const float SprintMomentumCutoffMultiplier = 0.65f;
+    private const float SprintMomentumGainMultiplier = 1.6f;
+    private const float SprintTurnLossMultiplier = 1.5f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -183,6 +186,8 @@ public partial class PlayerFsm
 
     private const float PitonMaximumWallInteractYVelocity = 5f;
 
+
+
     private const float KiMomentumThreshhold = 11.5f;
     
     public EventReference jumpFmodEvent;
@@ -249,7 +254,7 @@ public partial class PlayerFsm
     }
 
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false,
-        float momentumDecayMultiplier = 1f, bool ignoreTurnAnimationLayer = false)
+        float momentumDecayMultiplier = 1f, bool ignoreTurnAnimationLayer = false, float animationTurnModifier = 1f)
     {
         
         var v3 = GetInputMovementVector3();
@@ -261,10 +266,10 @@ public partial class PlayerFsm
             inputVector3 = transform.forward;
         }
         
-        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3, ignoreTurnAnimationLayer);
+        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3, ignoreTurnAnimationLayer, animationTurnModifier);
     }
 
-    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction, bool ignoreTurnAnimationLayer = false)
+    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction, bool ignoreTurnAnimationLayer = false, float animationTurnModifier = 1f)
     {
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(direction.normalized, transform.forward.normalized, Vector3.up);
@@ -272,7 +277,8 @@ public partial class PlayerFsm
         if (!ignoreTurnAnimationLayer)
         {
             var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
-            animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
+            
+            animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount) * animationTurnModifier;
             var turnAmount = Animator.GetFloat("TurnAmount");
             var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
             Animator.SetFloat("TurnAmount",
@@ -282,8 +288,9 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
+        var sprintLoss = _playerInput.actions["Sprint"].IsPressed() ? SprintTurnLossMultiplier : 1f;
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
-                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier));
+                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier * sprintLoss));
         
         var quaternion = Quaternion.LookRotation(direction.normalized, Vector3.up);
         
@@ -298,20 +305,24 @@ public partial class PlayerFsm
         var v2 = GetInputMovementVector2();
         if (v2.magnitude > InputMagnitudeThreshhold)
         {
+            var sprinting = _playerInput.actions["Sprint"].IsPressed();
+            
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
             
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
-            _momentum = Mathf.Min(MaxMomentum * slopeMaxMomentumMod, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * Time.deltaTime);
+            var localMaximum = MaxMomentum * slopeMaxMomentumMod * (sprinting ? 1f : SprintMomentumCutoffMultiplier);
+            var sprintMomentumGainMod = sprinting ? SprintMomentumGainMultiplier : 1f;
+            
+            _momentum = Mathf.Min(localMaximum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * sprintMomentumGainMod * Time.deltaTime);
         }
         else
         {
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
             _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
         }
-
-        _momentum = Mathf.Min(MaxMomentum * 0.6f, _momentum);
+        
     }
     
     
