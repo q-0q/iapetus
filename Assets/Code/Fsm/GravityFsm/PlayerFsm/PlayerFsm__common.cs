@@ -38,6 +38,7 @@ public partial class PlayerFsm
     private float _timeSinceDashFinished = 0f;
     private float _slopeTimer = 0f;
     private ParticleSystem _teleportParticles;
+    private bool isSprinting;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -90,7 +91,7 @@ public partial class PlayerFsm
     private const float MaximumMomentumSpeedMod = 3.5f;
     private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
-    private const float MomentumGainRate = 15f;
+    private const float MomentumGainRate = 20f;
     private const float MomentumLossRate = 25f;
     private const float MomentumTurnLoss = 3f;
     private const float NoMomentumThreshold = 0.25f;
@@ -103,7 +104,7 @@ public partial class PlayerFsm
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.45f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
-    private const float SprintMomentumGainMultiplier = 1.6f;
+    private const float SprintMomentumGainMultiplier = 2f;
     private const float SprintTurnLossMultiplier = 1.5f;
     
     private const float JumpYVelocity = 22f; 
@@ -288,7 +289,8 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-        var sprintLoss = _playerInput.actions["Sprint"].IsPressed() ? SprintTurnLossMultiplier : 1f;
+        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f) isSprinting = false;
+        var sprintLoss = isSprinting ? SprintTurnLossMultiplier : 1f;
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
                                               Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier * sprintLoss));
         
@@ -305,20 +307,22 @@ public partial class PlayerFsm
         var v2 = GetInputMovementVector2();
         if (v2.magnitude > InputMagnitudeThreshhold)
         {
-            var sprinting = _playerInput.actions["Sprint"].IsPressed();
+            var grounded = Machine.IsInState(GravityFsmState.Grounded);
+            var sprinting = isSprinting;
             
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
             
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
-            var localMaximum = MaxMomentum * slopeMaxMomentumMod * (sprinting ? 1f : SprintMomentumCutoffMultiplier);
-            var sprintMomentumGainMod = sprinting ? SprintMomentumGainMultiplier : 1f;
+            var localMaximum = MaxMomentum * slopeMaxMomentumMod * (!sprinting && grounded ? SprintMomentumCutoffMultiplier : 1f);
+            var sprintMomentumGainMod = (sprinting && grounded ? SprintMomentumGainMultiplier : 1f);
             
             _momentum = Mathf.Min(localMaximum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * sprintMomentumGainMod * Time.deltaTime);
         }
         else
         {
+            isSprinting = false;
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
             _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
         }

@@ -138,7 +138,7 @@ public partial class PlayerFsm : GravityFsm
         base.OnStart();
         Singleton = this;
         InitState = PlayerFsmState.GroundMove;
-
+        isSprinting = false;
         Time.timeScale = 1f;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
@@ -187,6 +187,8 @@ public partial class PlayerFsm : GravityFsm
         
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
         UpdateShaderGlobals();
+
+        if (_playerInput.actions["Sprint"].IsPressed()) isSprinting = true;
 
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
