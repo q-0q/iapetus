@@ -4,6 +4,8 @@ public partial class PlayerFsm
 {
     private void GroundMoveOnUpdate()
     { 
+        if (_playerInput.actions["Sprint"].IsPressed()) isSprinting = true;
+        
         HandleInputMomentumChange();
         HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);
         HandleCollisionMove();

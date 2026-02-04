@@ -33,6 +33,6 @@ public partial class PlayerFsm
     
     private bool WallrunVelocityChecker()
     {
-        return _momentum > WallRunMinimumMomentum && (YVelocity < WallRunMinimumYVelocity || IsInGust);
+        return isSprinting && _momentum > WallRunMinimumMomentum && (YVelocity < WallRunMinimumYVelocity || IsInGust);
     }
 }
