@@ -1,17 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FMODSceneRequestor : MonoBehaviour
 {
-    public List<FMODSceneManager.FMODSceneEvent> StartEvents;
+    [Serializable]
+    public class StartRequest
+    {
+        public FMODSceneManager.FMODSceneEvent FMODSceneEvent;
+        public float minimumPlayerY = -1000f;
+
+    }
+    public List<StartRequest> StartEvents;
     public List<FMODSceneManager.FMODSceneEvent> StopEvents;
-    void Start()
+    void Update()
     {
         
         foreach (var start in StartEvents)
         {
-            FMODSceneManager.Singleton.Play(start);
+            if (PlayerFsm.Singleton.transform.position.y < start.minimumPlayerY) continue;
+            FMODSceneManager.Singleton.Play(start.FMODSceneEvent);
         }
         
         foreach (var stop in StopEvents)

@@ -61,6 +61,9 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _finalVirtualCamera.Follow = cameraFollow;
         _finalVirtualCamera.LookAt = cameraFollow;
         
+        _initialFogEndDistance = RenderSettings.fogEndDistance;
+        _initialFogStartDistance = RenderSettings.fogStartDistance;
+        
 
     }
     
@@ -165,7 +168,6 @@ public partial class TestCutsceneFsm : CutsceneFsm
         if (saveData.persistentEvents.Contains(CutscenePersistentEvent))
         {
             Machine.Jump(CutsceneFsmState.Inactive);
-            FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.Ch1Music);
             return;
         }
         Machine.Fire(CutsceneFsmTrigger.StartCutscene);

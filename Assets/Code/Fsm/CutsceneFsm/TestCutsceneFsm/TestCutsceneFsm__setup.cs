@@ -67,7 +67,7 @@ public partial class TestCutsceneFsm
             .OnEntry(_ =>
             {
                 _creakEventInstance.stop(STOP_MODE.IMMEDIATE);
-                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaBreakEventReference, gondola.gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
                 innerCube.DOShakePosition(0.75f, 0.5f);
                 innerCube.DOShakeRotation(3.75f, 0.5f);
             });
@@ -77,7 +77,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaBreakEventReference, gondola.gameObject);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
                 innerCube.DOShakePosition(0.75f, 0.5f);
             });
@@ -130,7 +130,6 @@ public partial class TestCutsceneFsm
                 innerCube.DOShakePosition(1.5f, 1f);
                 gondola.DOShakePosition(1.5f, 1f);
                 gondola.transform.position = _endPosition.position;
-                FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.Ch1Music);
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
                 SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
                 SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, 0f, 0);

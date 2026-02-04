@@ -23,7 +23,7 @@ public partial class TestCutsceneFsm
     private bool _moveCubeForwardShake2 = false;
     private float _textClock;
     private ParticleSystem _impactParticles;
-    private const string CutscenePersistentEvent = "IntroCutsceneCompleted"; 
+    private const string CutscenePersistentEvent = "IntroCutsceneCompleted";
 
     private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
@@ -48,4 +48,6 @@ public partial class TestCutsceneFsm
 
     private float _moveCubeForwardDuration = 20f;
     private CinemachineVirtualCamera _finalVirtualCamera;
+    private float _initialFogEndDistance;
+    private float _initialFogStartDistance;
 }
