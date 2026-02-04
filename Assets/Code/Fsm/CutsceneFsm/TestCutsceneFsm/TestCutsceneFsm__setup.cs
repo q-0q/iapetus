@@ -84,13 +84,18 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.WaitForInput)
             .Permit(TestCutsceneFsmTrigger.PlayerInputJump, TestCutsceneFsmState.WaitForJumpsquat)
-            .SubstateOf(CutsceneFsmState.Active);
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                TutorialCanvas.Singleton.ShowTutorialText("South button / space: Jump");
+            });
         
         Machine.Configure(TestCutsceneFsmState.WaitForJumpsquat)
             .Permit(TestCutsceneFsmTrigger.PlayerInJumpState, TestCutsceneFsmState.MoveCubeDown2)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                TutorialCanvas.Singleton.HideTutorialText();
                 Time.timeScale = 0.5f;
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Jumpsquat);
             });
@@ -150,7 +155,7 @@ public partial class TestCutsceneFsm
         StateMapConfig.Duration.Add(TestCutsceneFsmState.TextFade, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeForward, +_moveCubeForwardDuration);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
-        StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake2, 2f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake2, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.625f);
         
