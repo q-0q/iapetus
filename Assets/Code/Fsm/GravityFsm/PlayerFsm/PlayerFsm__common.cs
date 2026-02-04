@@ -303,12 +303,13 @@ public partial class PlayerFsm
     }
 
     private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f)
-    {
+    { 
+        var sprinting = isSprinting;
+        var isSprintingOver = !isSprinting && _momentum >= MaxMomentum * SprintMomentumCutoffMultiplier;
         var v2 = GetInputMovementVector2();
-        if (v2.magnitude > InputMagnitudeThreshhold)
+        if (v2.magnitude > InputMagnitudeThreshhold && !isSprintingOver)
         {
             var grounded = Machine.IsInState(GravityFsmState.Grounded);
-            var sprinting = isSprinting;
             
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
