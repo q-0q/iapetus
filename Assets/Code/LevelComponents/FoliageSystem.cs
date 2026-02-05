@@ -40,52 +40,72 @@ public class FoliageSystem : MonoBehaviour
     void BuildInstances()
     {
         Collider col = GetComponent<Collider>();
-        Bounds bounds = col.bounds;
+        Bounds localBounds = GetLocalColliderBounds(col);
 
-        float area = bounds.size.x * bounds.size.z;
+        // -----------------------------
+        // WORLD-SPACE DENSITY FIX
+        // -----------------------------
+        Vector3 lossy = transform.lossyScale;
+
+        float worldArea =
+            localBounds.size.x * lossy.x *
+            localBounds.size.z * lossy.z;
+
         int targetCount = Mathf.Min(
-            Mathf.RoundToInt(area * density),
+            Mathf.RoundToInt(worldArea * density),
             maxInstances
         );
+        // -----------------------------
 
         List<Matrix4x4> matrices = new List<Matrix4x4>(targetCount);
 
         for (int i = 0; i < targetCount; i++)
         {
-            // Random point inside collider bounds (XZ)
-            float x = Random.Range(bounds.min.x, bounds.max.x);
-            float z = Random.Range(bounds.min.z, bounds.max.z);
+            // Sample in LOCAL space
+            Vector3 localPoint = new Vector3(
+                Random.Range(localBounds.min.x, localBounds.max.x),
+                localBounds.max.y,
+                Random.Range(localBounds.min.z, localBounds.max.z)
+            );
 
-            Vector3 origin = new Vector3(x, bounds.max.y + raycastHeight, z);
+            Vector3 worldOrigin =
+                transform.TransformPoint(localPoint) +
+                transform.up * raycastHeight;
 
-            if (!Physics.Raycast(origin, Vector3.down, out RaycastHit hit, raycastHeight * 2f, ~LayerMask.GetMask(), QueryTriggerInteraction.Ignore))
+            if (!Physics.Raycast(
+                worldOrigin,
+                -transform.up,
+                out RaycastHit hit,
+                raycastHeight * 2f,
+                ~LayerMask.GetMask(),
+                QueryTriggerInteraction.Ignore))
                 continue;
-            
 
-            // If we hit something that is NOT ReceiveFoliage → skip
             if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
                 continue;
-            
-            // Random offset (small jitter)
-            Vector3 offset = new Vector3(
+
+            Vector3 localOffset = new Vector3(
                 Random.Range(offsetRange.x, offsetRange.y),
                 0f,
                 Random.Range(offsetRange.x, offsetRange.y)
             );
 
-            Vector3 position = hit.point + offset;
+            Vector3 position =
+                hit.point + transform.TransformDirection(localOffset);
 
-            Quaternion rotation = Quaternion.Euler(
-                0f,
-                Random.Range(rotationYRange.x, rotationYRange.y),
-                0f
-            );
+            Quaternion rotation =
+                Quaternion.AngleAxis(
+                    Random.Range(rotationYRange.x, rotationYRange.y),
+                    hit.normal
+                );
 
             float scale = Random.Range(scaleRange.x, scaleRange.y);
 
-            matrices.Add(
-                Matrix4x4.TRS(position, rotation, Vector3.one * scale)
-            );
+            matrices.Add(Matrix4x4.TRS(
+                position,
+                rotation,
+                Vector3.one * scale
+            ));
         }
 
         instData = matrices.ToArray();
@@ -97,5 +117,31 @@ public class FoliageSystem : MonoBehaviour
             return;
 
         Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
+    }
+
+    Bounds GetLocalColliderBounds(Collider col)
+    {
+        if (col is BoxCollider box)
+        {
+            return new Bounds(box.center, box.size);
+        }
+        else if (col is MeshCollider meshCol && meshCol.sharedMesh != null)
+        {
+            return meshCol.sharedMesh.bounds;
+        }
+
+        // Fallback (least accurate)
+        Bounds b = col.bounds;
+        Vector3 center = transform.InverseTransformPoint(b.center);
+        Vector3 size = Vector3.Scale(
+            b.size,
+            new Vector3(
+                1f / transform.lossyScale.x,
+                1f / transform.lossyScale.y,
+                1f / transform.lossyScale.z
+            )
+        );
+
+        return new Bounds(center, size);
     }
 }
