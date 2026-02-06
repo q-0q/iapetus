@@ -75,7 +75,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleStartup, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.GrappleFlipsquat, 0.265f);
         StateMapConfig.Duration.Add(PlayerFsmState.InteractWithSwitch, 0.65f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.185f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Skipsquat, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.TrialTeleport, TrialTeleportDuration);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlipsquat, 0.1f);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlip, 0.9f);

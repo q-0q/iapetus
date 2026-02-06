@@ -27,7 +27,6 @@ public class FogController : MonoBehaviour
     {
         var height = Vector3.Dot(PlayerFsm.Singleton.transform.position, axis);
         var weight = Mathf.InverseLerp(startCoordinate, endCoordinate, height);
-        print(weight);
 
         RenderSettings.fogStartDistance = _initialFogStartDistance + Mathf.Lerp(0f, fogStartOffset, weight);
         RenderSettings.fogEndDistance = _initialFogEndDistance + Mathf.Lerp(0f, fogEndOffset, weight);
