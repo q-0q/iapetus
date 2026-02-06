@@ -34,16 +34,21 @@ public partial class PlayerFsm
     private Vector3 _walkToPositionTarget;
     private List<ParticleSystem> _kiIndicatorParticles;
     private List<Renderer> _renderers;
+    private SkinnedMeshRenderer _skinnedMeshRenderer;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
     private float _slopeTimer = 0f;
     private ParticleSystem _teleportParticles;
     private bool isSprinting;
+    public Material BakedComboMeshMaterial;
+
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 1.25f;
+    private const float ComboMoveSpeedModifier = 1.175f;
+    private Mesh _bakedComboMesh;
 
 
     private bool _movementAnimationMirror;
@@ -371,7 +376,13 @@ public partial class PlayerFsm
     private Vector3 ComputeDesiredMove()
     {
         var value = Mathf.Lerp(0f, MaximumMomentumSpeedMod, ComputeMomentumWeight());
-        return transform.forward.normalized * (MoveSpeed * value * Time.deltaTime);
+        var comboMultiplier = GetCurrentComboSpeedMultiplier();
+        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier * Time.deltaTime);
+    }
+
+    private float GetCurrentComboSpeedMultiplier()
+    {
+        return _currentComboLength >= MaxComboLength ? ComboMoveSpeedModifier : 1f;
     }
 
     private void SetAnimatorMomentum()
@@ -618,8 +629,16 @@ public partial class PlayerFsm
 
     private void InvokeComboAchieved()
     {
-        // print("Combo achieved");
+        _bakedComboMesh.Clear();
+        _skinnedMeshRenderer.BakeMesh(_bakedComboMesh);
+        Graphics.RenderMesh(
+            new RenderParams(BakedComboMeshMaterial),
+            _bakedComboMesh,
+            0,
+            transform.localToWorldMatrix
+        );
     }
+
 
     private void ResetCombo()
     {

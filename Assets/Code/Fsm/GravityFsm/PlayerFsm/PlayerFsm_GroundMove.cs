@@ -11,8 +11,7 @@ public partial class PlayerFsm
         HandleCollisionMove();
 
         SetAnimatorMomentum();
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-        Animator.SetFloat("SpeedMod", speedMod);
+        SetAnimatorSpeedMod();
     }
 
     private void GroundMoveConfigure()

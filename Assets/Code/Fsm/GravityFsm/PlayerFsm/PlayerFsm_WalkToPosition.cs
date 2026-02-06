@@ -13,7 +13,12 @@ public partial class PlayerFsm
         HandleTurningCore(1f, 0f, toTarget);
         HandleCollisionMove();
         SetAnimatorMomentum();
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        SetAnimatorSpeedMod();
+    }
+
+    private void SetAnimatorSpeedMod()
+    {
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()) * GetCurrentComboSpeedMultiplier();
         Animator.SetFloat("SpeedMod", speedMod);
     }
 

@@ -12,8 +12,7 @@ public partial class PlayerFsm
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (interacted) DialogueCanvas.Singleton.AdvanceDialogue();
         SetAnimatorMomentum();
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-        Animator.SetFloat("SpeedMod", speedMod);
+        SetAnimatorSpeedMod();
         
         
         if (DialogueCanvas.Singleton.currentDialogueController is null) return;

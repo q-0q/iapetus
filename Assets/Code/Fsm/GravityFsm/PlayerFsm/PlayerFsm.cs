@@ -130,6 +130,7 @@ public partial class PlayerFsm : GravityFsm
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         Application.targetFrameRate = 240;
+        _bakedComboMesh = new Mesh();
     }
     
     protected override void OnStart()
@@ -156,6 +157,7 @@ public partial class PlayerFsm : GravityFsm
         _teleportParticles.transform.SetParent(null);
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _renderers = GetComponentsInChildren<Renderer>().ToList();
+        _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         _interactables = new HashSet<Interactable>();
         _defaultScenePosition = transform.position;
