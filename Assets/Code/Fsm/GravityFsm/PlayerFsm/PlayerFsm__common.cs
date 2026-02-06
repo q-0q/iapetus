@@ -44,7 +44,7 @@ public partial class PlayerFsm
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
-    private const float ComboTimeoutDuration = 1.25f;
+    private const float ComboTimeoutDuration = 1.45f;
     private const float ComboMoveSpeedModifier = 1.175f;
 
     private bool _movementAnimationMirror;
@@ -489,7 +489,7 @@ public partial class PlayerFsm
     private void HandleKiEffects()
     {
 
-        var on = Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Dashsquat);
+        var on = _currentComboLength >= MaxComboLength;
         
         foreach (var p in _kiIndicatorParticles)
         {
@@ -499,7 +499,7 @@ public partial class PlayerFsm
 
         var desiredGlowWeight = on ? 3.5f : 0f;
         var currentGlowWeight =  _material.GetFloat("_GlowWeight");
-        var f = on ? 5f : 2f;
+        var f = on ? 5f : 10f;
         _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * f));
     }
 

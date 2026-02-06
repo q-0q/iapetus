@@ -24,9 +24,9 @@ public class InputBuffer
         _negativeEdge.Add(input, negativeEdge);
     }
     
-    public bool IsBuffered(string input)
+    public bool IsBuffered(string input, float windowSizeOffset = 0f)
     {
-        return _buffer[input] <= _windowSize;
+        return _buffer[input] <= _windowSize + windowSizeOffset;
     }
     
     public void ConsumeBuffer(string input)
