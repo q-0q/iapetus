@@ -184,6 +184,11 @@ public partial class PlayerFsm : GravityFsm
                                                             Machine.IsInState(PlayerFsmState.ForceWallRotation) ||
                                                             YVelocity < -6f);
         _timeSinceDashFinished += Time.deltaTime;
+        _comboTimer += Time.deltaTime;
+        if (_comboTimer > ComboTimeoutDuration)
+        {
+            ResetCombo();
+        }
         
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
         UpdateShaderGlobals();

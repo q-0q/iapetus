@@ -40,6 +40,12 @@ public partial class PlayerFsm
     private ParticleSystem _teleportParticles;
     private bool isSprinting;
 
+    public const int MaxComboLength = 5;
+    private int _currentComboLength = 0;
+    private float _comboTimer = 0;
+    private const float ComboTimeoutDuration = 1.25f;
+
+
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
     private bool _dashSinceLeavingGround;
@@ -596,5 +602,32 @@ public partial class PlayerFsm
         shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(GravityFsmState.Grounded) ? 2f : -0.5f);
         shaderGrounded = Mathf.Clamp(shaderGrounded, 0f, 1f);
         Shader.SetGlobalFloat("_PlayerGrounded", shaderGrounded);
+    }
+
+    private void IncrementCombo()
+    {
+        if (_currentComboLength == MaxComboLength - 1)
+        {
+            InvokeComboAchieved();
+        }
+        
+        _comboTimer = 0;
+        _currentComboLength++;
+        print(_currentComboLength);
+    }
+
+    private void InvokeComboAchieved()
+    {
+        // print("Combo achieved");
+    }
+
+    private void ResetCombo()
+    {
+        _currentComboLength = 0;
+    }
+
+    public int GetComboLength()
+    {
+        return _currentComboLength;
     }
 }

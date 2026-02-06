@@ -43,6 +43,7 @@ public partial class PlayerFsm
             {
                 _dashSinceLeavingGround = false;
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
+                IncrementCombo();
                 ReplaceAnimatorTrigger("Wallrun");
                 OnPlayerFootstep();
             })

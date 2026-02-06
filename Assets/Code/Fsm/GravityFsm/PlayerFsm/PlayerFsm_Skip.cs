@@ -23,7 +23,8 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, _ => true, 1)
             .OnEntry(_ =>
             {
-                _momentum = 13f;
+                _momentum = 14f;
+                IncrementCombo();
                 _inputBuffer.ConsumeBuffer("Jump");
                 FMODUnity.RuntimeManager.PlayOneShotAttached(skipFmodEvent, gameObject);
             })

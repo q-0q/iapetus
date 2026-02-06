@@ -44,6 +44,8 @@ public partial class PlayerFsm
                 
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
                 OnPlayerFootstep();
+                
+                IncrementCombo();
             })
             .OnExit(_ =>
             {
