@@ -130,7 +130,6 @@ public partial class PlayerFsm : GravityFsm
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         Application.targetFrameRate = 240;
-        _bakedComboMesh = new Mesh();
     }
     
     protected override void OnStart()

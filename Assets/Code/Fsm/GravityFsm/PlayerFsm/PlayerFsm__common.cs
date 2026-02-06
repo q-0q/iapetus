@@ -40,16 +40,12 @@ public partial class PlayerFsm
     private float _slopeTimer = 0f;
     private ParticleSystem _teleportParticles;
     private bool isSprinting;
-    public Material BakedComboMeshMaterial;
-
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 1.25f;
     private const float ComboMoveSpeedModifier = 1.175f;
-    private Mesh _bakedComboMesh;
-
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -629,19 +625,48 @@ public partial class PlayerFsm
 
     private void InvokeComboAchieved()
     {
-        _bakedComboMesh.Clear();
-        _skinnedMeshRenderer.BakeMesh(_bakedComboMesh);
-        Graphics.RenderMesh(
-            new RenderParams(BakedComboMeshMaterial),
-            _bakedComboMesh,
-            0,
-            transform.localToWorldMatrix
-        );
+        // _bakedComboMesh.Clear();
+        // _skinnedMeshRenderer.BakeMesh(_bakedComboMesh);
+        // Graphics.RenderMesh(
+        //     new RenderParams(BakedComboMeshMaterial),
+        //     _bakedComboMesh,
+        //     0,
+        //     transform.localToWorldMatrix
+        // );
+
+        StartCoroutine(InvokeNewComboMesh());
+        
+        IEnumerator InvokeNewComboMesh()
+        {
+            var initialDelay = 0.05f;
+            yield return new WaitForSeconds(initialDelay);
+            
+            var triggerPrefab = Resources.Load("Prefab/Fsm/PlayerComboTriggerMesh") as GameObject;
+            var triggerPosition = _skinnedMeshRenderer.transform.position;
+            yield return new WaitForSeconds(0.05f);
+            var triggerObject = Instantiate(triggerPrefab, triggerPosition,
+                Quaternion.identity, null);
+            
+            
+            while (_currentComboLength >= MaxComboLength){
+                if (Machine.IsInState(PlayerFsmState.TrialTeleport)) yield break;
+                var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
+                var position = _skinnedMeshRenderer.transform.position;
+                var rotation = _skinnedMeshRenderer.transform.rotation;
+                yield return new WaitForSeconds(0.05f);
+                var comboMeshObject = Instantiate(comboMeshPrefab, position,
+                    rotation, null);
+                comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
+                _skinnedMeshRenderer.BakeMesh(meshFilter.mesh);
+            }
+            yield break;
+        }
     }
 
 
     private void ResetCombo()
     {
+        if (_currentComboLength >= MaxComboLength && isSprinting) return;
         _currentComboLength = 0;
     }
 
