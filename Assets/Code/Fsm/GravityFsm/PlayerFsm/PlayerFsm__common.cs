@@ -9,6 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Wasp;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public partial class PlayerFsm
 {
@@ -41,11 +42,11 @@ public partial class PlayerFsm
     private ParticleSystem _teleportParticles;
     private bool isSprinting;
 
-    public const int MaxComboLength = 5;
+    public const int MaxComboLength = 6;
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 1.45f;
-    private const float ComboMoveSpeedModifier = 1.175f;
+    private const float ComboMoveSpeedModifier = 1.15f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -205,6 +206,8 @@ public partial class PlayerFsm
     public EventReference dashFmodEvent;
     public EventReference climbFmodEvent;
     public EventReference footstepFmodEvent;
+    public EventReference comboIncrementFmodEvent;
+    public EventReference comboActiveFmodEvent;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -493,8 +496,9 @@ public partial class PlayerFsm
         
         foreach (var p in _kiIndicatorParticles)
         {
-            if (on && !p.isEmitting) p.Play();
-            else if (!on) p.Stop();
+            p.Stop();
+            // if (on && !p.isEmitting) p.Play();
+            // else if (!on) p.Stop();
         }
 
         var desiredGlowWeight = on ? 3.5f : 0f;
@@ -613,14 +617,22 @@ public partial class PlayerFsm
 
     private void IncrementCombo()
     {
+        if (!isSprinting) return;
+        
         if (_currentComboLength == MaxComboLength - 1)
         {
             InvokeComboAchieved();
         }
-        
+
         _comboTimer = 0;
         _currentComboLength++;
-        print(_currentComboLength);
+
+        if (_currentComboLength > 1)
+        {
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerComboDuration",
+                Mathf.InverseLerp(0, MaxComboLength, _currentComboLength));
+            FMODUnity.RuntimeManager.PlayOneShotAttached(comboIncrementFmodEvent, gameObject);
+        }
     }
 
     private void InvokeComboAchieved()
@@ -638,27 +650,31 @@ public partial class PlayerFsm
         
         IEnumerator InvokeNewComboMesh()
         {
-            var initialDelay = 0.05f;
-            yield return new WaitForSeconds(initialDelay);
-            
             var triggerPrefab = Resources.Load("Prefab/Fsm/PlayerComboTriggerMesh") as GameObject;
             var triggerPosition = _skinnedMeshRenderer.transform.position;
             yield return new WaitForSeconds(0.05f);
             var triggerObject = Instantiate(triggerPrefab, triggerPosition,
                 Quaternion.identity, null);
+
+            var activeFmodInstance = RuntimeManager.CreateInstance(comboActiveFmodEvent);
+            RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
+            activeFmodInstance.start();
             
             
             while (_currentComboLength >= MaxComboLength){
-                if (Machine.IsInState(PlayerFsmState.TrialTeleport)) yield break;
+                if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
                 var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
                 var position = _skinnedMeshRenderer.transform.position;
                 var rotation = _skinnedMeshRenderer.transform.rotation;
-                yield return new WaitForSeconds(0.05f);
+                yield return new WaitForSeconds(0.045f);
                 var comboMeshObject = Instantiate(comboMeshPrefab, position,
                     rotation, null);
                 comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
                 _skinnedMeshRenderer.BakeMesh(meshFilter.mesh);
+                yield return new WaitForSeconds(0.045f);
             }
+            
+            activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             yield break;
         }
     }
