@@ -627,7 +627,7 @@ public partial class PlayerFsm
         _comboTimer = 0;
         _currentComboLength++;
 
-        if (_currentComboLength > 1)
+        if (_currentComboLength > 2 && _currentComboLength <= MaxComboLength)
         {
             FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerComboDuration",
                 Mathf.InverseLerp(0, MaxComboLength, _currentComboLength));
