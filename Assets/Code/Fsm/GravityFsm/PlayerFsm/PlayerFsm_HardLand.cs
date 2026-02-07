@@ -18,6 +18,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 isSprinting = false;
+                ResetCombo();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
                 OnPlayerFootstep();
                 _momentum = HardLandExitMomentum;

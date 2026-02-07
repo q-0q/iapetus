@@ -20,6 +20,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 isSprinting = false;
+                ResetCombo();
                 if (!UpdateLedgePosition(FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset())) UpdateLedgePosition(FaceLedgeHeight);
 
             })

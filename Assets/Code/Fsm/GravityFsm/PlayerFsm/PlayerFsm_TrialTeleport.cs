@@ -43,6 +43,8 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 isSprinting = false;
+                ResetCombo();
+                LastUpwardsY = transform.position.y;
                 transform.position = _teleportDestination;
                 transform.rotation = Quaternion.LookRotation(_teleportDirection, Vector3.up);
                 _teleportParticles.transform.position = transform.position;

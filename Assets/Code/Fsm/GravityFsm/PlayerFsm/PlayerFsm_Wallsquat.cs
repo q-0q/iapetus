@@ -25,6 +25,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 isSprinting = false;
+                ResetCombo();
                 YVelocity = 0;
                 LastUpwardsY = transform.position.y;
                 _wallsquattedSinceLeavingGround = true;

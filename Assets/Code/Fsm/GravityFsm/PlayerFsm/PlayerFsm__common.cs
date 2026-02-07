@@ -42,7 +42,7 @@ public partial class PlayerFsm
     private ParticleSystem _teleportParticles;
     private bool isSprinting;
 
-    public const int MaxComboLength = 6;
+    public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 1.45f;
@@ -70,6 +70,8 @@ public partial class PlayerFsm
     public static event Action OnPlayerGrappleStateEntered;
     public static event Action OnPlayerRacePressed;
     public static event Action<Transform, float, float> OnPlayerParentTransformChanged;
+    public static event Action<int> OnPlayerComboIncremented;
+    public static event Action OnPlayerComboReset;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;
@@ -299,7 +301,11 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f) isSprinting = false;
+        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f)
+        {
+            ResetCombo();
+            isSprinting = false;
+        }
         var sprintLoss = isSprinting ? SprintTurnLossMultiplier : 1f;
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
                                               Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier * sprintLoss));
@@ -333,7 +339,11 @@ public partial class PlayerFsm
         }
         else
         {
-            isSprinting = false;
+            if (Machine.IsInState(PlayerFsmState.GroundMove))
+            {
+                ResetCombo();
+                isSprinting = false;
+            };
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
             _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
         }
@@ -627,12 +637,24 @@ public partial class PlayerFsm
         _comboTimer = 0;
         _currentComboLength++;
 
-        if (_currentComboLength > 2 && _currentComboLength <= MaxComboLength)
+        if (_currentComboLength > 1)
         {
             FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerComboDuration",
                 Mathf.InverseLerp(0, MaxComboLength, _currentComboLength));
             FMODUnity.RuntimeManager.PlayOneShotAttached(comboIncrementFmodEvent, gameObject);
         }
+
+        if (_currentComboLength >= MaxComboLength)
+        {
+            var spherePrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+            var spherePosition = transform.position + Vector3.up;
+            var sphereObject = Instantiate(spherePrefab, spherePosition,
+                Quaternion.identity, null);
+            sphereObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 2f, 1.25f, 0.8f, -1f);
+        }
+        
+        OnPlayerComboIncremented?.Invoke(_currentComboLength);
+        
     }
 
     private void InvokeComboAchieved()
@@ -650,11 +672,12 @@ public partial class PlayerFsm
         
         IEnumerator InvokeNewComboMesh()
         {
-            var triggerPrefab = Resources.Load("Prefab/Fsm/PlayerComboTriggerMesh") as GameObject;
+            var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
             var triggerPosition = _skinnedMeshRenderer.transform.position;
             yield return new WaitForSeconds(0.05f);
             var triggerObject = Instantiate(triggerPrefab, triggerPosition,
                 Quaternion.identity, null);
+            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 5f, 1.25f, 1f, 0);
 
             var activeFmodInstance = RuntimeManager.CreateInstance(comboActiveFmodEvent);
             RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
@@ -666,12 +689,12 @@ public partial class PlayerFsm
                 var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
                 var position = _skinnedMeshRenderer.transform.position;
                 var rotation = _skinnedMeshRenderer.transform.rotation;
-                yield return new WaitForSeconds(0.045f);
+                yield return new WaitForSeconds(0.07f);
                 var comboMeshObject = Instantiate(comboMeshPrefab, position,
                     rotation, null);
                 comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
                 _skinnedMeshRenderer.BakeMesh(meshFilter.mesh);
-                yield return new WaitForSeconds(0.045f);
+                yield return new WaitForSeconds(0.02f);
             }
             
             activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
@@ -684,6 +707,7 @@ public partial class PlayerFsm
     {
         if (_currentComboLength >= MaxComboLength && isSprinting) return;
         _currentComboLength = 0;
+        OnPlayerComboReset?.Invoke();
     }
 
     public int GetComboLength()

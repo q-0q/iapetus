@@ -24,11 +24,11 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, IsRaycastHitParamSteep, 5)
             .OnEntry(_ =>
             {
+                isSprinting = true;
                 IncrementCombo();
                 YVelocity = 0;
                 YVelocity = Mathf.Max(YVelocity, 15f);
                 _dashSinceLeavingGround = true;
-                isSprinting = true;
                 FMODUnity.RuntimeManager.PlayOneShotAttached(dashFmodEvent, gameObject);
             })
             .OnExit(_ =>
