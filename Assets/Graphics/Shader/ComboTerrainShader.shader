@@ -2,11 +2,11 @@ Shader "Unlit/ComboTerrainShader"
 {
     Properties
     {
-        _VolumeTexture("3D Texture", 3D) = "white" {}
-        _VolumeTextureSize("Texture Size", Vector) = (1,1,1)
         _Color("Color", Color) = (1,1,1,1)
         _Alpha("Alpha", Float) = 0.02
         _StepSize("Step Size", Float) = 0.1
+        _NoiseScale("Noise Scale", Float) = 2.0
+        _NoisePower("Noise power", Float) = 2.0
     }
 
     SubShader
@@ -25,14 +25,14 @@ Shader "Unlit/ComboTerrainShader"
             #pragma fragment frag
             #include "UnityCG.cginc"
 
-            #define MAX_STEP_COUNT 32
+            #define MAX_STEP_COUNT 64
             #define EPSILON 0.00001f
 
-            sampler3D _VolumeTexture;
-            float3 _VolumeTextureSize;
             float4 _Color;
             float _Alpha;
             float _StepSize;
+            float _NoiseScale;
+            float _NoisePower;
 
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
@@ -70,6 +70,44 @@ Shader "Unlit/ComboTerrainShader"
                 baseColor.a += (1.0 - baseColor.a) * newColor.a;
                 return baseColor;
             }
+            
+            // Smooth 3D value noise, returns 0..1
+            float SmoothNoise3D(float3 p)
+            {
+                // Integer/fractional parts
+                float3 pi = floor(p);
+                float3 pf = frac(p);
+
+                // Smoothstep for smooth interpolation
+                float3 w = pf * pf * (3.0 - 2.0 * pf);
+
+                // Simple hash function for grid corners
+                #define HASH33(v) frac(sin(dot(v, float3(127.1, 311.7, 74.7))) * 43758.5453)
+
+                // Corners
+                float n000 = HASH33(pi + float3(0.0, 0.0, 0.0));
+                float n001 = HASH33(pi + float3(0.0, 0.0, 1.0));
+                float n010 = HASH33(pi + float3(0.0, 1.0, 0.0));
+                float n011 = HASH33(pi + float3(0.0, 1.0, 1.0));
+                float n100 = HASH33(pi + float3(1.0, 0.0, 0.0));
+                float n101 = HASH33(pi + float3(1.0, 0.0, 1.0));
+                float n110 = HASH33(pi + float3(1.0, 1.0, 0.0));
+                float n111 = HASH33(pi + float3(1.0, 1.0, 1.0));
+
+                // Trilinear interpolation
+                float nx00 = lerp(n000, n100, w.x);
+                float nx01 = lerp(n001, n101, w.x);
+                float nx10 = lerp(n010, n110, w.x);
+                float nx11 = lerp(n011, n111, w.x);
+
+                float nxy0 = lerp(nx00, nx10, w.y);
+                float nxy1 = lerp(nx01, nx11, w.y);
+
+                float nxyz = lerp(nxy0, nxy1, w.z);
+
+                return nxyz;
+            }
+
 
             fixed4 frag(v2f i) : SV_Target
             {
@@ -89,16 +127,20 @@ Shader "Unlit/ComboTerrainShader"
                         screenUV.y = 1.0 - screenUV.y;
                         #endif
 
-                        // Depth test
                         float sceneDepth = SAMPLE_DEPTH_TEXTURE(_CameraDepthTexture, UNITY_PROJ_COORD(screenUV));
                         float linearSceneDepth = LinearEyeDepth(sceneDepth);
                         float linearRayDepth = LinearEyeDepth(clipPos.z / clipPos.w);
 
                         if (linearRayDepth < linearSceneDepth - 0.001)
                         {
-                            float3 texCoord = pos + float3(0.5, 0.5, 0.5); // [-0.5, 0.5] -> [0,1]
-                            float4 sampleCol = tex3D(_VolumeTexture, texCoord) * _Color;
-                            sampleCol.a *= _Alpha;
+                            float3 texCoord = pos + float3(0.5, 0.5, 0.5); // [-0.5,0.5] -> [0,1]
+                            float4 sampleCol = _Color;
+
+                            // Multiply alpha by procedural noise based on world position
+                            float noiseVal = SmoothNoise3D(worldPos * _NoiseScale);
+                            noiseVal = pow(noiseVal, _NoisePower);
+                            sampleCol.a *= _Alpha * noiseVal;
+
                             accumulatedColor = BlendUnder(accumulatedColor, sampleCol);
 
                             if (accumulatedColor.a >= 0.95)
