@@ -31,7 +31,6 @@ public class PlayerComboMesh : MonoBehaviour
         
         if (_age >= MaxAge)
         {
-            print("destroying");
             Destroy(gameObject);
         }
     }

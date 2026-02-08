@@ -209,7 +209,9 @@ public partial class PlayerFsm
     public EventReference climbFmodEvent;
     public EventReference footstepFmodEvent;
     public EventReference comboIncrementFmodEvent;
+    public EventReference comboTriggerFmodEvent;
     public EventReference comboActiveFmodEvent;
+    private EventInstance activeFmodInstance;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -669,6 +671,7 @@ public partial class PlayerFsm
         // );
 
         StartCoroutine(InvokeNewComboMesh());
+        FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
         
         IEnumerator InvokeNewComboMesh()
         {
@@ -679,9 +682,10 @@ public partial class PlayerFsm
                 Quaternion.identity, null);
             triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 5f, 1.25f, 1f, 0);
 
-            var activeFmodInstance = RuntimeManager.CreateInstance(comboActiveFmodEvent);
+            
             RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
             activeFmodInstance.start();
+            print("started");
             
             
             while (_currentComboLength >= MaxComboLength){
@@ -689,14 +693,14 @@ public partial class PlayerFsm
                 var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
                 var position = _skinnedMeshRenderer.transform.position;
                 var rotation = _skinnedMeshRenderer.transform.rotation;
-                yield return new WaitForSeconds(0.07f);
+                yield return new WaitForSeconds(0.09f);
                 var comboMeshObject = Instantiate(comboMeshPrefab, position,
                     rotation, null);
                 comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
                 _skinnedMeshRenderer.BakeMesh(meshFilter.mesh);
-                yield return new WaitForSeconds(0.02f);
             }
             
+            print("stopped");
             activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             yield break;
         }

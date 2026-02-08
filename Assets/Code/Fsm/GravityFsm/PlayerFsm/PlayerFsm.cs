@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security;
 using Code.PlayerComponents;
 using DG.Tweening;
+using FMOD.Studio;
 using JetBrains.Annotations;
 using Unity.Mathematics;
 using Unity.VisualScripting;
@@ -415,6 +416,8 @@ public partial class PlayerFsm : GravityFsm
         PlayerContactCollider.OnPlayerContactHitboxCollision += OnContactHitboxCollide;
         MetaSaveSystem.OnMetaSaveDataUpdated += ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep += OnPlayerFootstep;
+        
+        activeFmodInstance = FMODUnity.RuntimeManager.CreateInstance(comboActiveFmodEvent);
     }
     
     private void OnDisable()
@@ -422,5 +425,6 @@ public partial class PlayerFsm : GravityFsm
         PlayerContactCollider.OnPlayerContactHitboxCollision -= OnContactHitboxCollide;
         MetaSaveSystem.OnMetaSaveDataUpdated -= ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep -= OnPlayerFootstep;
+        activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 }

@@ -10,15 +10,14 @@ public class ComboIndicator : MonoBehaviour
     void Start()
     {
         var prefab = Resources.Load("Prefab/Fsm/PlayerComboIndicator") as GameObject;
-        var radius = 0.45f;
-        Vector3 offset = new Vector3(2f, 1f, 0);
+        var radius = 1.5f;
+        Vector3 offset = Vector3.up;
         for (int i = 0; i < PlayerFsm.MaxComboLength; i++)
         {
-            var position = Quaternion.Euler(0, 0, 360f * i / PlayerFsm.MaxComboLength) * (transform.up * radius);
+            var position = Quaternion.Euler(0, 360f * i / PlayerFsm.MaxComboLength, 0) * (transform.forward * radius);
             position += offset;
             var obj = Instantiate(prefab, transform);
             obj.transform.localPosition = position;
-            print("instantiated " + obj.name);
         }
         transform.SetParent(null);
         OnReset();
@@ -27,18 +26,14 @@ public class ComboIndicator : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        var rotationSpeed = 100f;
+        if (PlayerFsm.Singleton.GetComboLength() >= PlayerFsm.MaxComboLength) rotationSpeed = 200f;
+        transform.Rotate(new Vector3(0, Time.deltaTime * rotationSpeed, 0));
         transform.position = PlayerFsm.Singleton.transform.position;
     }
 
     private void OnIncrement(int length)
     {
-        IEnumerator Kill()
-        {
-            yield return new WaitForSeconds(1.0f);
-            OnReset();
-        }
-        
-        if (length == PlayerFsm.MaxComboLength) StartCoroutine(Kill());
         if (length > PlayerFsm.MaxComboLength) return;
         transform.GetChild(length - 1).GetComponentInChildren<Renderer>().enabled = true;
     }
