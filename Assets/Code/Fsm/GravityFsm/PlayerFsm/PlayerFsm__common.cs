@@ -625,6 +625,11 @@ public partial class PlayerFsm
         shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(GravityFsmState.Grounded) ? 2f : -0.5f);
         shaderGrounded = Mathf.Clamp(shaderGrounded, 0f, 1f);
         Shader.SetGlobalFloat("_PlayerGrounded", shaderGrounded);
+        
+        var shaderCombo = Shader.GetGlobalFloat("_PlayerCombo");
+        shaderCombo += Time.deltaTime * 5f * (_currentComboLength >= MaxComboLength ? 0.5f : -0.5f);
+        shaderCombo = Mathf.Clamp(shaderCombo, 0f, 1f);
+        Shader.SetGlobalFloat("_PlayerCombo", shaderCombo);
     }
 
     private void IncrementCombo()
