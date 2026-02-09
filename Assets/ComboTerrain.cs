@@ -5,16 +5,32 @@ using UnityEngine;
 public class ComboTerrain : MonoBehaviour
 {
     private Collider _collider;
+    private bool _disabling;
     
     // Start is called before the first frame update
     void Start()
     {
+        _disabling = false;
         TryGetComponent(out _collider);
     }
 
     // Update is called once per frame
     void Update()
     {
-        _collider.enabled = PlayerFsm.Singleton.GetComboLength() >= PlayerFsm.MaxComboLength;
+        IEnumerator DisableAfterDelay()
+        {
+            if (_disabling) yield break;
+            _disabling = true;
+            yield return new WaitForSeconds(0.35f);
+            _collider.enabled = false;
+            _disabling = false;
+        }
+
+        if (_collider.enabled && PlayerFsm.Singleton.GetComboLength() < PlayerFsm.MaxComboLength)
+            StartCoroutine(DisableAfterDelay());
+
+        if (!_collider.enabled && PlayerFsm.Singleton.GetComboLength() >= PlayerFsm.MaxComboLength)
+            _collider.enabled = true;
+
     }
 }

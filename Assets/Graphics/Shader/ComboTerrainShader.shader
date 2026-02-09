@@ -15,6 +15,12 @@ Shader "Unlit/ComboTerrainShader"
         _NoiseSpeed("Noise Scroll Speed", Float) = 0.5
         _NoiseSpeed2("Noise 2 Scroll Speed", Float) = 0.5  
         _ActiveColor("Active Color", Color) = (1,1,1,1) 
+        
+        _StarNoiseScale("Star Noise Scale", Float) = 2.0
+        _StarNoisePower("Star Noise power", Float) = 2.0
+        _StarNoiseSpeed("Star Noise Scroll Speed", Float) = 0.5
+        _StarNoiseThreshhold("Star Noise Threshhold", Float) = 0.5    
+        _StarNoiseColor("Star Noise Threshhold", Color) = (1,1,1,1) 
 
     }
 
@@ -52,6 +58,12 @@ Shader "Unlit/ComboTerrainShader"
             float _PlayerCombo;
             float4 _PlayerWorldPosition;
             float4 _ActiveColor;
+
+            float _StarNoiseSpeed;
+            float _StarNoiseScale;
+            float _StarNoisePower;
+            float _StarNoiseThreshhold;
+            float4 _StarNoiseColor;
 
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
@@ -167,7 +179,10 @@ Shader "Unlit/ComboTerrainShader"
                         if (linearRayDepth < linearSceneDepth - 0.001)
                         {
 
-                            // Multiply alpha by procedural noise based on world position
+                            float3 starNoisePos = worldPos * _StarNoiseScale + float3(_Time.y * _StarNoiseSpeed, 0, 0);
+                            float starNoiseVal = SmoothNoise3D(starNoisePos);
+                            starNoiseVal = pow(starNoiseVal, _StarNoisePower);
+                            
 
                             float3 noisePos = worldPos * _NoiseScale + float3(_Time.y * _NoiseSpeed, 0, 0);
                             float noiseVal = SmoothNoise3D(noisePos);
@@ -179,10 +194,22 @@ Shader "Unlit/ComboTerrainShader"
                             float4 sampleCol = lerp(_NoiseColorDark, _NoiseColorLight, noiseVal);
 
                             float d = distance(worldPos, _PlayerWorldPosition) + noiseVal;
-                            float distanceWeight = InverseLerp(11.5f, 9.0f, d) * saturate(_PlayerCombo);
+
+                            float distanceOffset = lerp(1.0f, 0.0f, saturate(_PlayerCombo));
+                            float distanceWeight = InverseLerp(10.5f + (distanceOffset * 2.0f), 8.0f + distanceOffset, d);
                             sampleCol = lerp(sampleCol, _ActiveColor, distanceWeight);
+
+                            // sampleCol = lerp(sampleCol, _StarNoiseColor, InverseLerp(_StarNoiseThreshhold, 1.0f, starNoiseVal));
                             
-                            sampleCol.a *= lerp(lerp(_AlphaDark, _AlphaLight, noiseVal), 0.03f, distanceWeight);
+                            float activeAlphaMultiplier = InverseLerp(100.0f * saturate(_PlayerCombo * 0.5f) + 5.0f, 100.0f * saturate(_PlayerCombo * 0.5f), d);
+                            activeAlphaMultiplier = lerp(0.3f, 1.0f, activeAlphaMultiplier);
+                            
+                            float distanceAlphaModifier = lerp(0, 0.03f, saturate(_PlayerCombo));
+
+                            float noiseAlpha = lerp(_AlphaDark, _AlphaLight, noiseVal) * activeAlphaMultiplier;
+                            sampleCol.a *= lerp(noiseAlpha, distanceAlphaModifier, distanceWeight);
+                            // sampleCol.a = lerp(sampleCol.a, 1.0f, InverseLerp(_StarNoiseThreshhold, 1.0f, starNoiseVal));
+                            
                             accumulatedColor = BlendUnder(accumulatedColor, sampleCol);
                             
 
