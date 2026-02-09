@@ -2,11 +2,20 @@ Shader "Unlit/ComboTerrainShader"
 {
     Properties
     {
-        _Color("Color", Color) = (1,1,1,1)
-        _Alpha("Alpha", Float) = 0.02
+        _NoiseColorDark("Noise Color Dark", Color) = (1,1,1,1)
+        _NoiseColorLight("Noise Color Light", Color) = (1,1,1,1)
+        _AlphaDark("Alpha Dark", Float) = 0.02
+        _AlphaLight("Alpha Light", Float) = 0.02
         _StepSize("Step Size", Float) = 0.1
         _NoiseScale("Noise Scale", Float) = 2.0
         _NoisePower("Noise power", Float) = 2.0
+        _NoiseScale2("Noise 2 Scale", Float) = 2.0
+        _NoisePower2("Noise 2 power", Float) = 2.0
+        _NoiseOffset("Noise offset", Float) = 0.0
+        _NoiseSpeed("Noise Scroll Speed", Float) = 0.5
+        _NoiseSpeed2("Noise 2 Scroll Speed", Float) = 0.5  
+        _ActiveColor("Active Color", Color) = (1,1,1,1) 
+
     }
 
     SubShader
@@ -28,11 +37,21 @@ Shader "Unlit/ComboTerrainShader"
             #define MAX_STEP_COUNT 64
             #define EPSILON 0.00001f
 
-            float4 _Color;
-            float _Alpha;
+            float4 _NoiseColorDark;
+            float4 _NoiseColorLight;
+            float _AlphaDark;
+            float _AlphaLight;
             float _StepSize;
             float _NoiseScale;
             float _NoisePower;
+            float _NoiseScale2;
+            float _NoisePower2;
+            float _NoiseOffset;
+            float _NoiseSpeed;
+            float _NoiseSpeed2;
+            float _PlayerCombo;
+            float4 _PlayerWorldPosition;
+            float4 _ActiveColor;
 
             UNITY_DECLARE_DEPTH_TEXTURE(_CameraDepthTexture);
 
@@ -69,6 +88,13 @@ Shader "Unlit/ComboTerrainShader"
                 baseColor.rgb += (1.0 - baseColor.a) * newColor.a * newColor.rgb;
                 baseColor.a += (1.0 - baseColor.a) * newColor.a;
                 return baseColor;
+            }
+
+            float InverseLerp(float a, float b, float value)
+            {
+                // Avoid division by zero
+                if (a == b) return 0.0;
+                return saturate((value - a) / (b - a)); // saturate clamps result between 0 and 1
             }
             
             // Smooth 3D value noise, returns 0..1
@@ -111,6 +137,13 @@ Shader "Unlit/ComboTerrainShader"
 
             fixed4 frag(v2f i) : SV_Target
             {
+
+                // float3 surfacePos = i.objectPos;
+                // float3 surfaceWorldPos = mul(unity_ObjectToWorld, float4(surfacePos, 1.0)).xyz;
+                // float surfaceDistance = distance(surfaceWorldPos, _PlayerWorldPosition);
+                // float surfaceDistanceWeight = InverseLerp(5.5f, 3.0f, surfaceDistance) * saturate(_PlayerCombo);
+                
+                
                 float3 pos = i.objectPos;
                 float3 rayDir = normalize(i.rayDirObject);
                 float4 accumulatedColor = float4(0, 0, 0, 0);
@@ -133,15 +166,25 @@ Shader "Unlit/ComboTerrainShader"
 
                         if (linearRayDepth < linearSceneDepth - 0.001)
                         {
-                            float3 texCoord = pos + float3(0.5, 0.5, 0.5); // [-0.5,0.5] -> [0,1]
-                            float4 sampleCol = _Color;
 
                             // Multiply alpha by procedural noise based on world position
-                            float noiseVal = SmoothNoise3D(worldPos * _NoiseScale);
-                            noiseVal = pow(noiseVal, _NoisePower);
-                            sampleCol.a *= _Alpha * noiseVal;
 
+                            float3 noisePos = worldPos * _NoiseScale + float3(_Time.y * _NoiseSpeed, 0, 0);
+                            float noiseVal = SmoothNoise3D(noisePos);
+
+                            float3 noisePos2 = worldPos * _NoiseScale2 + float3(_Time.y * _NoiseSpeed2, 0, 0);
+                            float noiseVal2 = SmoothNoise3D(noisePos2);
+                            
+                            noiseVal = pow(noiseVal, _NoisePower) * pow(noiseVal2, _NoisePower2);
+                            float4 sampleCol = lerp(_NoiseColorDark, _NoiseColorLight, noiseVal);
+
+                            float d = distance(worldPos, _PlayerWorldPosition) + noiseVal;
+                            float distanceWeight = InverseLerp(11.5f, 9.0f, d) * saturate(_PlayerCombo);
+                            sampleCol = lerp(sampleCol, _ActiveColor, distanceWeight);
+                            
+                            sampleCol.a *= lerp(lerp(_AlphaDark, _AlphaLight, noiseVal), 0.03f, distanceWeight);
                             accumulatedColor = BlendUnder(accumulatedColor, sampleCol);
+                            
 
                             if (accumulatedColor.a >= 0.95)
                                 break;
