@@ -27,4 +27,9 @@ public partial class SavapheFsm
     {
         Machine.Fire(SavapheFsmTrigger.PlayerCrossed);
     }
+
+    private void OnNotCrossedDialogueComplete()
+    {
+        _tutorialTrigger.gameObject.SetActive(true);
+    }
 }

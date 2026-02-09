@@ -30,13 +30,6 @@ public partial class SavapheFsm : CutsceneFsm
     {
         base.OnAwake();
         // TryGetComponent(out _interactable);
-    }
-
-    protected override void OnStart()
-    {
-        base.OnStart();
-        InitState = SavapheFsmState.NotCrossed;
-        transform.Find("SavapheVirtualCamera").TryGetComponent(out _virtualCamera);
         
         _marker = transform.Find("Marker");
         _endPosition = transform.Find("EndPosition");
@@ -46,6 +39,16 @@ public partial class SavapheFsm : CutsceneFsm
         _notCrossedDialogue = transform.Find("NotCrossedDialogue");
         _crossedDialogue = transform.Find("CrossedDialogue");
         _tutorialTrigger = transform.Find("TutorialTrigger");
+        transform.Find("SavapheVirtualCamera").TryGetComponent(out _virtualCamera);
+
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
+        InitState = SavapheFsmState.NotCrossed;
+        
+
         _tutorialTrigger.gameObject.SetActive(false);
         
         _virtualCamera.LookAt = _marker;
@@ -95,12 +98,14 @@ public partial class SavapheFsm : CutsceneFsm
     private void OnEnable()
     {
         SavapheCrossTrigger.SavapheCrossTriggerOnTriggerEnter += OnCrossTrigger;
+        _notCrossedDialogue.GetComponent<DialogueController>().OnCompleted += OnNotCrossedDialogueComplete;
         // _interactable.OnInteracted += OnInteracted;
     }
 
     private void OnDisable()
     {
         SavapheCrossTrigger.SavapheCrossTriggerOnTriggerEnter -= OnCrossTrigger;
+        _notCrossedDialogue.GetComponent<DialogueController>().OnCompleted -= OnNotCrossedDialogueComplete;
         // _interactable.OnInteracted -= OnInteracted;
     }
 }

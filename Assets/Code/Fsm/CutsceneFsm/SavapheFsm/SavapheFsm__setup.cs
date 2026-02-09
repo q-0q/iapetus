@@ -41,7 +41,6 @@ public partial class SavapheFsm
             .SubstateOf(CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             { 
-                print("crossed onentry");
                 _notCrossedDialogue.gameObject.SetActive(false);
                 _crossedDialogue.gameObject.SetActive(true);
                 

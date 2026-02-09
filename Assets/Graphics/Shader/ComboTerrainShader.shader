@@ -150,10 +150,9 @@ Shader "Unlit/ComboTerrainShader"
             fixed4 frag(v2f i) : SV_Target
             {
 
-                // float3 surfacePos = i.objectPos;
-                // float3 surfaceWorldPos = mul(unity_ObjectToWorld, float4(surfacePos, 1.0)).xyz;
-                // float surfaceDistance = distance(surfaceWorldPos, _PlayerWorldPosition);
-                // float surfaceDistanceWeight = InverseLerp(5.5f, 3.0f, surfaceDistance) * saturate(_PlayerCombo);
+                float3 surfacePos = i.objectPos;
+                float3 surfaceWorldPos = mul(unity_ObjectToWorld, float4(surfacePos, 1.0)).xyz;
+                float surfaceDistance = distance(surfaceWorldPos, _PlayerWorldPosition);
                 
                 
                 float3 pos = i.objectPos;
@@ -225,6 +224,8 @@ Shader "Unlit/ComboTerrainShader"
                     }
                 }
 
+                float fakeFogAlphaMod = clamp(0.0f, 1.0f, InverseLerp(100.0f, 20.0f, surfaceDistance));
+                accumulatedColor.a *= fakeFogAlphaMod;
                 return accumulatedColor;
             }
             ENDCG
