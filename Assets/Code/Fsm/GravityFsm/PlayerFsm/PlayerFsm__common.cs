@@ -45,7 +45,7 @@ public partial class PlayerFsm
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
-    private const float ComboTimeoutDuration = 1.45f;
+    private const float ComboTimeoutDuration = 3.0f;
     private const float ComboMoveSpeedModifier = 1.15f;
 
     private bool _movementAnimationMirror;
@@ -190,7 +190,7 @@ public partial class PlayerFsm
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
     private const float ArriveAtWalkPositionTargetDistance = 1.5f;
-    private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
+    private const float ArriveAtWalkPositionTargetRangedDistance = 100f;
 
     private const float TrialTeleportStartupDuration = 0.7f;
     private const float TrialTeleportDuration = 2f;
@@ -690,7 +690,6 @@ public partial class PlayerFsm
             
             RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
             activeFmodInstance.start();
-            print("started");
             
             
             while (_currentComboLength >= MaxComboLength){
@@ -705,7 +704,6 @@ public partial class PlayerFsm
                 _skinnedMeshRenderer.BakeMesh(meshFilter.mesh);
             }
             
-            print("stopped");
             activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             yield break;
         }

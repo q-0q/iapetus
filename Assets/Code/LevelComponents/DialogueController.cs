@@ -21,6 +21,8 @@ public class DialogueController : MonoBehaviour
     public string DialogueName = "Unnamed dialogue";
     private Interactable _interactable;
     public event Action OnCompleted;
+    public Transform LookAtOverride;
+    
     private void OnEnable()
     {
         TryGetComponent(out Interactable interactable);

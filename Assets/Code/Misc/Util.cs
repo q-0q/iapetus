@@ -40,5 +40,22 @@ namespace Code.Misc
             return t * t * (3f - 2f * t);
         }
         
+        public static Vector3 LerpWithArc(Vector3 start, Vector3 end, float t, float height)
+        {
+            // Clamp t for safety
+            t = Mathf.Clamp01(t);
+
+            // Base linear interpolation
+            Vector3 position = Vector3.Lerp(start, end, t);
+
+            // Quadratic arc: peaks at t = 0.5, zero at t = 0 and t = 1
+            float arc = 4f * height * t * (1f - t);
+
+            // Apply arc in the world-up direction
+            position += Vector3.up * arc;
+
+            return position;
+        }
+        
     }
 }

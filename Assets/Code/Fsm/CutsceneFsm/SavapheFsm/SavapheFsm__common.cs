@@ -15,4 +15,16 @@ public partial class SavapheFsm
     private const string CutscenePersistentEvent = "SavapheCrossed";
 
     private Transform _endPosition;
+    private Transform _startPosition;
+    private Transform _marker;
+    private Transform _crossTrigger;
+
+    private Transform _notCrossedDialogue;
+    private Transform _crossedDialogue;
+    private Transform _tutorialTrigger;
+
+    private void OnCrossTrigger()
+    {
+        Machine.Fire(SavapheFsmTrigger.PlayerCrossed);
+    }
 }

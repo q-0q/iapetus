@@ -16,7 +16,12 @@ public partial class PlayerFsm
         
         
         if (DialogueCanvas.Singleton.currentDialogueController is null) return;
-        var rotationTarget = DialogueCanvas.Singleton.ControllerPosition() - transform.position;
+        
+        var lookAt = DialogueCanvas.Singleton.currentDialogueController.LookAtOverride == null
+            ? DialogueCanvas.Singleton.currentDialogueController.transform
+            : DialogueCanvas.Singleton.currentDialogueController.LookAtOverride;
+        
+        var rotationTarget = lookAt.position - transform.position;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(rotationTarget + transform.forward * 0.01f, transform.up), Time.deltaTime * 5f);
 
     }
