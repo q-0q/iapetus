@@ -49,6 +49,9 @@ public partial class SavapheFsm : CutsceneFsm
         _tutorialTrigger.gameObject.SetActive(false);
         
         _virtualCamera.LookAt = _marker;
+        
+        _notCrossedDialogue.gameObject.SetActive(true);
+        _crossedDialogue.gameObject.SetActive(false);
 
     }
     
@@ -58,8 +61,7 @@ public partial class SavapheFsm : CutsceneFsm
         
         if (Machine.IsInState(SavapheFsmState.NotCrossed))
         {
-            _notCrossedDialogue.gameObject.SetActive(true);
-            _crossedDialogue.gameObject.SetActive(false);
+            
         }
         
         if (Machine.IsInState(SavapheFsmState.Crossing3))
@@ -69,8 +71,7 @@ public partial class SavapheFsm : CutsceneFsm
 
         if (Machine.IsInState(SavapheFsmState.Crossed))
         {
-            _notCrossedDialogue.gameObject.SetActive(false);
-            _crossedDialogue.gameObject.SetActive(true);
+            
         }
         
     }

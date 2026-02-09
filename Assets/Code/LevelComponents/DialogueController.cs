@@ -10,6 +10,7 @@ using UnityEngine.Serialization;
 public class Dialogue
 {
     public List<string> texts = new List<string>();
+    public bool advanceDialogueIndex = false;
 }
 
 public class DialogueController : MonoBehaviour
@@ -45,6 +46,7 @@ public class DialogueController : MonoBehaviour
 
     public void Completed()
     {
+        if (dialogues[currentDialogueIndex].advanceDialogueIndex) currentDialogueIndex++;
         OnCompleted?.Invoke();
     }
 

@@ -159,12 +159,6 @@ public partial class PlayerFsm : GravityFsm
         _renderers = GetComponentsInChildren<Renderer>().ToList();
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
-        _interactables = new HashSet<Interactable>();
-        _defaultScenePosition = transform.position;
-        foreach (var interactable in FindObjectsByType<Interactable>(FindObjectsSortMode.None))
-        {
-            _interactables.Add(interactable);
-        }
 
 
         

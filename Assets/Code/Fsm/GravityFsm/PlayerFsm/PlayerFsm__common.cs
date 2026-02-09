@@ -52,7 +52,6 @@ public partial class PlayerFsm
     private bool _wallsquattedSinceLeavingGround;
     private bool _dashSinceLeavingGround;
     public static PlayerFsm Singleton;
-    private HashSet<Interactable> _interactables;
     public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
     private TightropeController _currentTightropeController;

@@ -40,8 +40,13 @@ public partial class SavapheFsm
         Machine.Configure(SavapheFsmState.Crossed)
             .SubstateOf(CutsceneFsmState.Inactive)
             .OnEntry(_ =>
-        {
-
+            { 
+                print("crossed onentry");
+                _notCrossedDialogue.gameObject.SetActive(false);
+                _crossedDialogue.gameObject.SetActive(true);
+                
+                _marker.position = _endPosition.position;
+                SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
         });
     }
 

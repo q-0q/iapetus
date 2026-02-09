@@ -8,7 +8,7 @@ public partial class PlayerFsm
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (currentPotentialInteractable != null && interacted) currentPotentialInteractable.TriggerInteraction();
         
-        currentPotentialInteractable = _interactables
+        currentPotentialInteractable = InteractableRegistry.Interactables
             .Where(i => i != null)
             .Where(i => Vector3.Distance(transform.position, i.transform.position) <= i.triggerRange)
             .OrderBy(i => Vector3.Distance(transform.position, i.transform.position))

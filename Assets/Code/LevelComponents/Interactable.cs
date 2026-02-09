@@ -32,4 +32,12 @@ public class Interactable : MonoBehaviour
     {
         _collider.enabled = val;
     }
+    
+    void OnEnable() => InteractableRegistry.Interactables.Add(this);
+    void OnDisable() => InteractableRegistry.Interactables.Remove(this);
+}
+
+public static class InteractableRegistry
+{
+    public static readonly List<Interactable> Interactables = new();
 }

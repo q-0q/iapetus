@@ -8,9 +8,4 @@ public partial class SavapheFsm
     {
         base.OnFireTriggers();
     }
-
-    private void OnInteracted()
-    {
-        Machine.Fire(CutsceneFsmTrigger.StartCutscene);
-    }
 }
