@@ -8,4 +8,9 @@ public partial class SavapheFsm
     {
         base.OnFireTriggers();
     }
+
+    private void OnInteracted()
+    {
+        ReplaceAnimatorTrigger("NotCrossedDialogue");
+    }
 }

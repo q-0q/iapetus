@@ -137,6 +137,7 @@ public partial class PlayerFsm : GravityFsm
     {
         
         base.OnStart();
+        TryGetComponent(out Animator);
         Singleton = this;
         InitState = PlayerFsmState.GroundMove;
         isSprinting = false;

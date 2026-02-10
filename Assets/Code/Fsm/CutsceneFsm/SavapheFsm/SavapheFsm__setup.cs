@@ -52,6 +52,7 @@ public partial class SavapheFsm
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
+        StateMapConfig.AnimationTrigger.Add(SavapheFsmState.NotCrossed, "NotCrossedIdle");
         
         StateMapConfig.Duration.Add(SavapheFsmState.Crossing1, 1.5f);
         StateMapConfig.Duration.Add(SavapheFsmState.Crossing2, 1.5f);

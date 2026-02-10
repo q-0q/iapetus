@@ -35,11 +35,13 @@ public partial class SavapheFsm : CutsceneFsm
         _endPosition = transform.Find("EndPosition");
         _startPosition = transform.Find("StartPosition");
         _marker.position = _startPosition.position;
+        _marker.rotation = _startPosition.rotation;
         
         _notCrossedDialogue = transform.Find("NotCrossedDialogue");
         _crossedDialogue = transform.Find("CrossedDialogue");
         _tutorialTrigger = transform.Find("TutorialTrigger");
         transform.Find("SavapheVirtualCamera").TryGetComponent(out _virtualCamera);
+        Animator = GetComponentInChildren<Animator>();
 
     }
 
@@ -47,6 +49,7 @@ public partial class SavapheFsm : CutsceneFsm
     {
         base.OnStart();
         InitState = SavapheFsmState.NotCrossed;
+        
         
 
         _tutorialTrigger.gameObject.SetActive(false);
@@ -83,11 +86,10 @@ public partial class SavapheFsm : CutsceneFsm
     {
         base.OnStartComplete();
         var saveData = SaveSystem.LoadSaveData(0);
-        if (saveData.persistentEvents.Contains(CutscenePersistentEvent))
-        {
-            Machine.Jump(SavapheFsmState.Crossed);
-            return;
-        }
+
+        Machine.Jump(saveData.persistentEvents.Contains(CutscenePersistentEvent)
+            ? SavapheFsmState.Crossed
+            : SavapheFsmState.NotCrossed);
     }
 
     protected override void OnStateChanged(TriggerParams triggerParams)
@@ -99,13 +101,13 @@ public partial class SavapheFsm : CutsceneFsm
     {
         SavapheCrossTrigger.SavapheCrossTriggerOnTriggerEnter += OnCrossTrigger;
         _notCrossedDialogue.GetComponent<DialogueController>().OnCompleted += OnNotCrossedDialogueComplete;
-        // _interactable.OnInteracted += OnInteracted;
+        _notCrossedDialogue.GetComponent<Interactable>().OnInteracted += OnInteracted;
     }
 
     private void OnDisable()
     {
         SavapheCrossTrigger.SavapheCrossTriggerOnTriggerEnter -= OnCrossTrigger;
         _notCrossedDialogue.GetComponent<DialogueController>().OnCompleted -= OnNotCrossedDialogueComplete;
-        // _interactable.OnInteracted -= OnInteracted;
+        _notCrossedDialogue.GetComponent<Interactable>().OnInteracted -= OnInteracted;
     }
 }

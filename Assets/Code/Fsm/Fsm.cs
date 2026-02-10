@@ -40,7 +40,6 @@ public abstract class Fsm : MonoBehaviour
         SetupMachine();
         SetupStateMaps();
         _timeInCurrentState = 0;
-        TryGetComponent(out Animator);
         OnStartComplete();
     }
 
@@ -130,7 +129,11 @@ public abstract class Fsm : MonoBehaviour
         foreach (var t in Animator.parameters)
         {
             if (t.type != AnimatorControllerParameterType.Trigger) continue;
-            if (t.name == trigger) Animator.SetTrigger(t.name);
+            if (t.name == trigger)
+            {
+                print("set " + t.name);
+                Animator.SetTrigger(t.name);
+            }
             else Animator.ResetTrigger(t.name);
         }
     }
