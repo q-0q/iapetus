@@ -414,6 +414,11 @@ public partial class PlayerFsm
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         if (updateMomentum) _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
+        if (collisionRatio > 1f && isSprinting && _momentum < 8f)
+        {
+            isSprinting = false;
+            ResetCombo();
+        }
     }
 
     public void InvokeBoost(bool jump, float momentumWeight)
