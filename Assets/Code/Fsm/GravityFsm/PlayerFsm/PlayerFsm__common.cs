@@ -302,7 +302,7 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f)
+        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f && Machine.IsInState(PlayerFsmState.GroundMove))
         {
             ResetCombo();
             isSprinting = false;

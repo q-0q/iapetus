@@ -26,15 +26,25 @@ public partial class SavapheFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                _virtualCamera.Priority = 20;
+                _virtualCameraA.Priority = 20;
+            })
+            .OnExit(_ =>
+            {
+                _virtualCameraA.Priority = -10;
             });
         
         Machine.Configure(SavapheFsmState.Crossing3)
             .Permit(FsmTrigger.Timeout, SavapheFsmState.Crossed)
             .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _marker.position = _endPosition.position;
+                _marker.rotation = _endPosition.rotation;
+                _virtualCameraB.Priority = 20;
+            })
             .OnExit(_ =>
             {
-                _virtualCamera.Priority = -10;
+                _virtualCameraB.Priority = -10;
             });
         
         Machine.Configure(SavapheFsmState.Crossed)
@@ -45,6 +55,7 @@ public partial class SavapheFsm
                 _crossedDialogue.gameObject.SetActive(true);
                 
                 _marker.position = _endPosition.position;
+                _marker.rotation = _endPosition.rotation;
                 SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
         });
     }
@@ -53,6 +64,9 @@ public partial class SavapheFsm
     {
         base.SetupStateMaps();
         StateMapConfig.AnimationTrigger.Add(SavapheFsmState.NotCrossed, "NotCrossedIdle");
+        StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossed, "CrossingB");
+        StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossing2, "CrossingA");
+        StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossing3, "CrossingB");
         
         StateMapConfig.Duration.Add(SavapheFsmState.Crossing1, 1.5f);
         StateMapConfig.Duration.Add(SavapheFsmState.Crossing2, 1.5f);

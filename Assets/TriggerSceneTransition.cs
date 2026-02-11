@@ -3,13 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TunnelSceneTransition : MonoBehaviour
+public class TriggerSceneTransition : MonoBehaviour
 {
     public string scene;
     public Vector3 destinationPosition;
     public float destinationRotation;
-    private float _initialFogEndDistance;
-    private float _initialFogStartDistance;
 
     private void OnTriggerEnter(Collider other)
     {

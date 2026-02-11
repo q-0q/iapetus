@@ -40,7 +40,8 @@ public partial class SavapheFsm : CutsceneFsm
         _notCrossedDialogue = transform.Find("NotCrossedDialogue");
         _crossedDialogue = transform.Find("CrossedDialogue");
         _tutorialTrigger = transform.Find("TutorialTrigger");
-        transform.Find("SavapheVirtualCamera").TryGetComponent(out _virtualCamera);
+        transform.Find("SavapheVirtualCameraA").TryGetComponent(out _virtualCameraA);
+        transform.Find("SavapheVirtualCameraB").TryGetComponent(out _virtualCameraB);
         Animator = GetComponentInChildren<Animator>();
 
     }
@@ -54,7 +55,8 @@ public partial class SavapheFsm : CutsceneFsm
 
         _tutorialTrigger.gameObject.SetActive(false);
         
-        _virtualCamera.LookAt = _marker;
+        _virtualCameraA.LookAt = _startPosition;
+        _virtualCameraB.LookAt = _endPosition;
         
         _notCrossedDialogue.gameObject.SetActive(true);
         _crossedDialogue.gameObject.SetActive(false);
@@ -64,6 +66,11 @@ public partial class SavapheFsm : CutsceneFsm
     public override void OnUpdate()
     {
         base.OnUpdate();
+
+        var playerNotCrossedDialogueDistance =
+            Vector3.Distance(PlayerFsm.Singleton.transform.position, _notCrossedDialogue.position);
+        
+        Animator.SetFloat("Look", Mathf.InverseLerp(25f, 15f, playerNotCrossedDialogueDistance));
         
         if (Machine.IsInState(SavapheFsmState.NotCrossed))
         {
@@ -72,7 +79,7 @@ public partial class SavapheFsm : CutsceneFsm
         
         if (Machine.IsInState(SavapheFsmState.Crossing3))
         {
-            _marker.position = Util.LerpWithArc(_startPosition.position, _endPosition.position, Util.SmoothLerp01(TimeInCurrentState() / 2.25f), 4f);
+            
         }
 
         if (Machine.IsInState(SavapheFsmState.Crossed))

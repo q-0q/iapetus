@@ -11,7 +11,8 @@ using UnityEngine.Serialization;
 public partial class SavapheFsm
 {
     // private Interactable _interactable;
-    private CinemachineVirtualCamera _virtualCamera;
+    private CinemachineVirtualCamera _virtualCameraA;
+    private CinemachineVirtualCamera _virtualCameraB;
     private const string CutscenePersistentEvent = "SavapheCrossed";
 
     private Transform _endPosition;
@@ -31,5 +32,6 @@ public partial class SavapheFsm
     private void OnNotCrossedDialogueComplete()
     {
         _tutorialTrigger.gameObject.SetActive(true);
+        ReplaceAnimatorTrigger("NotCrossedDialogueComplete");
     }
 }
