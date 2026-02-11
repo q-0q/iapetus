@@ -40,6 +40,7 @@ public partial class PlayerFsm
     private float _timeSinceDashFinished = 0f;
     private float _slopeTimer = 0f;
     private ParticleSystem _teleportParticles;
+    private ParticleSystem _deathParticles;
     private bool isSprinting;
 
     public const int MaxComboLength = 5;
@@ -414,11 +415,11 @@ public partial class PlayerFsm
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         if (updateMomentum) _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
-        if (collisionRatio > 1f && isSprinting && _momentum < 8f)
-        {
-            isSprinting = false;
-            ResetCombo();
-        }
+        // if (collisionRatio > 1f && isSprinting && _momentum < 8f)
+        // {
+        //     isSprinting = false;
+        //     ResetCombo();
+        // }
     }
 
     public void InvokeBoost(bool jump, float momentumWeight)
@@ -724,5 +725,11 @@ public partial class PlayerFsm
     public int GetComboLength()
     {
         return _currentComboLength;
+    }
+
+    public void InvokePlayerDeath()
+    {
+        if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead)) return;
+        Machine.Jump(PlayerFsmState.Dying1);
     }
 }

@@ -33,12 +33,7 @@ public partial class PlayerFsm
                 _teleportOrigin = transform.position;
                 _teleportParticles.transform.position = transform.position;
                 _teleportParticles.Play();
-                foreach (var r in _renderers)
-                {
-                    if (r.name == "TeleportParticles") continue;
-                    if (r.name.Contains("AmbientParticles")) continue;
-                    r.enabled = false;
-                }
+                MakeAllRenderersInvisible();
             })
             .OnExit(_ =>
             {
@@ -49,13 +44,28 @@ public partial class PlayerFsm
                 transform.rotation = Quaternion.LookRotation(_teleportDirection, Vector3.up);
                 _teleportParticles.transform.position = transform.position;
                 _teleportParticles.Play();
-                foreach (var r in _renderers)
-                {
-                    r.enabled = true;
-                }
+                MakeAllRenderersVisible();
             });
     }
-    
+
+    private void MakeAllRenderersVisible()
+    {
+        foreach (var r in _renderers)
+        {
+            r.enabled = true;
+        }
+    }
+
+    private void MakeAllRenderersInvisible()
+    {
+        foreach (var r in _renderers)
+        {
+            if (r.name == "TeleportParticles") continue;
+            if (r.name.Contains("AmbientParticles")) continue;
+            r.enabled = false;
+        }
+    }
+
     public static Vector3 LerpWithArc(Vector3 start, Vector3 end, float t, float height)
     {
         // Clamp t for safety

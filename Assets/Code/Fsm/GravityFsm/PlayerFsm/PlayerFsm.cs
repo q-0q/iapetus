@@ -76,6 +76,9 @@ public partial class PlayerFsm : GravityFsm
         public static int Updraft;
 
         public static int TrialTeleport;
+        public static int Dying1;
+        public static int Dying2;
+        public static int Dead;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -155,13 +158,15 @@ public partial class PlayerFsm : GravityFsm
         _checkpointQuaternion = transform.rotation;
         _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().Where(d => d.name == "PlayerFootParticles").ToList();
         _teleportParticles = transform.Find("TeleportParticles").GetComponent<ParticleSystem>();
+        _deathParticles = transform.Find("DeathParticles").GetComponent<ParticleSystem>();
         _teleportParticles.transform.SetParent(null);
+        _deathParticles.transform.SetParent(null);
+        
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _renderers = GetComponentsInChildren<Renderer>().ToList();
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
-
-
+        Shader.SetGlobalFloat("_PlayerTintWeight", 0);
         
     }
     
@@ -365,16 +370,21 @@ public partial class PlayerFsm : GravityFsm
         {
             PitonsquatOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.Dying1))
+        {
+            DyingOnUpdate();
+        }
 
         
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
         {
-            Reset();
+            InvokePlayerDeath();
         }
         
         if (transform.position.y < -80f)
         {
-            Reset();
+            InvokePlayerDeath();
         }
         
 
