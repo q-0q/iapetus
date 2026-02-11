@@ -6,8 +6,8 @@ public partial class TrialCollectibleFsm
 
     private void CompleteOnUpdate()
     {
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead)) return;
         Time.timeScale = Mathf.Lerp(1f, 0.15f, Mathf.InverseLerp(0, 0.2f, TimeInCurrentState()));
-        
     }
     private void CompleteConfigure()
     {
@@ -25,9 +25,10 @@ public partial class TrialCollectibleFsm
             })
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
+                UiTimer.Singleton._display = false;
+                // if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead)) return;
                 PlayerFsm.Singleton.SetTeleportDestination(_playerReturnTransform.position, _playerReturnTransform.forward);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.TrialTeleport);
-                UiTimer.Singleton._display = false;
             });
     }
 }

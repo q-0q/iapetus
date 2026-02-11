@@ -168,6 +168,14 @@ public partial class PlayerFsm : GravityFsm
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
         
+        ReplaceAnimatorTrigger("GroundMove");
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit,10f, GetEnvironmentalLayermask()))
+        {
+            transform.position = hit.point;
+        }
+
+
+        
     }
     
 

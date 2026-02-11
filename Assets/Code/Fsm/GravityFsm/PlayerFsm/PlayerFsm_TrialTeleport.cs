@@ -14,7 +14,9 @@ public partial class PlayerFsm
         
         if (TimeInCurrentState() > TrialTeleportStartupDuration && PreviousTimeInCurrentState() < TrialTeleportStartupDuration)
         {
-            var cameraDirection = CameraFollow.HighestPriorityZoneAtPosition(_teleportDestination)
+            var highestPriorityZoneAtPosition = CameraFollow.HighestPriorityZoneAtPosition(_teleportDestination);
+            if (highestPriorityZoneAtPosition is null) return;
+            var cameraDirection = highestPriorityZoneAtPosition
                 .GetCameraForward(_teleportDestination, out _);
             PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(cameraDirection, TrialTeleportDuration - TrialTeleportStartupDuration);
         }

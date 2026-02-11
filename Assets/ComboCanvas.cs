@@ -19,7 +19,7 @@ public class ComboCanvas : MonoBehaviour
     void Update()
     {
         var comboLength = PlayerFsm.Singleton.GetComboLength();
-        if (comboLength < 2)
+        if (comboLength < PlayerFsm.MaxComboLength + 1)
         {
             _tmp.text = "";
             return;

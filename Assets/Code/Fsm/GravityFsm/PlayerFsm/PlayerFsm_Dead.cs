@@ -12,7 +12,7 @@ public partial class PlayerFsm
 
     private IEnumerator ResetAfterDelay()
     {
-        yield return new WaitForSeconds(0.35f);
+        yield return new WaitForSeconds(0.275f);
         Reset();
     }
     
@@ -22,6 +22,7 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Timeout, PlayerFsmState.Dead)
             .OnEntry(_ =>
             {
+                Time.timeScale = 1f;
                 transform.DOShakePosition(0.5f, 0.4f, 30);
                 Shader.SetGlobalColor("_PlayerTintColor", Color.white);
                 Animator.StartPlayback();
