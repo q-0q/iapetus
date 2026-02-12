@@ -44,11 +44,18 @@ public partial class TrialCollectibleFsm : Fsm
         _marker.Find("ActiveFinalParticles").TryGetComponent(out _activeFinalParticles);
         _marker.Find("KeyframeTriggerParticles").TryGetComponent(out _keyframeTriggerParticles);
         _marker.Find("ReadyParticles").TryGetComponent(out _readyParticles);
+        _marker.Find("ReadyParticlesGold").TryGetComponent(out _readyParticlesGold);
         _beaconMaterial = _marker.Find("Beacon").Find("Plane").GetComponent<Renderer>().material;
         _beaconMaterial.SetFloat("_Opacity", 0);
-        _readyParticles.Play();
+        PlayReadyParticles();
         _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
         _initialCameraBehaviorZone.gameObject.SetActive(true);
+        
+        
+        if (Physics.Raycast(_playerReturnTransform.position, Vector3.down, out RaycastHit hit,10f, GetEnvironmentalLayermask()))
+        {
+            _playerReturnTransform.position = hit.point;
+        }
 
 
         

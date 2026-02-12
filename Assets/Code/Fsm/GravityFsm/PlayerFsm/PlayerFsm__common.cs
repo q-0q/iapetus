@@ -732,4 +732,13 @@ public partial class PlayerFsm
         if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead)) return;
         Machine.Jump(PlayerFsmState.Dying1);
     }
+
+    private void SnapToGround()
+    {
+        ReplaceAnimatorTrigger("GroundMove");
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit,20f, GetEnvironmentalLayermask()))
+        {
+            transform.position = hit.point;
+        }
+    }
 }

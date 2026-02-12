@@ -12,7 +12,7 @@ public partial class TrialCollectibleFsm
                 _marker.position = _keyframes[0].transform.position;
                 // _marker.gameObject.SetActive(true);
                 _currentKeyframeIndex = 0;
-                _readyParticles.Play();
+                PlayReadyParticles();
                 _beaconMaterial.SetFloat("_Opacity", 0);
                 DisableAllKeyframeCameraZones();
                 _initialCameraBehaviorZone.gameObject.SetActive(true);
@@ -20,6 +20,9 @@ public partial class TrialCollectibleFsm
             .OnExit(_ =>
             {
                 _readyParticles.Stop();
+                _readyParticles.Clear();
+                _readyParticlesGold.Stop();
+                _readyParticlesGold.Clear();
             });
 
         Machine.Configure(TrialCollectibleFsmState.ReadyUntaken)
