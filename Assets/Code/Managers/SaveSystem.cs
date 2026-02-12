@@ -23,6 +23,7 @@ public static class SaveSystem
         public float playerInGameYAngle;
         public List<string> persistentEvents;
         public List<TrialCompletionEntry> trialCompletions;
+        public List<string> lemonCollections;
             
 
         public SaveData()
@@ -31,6 +32,7 @@ public static class SaveSystem
             playerInGameYAngle = 0f;
             persistentEvents = new List<string>();
             trialCompletions = new List<TrialCompletionEntry>();
+            lemonCollections = new List<string>();
         }
     }
     
@@ -90,6 +92,22 @@ public static class SaveSystem
         SaveData data = LoadSaveData(id);
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
         if (entry != null) playerRecordTime = entry.time;
+        return entry != null;
+    }
+    
+    public static void WriteLemonCollection(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
+        if (entry != null) return;
+        data.lemonCollections.Add(metaName);
+        WriteSaveData(data, id);
+    }
+    
+    public static bool GetLemonCollection(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         return entry != null;
     }
 

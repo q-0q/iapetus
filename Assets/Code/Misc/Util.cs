@@ -57,5 +57,29 @@ namespace Code.Misc
             return position;
         }
         
+        public static void ReplaceAnimatorTrigger(Animator animator, string trigger)
+        {
+            if (trigger == "") return;
+            foreach (var t in animator.parameters)
+            {
+                if (t.type != AnimatorControllerParameterType.Trigger) continue;
+                if (t.name == trigger)
+                {
+                    animator.SetTrigger(t.name);
+                }
+                else animator.ResetTrigger(t.name);
+            }
+        }
+
+        public static void InvokeSphereEffect(Vector3 position, Vector3 initialScale, float finalScale, float ageMultiplier, float distanceOffset)
+        {
+            
+            var spherePrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+            var spherePosition = position + Vector3.up;
+            var sphereObject = Object.Instantiate(spherePrefab, spherePosition,
+                Quaternion.identity, null);
+            sphereObject.GetComponent<SphereEffect>().SetConfig(initialScale, finalScale, ageMultiplier, distanceOffset);
+        }
+        
     }
 }
