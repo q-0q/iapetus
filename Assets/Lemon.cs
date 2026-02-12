@@ -24,6 +24,11 @@ public class Lemon : MonoBehaviour
         _renderer = transform.Find("Mesh").Find("lemon").Find("Lemon").GetComponent<Renderer>();
         _material = _renderer.material;
         _bone = transform.Find("Mesh").Find("lemon").Find("Armature").Find("Bone");
+        
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 10f))
+        {
+            transform.position = hit.point;
+        }
 
         if (SaveSystem.GetLemonCollection(MetaName, 0))
         {
@@ -32,6 +37,7 @@ public class Lemon : MonoBehaviour
             _readyParticles.Clear();
             GetComponent<Collider>().enabled = false;
         }
+        
         
         Util.ReplaceAnimatorTrigger(_animator, "Ready");
         
@@ -56,7 +62,7 @@ public class Lemon : MonoBehaviour
         var main = _readyParticles.main;
         main.simulationSpeed = 2.75f;
         GetComponent<Collider>().enabled = false;
-        // SaveSystem.WriteLemonCollection(MetaName, 0);
+        SaveSystem.WriteLemonCollection(MetaName, 0);
         StartCoroutine(DoCollectionTintWeight());
     }
 
@@ -72,9 +78,7 @@ public class Lemon : MonoBehaviour
             t += Time.deltaTime;
         }
 
-
         
-        _animator.transform.DOShakePosition(1.0f, 0.15f, 25);
         yield return new WaitForSeconds(0.75f);
         Util.InvokeSphereEffect(transform.position + Vector3.up * 5.5f, Vector3.one * 6f, 1.25f, 0.8f, -1f);
         // _renderer.enabled = false;

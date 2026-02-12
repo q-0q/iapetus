@@ -66,15 +66,14 @@ public class MinorCheckpoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var distance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
-        if (distance < 15f)
+        var playerDistance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
+        if (playerDistance < 15f)
         {
             OnPlayerMinorCheckpointSet?.Invoke(this);
         }
         
-        _haloRenderer.enabled = distance > 15f;
-        
-        _haloRenderer.material.SetFloat("_Value", Mathf.InverseLerp(15f, 25f, distance));
+        var cameraDistance = Vector3.Distance(Camera.main.transform.position, transform.position);
+        _haloRenderer.enabled = cameraDistance > 25f;
         
     }
 
