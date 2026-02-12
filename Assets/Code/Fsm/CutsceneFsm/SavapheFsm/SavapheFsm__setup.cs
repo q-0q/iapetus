@@ -64,9 +64,9 @@ public partial class SavapheFsm
     {
         base.SetupStateMaps();
         StateMapConfig.AnimationTrigger.Add(SavapheFsmState.NotCrossed, "NotCrossedIdle");
-        StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossed, "CrossingB");
         StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossing2, "CrossingA");
         StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossing3, "CrossingB");
+        StateMapConfig.AnimationTrigger.Add(SavapheFsmState.Crossed, "Crossed");
         
         StateMapConfig.Duration.Add(SavapheFsmState.Crossing1, 1.5f);
         StateMapConfig.Duration.Add(SavapheFsmState.Crossing2, 1.5f);

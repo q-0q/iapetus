@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 public class MinorCheckpoint : MonoBehaviour
@@ -13,6 +14,7 @@ public class MinorCheckpoint : MonoBehaviour
     private ParticleSystem _seekParticles;
     private Transform _playerSpawnTransform;
     private Light _light;
+    private Renderer _haloRenderer;
 
 
     private static event Action<MinorCheckpoint> OnPlayerMinorCheckpointSet;
@@ -55,6 +57,7 @@ public class MinorCheckpoint : MonoBehaviour
         transform.Find("TriggerParticles").TryGetComponent(out _triggerParticles);
         transform.Find("ActiveParticles").TryGetComponent(out _activeParticles);
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
+        _haloRenderer = transform.Find("Halo").GetComponent<Renderer>();
         _playerSpawnTransform = transform.Find("PlayerSpawnTransform");
         _light = GetComponentInChildren<Light>();
         _currentMinorCheckpoint = null;
@@ -64,10 +67,14 @@ public class MinorCheckpoint : MonoBehaviour
     void Update()
     {
         var distance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
-        if (distance < 10f)
+        if (distance < 15f)
         {
             OnPlayerMinorCheckpointSet?.Invoke(this);
         }
+        
+        _haloRenderer.enabled = distance > 15f;
+        
+        _haloRenderer.material.SetFloat("_Value", Mathf.InverseLerp(15f, 25f, distance));
         
     }
 
