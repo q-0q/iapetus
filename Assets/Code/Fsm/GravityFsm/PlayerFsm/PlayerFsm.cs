@@ -79,6 +79,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Dying1;
         public static int Dying2;
         public static int Dead;
+        public static int FallAfterSlide;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -195,6 +196,7 @@ public partial class PlayerFsm : GravityFsm
         
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
         UpdateShaderGlobals();
+        HandleSlopeTimer();
 
 
 
@@ -381,6 +383,11 @@ public partial class PlayerFsm : GravityFsm
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
         {
             InvokePlayerDeath();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            SaveSystem.WritePlayerInGamePosition(transform.position, 0, 0);
         }
         
         if (transform.position.y < -80f)

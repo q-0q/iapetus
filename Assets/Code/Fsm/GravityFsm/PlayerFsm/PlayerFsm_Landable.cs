@@ -15,7 +15,8 @@ public partial class PlayerFsm
                 2)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
                 _ => (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum), 4)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5);
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, IsRaycastHitParamSteep, 6);
 
     }
     

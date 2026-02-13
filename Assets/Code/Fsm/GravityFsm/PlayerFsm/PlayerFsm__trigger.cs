@@ -83,6 +83,7 @@ public partial class PlayerFsm
         if (Physics.Raycast(transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                 out var hit, forwardRaycastDistance + skew * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > 70f) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
@@ -91,11 +92,13 @@ public partial class PlayerFsm
                        (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                        out hit, forwardRaycastDistance + skew, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});
         }
@@ -127,6 +130,7 @@ public partial class PlayerFsm
                  out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) 
              && IsHitValidFlank(hit, true) && _previousWallrunSide != FlankType.Right)
         {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Right;
@@ -138,6 +142,7 @@ public partial class PlayerFsm
                  out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)
              && IsHitValidFlank(hit, false) && _previousWallrunSide != FlankType.Left)
         {
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Left;

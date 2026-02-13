@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FMOD.Studio;
 using FMODUnity;
+using UnityEditor.Experimental.GraphView;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -535,13 +536,19 @@ public partial class PlayerFsm
         if (groundedRaycastHit.collider == null)
         {
             _slopeTimer = 0f;
+            return;
         }
-        else if (!groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up),
-                out var hit, 2f))
-        {
-            _slopeTimer = 0f;
-        }
-        else if (Vector3.Angle(hit.normal, Vector3.up) < 50f)
+        // else if (!groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up),
+        //         out var hit, 2f))
+        // {
+        //     _slopeTimer = 0f;
+        // }
+        // else if (Vector3.Angle(hit.normal, Vector3.up) < 50f)
+        // {
+        //     _slopeTimer = 0f;
+        // }
+        
+        if (groundedRaycastHit.collider.gameObject.layer != LayerMask.NameToLayer("ForceSlide"))
         {
             _slopeTimer = 0f;
         }

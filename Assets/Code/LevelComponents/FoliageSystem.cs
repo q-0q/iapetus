@@ -30,8 +30,8 @@ public class FoliageSystem : MonoBehaviour
     {
         rp = new RenderParams(material)
         {
-            shadowCastingMode = ShadowCastingMode.On,
-            receiveShadows = true
+            shadowCastingMode = ShadowCastingMode.Off,
+            receiveShadows = false
         };
 
         BuildInstances();

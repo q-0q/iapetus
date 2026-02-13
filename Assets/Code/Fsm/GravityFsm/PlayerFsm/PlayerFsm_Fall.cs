@@ -12,5 +12,10 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash);
+
+        Machine.Configure(PlayerFsmState.FallAfterSlide)
+            .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(PlayerFsmState.Landable)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall);
     }
 }
