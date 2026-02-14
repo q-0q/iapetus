@@ -1,5 +1,6 @@
 
 using System.Linq;
+using Code.Misc;
 using UnityEngine;
 
 
@@ -24,7 +25,7 @@ public abstract partial class GravityFsm
     
 
     private const float GroundedYPositionLerpStrength = 50f;
-    protected const float GroundedRaycastLength = 2f;
+    protected const float GroundedRaycastLength = 1f;
     protected const float GroundedRaycastForwardOffset = 0.05f;
 
     private const float GroundedRaycastMaximumAngle = 65f;
@@ -59,12 +60,18 @@ public abstract partial class GravityFsm
                 out hit,
                 sphereCastMaxDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
+            
             var slopeMinDistanceOffset =
-                Mathf.Lerp(0, 2f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.normal, Vector3.up)));
+                Mathf.Lerp(0, 2f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.GetCorrectNormalForSphere(sphereSpherecastDirection), Vector3.up)));
 
             _currentSlopeCastMinimumDistanceOffset = slopeMinDistanceOffset > _currentSlopeCastMinimumDistanceOffset
                 ? slopeMinDistanceOffset
                 : Mathf.Lerp(_currentSlopeCastMinimumDistanceOffset, slopeMinDistanceOffset, Time.deltaTime * 5f);
+            
+            if (Machine.IsInState(GravityFsmState.Aerial))
+            {
+                print(_currentSlopeCastMinimumDistanceOffset);
+            }
             
             return transform.position.y - hit.point.y < minDistance + _currentSlopeCastMinimumDistanceOffset;
         }
