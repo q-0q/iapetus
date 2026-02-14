@@ -14,9 +14,10 @@ public partial class PlayerFsm
         // groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up), out var hit, 2f);
         var forward = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
         var destinationRotation = Quaternion.LookRotation(forward, Vector3.up);
-        transform.rotation = Quaternion.Lerp(transform.rotation, destinationRotation, Time.deltaTime * 10f);
-        var speed = Mathf.Lerp(5f, 20f, Mathf.InverseLerp(0, 1f, TimeInCurrentState()));
-        transform.position += ComputeCollisionMove(forward * (speed * Time.deltaTime));
+        var forwardSpeed = Mathf.Lerp(6f, 20f, Mathf.InverseLerp(0.1f, 0.5f, TimeInCurrentState()));
+        var rotationSpeed = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0.25f, 0.75f, TimeInCurrentState()));
+        transform.rotation = Quaternion.Lerp(transform.rotation, destinationRotation, Time.deltaTime * rotationSpeed);
+        transform.position += ComputeCollisionMove(forward * (forwardSpeed * Time.deltaTime));
 
     }
 
@@ -25,9 +26,17 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Slide)
             .SubstateOf(GravityFsmState.Grounded)
             // .SubstateOf(PlayerFsmState.Interactable)
-            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlide, _=> true, 5)
-            // .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, IsRaycastHitParamShallow, 2);
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlide, _ => true, 5)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0.5f)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, IsRaycastHitParamShallow, 2)
+            .OnEntry(_ =>
+            {
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+            })
+            .OnExitFrom(GravityFsmTrigger.StartFrameAerial, _ => { _momentum = 7f; });
     }
 
     private bool IsRaycastHitParamSteep(TriggerParams triggerParams)

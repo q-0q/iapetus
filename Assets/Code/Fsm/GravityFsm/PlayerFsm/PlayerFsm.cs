@@ -420,7 +420,7 @@ public partial class PlayerFsm : GravityFsm
     
     private void OnStateChangedCompleted(TriggerParams obj)
     {
-        // print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
         ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 

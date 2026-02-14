@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public partial class PlayerFsm
 {
     private void LandsquatConfigure()
@@ -8,6 +10,8 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            // .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Slide,
+                // _ => parentTransform.gameObject.layer == LayerMask.NameToLayer("ForceSlide"), 2)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);

@@ -131,7 +131,6 @@ public abstract class Fsm : MonoBehaviour
             if (t.type != AnimatorControllerParameterType.Trigger) continue;
             if (t.name == trigger)
             {
-                print("set " + t.name);
                 Animator.SetTrigger(t.name);
             }
             else Animator.ResetTrigger(t.name);
