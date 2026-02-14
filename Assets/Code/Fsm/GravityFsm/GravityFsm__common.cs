@@ -24,7 +24,7 @@ public abstract partial class GravityFsm
     
 
     private const float GroundedYPositionLerpStrength = 50f;
-    protected const float GroundedRaycastLength = 1f;
+    protected const float GroundedRaycastLength = 2f;
     protected const float GroundedRaycastForwardOffset = 0.05f;
 
     private const float GroundedRaycastMaximumAngle = 65f;

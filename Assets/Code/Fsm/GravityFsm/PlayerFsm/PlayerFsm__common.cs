@@ -559,7 +559,7 @@ public partial class PlayerFsm
     protected override void OnParentTransformChanged(Transform t)
     {
 
-        
+        print(t.name);
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }

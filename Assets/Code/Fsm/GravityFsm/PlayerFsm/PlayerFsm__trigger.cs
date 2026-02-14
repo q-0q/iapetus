@@ -69,7 +69,8 @@ public partial class PlayerFsm
             var yDelta = neighbor.transform.position.y - transform.position.y;
             if (yDelta > 4f) continue;
             if (yDelta < -3f) continue;
-
+            
+            if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask())) continue;
             var param = new PitonParam() { Piton = neighbor.transform.parent};
             Machine.Fire(PlayerFsmTrigger.EnterPitonTrigger, param);
         }
