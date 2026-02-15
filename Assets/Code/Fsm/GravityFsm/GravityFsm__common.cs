@@ -68,12 +68,8 @@ public abstract partial class GravityFsm
                 ? slopeMinDistanceOffset
                 : Mathf.Lerp(_currentSlopeCastMinimumDistanceOffset, slopeMinDistanceOffset, Time.deltaTime * 5f);
             
-            if (Machine.IsInState(GravityFsmState.Aerial))
-            {
-                print(_currentSlopeCastMinimumDistanceOffset);
-            }
             
-            return transform.position.y - hit.point.y < minDistance + _currentSlopeCastMinimumDistanceOffset;
+            return transform.position.y - hit.point.y < minDistance + slopeMinDistanceOffset;
         }
 
         return false;

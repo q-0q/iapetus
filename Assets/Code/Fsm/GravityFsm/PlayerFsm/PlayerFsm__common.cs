@@ -153,7 +153,7 @@ public partial class PlayerFsm
     private const float FlankWallVacuumStrength = 20f;
     private const float WallrunJumpAngle = 75f;
     
-    private const float HardLandAirDiff = -9;
+    private const float HardLandAirDiff = -11;
     private const float HardLandExitMomentum = 4f;
     private const float HardLandForwardSpeed = 10f;
     private const float HardLandForwardDuration = 0.105f;

@@ -9,7 +9,9 @@ public class PlayerDeathCollider : MonoBehaviour
 
     private void Awake()
     {
-        GetComponent<Renderer>().enabled = false;
+        var component = GetComponent<Renderer>();
+        if (component is null) return;
+        component.enabled = false;
     }
 
     private void OnTriggerEnter(Collider other)

@@ -132,8 +132,8 @@ public partial class TrialCollectibleFsm
 
     private void PlayReadyParticles()
     {
-        var data = SaveSystem.GetTrialCompletion(metaName, out var time, 0);
-        if (time < goldTime) _readyParticlesGold.Play();
+        var isCompleted = SaveSystem.GetTrialCompletion(metaName, out var time, 0);
+        if (time < goldTime && isCompleted) _readyParticlesGold.Play();
         else _readyParticles.Play();
     }
 }

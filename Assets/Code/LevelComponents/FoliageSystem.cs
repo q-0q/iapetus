@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Collider))]
 public class FoliageSystem : MonoBehaviour
@@ -13,7 +14,8 @@ public class FoliageSystem : MonoBehaviour
     public float density = 4f;
 
     public int maxInstances = 10000;
-    public float raycastHeight = 50f;
+    public float raycastDepth = 50f;
+    public float raycastOriginYOffset = 1f;
 
     [Header("Randomization")]
     public Vector2 scaleRange = new Vector2(0.8f, 1.2f);
@@ -70,13 +72,13 @@ public class FoliageSystem : MonoBehaviour
 
             Vector3 worldOrigin =
                 transform.TransformPoint(localPoint) +
-                transform.up * raycastHeight;
+                transform.up * raycastOriginYOffset;
 
             if (!Physics.Raycast(
                 worldOrigin,
                 -transform.up,
                 out RaycastHit hit,
-                raycastHeight * 2f,
+                raycastDepth,
                 ~LayerMask.GetMask(),
                 QueryTriggerInteraction.Ignore))
                 continue;

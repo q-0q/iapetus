@@ -87,6 +87,10 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
             .SubstateOf(PlayerFsmState.WallInteractable)
+            .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, _ =>
+            {
+                ResetCombo();
+            })
             .OnEntry(_ =>
             {
                 _momentum = 5f;
