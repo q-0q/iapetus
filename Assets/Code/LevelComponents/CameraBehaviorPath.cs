@@ -50,8 +50,8 @@ public class CameraBehaviorPath : CameraBehaviorZone
         float smoothT = Util.SmoothLerp01(bestT);
 
         // Blend rotations and return forward direction
-        Quaternion rotA = keyFrames[bestSegmentIndex].transform.rotation;
-        Quaternion rotB = keyFrames[bestSegmentIndex + 1].transform.rotation;
+        Quaternion rotA = keyFrames[bestSegmentIndex].GetKeyframeRotation();
+        Quaternion rotB = keyFrames[bestSegmentIndex + 1].GetKeyframeRotation();
 
         Quaternion blendedRotation = Quaternion.Slerp(rotA, rotB, smoothT);
         y = Mathf.Lerp(keyFrames[bestSegmentIndex].y, keyFrames[bestSegmentIndex + 1].y, smoothT);

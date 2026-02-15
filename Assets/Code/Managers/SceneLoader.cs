@@ -75,7 +75,6 @@ public class SceneLoader : MonoBehaviour
     {
         if (_mutex) yield break;
         _mutex = true;
-        print("async coroutine invoked");
         float width = _rawImageRectTransform.rect.width;
         Vector2 startPos = new Vector2(width, 0);
         Vector2 endPos = startPos - new Vector2(width, 0);

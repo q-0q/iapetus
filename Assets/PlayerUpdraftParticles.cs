@@ -25,7 +25,7 @@ public class PlayerUpdraftParticles : MonoBehaviour
 
     private void OnPlayerEnterUpdraft()
     {
-        print(transform.parent.name);
+        // print(transform.parent.name);
         _particleSystem.Play();
     }
 

@@ -93,7 +93,6 @@ public class GameMenu : MonoBehaviour
 
     public void OnMenuReset()
     {
-        print("menu onreset somehow got called");
         SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

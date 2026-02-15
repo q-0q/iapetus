@@ -20,7 +20,7 @@ public partial class PlayerFsm
             .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, @params =>
             {
                 if (@params is not RaycastHitParam param) return;
-                print("startframegrounded: " + param.Hit.collider.name );
+                // print("startframegrounded: " + param.Hit.collider.name );
             });
 
     }
