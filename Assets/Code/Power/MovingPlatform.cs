@@ -9,11 +9,11 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private float cycleSnapping = 0f;
     [SerializeField] private bool loop = true;
 
-    [Header("Movement")]
-    [SerializeField] private Vector3 positionDestination = Vector3.zero;
-    [SerializeField] private Vector3 rotationDestination = Vector3.zero;
+    [Header("Movement (Per Cycle Delta)")]
+    [SerializeField] private Vector3 positionPerCycle = Vector3.zero;
+    [SerializeField] private Vector3 rotationPerCycle = Vector3.zero;
 
-    private float transitionTime = 0f; // Tracks time for non-cycling mode
+    private float transitionTime = 0f;
     private Vector3 startPosition;
     private Quaternion startRotation;
     private PowerConnector _powerConnector;
@@ -27,39 +27,61 @@ public class MovingPlatform : MonoBehaviour
 
     private void Update()
     {
-        
         if (HitstopManager.Singleton.IsHitstopActive()) return;
-        
-        float t;
-        
+        if (cycleDuration <= 0f) return;
+
         if (_powerConnector is null)
         {
-            if (cycleDuration <= 0f) return;
+            if (loop)
+            {
+                // Continuous linear motion (no snapping)
+                float time = Time.time + cycleOffset * cycleDuration;
+                float cycles = time / cycleDuration;
 
-            float time = Time.time + cycleOffset * cycleDuration;
-            float normalizedTime = (time % cycleDuration) / cycleDuration;
+                ApplyContinuousMotion(cycles);
+            }
+            else
+            {
+                // Ping-pong
+                float time = Time.time + cycleOffset * cycleDuration;
+                float normalizedTime = (time % cycleDuration) / cycleDuration;
+                float sine = Mathf.Sin(normalizedTime * Mathf.PI * 2f);
+                float t = (sine * 0.5f) + 0.5f;
 
-            // Sine wave between -1 and 1 → normalized to [0,1]
-            float sine = Mathf.Sin(normalizedTime * Mathf.PI * 2f);
-            t = (sine * 0.5f) + 0.5f;
+                ApplyLerpedMotion(t);
+            }
         }
         else
         {
             var isForward = _powerConnector.IsPowered();
-            // Increment or decrement transitionTime
+
             transitionTime += (isForward ? 1f : -1f) * Time.deltaTime;
             transitionTime = Mathf.Clamp(transitionTime, 0f, cycleDuration);
 
-            // Normalize transition time
-            t = (cycleDuration > 0f) ? transitionTime / cycleDuration : (isForward ? 1f : 0f);
+            float t = transitionTime / cycleDuration;
+            ApplyLerpedMotion(t);
         }
+    }
 
-        // Apply sigmoid shaping
+    private void ApplyContinuousMotion(float cycles)
+    {
+        Vector3 targetPos = positionPerCycle * cycles;
+        Quaternion targetRot = Quaternion.Euler(rotationPerCycle * cycles);
+
+        transform.localPosition = startPosition + targetPos;
+        transform.localRotation = startRotation * targetRot;
+    }
+
+    private void ApplyLerpedMotion(float t)
+    {
         float shapedT = SharpSymmetric(t, cycleSnapping);
 
-        // Lerp position and rotation
-        Vector3 targetPos = Vector3.Lerp(Vector3.zero, positionDestination, shapedT);
-        Quaternion targetRot = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(rotationDestination), shapedT);
+        Vector3 targetPos = Vector3.Lerp(Vector3.zero, positionPerCycle, shapedT);
+        Quaternion targetRot = Quaternion.Lerp(
+            Quaternion.identity,
+            Quaternion.Euler(rotationPerCycle),
+            shapedT
+        );
 
         transform.localPosition = startPosition + targetPos;
         transform.localRotation = startRotation * targetRot;
@@ -67,6 +89,8 @@ public class MovingPlatform : MonoBehaviour
 
     private float SharpSymmetric(float t, float snapping)
     {
+        if (snapping <= 0f) return t;
+
         float k = Mathf.Lerp(0.1f, 60f, snapping);
         float x = (t - 0.5f) * 2f;
         float y = 1f / (1f + Mathf.Exp(-k * x));
@@ -76,5 +100,4 @@ public class MovingPlatform : MonoBehaviour
 
         return Mathf.InverseLerp(min, max, y);
     }
-
 }

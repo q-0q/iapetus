@@ -64,11 +64,11 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.EndUpdraft);
         }
 
-        foreach (var neighbor in Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("Piton"), QueryTriggerInteraction.Collide))
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2f, LayerMask.GetMask("Piton"), QueryTriggerInteraction.Collide))
         {
             var yDelta = neighbor.transform.position.y - transform.position.y;
             if (yDelta > 4f) continue;
-            if (yDelta < -3f) continue;
+            if (yDelta < -2f) continue;
             
             if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask())) continue;
             var param = new PitonParam() { Piton = neighbor.transform.parent};
@@ -81,12 +81,13 @@ public partial class PlayerFsm
     {
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
         var skew = FaceRaycastSkew * GetRaycastTimeModifier();
+        var minSlope = 80f;
         if (Physics.Raycast(transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                 out var hit, forwardRaycastDistance + skew * 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
-            if (slope > 70f) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
+            if (slope > minSlope) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up *
@@ -95,13 +96,13 @@ public partial class PlayerFsm
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
-            if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
+            if (slope > minSlope) Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
-            if (slope > 70f) Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});
+            if (slope > minSlope) Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});
         }
         else
         {

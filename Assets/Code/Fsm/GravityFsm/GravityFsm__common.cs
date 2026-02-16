@@ -60,13 +60,16 @@ public abstract partial class GravityFsm
                 out hit,
                 sphereCastMaxDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
-            
+            var angle = Vector3.Angle(hit.GetCorrectNormalForSphere(sphereSpherecastDirection), Vector3.up);
+            if (angle > 60f) return false;
             var slopeMinDistanceOffset =
-                Mathf.Lerp(0, 2f, Mathf.InverseLerp(0f, 90f, Vector3.Angle(hit.GetCorrectNormalForSphere(sphereSpherecastDirection), Vector3.up)));
+                Mathf.Lerp(0, 2f, Mathf.InverseLerp(0f, 90f, angle));
 
             _currentSlopeCastMinimumDistanceOffset = slopeMinDistanceOffset > _currentSlopeCastMinimumDistanceOffset
                 ? slopeMinDistanceOffset
                 : Mathf.Lerp(_currentSlopeCastMinimumDistanceOffset, slopeMinDistanceOffset, Time.deltaTime * 5f);
+            
+            
             
             
             return transform.position.y - hit.point.y < minDistance + slopeMinDistanceOffset;

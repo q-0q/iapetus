@@ -27,12 +27,14 @@ public class MinorCheckpoint : MonoBehaviour
         
         if (minorCheckpoint == this)
         {
+            _haloRenderer.enabled = false;
             if (_currentMinorCheckpoint == this) return;
             _currentMinorCheckpoint = this;
             StartCoroutine(InvokeSeekParticles());
         }
         else
         {
+            _haloRenderer.enabled = true;
             _light.enabled = false;
             _triggerParticles.Stop();
             _activeParticles.Stop();
@@ -71,9 +73,6 @@ public class MinorCheckpoint : MonoBehaviour
         {
             OnPlayerMinorCheckpointSet?.Invoke(this);
         }
-        
-        var cameraDistance = Vector3.Distance(Camera.main.transform.position, transform.position);
-        _haloRenderer.enabled = cameraDistance > 25f;
         
     }
 

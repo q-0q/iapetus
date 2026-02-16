@@ -106,7 +106,7 @@ public partial class PlayerFsm
                 if (Vector3.Angle(transform.forward, pitonParam.Piton.forward) >= 100f) return false;
                 if (Machine.IsInState(PlayerFsmState.FallAfterPitonHoming) && TimeInCurrentState() < 0.5f) return false;
                 if (Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.1f) return false;
-                return YVelocity < 20f;
+                return YVelocity < 15f;
             });
 
         Machine.Configure(PlayerFsmState.FallAfterPitonHoming)

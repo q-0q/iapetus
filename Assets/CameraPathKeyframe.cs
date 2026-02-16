@@ -41,7 +41,7 @@ public class CameraPathKeyframe : MonoBehaviour
         
         var newForward = GetNewForward();
 
-        reflectionAxisStore = Quaternion.Lerp(reflectionAxisStore, newForward, Time.deltaTime * 6f);
+        reflectionAxisStore = Quaternion.Lerp(reflectionAxisStore, newForward, Time.deltaTime * 10f);
     }
 
     private Quaternion GetNewForward()
