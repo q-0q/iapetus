@@ -21,24 +21,40 @@ public class CameraPathKeyframe : MonoBehaviour
         Gizmos.DrawLine(transform.position, transform.position + transform.forward * 5f);
     }
 
+    private void Awake()
+    {
+    }
+
     private void Start()
     {
-        reflectionAxisStore = transform.rotation;
+        reflectionAxisStore = GetNewForward();
     }
 
     private void Update()
     {
         if (!reflectionEnabled) return;
+        if (PlayerFsm.Singleton.GetMomentum() < 10f) return;
+        
+        // var roundedPlayerForwardEuler = new Vector3(0,  Mathf.Round(PlayerFsm.Singleton.transform.rotation.y / 45f) * 45f, 0);
+        // var roundedPlayerForward = Quaternion.Euler(roundedPlayerForwardEuler) * Vector3.forward;
+        // Debug.DrawRay(PlayerFsm.Singleton.transform.position, roundedPlayerForward, Color.green);
+        
+        var newForward = GetNewForward();
 
+        reflectionAxisStore = Quaternion.Lerp(reflectionAxisStore, newForward, Time.deltaTime * 6f);
+    }
+
+    private Quaternion GetNewForward()
+    {
         var signedAngle = Vector3.SignedAngle(transform.forward, PlayerFsm.Singleton.transform.forward, Vector3.up);
+        signedAngle = signedAngle > 0 ? 90f : -90f;
 
-        var newForwardMinimum = Quaternion.Euler(0, -reflectionAngle + reflectionDeadzoneSize, 0) * transform.rotation;
-        var newForwardMAximum = Quaternion.Euler(0, reflectionAngle - reflectionDeadzoneSize, 0) * transform.rotation;
+        var newForwardMinimum = Quaternion.Euler(0, -reflectionAngle, 0) * transform.rotation;
+        var newForwardMAximum = Quaternion.Euler(0, reflectionAngle, 0) * transform.rotation;
 
         var newForward = Quaternion.Lerp(newForwardMinimum, newForwardMAximum,
-            Mathf.InverseLerp(-reflectionAngle, reflectionAngle, signedAngle));
-        
-        reflectionAxisStore = Quaternion.Lerp(reflectionAxisStore, newForward, Time.deltaTime * 6f);
+            Mathf.InverseLerp(-90f, 90f, signedAngle));
+        return newForward;
     }
 
     public Quaternion GetKeyframeRotation()

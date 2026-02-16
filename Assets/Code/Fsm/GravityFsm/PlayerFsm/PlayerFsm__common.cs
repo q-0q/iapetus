@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FMOD.Studio;
 using FMODUnity;
+using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEditor.Rendering;
 using UnityEngine;
@@ -54,6 +55,7 @@ public partial class PlayerFsm
     private bool _wallsquattedSinceLeavingGround;
     private bool _dashSinceLeavingGround;
     public static PlayerFsm Singleton;
+    
     public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
     private TightropeController _currentTightropeController;
