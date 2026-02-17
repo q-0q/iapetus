@@ -64,7 +64,7 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.EndUpdraft);
         }
 
-        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2f, LayerMask.GetMask("Piton"), QueryTriggerInteraction.Collide))
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2.75f, LayerMask.GetMask("Piton"), QueryTriggerInteraction.Collide))
         {
             var yDelta = neighbor.transform.position.y - transform.position.y;
             if (yDelta > 4f) continue;

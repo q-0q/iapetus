@@ -26,8 +26,8 @@ public partial class SwitchFsm
 
         IEnumerator Coroutine()
         {
-            yield return new WaitForSeconds(0.25f);
             CutsceneManager.Singleton.SetPseudoCutsceneActive();
+            yield return new WaitForSeconds(0.75f);
             float t = 0;
             float duration = 1.25f;
             while (t < duration)

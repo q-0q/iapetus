@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Collider))]
 public class FoliageSystem : MonoBehaviour
@@ -44,9 +43,6 @@ public class FoliageSystem : MonoBehaviour
         Collider col = GetComponent<Collider>();
         Bounds localBounds = GetLocalColliderBounds(col);
 
-        // -----------------------------
-        // WORLD-SPACE DENSITY FIX
-        // -----------------------------
         Vector3 lossy = transform.lossyScale;
 
         float worldArea =
@@ -57,7 +53,6 @@ public class FoliageSystem : MonoBehaviour
             Mathf.RoundToInt(worldArea * density),
             maxInstances
         );
-        // -----------------------------
 
         List<Matrix4x4> matrices = new List<Matrix4x4>(targetCount);
 
@@ -70,13 +65,17 @@ public class FoliageSystem : MonoBehaviour
                 Random.Range(localBounds.min.z, localBounds.max.z)
             );
 
+            // Convert to world
             Vector3 worldOrigin =
                 transform.TransformPoint(localPoint) +
                 transform.up * raycastOriginYOffset;
 
+            // Ray direction now fully respects GameObject rotation
+            Vector3 rayDirection = -transform.up;
+
             if (!Physics.Raycast(
                 worldOrigin,
-                -transform.up,
+                rayDirection,
                 out RaycastHit hit,
                 raycastDepth,
                 ~LayerMask.GetMask(),
@@ -86,20 +85,32 @@ public class FoliageSystem : MonoBehaviour
             if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
                 continue;
 
+            // Random offset in object-local space
             Vector3 localOffset = new Vector3(
                 Random.Range(offsetRange.x, offsetRange.y),
                 0f,
                 Random.Range(offsetRange.x, offsetRange.y)
             );
 
-            Vector3 position =
-                hit.point + transform.TransformDirection(localOffset);
+            Vector3 worldOffset = transform.TransformDirection(localOffset);
+            Vector3 position = hit.point + worldOffset;
 
-            Quaternion rotation =
-                Quaternion.AngleAxis(
-                    Random.Range(rotationYRange.x, rotationYRange.y),
-                    hit.normal
-                );
+            // --------------------------------------------------
+            // ROTATION: Align mesh opposite ray direction
+            // --------------------------------------------------
+
+            Vector3 foliageUp = -rayDirection;
+
+            // Align mesh's +Y with foliageUp
+            Quaternion alignToRay =
+                Quaternion.FromToRotation(Vector3.up, foliageUp);
+
+            // Random twist around ray axis
+            float randomY = Random.Range(rotationYRange.x, rotationYRange.y);
+            Quaternion twist =
+                Quaternion.AngleAxis(randomY, foliageUp);
+
+            Quaternion rotation = twist * alignToRay;
 
             float scale = Random.Range(scaleRange.x, scaleRange.y);
 
@@ -132,7 +143,7 @@ public class FoliageSystem : MonoBehaviour
             return meshCol.sharedMesh.bounds;
         }
 
-        // Fallback (least accurate)
+        // Fallback
         Bounds b = col.bounds;
         Vector3 center = transform.InverseTransformPoint(b.center);
         Vector3 size = Vector3.Scale(

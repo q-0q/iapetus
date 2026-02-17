@@ -126,8 +126,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         // if the player is facing away from the newForward and the camera is also pointed
         // roughly in that direction then we assume the player "knows what theyre doing" and we dont autocam
-        var playerDesiredAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, newForward);
-        print(playerDesiredAngleDelta);
+        // var playerDesiredAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, newForward);
         // var playerCurrentAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, oldXQuat * Vector3.forward);
         // if (playerDesiredAngleDelta > 100f && playerCurrentAngleDelta < 45f && PlayerFsm.Singleton.GetMomentum() > 2f) return;
         

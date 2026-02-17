@@ -39,6 +39,11 @@ public class CameraPathKeyframe : MonoBehaviour
         // var roundedPlayerForward = Quaternion.Euler(roundedPlayerForwardEuler) * Vector3.forward;
         // Debug.DrawRay(PlayerFsm.Singleton.transform.position, roundedPlayerForward, Color.green);
         
+        
+        var signedAngle = Vector3.SignedAngle(transform.forward, PlayerFsm.Singleton.transform.forward, Vector3.up);
+        var deadzone = 10f;
+        if (Mathf.Abs(signedAngle) < deadzone || Mathf.Abs(signedAngle) > 180f - deadzone) return;
+        
         var newForward = GetNewForward();
 
         reflectionAxisStore = Quaternion.Lerp(reflectionAxisStore, newForward, Time.deltaTime * 10f);
