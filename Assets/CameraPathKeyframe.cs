@@ -33,7 +33,7 @@ public class CameraPathKeyframe : MonoBehaviour
     private void Update()
     {
         if (!reflectionEnabled) return;
-        if (PlayerFsm.Singleton.GetMomentum() < 10f) return;
+        if (PlayerFsm.Singleton.GetMomentum() < 6f) return;
         
         // var roundedPlayerForwardEuler = new Vector3(0,  Mathf.Round(PlayerFsm.Singleton.transform.rotation.y / 45f) * 45f, 0);
         // var roundedPlayerForward = Quaternion.Euler(roundedPlayerForwardEuler) * Vector3.forward;

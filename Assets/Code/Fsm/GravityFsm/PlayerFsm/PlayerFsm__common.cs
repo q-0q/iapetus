@@ -115,7 +115,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.6f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 3f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.65f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.85f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 2f;
     private const float SprintTurnLossMultiplier = 1.5f;
@@ -255,6 +255,9 @@ public partial class PlayerFsm
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
                 (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
+
+        var slope = Vector3.Angle(hit.normal, Vector3.up);
+        if (slope > 40f) return false;
         _currentLedgePosition = hit.point;
         return true;
     }
