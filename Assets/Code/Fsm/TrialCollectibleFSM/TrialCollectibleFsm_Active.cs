@@ -54,7 +54,7 @@ public partial class TrialCollectibleFsm
                 _activeFinalParticles.transform.localScale = Vector3.zero;
                 IncrementKeyframeIndex();
                 OnPlayerBeganTrial?.Invoke();
-                SaveSystem.WritePlayerInGamePosition(_playerReturnTransform.position, _playerReturnTransform.rotation.y, 0);
+                SaveSystem.WritePlayerInGamePosition(_playerReturnTransform.position, "", _playerReturnTransform.rotation.y, 0);
             });
     }
 

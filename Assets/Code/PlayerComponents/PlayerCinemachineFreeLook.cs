@@ -109,10 +109,10 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     
     private void OnCameraFollowTriggerStart(CameraBehaviorZone cameraBehaviorZone)
     {
-        if (cameraBehaviorZone == null )return;
-        var newForward = cameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
-        var xAngle = Vector3.SignedAngle(Vector3.forward, newForward, transform.up);
+        var xAngle = Vector3.SignedAngle(Vector3.forward, PlayerFsm.Singleton.transform.forward, transform.up);
         _freeLook.m_XAxis.Value = xAngle;
+        if (cameraBehaviorZone == null )return;
+        cameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
         _freeLook.m_YAxis.Value = y;
     }
 

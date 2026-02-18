@@ -6,12 +6,13 @@ using UnityEngine;
 public class TriggerSceneTransition : MonoBehaviour
 {
     public string scene;
-    public Vector3 destinationPosition;
     public float destinationRotation;
+    
+    public string DestinationId;
 
     private void OnTriggerEnter(Collider other)
     {
-        SaveSystem.WritePlayerInGamePosition(destinationPosition, destinationRotation, 0);
+        SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, destinationRotation, 0);
         SceneLoader.Singleton.LoadScene(scene);
     }
 

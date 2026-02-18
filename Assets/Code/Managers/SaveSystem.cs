@@ -20,6 +20,7 @@ public static class SaveSystem
     public class SaveData
     {
         public float[] playerInGamePosition;
+        public string playerInGamePositionId;
         public float playerInGameYAngle;
         public List<string> persistentEvents;
         public List<TrialCompletionEntry> trialCompletions;
@@ -30,6 +31,7 @@ public static class SaveSystem
         {
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
+            playerInGamePositionId = "";
             persistentEvents = new List<string>();
             trialCompletions = new List<TrialCompletionEntry>();
             lemonCollections = new List<string>();
@@ -46,10 +48,11 @@ public static class SaveSystem
         return Path.Combine(GetDirectory(), id + ".json");
     }
     
-    public static void WritePlayerInGamePosition(Vector3 gamePosition, float yAngle, int id)
+    public static void WritePlayerInGamePosition(Vector3 gamePosition, string gamePositionId, float yAngle, int id)
     {
         SaveData data = LoadSaveData(id);
         data.playerInGamePosition = new []{ gamePosition.x, gamePosition.y, gamePosition.z};
+        data.playerInGamePositionId = gamePositionId;
         data.playerInGameYAngle = yAngle;
         WriteSaveData(data, id);
     }

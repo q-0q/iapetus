@@ -126,7 +126,19 @@ public partial class PlayerFsm : GravityFsm
         var saveData = SaveSystem.LoadSaveData(0);
         if (saveData != null )
         {
-            if (saveData.playerInGamePosition != null)
+            if (saveData.playerInGamePositionId != "")
+            {
+                foreach (var playerGamePosition in FindObjectsByType<PlayerGamePosition>(FindObjectsSortMode.None))
+                {
+                    if (playerGamePosition.Id == saveData.playerInGamePositionId)
+                    {
+                        transform.position = playerGamePosition.transform.position;
+                        transform.rotation = playerGamePosition.transform.rotation;
+                    }
+                }
+            }
+            
+            else if (saveData.playerInGamePosition != null)
             {
                 if (saveData.playerInGamePosition.Length != 0)
                 {
@@ -411,7 +423,7 @@ public partial class PlayerFsm : GravityFsm
         
         if (Input.GetKeyDown(KeyCode.X))
         {
-            SaveSystem.WritePlayerInGamePosition(transform.position, 0, 0);
+            SaveSystem.WritePlayerInGamePosition(transform.position, "", 0, 0);
         }
         
         if (transform.position.y < -80f)
