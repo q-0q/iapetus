@@ -61,6 +61,8 @@ public class CameraFollow : MonoBehaviour
     
     void UpdatePlayerPosition(Vector3 pos, bool grounded)
     {
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
+        
         pos = CameraFollowTarget.Singleton.transform.position;
         var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)
             ? YLerpRate * 4f

@@ -9,8 +9,8 @@ public class PlayerDeathCollider : MonoBehaviour
 
     private void Awake()
     {
-        var component = GetComponent<Renderer>();
-        if (component is null) return;
+        TryGetComponent(out Renderer component);
+        if (component == null) return;
         component.enabled = false;
     }
 
