@@ -44,6 +44,8 @@ public partial class PlayerFsm
     private ParticleSystem _teleportParticles;
     private ParticleSystem _deathParticles;
     private bool isSprinting;
+    private bool _isParentSlippery = false;
+    private Vector3 _previousPositionDelta;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -416,6 +418,8 @@ public partial class PlayerFsm
     private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
     {
         var desiredMove = ComputeDesiredMove();
+        desiredMove = ApplyTraction(desiredMove);
+        
         var collisionMove = ComputeCollisionMove(desiredMove);
         transform.position += collisionMove * modifier;
         
@@ -431,6 +435,18 @@ public partial class PlayerFsm
         //     isSprinting = false;
         //     ResetCombo();
         // }
+    }
+
+    private Vector3 ApplyTraction(Vector3 desiredMove)
+    {
+
+        // if (Input.GetKey(KeyCode.P)) desiredMove = Vector3.zero;
+        if (!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery) return desiredMove;
+        
+        var lerpStrength = 1.5f;
+        desiredMove = Vector3.Lerp(_previousPositionDelta, desiredMove, lerpStrength * Time.deltaTime);
+
+        return desiredMove;
     }
 
     public void InvokeBoost(bool jump, float momentumWeight)
@@ -569,7 +585,8 @@ public partial class PlayerFsm
     protected override void OnParentTransformChanged(Transform t)
     {
 
-        // print(t.name);
+        t.TryGetComponent(out PlayerSlipperyIndicator tractionIndicator);
+        _isParentSlippery = tractionIndicator != null;
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }

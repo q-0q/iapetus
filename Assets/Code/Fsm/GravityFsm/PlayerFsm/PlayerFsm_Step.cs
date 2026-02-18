@@ -6,6 +6,7 @@ public partial class PlayerFsm
     private void IdleOnUpdate()
     {
         HandleInputMomentumChange();
+        transform.position += ComputeCollisionMove(ApplyTraction(Vector3.zero));
     }
     
     private void StepStartOnUpdate()
@@ -14,13 +15,14 @@ public partial class PlayerFsm
         HandleTurning(2f);
 
         var movement = transform.forward * (3f * Time.deltaTime);
-        transform.position += ComputeCollisionMove(movement);
+        transform.position += ComputeCollisionMove(ApplyTraction(movement));
         SetAnimatorMomentum();
     }
     
     private void StepEndOnUpdate()
     {
         HandleInputMomentumChange();
+        transform.position += ApplyTraction(Vector3.zero);
     }
     
     private void StepConfigure()
@@ -59,7 +61,12 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6);
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
+            .OnEntry(_ =>
+            {
+                _previousPositionDelta *= 0.35f;
+                _momentum = 0;
+            });
         
     }
 }

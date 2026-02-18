@@ -206,6 +206,8 @@ public partial class PlayerFsm : GravityFsm
         UpdateShaderGlobals();
         HandleSlopeTimer();
 
+        var previousPosition = transform.position;
+
 
         if (Machine.IsInState(PlayerFsmState.Idle))
         {
@@ -225,11 +227,6 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.StepEnd))
         {
             StepEndOnUpdate();
-        }
-        
-        if (Machine.IsInState(PlayerFsmState.Idle))
-        {
-            IdleOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.TightropeMove))
@@ -421,6 +418,8 @@ public partial class PlayerFsm : GravityFsm
         {
             InvokePlayerDeath();
         }
+
+        _previousPositionDelta = transform.position - previousPosition;
         
 
         // HandleSlopeTimer();
