@@ -13,6 +13,7 @@ public class CameraPathKeyframe : MonoBehaviour
     public float reflectionDeadzoneSize = 10f;
     private Quaternion reflectionAxisStore;
     
+    
 
     private void OnDrawGizmos()
     {
