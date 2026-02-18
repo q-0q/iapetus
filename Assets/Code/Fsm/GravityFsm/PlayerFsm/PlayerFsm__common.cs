@@ -119,6 +119,7 @@ public partial class PlayerFsm
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 2f;
     private const float SprintTurnLossMultiplier = 1.5f;
+    private const float IdleMomentumThreshold = 3f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -344,6 +345,8 @@ public partial class PlayerFsm
             var sprintMomentumGainMod = (sprinting && grounded ? SprintMomentumGainMultiplier : 1f);
             
             _momentum = Mathf.Min(localMaximum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * sprintMomentumGainMod * Time.deltaTime);
+            
+            Machine.Fire(PlayerFsm.PlayerFsmTrigger.Accelerating);
         }
         else
         {
@@ -354,6 +357,8 @@ public partial class PlayerFsm
             };
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
             _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
+            
+            if (_momentum < IdleMomentumThreshold) Machine.Fire(PlayerFsm.PlayerFsmTrigger.IdleMomentumThresholdPassedDecelerating);
         }
         
     }

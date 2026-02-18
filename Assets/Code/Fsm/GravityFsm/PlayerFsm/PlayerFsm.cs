@@ -19,6 +19,10 @@ public partial class PlayerFsm : GravityFsm
 {
     public class PlayerFsmState : GravityFsmState
     {
+        public static int Idle;
+        public static int StepStart;
+        public static int StepEnd;
+        
         public static int GroundMove;
         public static int Jumpsquat;
         public static int Landsquat;
@@ -109,6 +113,10 @@ public partial class PlayerFsm : GravityFsm
 
         public static int ArriveAtPiton;
         public static int EnterPitonTrigger;
+
+
+        public static int Accelerating;
+        public static int IdleMomentumThresholdPassedDecelerating;
     }
     
     protected override void OnAwake()
@@ -199,10 +207,29 @@ public partial class PlayerFsm : GravityFsm
         HandleSlopeTimer();
 
 
+        if (Machine.IsInState(PlayerFsmState.Idle))
+        {
+            IdleOnUpdate();
+        }
 
         if (Machine.IsInState(PlayerFsmState.GroundMove))
         {
             GroundMoveOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.StepStart))
+        {
+            StepStartOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.StepEnd))
+        {
+            StepEndOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Idle))
+        {
+            IdleOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.TightropeMove))

@@ -19,6 +19,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
+            .Permit(PlayerFsm.PlayerFsmTrigger.IdleMomentumThresholdPassedDecelerating, PlayerFsm.PlayerFsmState.StepEnd)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)

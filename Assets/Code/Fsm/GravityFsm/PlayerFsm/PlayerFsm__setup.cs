@@ -52,6 +52,7 @@ public partial class PlayerFsm
         ClimbConfigure();
         PitonConfigure();
         DeathConfigure();
+        StepConfigure();
     }
 
     public override void SetupStateMaps()
@@ -84,6 +85,9 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Dying1, 0.3f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dying2, 0.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.FallAfterSlide, 0.25f);
+        
+        StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -121,6 +125,10 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterPitonHoming, "Fall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dying2, "Dying");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlide, "Fall");
+        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Idle, "Idle");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepStart, "StepStart");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepEnd, "StepEnd");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
