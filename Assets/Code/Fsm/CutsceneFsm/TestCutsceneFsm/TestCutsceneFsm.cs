@@ -164,8 +164,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
     {
         base.OnStartComplete();
         FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.WindAmbience);
-        var saveData = SaveSystem.LoadSaveData(0);
-        if (saveData.persistentEvents.Contains(CutscenePersistentEvent))
+        if (SaveSystem.GetPersistentEventCompleted(CutscenePersistentEvent))
         {
             Machine.Jump(CutsceneFsmState.Inactive);
             return;

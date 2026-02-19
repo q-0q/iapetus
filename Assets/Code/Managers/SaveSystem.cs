@@ -5,8 +5,35 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public static class SaveSystem
+public class SaveSystem : MonoBehaviour
 {
+    
+    private static SaveSystem _singleton;
+    private static SaveSystem Singleton
+    {
+        get
+        {
+            if (_singleton == null)
+            {
+                var go = new GameObject("SaveSystem");
+                _singleton = go.AddComponent<SaveSystem>();
+            }
+            return _singleton;
+        }
+    }
+    
+    void Awake()
+    {
+        if (_singleton != null && _singleton != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _cachedSaveData = null;
+        _singleton = this;
+        DontDestroyOnLoad(gameObject);
+    }
     
     [System.Serializable]
     public class TrialCompletionEntry
@@ -25,6 +52,9 @@ public static class SaveSystem
         public List<string> persistentEvents;
         public List<TrialCompletionEntry> trialCompletions;
         public List<string> lemonCollections;
+        public List<string> bells;
+        
+        
             
 
         public SaveData()
@@ -35,8 +65,11 @@ public static class SaveSystem
             persistentEvents = new List<string>();
             trialCompletions = new List<TrialCompletionEntry>();
             lemonCollections = new List<string>();
+            bells = new List<string>();
         }
     }
+
+    private SaveData _cachedSaveData;
     
     private static string GetDirectory()
     {
@@ -62,6 +95,14 @@ public static class SaveSystem
         SaveData data = LoadSaveData(id);
         if (data.persistentEvents.Contains(persistentEvent)) return;
         data.persistentEvents.Add(persistentEvent);
+        WriteSaveData(data, id);
+    }
+    
+    public static void WriteBell(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        if (data.bells.Contains(metaName)) return;
+        data.bells.Add(metaName);
         WriteSaveData(data, id);
     }
 
@@ -114,7 +155,18 @@ public static class SaveSystem
         return entry != null;
     }
 
-
+    public static bool GetPersistentEventCompleted(string persistentEvent)
+    {
+        var data = LoadSaveData(0);
+        return data.persistentEvents.Contains(persistentEvent);
+    }
+    
+    public static bool GetBell(string metaName)
+    {
+        var data = LoadSaveData(0);
+        return data.bells.Contains(metaName);
+    }
+    
     private static void WriteSaveData(SaveData saveData, int id)
     {
         string directory = GetDirectory();
@@ -122,6 +174,7 @@ public static class SaveSystem
             Directory.CreateDirectory(directory);
         
         SaveData data = saveData;
+        Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(id), json);
@@ -130,15 +183,21 @@ public static class SaveSystem
 
     public static SaveData LoadSaveData(int id)
     {
-        string path = GetPath(id);
-        if (!File.Exists(path))
+        if (Singleton._cachedSaveData == null)
         {
-            return new SaveData();
-        }
-
-        string json = File.ReadAllText(path);
-        SaveData data = JsonUtility.FromJson<SaveData>(json);
-        return data;
+            string path = GetPath(id);
+            if (!File.Exists(path))
+            {
+                Singleton._cachedSaveData = new SaveData();
+            }
+            else
+            {
+                string json = File.ReadAllText(path);
+                Singleton._cachedSaveData = JsonUtility.FromJson<SaveData>(json);
+            }
+        };
+        
+        return Singleton._cachedSaveData;
     }
 }
 

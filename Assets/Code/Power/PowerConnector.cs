@@ -32,7 +32,7 @@ public class PowerConnector : MonoBehaviour
     private void Start()
     {
         var data = SaveSystem.LoadSaveData(0);
-        _persistentEventCached = data.persistentEvents.Contains(PersistentEvent);
+        _persistentEventCached = SaveSystem.GetPersistentEventCompleted(PersistentEvent);
         foreach (var powerConnector in outputs)
         {
             powerConnector.AddInput(this);

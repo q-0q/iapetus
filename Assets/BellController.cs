@@ -11,7 +11,7 @@ public class BellController : MonoBehaviour
 {
     private Interactable _interactable;
     private Animator _animator;
-    public string persistentEvent;
+    [FormerlySerializedAs("persistentEvent")] public string metaName;
     private bool rung;
     public Transform bellMesh;
     private Material _bellMaterial;
@@ -25,8 +25,7 @@ public class BellController : MonoBehaviour
     private void Awake()
     {
         _interactable = GetComponentInChildren<Interactable>();
-        var saveData = SaveSystem.LoadSaveData(0);
-        rung = saveData.persistentEvents.Contains(persistentEvent);
+        rung = SaveSystem.GetBell(metaName);
         _bellMaterial = bellMesh.GetComponent<Renderer>().material;
         _haloMaterial = transform.Find("Halo").GetComponent<Renderer>().material;
         if (!rung) return;
@@ -70,7 +69,7 @@ public class BellController : MonoBehaviour
     {
         if (rung) return;
         
-        SaveSystem.WritePersistentEvent(persistentEvent, 0);
+        SaveSystem.WriteBell(metaName, 0);
         
         Util.ReplaceAnimatorTrigger(_animator, "Ring");
         rung = true;

@@ -54,7 +54,7 @@ public partial class SavaphePitonUpperFsm : CutsceneFsm
         base.OnStartComplete();
         var saveData = SaveSystem.LoadSaveData(0);
 
-        Machine.Jump(saveData.persistentEvents.Contains(bell.persistentEvent)
+        Machine.Jump(SaveSystem.GetBell(bell.metaName)
             ? SavaphePitonUpperFsmState.Rung
             : SavaphePitonUpperFsmState.NotRung);
     }

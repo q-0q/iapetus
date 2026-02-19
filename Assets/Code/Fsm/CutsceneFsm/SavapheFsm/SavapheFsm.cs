@@ -94,7 +94,7 @@ public partial class SavapheFsm : CutsceneFsm
         base.OnStartComplete();
         var saveData = SaveSystem.LoadSaveData(0);
 
-        Machine.Jump(saveData.persistentEvents.Contains(CutscenePersistentEvent)
+        Machine.Jump(SaveSystem.GetPersistentEventCompleted(CutscenePersistentEvent)
             ? SavapheFsmState.Crossed
             : SavapheFsmState.NotCrossed);
     }
