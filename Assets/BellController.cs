@@ -15,9 +15,12 @@ public class BellController : MonoBehaviour
     private bool rung;
     public Transform bellMesh;
     private Material _bellMaterial;
+    private Material _haloMaterial;
     private CinemachineVirtualCamera _virtualCamera;
     private Transform _virtualCameraLookAtTarget;
-    private Transform _ambientParticlesHolder;
+    public Transform armHolder;
+    private Vector3 _startPosition;
+    public static event Action OnBellRing;
 
     private void Awake()
     {
@@ -25,25 +28,32 @@ public class BellController : MonoBehaviour
         var saveData = SaveSystem.LoadSaveData(0);
         rung = saveData.persistentEvents.Contains(persistentEvent);
         _bellMaterial = bellMesh.GetComponent<Renderer>().material;
+        _haloMaterial = transform.Find("Halo").GetComponent<Renderer>().material;
+        if (!rung) return;
+        _bellMaterial.SetFloat("_GlowWeight", 1f);
+        _bellMaterial.SetFloat("_NoiseWeight", 0f);
+        _haloMaterial.SetFloat("_Weight", 0f);
+        armHolder.gameObject.SetActive(false);
+        _interactable.SetEnabled(false);
 
     }
 
     // Start is called before the first frame update
     void Start()
     {
+        _startPosition = transform.position;
         _animator = GetComponentInChildren<Animator>();
         _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         Util.ReplaceAnimatorTrigger(_animator, "Idle");
         _virtualCamera.transform.SetParent(null);
         _virtualCameraLookAtTarget = transform.Find("VirtualCameraLookAtTarget");
-        _ambientParticlesHolder = transform.Find("AmbientParticlesHolder");
         _virtualCameraLookAtTarget.SetParent(null);
     }
 
     // Update is called once per frame
     void Update()
     {
-        _ambientParticlesHolder.Rotate(new Vector3(0, Time.deltaTime * 50f, 0));
+        transform.position = _startPosition + Vector3.up * (Mathf.Sin(Time.time * 1f) * 0.4f);
     }
 
     private void OnEnable()
@@ -58,7 +68,9 @@ public class BellController : MonoBehaviour
 
     private void OnInteracted()
     {
-        // if (rung) return;
+        if (rung) return;
+        
+        SaveSystem.WritePersistentEvent(persistentEvent, 0);
         
         Util.ReplaceAnimatorTrigger(_animator, "Ring");
         rung = true;
@@ -69,18 +81,33 @@ public class BellController : MonoBehaviour
         {
             CutsceneManager.Singleton.SetPseudoCutsceneActive();
             _virtualCamera.Priority = 20;
-            yield return new WaitForSeconds(2.25f);
-            transform.DOShakePosition(3f, 0.2f, 30);
-            Util.InvokeSphereEffect(transform.position + (Vector3.down * 2f), Vector3.one * 17f, 1.35f, 1f, -5f);
-
-            Vector3 virtualCameraLookAtStartPosition = _virtualCameraLookAtTarget.position;
-
+            
             float t = 0;
-            float duration = 1f;
+            float duration = 2.25f;
             while (t < duration)
             {
                 var value = Mathf.Lerp(0f, 1f, (duration - t) / duration);
-                _bellMaterial.SetFloat("_GlowWeight", value);
+                
+                _haloMaterial.SetFloat("_Weight", value);
+                t += Time.deltaTime;
+                yield return null;
+            }
+            
+            transform.DOShakePosition(3f, 0.2f, 30);
+            Util.InvokeSphereEffect(transform.position + (Vector3.down * 2f), Vector3.one * 17f, 1.35f, 1f, -5f);
+            _bellMaterial.SetFloat("_GlowWeight", 1f);
+            armHolder.gameObject.SetActive(false);
+            _interactable.SetEnabled(false);
+            OnBellRing?.Invoke();
+            
+            Vector3 virtualCameraLookAtStartPosition = _virtualCameraLookAtTarget.position;
+
+            t = 0;
+            duration = 1f;
+            while (t < duration)
+            {
+                var value = Mathf.Lerp(0f, 1f, (duration - t) / duration);
+                
                 t += Time.deltaTime;
                 _virtualCameraLookAtTarget.position = virtualCameraLookAtStartPosition + Vector3.down * (value * 2f);
                 yield return null;
@@ -89,6 +116,18 @@ public class BellController : MonoBehaviour
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
             _virtualCameraLookAtTarget.position = virtualCameraLookAtStartPosition;
             _virtualCamera.Priority = -10;
+            
+            duration = 1f;
+            t = 0;
+            while (t < duration)
+            {
+                var value = Mathf.Lerp(0f, 1f, (duration - t) / duration);
+                _bellMaterial.SetFloat("_NoiseWeight", value);
+
+                _bellMaterial.SetFloat("_FadeWeight", value);
+                t += Time.deltaTime;
+                yield return null;
+            }
         }
         
     }

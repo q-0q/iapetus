@@ -12,6 +12,7 @@ public class Interactable : MonoBehaviour
     public event Action OnInteracted;
     public event Action OnHardInteracted;
     private Collider _collider;
+    public bool isEnabled = true;
     
     private void Awake()
     {
@@ -30,7 +31,7 @@ public class Interactable : MonoBehaviour
 
     public void SetEnabled(bool val)
     {
-        _collider.enabled = val;
+        isEnabled = val;
     }
     
     void OnEnable() => InteractableRegistry.Interactables.Add(this);

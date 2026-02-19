@@ -10,6 +10,7 @@ public partial class PlayerFsm
         
         currentPotentialInteractable = InteractableRegistry.Interactables
             .Where(i => i != null)
+            .Where(i => i.isEnabled)
             .Where(i => Vector3.Distance(transform.position, i.transform.position) <= i.triggerRange)
             .OrderBy(i => Vector3.Distance(transform.position, i.transform.position))
             .FirstOrDefault();
