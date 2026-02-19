@@ -72,7 +72,6 @@ public class BreakableSystem : MonoBehaviour
         for (int i = 0; i < targetCount; i++)
         {
             
-            print(i);
             int configIndex = Random.Range(0, Configs.Count);
             
             
@@ -83,9 +82,15 @@ public class BreakableSystem : MonoBehaviour
                 Random.Range(localBounds.min.z, localBounds.max.z)
             );
 
+            Vector3 localOffset = new Vector3(
+                Random.Range(Configs[configIndex].offsetRange.x, Configs[configIndex].offsetRange.y),
+                0f,
+                Random.Range(Configs[configIndex].offsetRange.x, Configs[configIndex].offsetRange.y)
+            );
+            
             // Convert to world
             Vector3 worldOrigin =
-                transform.TransformPoint(localPoint) +
+                transform.TransformPoint(localPoint + localOffset) +
                 transform.up * raycastOriginYOffset;
 
             // Ray direction now fully respects GameObject rotation
@@ -104,15 +109,10 @@ public class BreakableSystem : MonoBehaviour
                 continue;
 
             // Random offset in object-local space
-            Vector3 localOffset = new Vector3(
-                Random.Range(Configs[configIndex].offsetRange.x, Configs[configIndex].offsetRange.y),
-                0f,
-                Random.Range(Configs[configIndex].offsetRange.x, Configs[configIndex].offsetRange.y)
-            );
+
 
             // Vector3 localOffset = Vector3.zero;
-            Vector3 worldOffset = transform.TransformDirection(localOffset);
-            Vector3 position = hit.point + worldOffset;
+            Vector3 position = hit.point;
 
             // --------------------------------------------------
             // ROTATION: Align mesh opposite ray direction

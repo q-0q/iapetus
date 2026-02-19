@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8754977187948486372
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3009133816784885961}
+  - component: {fileID: 7027590638513406169}
+  - component: {fileID: 1060071577839968820}
+  m_Layer: 0
+  m_Name: IceBreakableSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3009133816784885961
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8754977187948486372}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 104.467, y: -1.6974545, z: -18.300003}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7027590638513406169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8754977187948486372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00745e4135a124f15b83681adba4db94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  density: 0.25
+  maxInstances: 10000
+  raycastDepth: 50
+  raycastOriginYOffset: 1
+  Configs:
+  - Material: {fileID: 2100000, guid: 84b86e60827474a20838d178be6cf68d, type: 2}
+    Mesh: {fileID: 2231132180598544038, guid: 755eea5c5d1cb44359fa4ec888cc2167, type: 3}
+    scaleRange: {x: 1, y: 3}
+    rotationYRange: {x: 0, y: 360}
+    offsetRange: {x: -5, y: 5}
+    EventReference:
+      Guid:
+        Data1: 415502447
+        Data2: 1115327335
+        Data3: -310045018
+        Data4: -2006482273
+      Path: event:/UrnBreak
+  receiveFoliageMask:
+    serializedVersion: 2
+    m_Bits: 1048576
+--- !u!65 &1060071577839968820
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8754977187948486372}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 43.67, y: 1, z: 26.82}
+  m_Center: {x: 0, y: 0, z: 0}

@@ -6,8 +6,10 @@ public partial class PlayerFsm
     private void DialogueOnUpdate()
     {
         currentPotentialInteractable = null;
-        
-        _momentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
+
+        var newMomentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
+        if (newMomentum < 1f && _momentum > 1f) ReplaceAnimatorTrigger("Idle");
+        _momentum = newMomentum;
         HandleCollisionMove();
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (interacted) DialogueCanvas.Singleton.AdvanceDialogue();
@@ -30,6 +32,6 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Dialogue)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.GroundMove);
+            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.Idle);
     }
 }
