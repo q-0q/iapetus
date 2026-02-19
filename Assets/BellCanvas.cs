@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using TMPro;
 using UnityEditor.Search;
 using UnityEngine;
@@ -9,7 +10,7 @@ public class BellCanvas : MonoBehaviour
 {
     private TextMeshProUGUI _tmp;
     private CanvasGroup _canvasGroup;
-    private bool show;
+    private float _showTimer;
     
     // Start is called before the first frame update
     void Start()
@@ -17,18 +18,20 @@ public class BellCanvas : MonoBehaviour
         _tmp = GetComponentInChildren<TextMeshProUGUI>();
         TryGetComponent(out _canvasGroup);
         UpdateBellCount();
-        show = true;
+        _showTimer = 100f;
         UpdateBellCount();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, show ? 1f : 0, Time.deltaTime * 5f);
+        _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _showTimer < 0.5f ? 1f : 0, Time.deltaTime * 5f);
+        _showTimer += Time.deltaTime;
     }
 
     private void OnBellRung()
     {
+        _canvasGroup.alpha = 1f;
         UpdateBellCount();
     }
 
@@ -37,13 +40,20 @@ public class BellCanvas : MonoBehaviour
         _tmp.text = SaveSystem.LoadSaveData(0).bells.Count.ToString();
     }
 
+    public void ResetShowTimer()
+    {
+        _showTimer = 0;
+    }
+
     private void OnEnable()
     {
         BellController.OnBellRing += OnBellRung;
+        BellController.OnPlayerNearbyRungBell += ResetShowTimer;
     }
 
     private void OnDisable()
     {
         BellController.OnBellRing -= OnBellRung;
+        BellController.OnPlayerNearbyRungBell -= ResetShowTimer;
     }
 }

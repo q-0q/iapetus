@@ -21,6 +21,8 @@ public class BellController : MonoBehaviour
     public Transform armHolder;
     private Vector3 _startPosition;
     public static event Action OnBellRing;
+    
+    public static event Action OnPlayerNearbyRungBell;
 
     private void Awake()
     {
@@ -53,6 +55,10 @@ public class BellController : MonoBehaviour
     void Update()
     {
         transform.position = _startPosition + Vector3.up * (Mathf.Sin(Time.time * 1f) * 0.4f);
+        if (rung && Vector3.Distance(transform.position, PlayerFsm.Singleton.transform.position) < 25f)
+        {
+            OnPlayerNearbyRungBell?.Invoke();
+        }
     }
 
     private void OnEnable()
@@ -67,12 +73,13 @@ public class BellController : MonoBehaviour
 
     private void OnInteracted()
     {
-        if (rung) return;
+        
+        _interactable.SetEnabled(false);
+        
         
         SaveSystem.WriteBell(metaName, 0);
         
         Util.ReplaceAnimatorTrigger(_animator, "Ring");
-        rung = true;
 
         StartCoroutine(Coroutine());
 
@@ -91,7 +98,8 @@ public class BellController : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
-            
+
+            rung = true;
             transform.DOShakePosition(3f, 0.2f, 30);
             Util.InvokeSphereEffect(transform.position + (Vector3.down * 2f), Vector3.one * 17f, 1.35f, 1f, -5f);
             _bellMaterial.SetFloat("_GlowWeight", 1f);
