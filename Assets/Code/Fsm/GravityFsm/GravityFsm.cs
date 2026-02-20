@@ -19,6 +19,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int StartFrameGrounded;
         public static int StartFrameAerial;
         public static int StartFrameWithNegativeYVelocity;
+        public static int DepenetrationTimeout;
     }
 
     protected override void OnStart()
@@ -55,10 +56,8 @@ public  abstract partial class GravityFsm : Fsm
             parentTransform = null;
         }
         
-        if (!Machine.IsInState(GravityFsmState.IgnoreDepenetration))
-        {
-            HandleDepenetration();
-        }
+        HandleDepenetration();
+        
     }
 
 

@@ -34,7 +34,7 @@ public class MainMenu : MonoBehaviour
         _main.SetActive(false);
         _back.SetActive(true);
         _levelSelect.SetActive(true);
-        _levelSelect.transform.Find("Buttons").Find("Tutorial").GetComponent<Button>().Select();
+        _levelSelect.transform.Find("Buttons").Find("Demo").GetComponent<Button>().Select();
     }
     
     public void OnSettingsClicked()

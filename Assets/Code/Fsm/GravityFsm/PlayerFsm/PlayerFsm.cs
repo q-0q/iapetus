@@ -117,6 +117,8 @@ public partial class PlayerFsm : GravityFsm
 
         public static int Accelerating;
         public static int IdleMomentumThresholdPassedDecelerating;
+
+        public static int VaultHangFarFromLedge;
     }
     
     protected override void OnAwake()
@@ -196,6 +198,9 @@ public partial class PlayerFsm : GravityFsm
     public override void OnUpdate()
     {
         if (HitstopOnUpdate()) return;
+        
+        
+
 
         var isCutscenePlayerDisabled = CutsceneManager.Singleton.IsCutscenePlayerDisabled();
         if (!isCutscenePlayerDisabled)
@@ -216,7 +221,7 @@ public partial class PlayerFsm : GravityFsm
         
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
         UpdateShaderGlobals();
-        HandleSlopeTimer();
+        // HandleSlopeTimer();
 
         var previousPosition = transform.position;
 

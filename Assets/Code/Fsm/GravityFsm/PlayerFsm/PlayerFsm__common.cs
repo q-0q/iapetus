@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using FMOD.Studio;
 using FMODUnity;
 using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -764,6 +763,7 @@ public partial class PlayerFsm
     public void InvokePlayerDeath()
     {
         if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead)) return;
+        if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
         Machine.Jump(PlayerFsmState.Dying1);
     }
 

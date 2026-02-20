@@ -14,7 +14,7 @@ public class PlayerDeathCollider : MonoBehaviour
         component.enabled = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         PlayerFsm.Singleton.InvokePlayerDeath();
     }

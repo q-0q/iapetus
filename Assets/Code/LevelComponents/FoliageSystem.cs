@@ -64,10 +64,16 @@ public class FoliageSystem : MonoBehaviour
                 localBounds.max.y,
                 Random.Range(localBounds.min.z, localBounds.max.z)
             );
+            
+            Vector3 localOffset = new Vector3(
+                Random.Range(offsetRange.x, offsetRange.y),
+                0f,
+                Random.Range(offsetRange.x, offsetRange.y)
+            );
 
             // Convert to world
             Vector3 worldOrigin =
-                transform.TransformPoint(localPoint) +
+                transform.TransformPoint(localPoint) + localOffset +
                 transform.up * raycastOriginYOffset;
 
             // Ray direction now fully respects GameObject rotation
@@ -86,14 +92,8 @@ public class FoliageSystem : MonoBehaviour
                 continue;
 
             // Random offset in object-local space
-            Vector3 localOffset = new Vector3(
-                Random.Range(offsetRange.x, offsetRange.y),
-                0f,
-                Random.Range(offsetRange.x, offsetRange.y)
-            );
 
-            Vector3 worldOffset = transform.TransformDirection(localOffset);
-            Vector3 position = hit.point + worldOffset;
+            Vector3 position = hit.point;
 
             // --------------------------------------------------
             // ROTATION: Align mesh opposite ray direction

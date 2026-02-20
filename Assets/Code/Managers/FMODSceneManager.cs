@@ -41,8 +41,8 @@ public class FMODSceneManager : MonoBehaviour
 
         _eventInstances = new Dictionary<FMODSceneEvent, EventInstance>
         {
-            [FMODSceneEvent.Ch1Music] = RuntimeManager.CreateInstance(EventReference.Find("event:/CH1_Music")),
-            [FMODSceneEvent.WindAmbience] = RuntimeManager.CreateInstance(EventReference.Find("event:/WindAmbience"))
+            [FMODSceneEvent.Ch1Music] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/CH1_Music")),
+            [FMODSceneEvent.WindAmbience] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/WindAmbience"))
         };
     }
 

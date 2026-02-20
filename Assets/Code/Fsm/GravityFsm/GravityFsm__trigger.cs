@@ -24,5 +24,10 @@ public abstract partial class GravityFsm
         {
             Machine.Fire(GravityFsmTrigger.StartFrameWithNegativeYVelocity);
         }
+
+        if (_depenetrationTimer >= DepenetrationTimerDuration)
+        {
+            Machine.Fire(GravityFsmTrigger.DepenetrationTimeout);
+        }
     }
 }

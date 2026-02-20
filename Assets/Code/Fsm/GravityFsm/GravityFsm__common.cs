@@ -13,6 +13,7 @@ public abstract partial class GravityFsm
     protected float LastUpwardsY;
     protected float GroundForwardSlope;
     private Collider _depenetrationCollider;
+    private float _depenetrationTimer;
     protected bool IsInGust = false;
     private float _timeOfLastGustSinOffset;
     private float _timeAtTopOfGust;
@@ -25,7 +26,7 @@ public abstract partial class GravityFsm
     
 
     private const float GroundedYPositionLerpStrength = 50f;
-    protected const float GroundedRaycastLength = 1f;
+    protected const float GroundedRaycastLength = 2f;
     protected const float GroundedRaycastForwardOffset = 0.05f;
 
     private const float GroundedRaycastMaximumAngle = 65f;
@@ -35,6 +36,7 @@ public abstract partial class GravityFsm
     private const float FallingCollisionMoveSphereCastHeight = 1.15f;
     private const float FallingCollisionMoveSphereCastHeightYVelocityThreshhold = -10f;
     private const float CollisionMoveSphereCastDistance = 0.45f;
+    private const float DepenetrationTimerDuration = 0.25f;
 
     public enum GroundKind
     {
@@ -69,10 +71,9 @@ public abstract partial class GravityFsm
                 ? slopeMinDistanceOffset
                 : Mathf.Lerp(_currentSlopeCastMinimumDistanceOffset, slopeMinDistanceOffset, Time.deltaTime * 5f);
             
-            
-            
-            
-            return transform.position.y - hit.point.y < minDistance + slopeMinDistanceOffset;
+            // if (Mathf.Abs(YVelocity) < 0.075f) return true;
+            return transform.position.y - hit.point.y < (minDistance *
+                                                         (Machine.IsInState(GravityFsmState.Grounded) ? 10f : 1f)) + slopeMinDistanceOffset;
         }
 
         return false;
@@ -139,6 +140,8 @@ public abstract partial class GravityFsm
 
     private void HandleDepenetration()
     {
+        
+        
         var neighbors = Physics.OverlapCapsule(transform.position, transform.position + Vector3.up * 3f, 0.5f,
             GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore);
         foreach (var neighbor in neighbors)
@@ -149,10 +152,16 @@ public abstract partial class GravityFsm
                     neighbor.transform.position, neighbor.transform.rotation, out Vector3 direction,
                     out float distance))
             {
+                _depenetrationTimer += Time.deltaTime;
+                if (Machine.IsInState(GravityFsmState.IgnoreDepenetration)) return;
                 transform.position += direction * distance;
             }
+            else
+            {
+                _depenetrationTimer = 0;
+            }
+            
 
-            ;
         }
     }
 
