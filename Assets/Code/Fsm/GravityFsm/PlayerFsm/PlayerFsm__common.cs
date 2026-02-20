@@ -440,7 +440,7 @@ public partial class PlayerFsm
     {
 
         // if (Input.GetKey(KeyCode.P)) desiredMove = Vector3.zero;
-        if (!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery) return desiredMove;
+        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery) && !Machine.IsInState(PlayerFsmState.Slide)) return desiredMove;
         
         var lerpStrength = 1.5f;
         desiredMove = Vector3.Lerp(_previousPositionDelta, desiredMove, lerpStrength * Time.deltaTime);

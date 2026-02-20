@@ -14,10 +14,10 @@ public partial class PlayerFsm
         // groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up), out var hit, 2f);
         var forward = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
         var destinationRotation = Quaternion.LookRotation(forward, Vector3.up);
-        var forwardSpeed = Mathf.Lerp(6f, 20f, Mathf.InverseLerp(0.1f, 0.5f, TimeInCurrentState()));
-        var rotationSpeed = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0.25f, 0.75f, TimeInCurrentState()));
+        var forwardSpeed = Mathf.Lerp(8f, 35f, Mathf.InverseLerp(0.65f, 0.9f, TimeInCurrentState()));
+        var rotationSpeed = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0.15f, 0.35f, TimeInCurrentState()));
         transform.rotation = Quaternion.Lerp(transform.rotation, destinationRotation, Time.deltaTime * rotationSpeed);
-        transform.position += ComputeCollisionMove(forward * (forwardSpeed * Time.deltaTime));
+        transform.position += ApplyTraction(ComputeCollisionMove(forward * (forwardSpeed * Time.deltaTime)));
 
     }
 
