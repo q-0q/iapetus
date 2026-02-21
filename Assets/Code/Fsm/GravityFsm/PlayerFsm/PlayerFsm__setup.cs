@@ -44,7 +44,7 @@ public partial class PlayerFsm
         InteractableConfigure();
         WalkToDialoguePositionConfigure();
         DialogueConfigure();
-        SlideConfigure();
+        SlideLateralConfigure();
         TightropeMoveConfigure();
         CutsceneConfigure();
         UpdraftConfigure();
@@ -112,7 +112,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skip, "Skip");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LandsquatAfterDash, "LandsquatAfterDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DashVault, "DashVault");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Slide, "Slide");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlideLateral, "SlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "GroundMove");
@@ -141,6 +141,7 @@ public partial class PlayerFsm
         // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.45f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SlideLateral, 0.35f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.PitonFlip, 0.75f);
         

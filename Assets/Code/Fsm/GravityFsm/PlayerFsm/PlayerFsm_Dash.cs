@@ -21,7 +21,6 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.DashVault, _ => true, 2)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.DashVault, _ => true, 10)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, IsRaycastHitParamSteep, 5)
             .OnEntry(_ =>
             {
                 isSprinting = true;

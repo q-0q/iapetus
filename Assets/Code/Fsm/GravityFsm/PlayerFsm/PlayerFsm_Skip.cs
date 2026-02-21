@@ -20,7 +20,7 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft, _ => TimeInCurrentState() > 0.35f)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, _ => true, 1)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, @params => !IsSlideTrigger(@params), 1)
             .OnEntry(_ =>
             {
                 _momentum = 13f;

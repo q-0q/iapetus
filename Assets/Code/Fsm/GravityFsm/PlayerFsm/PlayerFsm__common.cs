@@ -426,6 +426,7 @@ public partial class PlayerFsm
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;
         if (Machine.IsInState(PlayerFsmState.Wallrun)) return;
+        if (Machine.IsInState(PlayerFsmState.SlideLateral)) return;
         if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity > WallsquatMinimumYVelocity - 1f) return;
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
@@ -441,7 +442,7 @@ public partial class PlayerFsm
     {
 
         // if (Input.GetKey(KeyCode.P)) desiredMove = Vector3.zero;
-        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery) && !Machine.IsInState(PlayerFsmState.Slide)) return desiredMove;
+        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery)) return desiredMove;
         
         var lerpStrength = 1.5f;
         desiredMove = Vector3.Lerp(new Vector3(_previousPositionDelta.x, desiredMove.y, _previousPositionDelta.z), desiredMove, lerpStrength * Time.deltaTime);
