@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Code.Misc;
+using FMODUnity;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class MinorCheckpoint : MonoBehaviour
 {
@@ -17,6 +20,9 @@ public class MinorCheckpoint : MonoBehaviour
 
 
     private static event Action<MinorCheckpoint> OnPlayerMinorCheckpointSet;
+    
+    public EventReference triggerEventReference;
+    public EventReference seekEventReference;
 
     private void OnPlayerMinorCheckpointSetMethod(MinorCheckpoint minorCheckpoint)
     {
@@ -68,7 +74,7 @@ public class MinorCheckpoint : MonoBehaviour
     void Update()
     {
         var playerDistance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
-        if (playerDistance < 15f)
+        if (playerDistance < 20f)
         {
             OnPlayerMinorCheckpointSet?.Invoke(this);
         }
@@ -78,6 +84,8 @@ public class MinorCheckpoint : MonoBehaviour
     IEnumerator InvokeSeekParticles()
     {
         _seekParticles.Play();
+        Util.InvokeSphereEffect(transform.position, Vector3.one * 15f, 1.25f, 1f, -3f);
+        FMODUnity.RuntimeManager.PlayOneShotAttached(seekEventReference, gameObject);
         var seekParticlesStartPosition = PlayerFsm.Singleton.transform.position + Vector3.up * 3f;
         var seekParticlesEndPosition = transform.position + Vector3.up * 0.1f;
         float t = 0f;
@@ -93,7 +101,7 @@ public class MinorCheckpoint : MonoBehaviour
         _triggerParticles.Play();
         _activeParticles.Play();
         _light.enabled = true;
-        
+        FMODUnity.RuntimeManager.PlayOneShotAttached(triggerEventReference, gameObject);
         _seekParticles.Stop();
         SaveSystem.WritePlayerInGamePosition(_playerSpawnTransform.position,
             "",

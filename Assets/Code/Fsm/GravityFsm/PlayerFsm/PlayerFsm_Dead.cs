@@ -22,6 +22,7 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Timeout, PlayerFsmState.Dead)
             .OnEntry(_ =>
             {
+                FMODUnity.RuntimeManager.PlayOneShot(deathFmodEvent);
                 Time.timeScale = 1f;
                 transform.DOShakePosition(0.5f, 0.4f, 30);
                 Shader.SetGlobalColor("_PlayerTintColor", Color.white);

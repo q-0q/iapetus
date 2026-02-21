@@ -48,6 +48,10 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
+            .OnEntry(_ =>
+            {
+                OnPlayerFootstep();
+            })
             .OnExit(_ =>
             {
                 _momentum = Mathf.Max(_momentum, 3f);
@@ -64,6 +68,7 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
             .OnEntry(_ =>
             {
+                OnPlayerFootstep();
                 _previousPositionDelta *= 0.35f;
                 _momentum = 0;
             });

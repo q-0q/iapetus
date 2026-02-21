@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using FMOD.Studio;
 using UnityEngine;
 
 public partial class TrialCollectibleFsm : Fsm
@@ -86,6 +87,14 @@ public partial class TrialCollectibleFsm : Fsm
     {
         _cachedPlayerRecordTime = time;
     }
-    
-    
+
+    private void OnEnable()
+    {
+        _tickingFmodEvent = FMODUnity.RuntimeManager.CreateInstance(tickingEvent);
+    }
+
+    private void OnDisable()
+    {
+        _tickingFmodEvent.stop(STOP_MODE.ALLOWFADEOUT);
+    }
 }

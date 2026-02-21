@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Code.Fsm.TrialCollectibleFSM;
 using Code.TriggerParams;
+using FMOD.Studio;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -36,6 +38,17 @@ public partial class TrialCollectibleFsm
     
     private CameraBehaviorZone _initialCameraBehaviorZone;
 
+
+    public EventReference keyframeTriggerEvent;
+    public EventReference tickingEvent;
+    public EventReference completeEvent;
+    public EventReference completeGoldEvent;
+    public EventReference startEvent;
+    public EventReference seekingEvent;
+    
+    private EventInstance _tickingFmodEvent;
+
+
     
     
     IEnumerator InvokeSeekParticles()
@@ -53,6 +66,8 @@ public partial class TrialCollectibleFsm
         // curve.constantMin = duration;
         // seekMain.startLifetime = curve;
         
+        
+        FMODUnity.RuntimeManager.PlayOneShotAttached(seekingEvent, _seekParticles.gameObject);
         
         while (t < duration)
         {

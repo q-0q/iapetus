@@ -216,6 +216,7 @@ public partial class PlayerFsm
     public EventReference comboIncrementFmodEvent;
     public EventReference comboTriggerFmodEvent;
     public EventReference comboActiveFmodEvent;
+    public EventReference deathFmodEvent;
     private EventInstance activeFmodInstance;
 
 
@@ -443,7 +444,7 @@ public partial class PlayerFsm
         if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery) && !Machine.IsInState(PlayerFsmState.Slide)) return desiredMove;
         
         var lerpStrength = 1.5f;
-        desiredMove = Vector3.Lerp(_previousPositionDelta, desiredMove, lerpStrength * Time.deltaTime);
+        desiredMove = Vector3.Lerp(new Vector3(_previousPositionDelta.x, desiredMove.y, _previousPositionDelta.z), desiredMove, lerpStrength * Time.deltaTime);
 
         return desiredMove;
     }

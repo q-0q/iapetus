@@ -436,7 +436,6 @@ public partial class PlayerFsm : GravityFsm
             InvokePlayerDeath();
         }
 
-        _previousPositionDelta = transform.position - previousPosition;
         
 
         // HandleSlopeTimer();
@@ -444,6 +443,7 @@ public partial class PlayerFsm : GravityFsm
         
         base.OnUpdate();
         
+        _previousPositionDelta = transform.position - previousPosition;
     }
 
     private bool HitstopOnUpdate()

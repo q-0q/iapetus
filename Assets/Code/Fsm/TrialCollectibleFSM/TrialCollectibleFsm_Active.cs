@@ -1,4 +1,6 @@
+using FMODUnity;
 using UnityEngine;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public partial class TrialCollectibleFsm
 {
@@ -41,6 +43,7 @@ public partial class TrialCollectibleFsm
                 _activeParticles.Clear();
                 _activeFinalParticles.Stop();
                 _activeFinalParticles.Clear();
+                _tickingFmodEvent.stop(STOP_MODE.ALLOWFADEOUT);
             })
             .OnEntry(_ =>
             {
@@ -52,6 +55,10 @@ public partial class TrialCollectibleFsm
                 _activeParticles.Play();
                 _activeFinalParticles.Play();
                 _activeFinalParticles.transform.localScale = Vector3.zero;
+                
+                RuntimeManager.AttachInstanceToGameObject(_tickingFmodEvent, gameObject);
+                _tickingFmodEvent.start();
+
                 IncrementKeyframeIndex();
                 OnPlayerBeganTrial?.Invoke();
                 SaveSystem.WritePlayerInGamePosition(_playerReturnTransform.position, "", _playerReturnTransform.rotation.y, 0);
@@ -63,9 +70,15 @@ public partial class TrialCollectibleFsm
         _keyframes[_currentKeyframeIndex].DisableCameraZone();
         _keyframeTriggerParticles.Play();
         _currentKeyframeIndex++;
-        if (_currentKeyframeIndex > _keyframes.Count - 1) return; 
+        FMODUnity.RuntimeManager.PlayOneShot(_currentKeyframeIndex == 1 ? startEvent : keyframeTriggerEvent);
+        if (_currentKeyframeIndex > _keyframes.Count - 1)
+        {
+            FMODUnity.RuntimeManager.PlayOneShot(TimeInCurrentState() < goldTime ? completeGoldEvent : completeEvent);
+            return;
+        }
         _keyframes[_currentKeyframeIndex].EnableCameraZone();
         // _marker.gameObject.SetActive(false);
+        
         StartCoroutine(InvokeSeekParticles());
         _timeOnCurrentKeyframe = 0f;
     }
