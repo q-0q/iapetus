@@ -44,7 +44,7 @@ public partial class PlayerFsm
         InteractableConfigure();
         WalkToDialoguePositionConfigure();
         DialogueConfigure();
-        SlideLateralConfigure();
+        SlideConfigure();
         TightropeMoveConfigure();
         CutsceneConfigure();
         UpdraftConfigure();
@@ -137,6 +137,7 @@ public partial class PlayerFsm
         StateMapConfig.IsAbstract.Add(PlayerFsmState.WallInteractable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.AirControl, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.WalkToPosition, true);
+        StateMapConfig.IsAbstract.Add(PlayerFsmState.Slide, true);
 
         // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);

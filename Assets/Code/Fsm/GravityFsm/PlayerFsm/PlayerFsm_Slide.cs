@@ -11,33 +11,29 @@ public partial class PlayerFsm
         Animator.SetLayerWeight(1, 0);
         GetGroundedRaycastHit(out var groundedRaycastHit);
         if (groundedRaycastHit.collider == null) return; 
-        // groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up), out var hit, 2f);
-        // var forward = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
-        // var destinationRotation = Quaternion.LookRotation(forward, Vector3.up);
-        // var forwardSpeed = Mathf.Lerp(8f, 35f, Mathf.InverseLerp(0.65f, 0.9f, TimeInCurrentState()));
-        // var rotationSpeed = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0.25f, 0.5f, TimeInCurrentState()));
-        // transform.rotation = Quaternion.Lerp(transform.rotation, destinationRotation, Time.deltaTime * rotationSpeed);
-        // transform.position += ApplyTraction(ComputeCollisionMove(forward * (forwardSpeed * Time.deltaTime)));
-        
-        
-        //
-        // if (_currentWallrunTransform != parentTransform)
-        // {
-        //     parentTransform = _currentWallrunTransform;
-        //     _previousParentTransformPosition = parentTransform.position;
-        //     _previousParentRotation = parentTransform.rotation;
-        //     OnParentTransformChanged(parentTransform);
-        // }
-        
-        
         SetAnimatorMomentum();
-
         var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
         var flattenedNormal = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
         var forward = Quaternion.Euler(0f, 90f * rotationMod, 0f) * flattenedNormal;
         var lookRotation = Quaternion.LookRotation(forward, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
+        transform.position +=
+            ComputeCollisionMove(-flattenedNormal * (Time.deltaTime * FlankWallVacuumStrength));
         
+        HandleCollisionMove(0.15f);
+
+    }
+    
+    private void SlideDownOnUpdate()
+    {
+        GetGroundedRaycastHit(out var groundedRaycastHit);
+        var flattenedNormal = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
+        
+        var lookRotation = Quaternion.LookRotation(flattenedNormal, Vector3.up);
+        Animator.SetLayerWeight(1, 0);
+        if (groundedRaycastHit.collider == null) return; 
+        SetAnimatorMomentum();
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
         transform.position +=
             ComputeCollisionMove(-flattenedNormal * (Time.deltaTime * FlankWallVacuumStrength));
         
@@ -45,9 +41,9 @@ public partial class PlayerFsm
 
     }
 
-    private void SlideLateralConfigure()
+    private void SlideConfigure()
     {
-        Machine.Configure(PlayerFsmState.SlideLateral)
+        Machine.Configure(PlayerFsmState.Slide)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
@@ -62,6 +58,17 @@ public partial class PlayerFsm
                 _ => _momentum > WallSquatMinimumMomentum)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum)
+            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
+            {
+                // var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
+                // var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
+                // transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+            });
+        // .OnExitFrom(GravityFsmTrigger.StartFrameAerial, _ => { _momentum = 7f; });
+
+
+        Machine.Configure(PlayerFsmState.SlideLateral)
+            .SubstateOf(PlayerFsmState.Slide)
             .OnEntry(@params =>
             {
                 _wallsquattedSinceLeavingGround = false;
@@ -77,14 +84,29 @@ public partial class PlayerFsm
                 bool flip = signedAngle > 0;
                 _currentFlankType = flip ? FlankType.Right : FlankType.Left;
                 Animator.SetFloat("Flip", flip ? 0f : 1f);
-            })
-            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
-            {
-                // var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
-                // var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
-                // transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
             });
-        // .OnExitFrom(GravityFsmTrigger.StartFrameAerial, _ => { _momentum = 7f; });
+        
+        Machine.Configure(PlayerFsmState.SlideDown)
+            .SubstateOf(PlayerFsmState.Slide)
+            .OnEntry(@params =>
+            {
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                
+                // if (@params is not RaycastHitParam raycastHitParam) return;
+                // var flattenedNormal = new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z);
+                // var signedAngle = Vector3.SignedAngle(flattenedNormal, transform.forward, Vector3.up);
+                // bool flip = signedAngle > 0;
+                // _currentFlankType = flip ? FlankType.Right : FlankType.Left;
+                // Animator.SetFloat("Flip", flip ? 0f : 1f);
+            });
+
+        Machine.Configure(PlayerFsmState.SlideInteractable)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.SlideLateral,
+                @params => IsSlideTrigger(@params) &&
+                           !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
+                           !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f), 6);
     }
     
     private bool IsRaycastHitParamShallow(TriggerParams triggerParams)

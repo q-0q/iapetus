@@ -17,7 +17,7 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
                 _ => (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum), 4)
         // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5)
-        .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.SlideLateral, @params => IsSlideTrigger(@params) && !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) && !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f), 6)
+            .SubstateOf(PlayerFsmState.SlideInteractable)
             .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, @params =>
             {
                 if (@params is not RaycastHitParam param) return;

@@ -70,8 +70,12 @@ public partial class PlayerFsm : GravityFsm
         public static int PitonFlip;
         public static int PitonInteractable;
         public static int FallAfterPitonHoming;
-        
+
+        public static int Slide;
         public static int SlideLateral;
+        public static int SlideDown;
+        public static int SlideInteractable;
+        
         public static int TightropeMove;
         public static int GroundMoveAfterVault;
 
@@ -388,6 +392,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.SlideLateral))
         {
             SlideLateralOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.SlideDown))
+        {
+            SlideDownOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Updraft))
