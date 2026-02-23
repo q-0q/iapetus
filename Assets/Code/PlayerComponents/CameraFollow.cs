@@ -68,7 +68,7 @@ public class CameraFollow : MonoBehaviour
             : YLerpRate;
 
         var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SlideLateral))
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))
         {
             pos += Vector3.up * Mathf.Lerp(-3f, 5f, Mathf.InverseLerp(0, 60f, playerYVelocity));
         }

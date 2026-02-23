@@ -26,11 +26,7 @@ public partial class PlayerFsm
 
     }
     
-    private bool IsSlideTrigger(TriggerParams triggerParams)
-    {
-        if (triggerParams is not RaycastHitParam raycastHitParam) return false;
-        return raycastHitParam.Hit.transform.gameObject.layer == LayerMask.NameToLayer("ForceSlide");
-    }
+
     
     private bool IsTightropeTrigger(TriggerParams triggerParams)
     {

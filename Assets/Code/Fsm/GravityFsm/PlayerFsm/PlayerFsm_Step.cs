@@ -6,7 +6,7 @@ public partial class PlayerFsm
     private void IdleOnUpdate()
     {
         HandleInputMomentumChange();
-        transform.position += ComputeCollisionMove(ApplyTraction(Vector3.zero));
+        transform.position += ComputeCollisionMove(ApplyTractionNoTimescale(Vector3.zero) * Time.deltaTime);
     }
     
     private void StepStartOnUpdate()
@@ -14,15 +14,15 @@ public partial class PlayerFsm
         HandleInputMomentumChange();
         HandleTurning(2f);
 
-        var movement = transform.forward * (3f * Time.deltaTime);
-        transform.position += ComputeCollisionMove(ApplyTraction(movement));
+        var movement = transform.forward * (3f);
+        transform.position += ComputeCollisionMove(ApplyTractionNoTimescale(movement) * Time.deltaTime);
         SetAnimatorMomentum();
     }
     
     private void StepEndOnUpdate()
     {
         HandleInputMomentumChange();
-        transform.position += ApplyTraction(Vector3.zero);
+        transform.position += ApplyTractionNoTimescale(Vector3.zero) * Time.deltaTime;
     }
     
     private void StepConfigure()
@@ -69,7 +69,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 OnPlayerFootstep();
-                _previousPositionDelta *= 0.35f;
+                _previousPositionDeltaNoTimescale *= 0.35f;
                 _momentum = 0;
             });
         

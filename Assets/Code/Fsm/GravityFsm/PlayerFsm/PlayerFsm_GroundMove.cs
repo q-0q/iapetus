@@ -12,6 +12,8 @@ public partial class PlayerFsm
 
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
+        
+
     }
 
     private void GroundMoveConfigure()

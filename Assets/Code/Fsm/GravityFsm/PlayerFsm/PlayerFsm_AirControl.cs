@@ -26,6 +26,12 @@ public partial class PlayerFsm
             forceForwardInput = false;
         }
 
+        if (_momentum < 8f)
+        {
+            increaseMultiplier = 1.5f;
+            turningMultiplier = 1.5f;
+        }
+
         HandleTurning(turningMultiplier, forceForwardInput, AirControlTurningMomentumDecayModifier);
         HandleInputMomentumChange(increaseMultiplier, decreaseMultiplier);
     }

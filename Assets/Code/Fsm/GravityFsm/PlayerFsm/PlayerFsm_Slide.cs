@@ -1,24 +1,24 @@
+using System;
 using Code.Misc;
 using Code.TriggerParams;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.InputSystem.HID;
 using Wasp;
 
 public partial class PlayerFsm
 {
+    public static event Action<bool> OnPlayerEnteredSlideLateral;
+    
     private void SlideLateralOnUpdate()
     {
         Animator.SetLayerWeight(1, 0);
-        GetGroundedRaycastHit(out var groundedRaycastHit);
-        if (groundedRaycastHit.collider == null) return; 
         SetAnimatorMomentum();
         var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
-        var flattenedNormal = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
+        var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
         var forward = Quaternion.Euler(0f, 90f * rotationMod, 0f) * flattenedNormal;
         var lookRotation = Quaternion.LookRotation(forward, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
-        transform.position +=
-            ComputeCollisionMove(-flattenedNormal * (Time.deltaTime * FlankWallVacuumStrength));
         
         HandleCollisionMove(0.15f);
 
@@ -26,19 +26,38 @@ public partial class PlayerFsm
     
     private void SlideDownOnUpdate()
     {
-        GetGroundedRaycastHit(out var groundedRaycastHit);
-        var flattenedNormal = new Vector3(groundedRaycastHit.normal.x, 0, groundedRaycastHit.normal.z);
+
+        
+        var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z).normalized;
         
         var lookRotation = Quaternion.LookRotation(flattenedNormal, Vector3.up);
         Animator.SetLayerWeight(1, 0);
-        if (groundedRaycastHit.collider == null) return; 
+ 
         SetAnimatorMomentum();
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
-        transform.position +=
-            ComputeCollisionMove(-flattenedNormal * (Time.deltaTime * FlankWallVacuumStrength));
+
+
         
         HandleCollisionMove(0.15f);
 
+    }
+
+    private void SlideOnUpdate()
+    {
+        GetGroundedRaycastHit(out var groundedRaycastHit);
+        if (groundedRaycastHit.collider != null)
+        {
+            if (IsSlideTriggerCore(groundedRaycastHit)) _currentSlideNormal = groundedRaycastHit.normal;
+        } 
+        
+        var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z).normalized;
+
+        var vacuumRaycastOrigin = transform.position + Vector3.up * 1.5f;
+        if (Physics.Raycast(vacuumRaycastOrigin, -flattenedNormal, 3f, GetEnvironmentalLayermask()))
+        {
+            transform.position +=
+                ComputeCollisionMove(-flattenedNormal * (Time.deltaTime * FlankWallVacuumStrength));
+        }
     }
 
     private void SlideConfigure()
@@ -48,9 +67,10 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat,
-                @params => !IsSlideTrigger(@params))
+                @params => !IsSlideTrigger(@params) && TimeInCurrentState() >= 0.25f)
             .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlide, _ => YVelocity < 0.5f, 5)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
+                _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0.25f)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
@@ -58,11 +78,26 @@ public partial class PlayerFsm
                 _ => _momentum > WallSquatMinimumMomentum)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum)
+            .OnEntry(_ =>
+            {
+                
+                FMODUnity.RuntimeManager.AttachInstanceToGameObject(slideFmodInstance, gameObject);
+                slideFmodInstance.start();
+            })
+            .OnEntry(@params =>
+            {
+                if (@params is not RaycastHitParam raycastHitParam) return;
+                _currentSlideNormal = raycastHitParam.Hit.normal;
+            })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
                 // var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
                 // var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
                 // transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+            })
+            .OnExit(_ =>
+            {
+                slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             });
         // .OnExitFrom(GravityFsmTrigger.StartFrameAerial, _ => { _momentum = 7f; });
 
@@ -71,6 +106,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Slide)
             .OnEntry(@params =>
             {
+                YVelocity += 8f;
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
@@ -82,6 +118,7 @@ public partial class PlayerFsm
                 var flattenedNormal = new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z);
                 var signedAngle = Vector3.SignedAngle(flattenedNormal, transform.forward, Vector3.up);
                 bool flip = signedAngle > 0;
+                OnPlayerEnteredSlideLateral?.Invoke(flip);
                 _currentFlankType = flip ? FlankType.Right : FlankType.Left;
                 Animator.SetFloat("Flip", flip ? 0f : 1f);
             });
@@ -93,7 +130,8 @@ public partial class PlayerFsm
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
-                
+                _momentum = 3f;
+
                 // if (@params is not RaycastHitParam raycastHitParam) return;
                 // var flattenedNormal = new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z);
                 // var signedAngle = Vector3.SignedAngle(flattenedNormal, transform.forward, Vector3.up);
@@ -104,19 +142,39 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.SlideInteractable)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.SlideLateral,
-                @params => IsSlideTrigger(@params) &&
-                           !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
-                           !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f), 6);
+                @params =>
+                {
+                    return IsSlideTrigger(@params) &&
+                        !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
+                        !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f);
+                }, 6)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.SlideDown,
+                @params =>
+                {
+                    if (!IsSlideTrigger(@params)) return false;
+                    if (@params is not RaycastHitParam raycastHitParam) return false;
+
+                    var angle = Vector3.Angle(transform.forward,
+                        new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z));
+
+                    if (angle < 30f) return true;
+                    if (angle > 150f) return true;
+                    return false;
+                }, 7);
     }
     
-    private bool IsRaycastHitParamShallow(TriggerParams triggerParams)
+    
+    private bool IsSlideTrigger(TriggerParams triggerParams)
     {
         if (triggerParams is not RaycastHitParam raycastHitParam) return false;
-        if (raycastHitParam.Hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return false;
-        raycastHitParam.Hit.collider.Raycast(new Ray(raycastHitParam.Hit.point + Vector3.up, -Vector3.up), out var hit, 2f);
-        var angle = Vector3.Angle(hit.normal, Vector3.up);
-        Debug.DrawRay(raycastHitParam.Hit.point, hit.normal, Color.yellow, 1f);
-        return angle < 40f;
+        return IsSlideTriggerCore(raycastHitParam.Hit);
+    }
+    
+    private bool IsSlideTriggerCore(RaycastHit hit)
+    {
+        var playerSlideIndicator = hit.transform.GetComponent<PlayerSlideIndicator>();
+        if (playerSlideIndicator == null) return false;
+        return Vector3.Angle(hit.normal, hit.transform.up) < 5f;
     }
     
 }

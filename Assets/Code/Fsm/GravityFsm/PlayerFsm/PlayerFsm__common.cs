@@ -28,6 +28,7 @@ public partial class PlayerFsm
     private float _stateEntryMomentum = 0f;
     private Vector3 _currentLedgePosition;
     private Vector3 _currentFlankWallNormal;
+    private Vector3 _currentSlideNormal;
     private Transform _currentWallrunTransform;
     private FlankType _currentFlankType;
     private FlankType _previousWallrunSide;
@@ -44,7 +45,8 @@ public partial class PlayerFsm
     private ParticleSystem _deathParticles;
     private bool isSprinting;
     private bool _isParentSlippery = false;
-    private Vector3 _previousPositionDelta;
+    private Vector3 _previousPositionDeltaNoTimescale;
+    private float _currentSlipWeight;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -217,7 +219,14 @@ public partial class PlayerFsm
     public EventReference comboTriggerFmodEvent;
     public EventReference comboActiveFmodEvent;
     public EventReference deathFmodEvent;
+    public EventReference slideFmodEvent;
+    public EventReference slipAmbientEvent;
     private EventInstance activeFmodInstance;
+    private EventInstance slideFmodInstance;
+    
+    
+    private EventInstance slipAmbientFmodInstance;
+    private float _timeSinceLastFootstep;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -399,10 +408,16 @@ public partial class PlayerFsm
 
     private Vector3 ComputeDesiredMove()
     {
+        return ComputeDesiredMoveWithoutTimescale() * Time.deltaTime;
+    }
+    
+    private Vector3 ComputeDesiredMoveWithoutTimescale()
+    {
         var value = Mathf.Lerp(0f, MaximumMomentumSpeedMod, ComputeMomentumWeight());
         var comboMultiplier = GetCurrentComboSpeedMultiplier();
-        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier * Time.deltaTime);
+        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier);
     }
+
 
     private float GetCurrentComboSpeedMultiplier()
     {
@@ -417,8 +432,7 @@ public partial class PlayerFsm
 
     private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
     {
-        var desiredMove = ComputeDesiredMove();
-        desiredMove = ApplyTraction(desiredMove);
+        var desiredMove = ApplyTractionNoTimescale(ComputeDesiredMoveWithoutTimescale()) * Time.deltaTime;
         
         var collisionMove = ComputeCollisionMove(desiredMove);
         transform.position += collisionMove * modifier;
@@ -438,17 +452,76 @@ public partial class PlayerFsm
         // }
     }
 
-    private Vector3 ApplyTraction(Vector3 desiredMove)
+    private Vector3 ApplyTractionNoTimescale(Vector3 desiredMoveNoTimescale)
     {
 
         // if (Input.GetKey(KeyCode.P)) desiredMove = Vector3.zero;
-        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery)) return desiredMove;
+        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery))
+        {
+            _currentSlipWeight = 0f;
+            HandleSlipAudio();
+            return desiredMoveNoTimescale;
+        };
+        
         
         var lerpStrength = 1.5f;
-        desiredMove = Vector3.Lerp(new Vector3(_previousPositionDelta.x, desiredMove.y, _previousPositionDelta.z), desiredMove, lerpStrength * Time.deltaTime);
-
-        return desiredMove;
+        var afterTraction = Vector3.Lerp(new Vector3(_previousPositionDeltaNoTimescale.x, desiredMoveNoTimescale.y, _previousPositionDeltaNoTimescale.z), desiredMoveNoTimescale, lerpStrength * Time.deltaTime);
+        if (afterTraction.magnitude < 0.75f) afterTraction = desiredMoveNoTimescale;
+        UpdateSlipWeight(desiredMoveNoTimescale, afterTraction);
+        
+        HandleSlipAudio();
+        
+        return afterTraction;
     }
+
+    private void HandleSlipAudio()
+    {
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerSlipWeight", _currentSlipWeight);
+    }
+
+    private void UpdateSlipWeight(Vector3 desiredMove, Vector3 afterTraction)
+    {
+        var footstepMod = 1f;
+        if (Machine.IsInState(PlayerFsm.PlayerFsmState.GroundMove))
+        {
+            var tailLength = Mathf.Lerp(0.5f, 0.15f, Mathf.InverseLerp(0.3f, 0.5f, ComputeMomentumWeight()));
+            footstepMod = Mathf.Lerp(1f, 0f, Mathf.InverseLerp(0.05f, 0.05f + tailLength, _timeSinceLastFootstep));
+        }
+        _currentSlipWeight = GetSlipWeight(desiredMove, afterTraction) * footstepMod;
+    }
+    
+    private float GetSlipWeight(Vector3 desiredMove, Vector3 afterTraction)
+    {
+        // Ignore vertical component (important!)
+        Vector3 desiredFlat = new Vector3(desiredMove.x, 0f, desiredMove.z);
+        Vector3 tractionFlat = new Vector3(afterTraction.x, 0f, afterTraction.z);
+
+        float desiredMag = desiredFlat.magnitude;
+        float tractionMag = tractionFlat.magnitude;
+
+        if (desiredMag < 0.75f && tractionMag < 0.75f)
+            return Mathf.Lerp(0f, 1f, Mathf.InverseLerp(0.4f, 0.75f, tractionMag));
+
+        // --- 1) Speed Difference Factor (0-1) ---
+        float speedDifference = Mathf.Abs(desiredMag * (desiredMag < tractionMag ? 2f : 1f) - tractionMag) / desiredMag;
+        float speedFactor = Mathf.Clamp01(speedDifference);
+
+        // --- 2) Direction Loss Factor (0-1) ---
+        float directionFactor = 0f;
+
+        if (tractionMag > 0.001f)
+        {
+            float dot = Vector3.Dot(desiredFlat.normalized, tractionFlat.normalized);
+            directionFactor = Mathf.Clamp01(1f - dot);
+        }
+
+        // --- 3) Combined Slip ---
+        // float slipWeight = speedFactor * directionFactor;
+
+        float slipWeight = Mathf.Pow(speedFactor * directionFactor, 0.5f);
+        return slipWeight;
+    }
+    
 
     public void InvokeBoost(bool jump, float momentumWeight)
     {
@@ -588,6 +661,7 @@ public partial class PlayerFsm
 
         t.TryGetComponent(out PlayerSlipperyIndicator tractionIndicator);
         _isParentSlippery = tractionIndicator != null;
+        print(t.name);
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }
@@ -608,7 +682,8 @@ public partial class PlayerFsm
     private void OnPlayerFootstep()
     {
         StartCoroutine(QueueFootstep());
-        
+        _timeSinceLastFootstep = 0f;
+
     }
 
     private void OnPlayerFootstepDelay(float delay)

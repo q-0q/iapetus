@@ -218,6 +218,8 @@ public partial class PlayerFsm : GravityFsm
                                                             YVelocity < -6f);
         _timeSinceDashFinished += Time.deltaTime;
         _comboTimer += Time.deltaTime;
+        _timeSinceLastFootstep += Time.deltaTime;
+        
         if (_comboTimer > ComboTimeoutDuration)
         {
             ResetCombo();
@@ -399,6 +401,11 @@ public partial class PlayerFsm : GravityFsm
             SlideDownOnUpdate();
         }
         
+        if (Machine.IsInState(PlayerFsmState.Slide))
+        {
+            SlideOnUpdate();
+        }
+        
         if (Machine.IsInState(PlayerFsmState.Updraft))
         {
             UpdraftOnUpdate();
@@ -452,7 +459,7 @@ public partial class PlayerFsm : GravityFsm
         
         base.OnUpdate();
         
-        _previousPositionDelta = transform.position - previousPosition;
+        _previousPositionDeltaNoTimescale = (transform.position - previousPosition) / Time.deltaTime;
     }
 
     private bool HitstopOnUpdate()
@@ -483,6 +490,12 @@ public partial class PlayerFsm : GravityFsm
         PlayerFootTracker.OnPlayerFootstep += OnPlayerFootstep;
         
         activeFmodInstance = FMODUnity.RuntimeManager.CreateInstance(comboActiveFmodEvent);
+        slideFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slideFmodEvent);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(slideFmodInstance, gameObject);
+        
+        slipAmbientFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slipAmbientEvent);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(slipAmbientFmodInstance, gameObject);
+        slipAmbientFmodInstance.start();
     }
     
     private void OnDisable()
@@ -491,5 +504,7 @@ public partial class PlayerFsm : GravityFsm
         MetaSaveSystem.OnMetaSaveDataUpdated -= ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep -= OnPlayerFootstep;
         activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+        slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+        slipAmbientFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 }

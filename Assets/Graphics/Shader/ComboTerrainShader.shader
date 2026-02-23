@@ -83,11 +83,24 @@ Shader "Unlit/ComboTerrainShader"
             v2f vert(appdata v)
             {
                 v2f o;
-                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+
+                // Camera position in object space
                 float3 camObj = mul(unity_WorldToObject, float4(_WorldSpaceCameraPos, 1.0)).xyz;
 
                 o.objectPos = v.vertex.xyz;
-                o.rayDirObject = normalize(o.objectPos - camObj);
+
+                // Compute ray direction WITHOUT normalization first
+                float3 rayDir = o.objectPos - camObj;
+
+                // Compensate for object scaling
+                float3 objectScale;
+                objectScale.x = length(unity_ObjectToWorld._m00_m10_m20);
+                objectScale.y = length(unity_ObjectToWorld._m01_m11_m21);
+                objectScale.z = length(unity_ObjectToWorld._m02_m12_m22);
+
+                rayDir /= objectScale;
+
+                o.rayDirObject = normalize(rayDir);
 
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.screenPos = o.vertex;

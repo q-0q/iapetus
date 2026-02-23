@@ -7121,7 +7121,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3600708144320890767}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.34317824, y: 0.000000007525236, z: -0.0000000028107634, w: 0.9392703}
+  m_LocalRotation: {x: 0.34317824, y: -0.000000013027683, z: 0.0000000047839284, w: 0.9392703}
   m_LocalPosition: {x: 4.1, y: 16.78386, z: 12.295044}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -20646,8 +20646,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
         type: 3}
+      propertyPath: slideFmodEvent.Path
+      value: event:/PlayerSlide
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
       propertyPath: impactFmodEvent.Path
       value: event:/PlayerImpact
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slipAmbientEvent.Path
+      value: event:/PlayerSlideAmbient
       objectReference: {fileID: 0}
     - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
         type: 3}
@@ -20786,6 +20796,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
         type: 3}
+      propertyPath: slideFmodEvent.Guid.Data1
+      value: -1289717677
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slideFmodEvent.Guid.Data2
+      value: 1085250076
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slideFmodEvent.Guid.Data3
+      value: -2083427433
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slideFmodEvent.Guid.Data4
+      value: 1771164065
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
       propertyPath: comboTriggerFmodEvent.Path
       value: event:/PlayerComboTrigger
       objectReference: {fileID: 0}
@@ -20813,6 +20843,26 @@ PrefabInstance:
         type: 3}
       propertyPath: snowFootstepFmodEvent.Path
       value: event:/PlayerFootstepSnow
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slipAmbientEvent.Guid.Data1
+      value: 552640129
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slipAmbientEvent.Guid.Data2
+      value: 1283043224
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slipAmbientEvent.Guid.Data3
+      value: -1282348633
+      objectReference: {fileID: 0}
+    - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
+        type: 3}
+      propertyPath: slipAmbientEvent.Guid.Data4
+      value: 618848997
       objectReference: {fileID: 0}
     - target: {fileID: 1745928456593767258, guid: 33aaef3821e5f4292b505de6ac941826,
         type: 3}
@@ -21441,6 +21491,11 @@ PrefabInstance:
     - target: {fileID: 100785672966762774, guid: 6fedd59d65c6f428c87967f8ea706ce2,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4955250989680000023, guid: 6fedd59d65c6f428c87967f8ea706ce2,
+        type: 3}
+      propertyPath: side
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5970777426235050169, guid: 6fedd59d65c6f428c87967f8ea706ce2,
@@ -22190,6 +22245,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4955250989680000023, guid: 6fedd59d65c6f428c87967f8ea706ce2,
+        type: 3}
+      propertyPath: side
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5970777426235050169, guid: 6fedd59d65c6f428c87967f8ea706ce2,
         type: 3}
       propertyPath: m_Name
@@ -22512,6 +22572,11 @@ PrefabInstance:
       propertyPath: TrailModule.colorOverLifetime.maxGradient.m_NumAlphaKeys
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 4955250989680000023, guid: 6fedd59d65c6f428c87967f8ea706ce2,
+        type: 3}
+      propertyPath: side
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5970777426235050169, guid: 6fedd59d65c6f428c87967f8ea706ce2,
         type: 3}
       propertyPath: m_Name
@@ -22585,6 +22650,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4955250989680000023, guid: 6fedd59d65c6f428c87967f8ea706ce2,
+        type: 3}
+      propertyPath: side
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5970777426235050169, guid: 6fedd59d65c6f428c87967f8ea706ce2,
         type: 3}
