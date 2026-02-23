@@ -36,6 +36,7 @@ public partial class PlayerFsm
             {
                 YVelocity = 0;
             })
-            .OnExitFrom(PlayerFsmTrigger.FaceOpen, _ => { _momentum = 0; });
+            .OnExitFrom(PlayerFsmTrigger.FaceOpen, _ => { _momentum = 0; })
+            .OnExitFrom(FsmTrigger.Timeout, _ => { _momentum = 0; });
     }
 }

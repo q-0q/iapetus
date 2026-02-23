@@ -71,11 +71,11 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlide, _ => YVelocity < 0.5f, 5)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0.25f)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0.4f)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum)
+                _ => _momentum > WallSquatMinimumMomentum && TimeInCurrentState() > 0.25f)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum)
             .OnEntry(_ =>
@@ -106,13 +106,13 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Slide)
             .OnEntry(@params =>
             {
-                YVelocity += 8f;
+                YVelocity += 10f;
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
 
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
-                IncrementCombo();
+                // IncrementCombo();
 
                 if (@params is not RaycastHitParam raycastHitParam) return;
                 var flattenedNormal = new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z);
@@ -131,13 +131,8 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _momentum = 3f;
-
-                // if (@params is not RaycastHitParam raycastHitParam) return;
-                // var flattenedNormal = new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z);
-                // var signedAngle = Vector3.SignedAngle(flattenedNormal, transform.forward, Vector3.up);
-                // bool flip = signedAngle > 0;
-                // _currentFlankType = flip ? FlankType.Right : FlankType.Left;
-                // Animator.SetFloat("Flip", flip ? 0f : 1f);
+                _currentComboLength = 0;
+                OnPlayerComboReset?.Invoke();
             });
 
         Machine.Configure(PlayerFsmState.SlideInteractable)
@@ -157,6 +152,7 @@ public partial class PlayerFsm
                     var angle = Vector3.Angle(transform.forward,
                         new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z));
 
+                    if (_momentum < 6f) return true;
                     if (angle < 30f) return true;
                     if (angle > 150f) return true;
                     return false;
@@ -174,7 +170,8 @@ public partial class PlayerFsm
     {
         var playerSlideIndicator = hit.transform.GetComponent<PlayerSlideIndicator>();
         if (playerSlideIndicator == null) return false;
-        return Vector3.Angle(hit.normal, hit.transform.up) < 5f;
+        return true;
+        return Vector3.Angle(hit.normal, hit.transform.up) < 7.5f;
     }
     
 }
