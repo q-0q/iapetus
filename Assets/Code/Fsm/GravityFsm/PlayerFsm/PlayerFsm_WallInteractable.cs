@@ -22,6 +22,7 @@ public partial class PlayerFsm
 
     private bool CanVault(TriggerParams t)
     {
+        if (Machine.IsInState(PlayerFsmState.PitonFlip)) return YVelocity < PitonMaximumWallInteractYVelocity;
         return (YVelocity > VaultMinimumYVelocity && _momentum > VaultMinimumMomentum);
     }
 

@@ -269,7 +269,7 @@ public partial class PlayerFsm
                 (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
 
         var slope = Vector3.Angle(hit.normal, Vector3.up);
-        if (slope > 40f) return false;
+        if (slope > 60f) return false;
         _currentLedgePosition = hit.point;
         return true;
     }
