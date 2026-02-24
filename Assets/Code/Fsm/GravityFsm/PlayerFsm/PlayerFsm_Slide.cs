@@ -24,6 +24,23 @@ public partial class PlayerFsm
 
     }
     
+    private void FallAfterSlideLateralOnUpdate()
+    {
+        Animator.SetLayerWeight(1, 0);
+        SetAnimatorMomentum();
+        var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
+        var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
+        var forward = Quaternion.Euler(0f, 90f * rotationMod, 0f) * flattenedNormal;
+        var lookRotation = Quaternion.LookRotation(forward, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
+        
+        HandleCollisionMove(0.15f);
+        
+        transform.position +=
+            ComputeCollisionMove(flattenedNormal.normalized * (Time.deltaTime * FlankWallVacuumStrength));
+
+    }
+    
     private void SlideDownOnUpdate()
     {
 
@@ -53,10 +70,12 @@ public partial class PlayerFsm
         var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z).normalized;
 
         var vacuumRaycastOrigin = transform.position + Vector3.up * 1.5f;
-        if (Physics.Raycast(vacuumRaycastOrigin, -flattenedNormal, 3f, GetEnvironmentalLayermask()))
+        if (Physics.Raycast(vacuumRaycastOrigin, -flattenedNormal, out RaycastHit vacuumHit, 3f, GetEnvironmentalLayermask()))
         {
+            var distance = Vector3.Distance(transform.position, vacuumHit.point);
+            var distanceMod = Mathf.Lerp(0.1f, 1f, Mathf.InverseLerp(2.5f, 3.25f, distance));
             transform.position +=
-                ComputeCollisionMove(-flattenedNormal * (Time.deltaTime * FlankWallVacuumStrength));
+                ComputeCollisionMove(-flattenedNormal.normalized * (Time.deltaTime * FlankWallVacuumStrength * distanceMod));
         }
     }
 
@@ -78,6 +97,8 @@ public partial class PlayerFsm
                 _ => _momentum > WallSquatMinimumMomentum && TimeInCurrentState() > 0.25f)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
+                @params => (!IsSlideTrigger(@params) && CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum), 4)
             .OnEntry(_ =>
             {
                 
@@ -91,9 +112,10 @@ public partial class PlayerFsm
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
-                // var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
-                // var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
-                // transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+                var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
+                var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
+                var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * flattenedNormal;
+                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
             })
             .OnExit(_ =>
             {
@@ -104,6 +126,7 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.SlideLateral)
             .SubstateOf(PlayerFsmState.Slide)
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlideLateral, _ => YVelocity < 0.5f, 6)
             .OnEntry(@params =>
             {
                 YVelocity += 10f;
@@ -157,6 +180,17 @@ public partial class PlayerFsm
                     if (angle > 150f) return true;
                     return false;
                 }, 7);
+        
+        
+        Machine.Configure(PlayerFsmState.FallAfterSlide)
+            .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(PlayerFsmState.Landable)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall);
+        
+        Machine.Configure(PlayerFsmState.FallAfterSlideLateral)
+            .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(PlayerFsmState.Landable)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall);
     }
     
     
@@ -170,8 +204,25 @@ public partial class PlayerFsm
     {
         var playerSlideIndicator = hit.transform.GetComponent<PlayerSlideIndicator>();
         if (playerSlideIndicator == null) return false;
-        return true;
-        return Vector3.Angle(hit.normal, hit.transform.up) < 7.5f;
+
+        var ray = hit;
+            
+        if (Physics.Raycast(hit.point + Vector3.up, Vector3.down, out RaycastHit recast, 2f,
+                GetEnvironmentalLayermask()))
+        {
+            ray = recast;
+        }
+
+        var angle = Vector3.Angle(ray.normal, ray.transform.up);
+        
+        if (Machine.IsInState(PlayerFsmState.Slide))
+        {
+            return angle < 100f;
+        }
+        else
+        {
+            return angle < 10f;
+        }
     }
     
 }

@@ -88,6 +88,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Dying2;
         public static int Dead;
         public static int FallAfterSlide;
+        public static int FallAfterSlideLateral;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -404,6 +405,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Slide))
         {
             SlideOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.FallAfterSlideLateral))
+        {
+            FallAfterSlideLateralOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Updraft))

@@ -72,8 +72,14 @@ public class CameraFollow : MonoBehaviour
         {
             pos += Vector3.up * Mathf.Lerp(-3f, 5f, Mathf.InverseLerp(0, 60f, playerYVelocity));
         }
-
+        
         yLerp = Mathf.Lerp(yLerp, yLerp * 1.25f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
+        {
+            yLerp *= 1.5f;
+            pos += Vector3.up * -5f;
+        }
+
         var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
         _playerPos = new Vector3(pos.x, newY, pos.z);
     }

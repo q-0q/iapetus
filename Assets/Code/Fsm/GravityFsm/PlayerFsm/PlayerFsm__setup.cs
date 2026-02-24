@@ -114,6 +114,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DashVault, "DashVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlideLateral, "SlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlideDown, "SlideDown");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlideLateral, "FallAfterSlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "GroundMove");
