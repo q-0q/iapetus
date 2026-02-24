@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using FMODUnity;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class BreakableObject : MonoBehaviour
@@ -13,8 +14,9 @@ public class BreakableObject : MonoBehaviour
     private ParticleSystem _particleSystem;
     private MeshRenderer _meshRenderer;
     private EventReference _eventReference;
+    private float _bitChance;
     
-    public void Set(Mesh mesh, Material material, EventReference eventReference)
+    public void Set(Mesh mesh, Material material, EventReference eventReference, float bitChance)
     {
         GetComponent<MeshFilter>().mesh = mesh;
         _meshRenderer = GetComponent<MeshRenderer>();
@@ -22,6 +24,7 @@ public class BreakableObject : MonoBehaviour
         _eventReference = eventReference;
         transform.Find("Particles").TryGetComponent(out _particleSystem);
         _particleSystem.GetComponent<Renderer>().material = material;
+        _bitChance = bitChance;
 
     }
 
@@ -48,6 +51,8 @@ public class BreakableObject : MonoBehaviour
         if (broken) yield break;
         broken = true;
 
+        if (Random.Range(0f, 1f) < _bitChance) BitSystem.Singleton.SpawnFromPool(transform.position + Vector3.up * 2f);
+        
         _meshRenderer.enabled = false;
         _particleSystem.transform.SetParent(null);
         _particleSystem.Play();

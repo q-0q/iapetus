@@ -16,6 +16,7 @@ public class BreakableConfig
     public Vector2 scaleRange = new Vector2(0.8f, 1.2f);
     public Vector2 rotationYRange = new Vector2(0f, 360f);
     public Vector2 offsetRange = new Vector2(-0f, 0f);
+    public float bitChance = 0;
 
     public EventReference EventReference;
 }
@@ -137,7 +138,7 @@ public class BreakableSystem : MonoBehaviour
             breakableObject.transform.localScale = Vector3.one * scale;
             breakableObject.transform.SetParent(transform);
             breakableObject.TryGetComponent(out BreakableObject component);
-            component.Set(Configs[configIndex].Mesh, Configs[configIndex].Material, Configs[configIndex].EventReference);
+            component.Set(Configs[configIndex].Mesh, Configs[configIndex].Material, Configs[configIndex].EventReference, Configs[configIndex].bitChance);
 
             // matrices.Add(Matrix4x4.TRS(
             //     position,

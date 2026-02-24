@@ -53,8 +53,8 @@ public class SaveSystem : MonoBehaviour
         public List<TrialCompletionEntry> trialCompletions;
         public List<string> lemonCollections;
         public List<string> bells;
-        
-        
+        public int bitCount;
+        public List<string> bitDeposits;
             
 
         public SaveData()
@@ -66,6 +66,8 @@ public class SaveSystem : MonoBehaviour
             trialCompletions = new List<TrialCompletionEntry>();
             lemonCollections = new List<string>();
             bells = new List<string>();
+            bitCount = 0;
+            bitDeposits = new List<string>();
         }
     }
 
@@ -146,6 +148,29 @@ public class SaveSystem : MonoBehaviour
         if (entry != null) return;
         data.lemonCollections.Add(metaName);
         WriteSaveData(data, id);
+    }
+    
+    public static void AddBit(int id)
+    {
+        SaveData data = LoadSaveData(id);
+        data.bitCount++;
+        Singleton._cachedSaveData = data;
+    }
+    
+    public static void CollectBitDeposit(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
+        if (entry != null) return;
+        data.bitDeposits.Add(metaName);
+        Singleton._cachedSaveData = data;
+    }
+    
+    public static bool GetBitDeposit(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
+        return entry != null;
     }
     
     public static bool GetLemonCollection(string metaName, int id)

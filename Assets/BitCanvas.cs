@@ -1,57 +1,52 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using FMODUnity;
 using TMPro;
 using UnityEngine;
 
-public class BellCanvas : MonoBehaviour
+public class BitCanvas : MonoBehaviour
 {
     private TextMeshProUGUI _tmp;
     private CanvasGroup _canvasGroup;
     private float _showTimer;
+
     
     // Start is called before the first frame update
     void Start()
     {
         _tmp = GetComponentInChildren<TextMeshProUGUI>();
         TryGetComponent(out _canvasGroup);
-        UpdateBellCount();
+        UpdateBitCount();
         _showTimer = 100f;
+        UpdateBitCount();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _showTimer < 0.5f ? 1f : 0, Time.deltaTime * 5f);
+        _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _showTimer < 1.5f ? 1f : 0, Time.deltaTime * 5f);
         _showTimer += Time.deltaTime;
     }
 
-    private void OnBellRung()
+    private void OnBitCountUpdated()
     {
         _canvasGroup.alpha = 1f;
-        UpdateBellCount();
+        _showTimer = 0f;
+        UpdateBitCount();
     }
 
-    private void UpdateBellCount()
+    private void UpdateBitCount()
     {
-        _tmp.text = SaveSystem.LoadSaveData(0).bells.Count.ToString();
-    }
-
-    public void ResetShowTimer()
-    {
-        _showTimer = 0;
+        _tmp.text = SaveSystem.LoadSaveData(0).bitCount.ToString();
     }
 
     private void OnEnable()
     {
-        BellController.OnBellRing += OnBellRung;
-        BellController.OnPlayerNearbyRungBell += ResetShowTimer;
+        BitController.OnBitCountUpdated += OnBitCountUpdated;
     }
 
     private void OnDisable()
     {
-        BellController.OnBellRing -= OnBellRung;
-        BellController.OnPlayerNearbyRungBell -= ResetShowTimer;
+        BitController.OnBitCountUpdated -= OnBitCountUpdated;
     }
 }
