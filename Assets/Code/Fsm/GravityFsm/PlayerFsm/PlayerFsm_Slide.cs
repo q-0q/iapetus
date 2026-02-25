@@ -170,6 +170,10 @@ public partial class PlayerFsm
                 @params =>
                 {
                     if (!IsSlideTrigger(@params)) return false;
+
+                    if ((Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) ||
+                        (Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f)) return false;
+                    
                     if (@params is not RaycastHitParam raycastHitParam) return false;
 
                     var angle = Vector3.Angle(transform.forward,
@@ -204,6 +208,7 @@ public partial class PlayerFsm
     {
         var playerSlideIndicator = hit.transform.GetComponent<PlayerSlideIndicator>();
         if (playerSlideIndicator == null) return false;
+        if (playerSlideIndicator.allNormals) return true;
 
         var ray = hit;
             

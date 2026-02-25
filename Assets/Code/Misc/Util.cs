@@ -80,6 +80,20 @@ namespace Code.Misc
                 Quaternion.identity, null);
             sphereObject.GetComponent<SphereEffect>().SetConfig(initialScale, finalScale, ageMultiplier, distanceOffset);
         }
-        
+
+        public static Transform FindGamePositionById(string id)
+        {
+            if (id == "") return null;
+            
+            foreach (var playerGamePosition in UnityEngine.Object.FindObjectsByType<PlayerGamePosition>(FindObjectsSortMode.None))
+            {
+                if (playerGamePosition.Id == id)
+                {
+                    return playerGamePosition.transform;
+                }
+            }
+
+            return null;
+        }
     }
 }

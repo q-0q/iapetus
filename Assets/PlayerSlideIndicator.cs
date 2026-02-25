@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PlayerSlideIndicator : MonoBehaviour
 {
-
+    public bool allNormals = false;
 }

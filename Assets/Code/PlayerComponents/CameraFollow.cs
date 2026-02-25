@@ -60,6 +60,13 @@ public class CameraFollow : MonoBehaviour
     
     void UpdatePlayerPosition(Vector3 pos, bool grounded)
     {
+
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
+        {
+            _playerPos = PlayerFsm.Singleton.transform.position;
+            return;
+        }
+        
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
         
         pos = CameraFollowTarget.Singleton.transform.position;

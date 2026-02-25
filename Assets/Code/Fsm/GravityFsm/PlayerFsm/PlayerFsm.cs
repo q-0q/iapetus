@@ -14,6 +14,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.PlayerLoop;
 using UnityEngine.Serialization;
 using Wasp;
+using Util = Code.Misc.Util;
 
 public partial class PlayerFsm : GravityFsm
 {
@@ -133,16 +134,12 @@ public partial class PlayerFsm : GravityFsm
         var saveData = SaveSystem.LoadSaveData(0);
         if (saveData != null )
         {
-            if (saveData.playerInGamePositionId != "")
+
+            var positionIdTransform = Util.FindGamePositionById(saveData.playerInGamePositionId);
+            if (positionIdTransform != null)
             {
-                foreach (var playerGamePosition in FindObjectsByType<PlayerGamePosition>(FindObjectsSortMode.None))
-                {
-                    if (playerGamePosition.Id == saveData.playerInGamePositionId)
-                    {
-                        transform.position = playerGamePosition.transform.position;
-                        transform.rotation = playerGamePosition.transform.rotation;
-                    }
-                }
+                transform.position = positionIdTransform.position;
+                transform.rotation = positionIdTransform.rotation;
             }
             
             else if (saveData.playerInGamePosition != null)
