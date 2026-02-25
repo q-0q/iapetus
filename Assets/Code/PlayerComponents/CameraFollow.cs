@@ -19,6 +19,7 @@ public class CameraFollow : MonoBehaviour
 
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart;
+    
 
     private void Start()
     {
@@ -67,6 +68,12 @@ public class CameraFollow : MonoBehaviour
             return;
         }
         
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
+        {
+            _playerPos = Vector3.Lerp(_playerPos, PlayerFsm.Singleton.transform.position + Vector3.up * -5f, Time.deltaTime * 10f);
+            return;
+        }
+        
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
         
         pos = CameraFollowTarget.Singleton.transform.position;
@@ -81,11 +88,7 @@ public class CameraFollow : MonoBehaviour
         }
         
         yLerp = Mathf.Lerp(yLerp, yLerp * 1.25f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
-        {
-            yLerp *= 1.5f;
-            pos += Vector3.up * -5f;
-        }
+
 
         var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
         _playerPos = new Vector3(pos.x, newY, pos.z);
@@ -110,10 +113,10 @@ public class CameraFollow : MonoBehaviour
         //         return;
         //     }
         // }
-        
-        
-        
-        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));
+
+
+
+        transform.position = _playerPos;
         
         var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
         OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);
