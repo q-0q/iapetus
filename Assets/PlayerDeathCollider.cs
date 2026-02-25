@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PlayerDeathCollider : MonoBehaviour
 {
+
+    public bool requireGroundedState = true;
     // Start is called before the first frame update
 
     private void Awake()
@@ -16,6 +18,7 @@ public class PlayerDeathCollider : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        if (requireGroundedState && !PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.Grounded)) return;
         PlayerFsm.Singleton.InvokePlayerDeath();
     }
 }
