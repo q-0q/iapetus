@@ -97,11 +97,15 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
+            
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat,
                 @params => !IsSlideTrigger(@params) && TimeInCurrentState() >= 0.25f)
             .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlide, _ => YVelocity < 0.5f, 5)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
+            
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jumpsquat, _ => _inputBuffer.IsBuffered("Jump"), 7)
+
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0.4f)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => true)
@@ -123,13 +127,7 @@ public partial class PlayerFsm
                 _currentSlideNormal = raycastHitParam.Hit.normal;
                 _currentSlideTransform = raycastHitParam.Hit.transform;
             })
-            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
-            {
-                var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
-                var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
-                var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * flattenedNormal;
-                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
-            })
+
             .OnExit(_ =>
             {
                 slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
@@ -158,8 +156,23 @@ public partial class PlayerFsm
                 OnPlayerEnteredSlideLateral?.Invoke(flip);
                 _currentFlankType = flip ? FlankType.Right : FlankType.Left;
                 Animator.SetFloat("Flip", flip ? 0f : 1f);
+            })
+            .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, _ =>
+            {
+                var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
+                var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
+                var forward = Quaternion.Euler(0f, 25f * rotationMod, 0f) * flattenedNormal;
+                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
+            })
+            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
+            {
+                _momentum = MaxMomentum;
+                var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
+                var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
+                var forward = Quaternion.Euler(0f, 45 * rotationMod, 0f) * flattenedNormal;
+                transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
             });
-        
+
         Machine.Configure(PlayerFsmState.SlideDown)
             .SubstateOf(PlayerFsmState.Slide)
             .OnEntry(@params =>
@@ -167,9 +180,13 @@ public partial class PlayerFsm
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
-                _momentum = 3f;
+                _momentum = Mathf.Max(_momentum, 3f);
                 _currentComboLength = 0;
                 OnPlayerComboReset?.Invoke();
+            })
+            .OnExit(_ =>
+            {
+                _momentum = 9f;
             });
 
         Machine.Configure(PlayerFsmState.SlideInteractable)
@@ -179,7 +196,6 @@ public partial class PlayerFsm
                     return IsSlideTrigger(@params) &&
                            !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
                            !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f) &&
-                           !(Machine.IsInState(PlayerFsmState.GroundMove) && TimeInCurrentState() < MaxSlideTimer) &&
                            (Machine.IsInState(PlayerFsmState.Aerial) || _slideTimer > MaxSlideTimer);
                 }, 6)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.SlideDown,
@@ -188,8 +204,7 @@ public partial class PlayerFsm
                     if (!IsSlideTrigger(@params)) return false;
             
                     if ((Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) ||
-                        (Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f) ||
-                        (Machine.IsInState(PlayerFsmState.GroundMove) && TimeInCurrentState() < MaxSlideTimer)) return false;
+                        (Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f)) return false;
             
                     if (!Machine.IsInState(PlayerFsmState.Aerial) && _slideTimer < MaxSlideTimer) return false;
                     
@@ -240,15 +255,20 @@ public partial class PlayerFsm
             originOffset = flattenedNormal.normalized;
         }
             
-        if (Physics.Raycast(hit.point + originOffset + Vector3.up * 2f, Vector3.down, out RaycastHit recast, 4f,
+        if (Physics.Raycast(hit.point + originOffset + Vector3.up * 3f, Vector3.down, out RaycastHit recast, 6f,
                 GetEnvironmentalLayermask()))
         {
             ray = recast;
-            Debug.DrawRay(hit.point + Vector3.up * 2f, Vector3.down * 4f, Color.green);
         }
 
-        var angle = Vector3.Angle(ray.normal, ray.transform.up);
-        return angle < 5f;
+        var val = Vector3.Angle(ray.normal, ray.transform.up) < 10f && Vector3.Angle(ray.normal, Vector3.up) < 60f;
+        if (!val)
+        {
+            Debug.DrawRay(ray.point, Vector3.up, Color.blue, 1f);
+            Debug.DrawRay(ray.point, ray.transform.up, Color.red, 1f);
+            Debug.DrawRay(ray.point, ray.normal, Color.yellow, 1f);
+        }
+        return val;
     }
     
 }

@@ -62,6 +62,11 @@ public abstract partial class GravityFsm
                 out hit,
                 sphereCastMaxDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
+
+
+            if (Physics.Raycast(hit.point + Vector3.up * 3f, Vector3.down, out var recast, 6f,
+                    GetEnvironmentalLayermask())) hit = recast;
+            
             var angle = Vector3.Angle(hit.GetCorrectNormalForSphere(sphereSpherecastDirection), Vector3.up);
             if (angle > 60f) return false;
             var slopeMinDistanceOffset =
