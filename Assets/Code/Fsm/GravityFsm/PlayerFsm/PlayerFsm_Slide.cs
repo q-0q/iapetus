@@ -64,7 +64,19 @@ public partial class PlayerFsm
         GetGroundedRaycastHit(out var groundedRaycastHit);
         if (groundedRaycastHit.collider != null)
         {
-            if (IsSlideTriggerCore(groundedRaycastHit)) _currentSlideNormal = groundedRaycastHit.normal;
+            if (IsSlideTriggerCore(groundedRaycastHit))
+            {
+
+                _currentSlideNormal = groundedRaycastHit.normal;
+                if (_currentSlideTransform != groundedRaycastHit.transform)
+                {
+                    _currentSlideTransform = groundedRaycastHit.transform;
+                    if (TimeInCurrentState() >= 0.5f)
+                    {
+                        YVelocity = 8f;
+                    };
+                }
+            }
         } 
         
         var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z).normalized;
@@ -109,6 +121,7 @@ public partial class PlayerFsm
             {
                 if (@params is not RaycastHitParam raycastHitParam) return;
                 _currentSlideNormal = raycastHitParam.Hit.normal;
+                _currentSlideTransform = raycastHitParam.Hit.transform;
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
@@ -120,6 +133,7 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+                _slideTimer = 0;
             });
         // .OnExitFrom(GravityFsmTrigger.StartFrameAerial, _ => { _momentum = 7f; });
 
@@ -163,22 +177,27 @@ public partial class PlayerFsm
                 @params =>
                 {
                     return IsSlideTrigger(@params) &&
-                        !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
-                        !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f);
+                           !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
+                           !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f) &&
+                           !(Machine.IsInState(PlayerFsmState.GroundMove) && TimeInCurrentState() < MaxSlideTimer) &&
+                           (Machine.IsInState(PlayerFsmState.Aerial) || _slideTimer > MaxSlideTimer);
                 }, 6)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.SlideDown,
                 @params =>
                 {
                     if (!IsSlideTrigger(@params)) return false;
-
+            
                     if ((Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) ||
-                        (Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f)) return false;
+                        (Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f) ||
+                        (Machine.IsInState(PlayerFsmState.GroundMove) && TimeInCurrentState() < MaxSlideTimer)) return false;
+            
+                    if (!Machine.IsInState(PlayerFsmState.Aerial) && _slideTimer < MaxSlideTimer) return false;
                     
                     if (@params is not RaycastHitParam raycastHitParam) return false;
-
+            
                     var angle = Vector3.Angle(transform.forward,
                         new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z));
-
+            
                     if (_momentum < 6f) return true;
                     if (angle < 30f) return true;
                     if (angle > 150f) return true;
@@ -212,22 +231,24 @@ public partial class PlayerFsm
 
         var ray = hit;
             
-        if (Physics.Raycast(hit.point + Vector3.up, Vector3.down, out RaycastHit recast, 2f,
+        
+        // hack for stopping corner sliding
+        var originOffset = Vector3.zero;
+        if (Machine.IsInState(PlayerFsmState.SlideLateral))
+        {
+            var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
+            originOffset = flattenedNormal.normalized;
+        }
+            
+        if (Physics.Raycast(hit.point + originOffset + Vector3.up * 2f, Vector3.down, out RaycastHit recast, 4f,
                 GetEnvironmentalLayermask()))
         {
             ray = recast;
+            Debug.DrawRay(hit.point + Vector3.up * 2f, Vector3.down * 4f, Color.green);
         }
 
         var angle = Vector3.Angle(ray.normal, ray.transform.up);
-        
-        if (Machine.IsInState(PlayerFsmState.Slide))
-        {
-            return angle < 100f;
-        }
-        else
-        {
-            return angle < 10f;
-        }
+        return angle < 5f;
     }
     
 }

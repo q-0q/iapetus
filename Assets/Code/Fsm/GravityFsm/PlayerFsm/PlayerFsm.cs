@@ -225,7 +225,7 @@ public partial class PlayerFsm : GravityFsm
         
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
         UpdateShaderGlobals();
-        // HandleSlopeTimer();
+        HandleSlideTimer();
 
         var previousPosition = transform.position;
 

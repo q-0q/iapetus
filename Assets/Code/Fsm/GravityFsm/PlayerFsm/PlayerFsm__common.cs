@@ -29,6 +29,7 @@ public partial class PlayerFsm
     private Vector3 _currentLedgePosition;
     private Vector3 _currentFlankWallNormal;
     private Vector3 _currentSlideNormal;
+    private Transform _currentSlideTransform;
     private Transform _currentWallrunTransform;
     private FlankType _currentFlankType;
     private FlankType _previousWallrunSide;
@@ -40,13 +41,14 @@ public partial class PlayerFsm
     private SkinnedMeshRenderer _skinnedMeshRenderer;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
-    private float _slopeTimer = 0f;
+    private float _slideTimer = 0f;
     private ParticleSystem _teleportParticles;
     private ParticleSystem _deathParticles;
     private bool isSprinting;
     private bool _isParentSlippery = false;
     private Vector3 _previousPositionDeltaNoTimescale;
     private float _currentSlipWeight;
+    private const float MaxSlideTimer = 0.15f;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -629,39 +631,14 @@ public partial class PlayerFsm
     {
         return Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Skip) ? DashRaycastHeightOffset : 0;
     }
-
-    private void HandleSlopeTimer()
-    {
-        GetGroundedRaycastHit(out var groundedRaycastHit);
-        if (groundedRaycastHit.collider == null)
-        {
-            _slopeTimer = 0f;
-            return;
-        }
-        // else if (!groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up),
-        //         out var hit, 2f))
-        // {
-        //     _slopeTimer = 0f;
-        // }
-        // else if (Vector3.Angle(hit.normal, Vector3.up) < 50f)
-        // {
-        //     _slopeTimer = 0f;
-        // }
-        
-        if (groundedRaycastHit.collider.gameObject.layer != LayerMask.NameToLayer("ForceSlide"))
-        {
-            _slopeTimer = 0f;
-        }
-
-        _slopeTimer += Time.deltaTime;
-    }
+    
 
     protected override void OnParentTransformChanged(Transform t)
     {
 
         t.TryGetComponent(out PlayerSlipperyIndicator tractionIndicator);
         _isParentSlippery = tractionIndicator != null;
-        print(t.name);
+
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }
@@ -850,6 +827,24 @@ public partial class PlayerFsm
         if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit,20f, GetEnvironmentalLayermask()))
         {
             transform.position = hit.point;
+        }
+    }
+
+    private void HandleSlideTimer()
+    {
+        GetGroundedRaycastHit(out var groundedRaycastHit);
+        if (groundedRaycastHit.collider == null)
+        {
+            _slideTimer = 0;
+            return;
+        };
+        if (IsSlideTriggerCore(groundedRaycastHit))
+        {
+            _slideTimer += Time.deltaTime;
+        }
+        else
+        {
+            _slideTimer = 0;
         }
     }
 }
