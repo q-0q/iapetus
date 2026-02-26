@@ -8,6 +8,7 @@ public partial class SwitchFsm
             .OnEntry(_ =>
             {
                 InvokeVirtualCamera();
+                OnSwitchFsmTurnedOn?.Invoke(this);
             });
     }
 }

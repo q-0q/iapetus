@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
@@ -10,6 +11,8 @@ public partial class SwitchFsm
     private Interactable _interactable;
     private PowerConnector _powerConnector;
     public CinemachineVirtualCamera _VirtualCamera;
+    
+    public static Action<SwitchFsm> OnSwitchFsmTurnedOn;
 
     private void StartPlayerInteraction()
     {
