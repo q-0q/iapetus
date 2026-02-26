@@ -18,6 +18,12 @@ public class MovingPlatform : MonoBehaviour
     private Quaternion startRotation;
     private PowerConnector _powerConnector;
 
+
+    public void JumpToEnd()
+    {
+        transitionTime = cycleDuration;
+    }
+    
     private void Start()
     {
         startPosition = transform.localPosition;

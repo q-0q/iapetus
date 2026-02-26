@@ -10,9 +10,12 @@ public class MultiSwitchDoor : MonoBehaviour
 
     public List<OnetimeSwitchFsm> SwitchFsms;
     private Dictionary<OnetimeSwitchFsm, GameObject> _lightDictionary;
-    private CinemachineVirtualCamera _virtualCamera;
+    private CinemachineVirtualCamera _lightVirtualCamera;
+    private CinemachineVirtualCamera _openVirtualCamera;
+    private Collider _openTrigger;
+    private PowerConnector _powerConnector;
 
-    public string persistentEventPrefix;
+    public string persistentEvent;
 
     private Transform _cameraFollow;
     private Transform _cameraStart;
@@ -23,12 +26,17 @@ public class MultiSwitchDoor : MonoBehaviour
         _cameraFollow = transform.Find("Camera").Find("CameraFollow");
         _cameraStart = transform.Find("Camera").Find("CameraFollowStart");
         _cameraEnd = transform.Find("Camera").Find("CameraFollowEnd");
+        _powerConnector = GetComponentInChildren<PowerConnector>();
         
-        _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
+        TryGetComponent(out _openTrigger);
+        _openTrigger.enabled = false;
+        
+        _lightVirtualCamera = transform.Find("Camera").Find("MultiSwitchDoorLightVirtualCamera").GetComponentInChildren<CinemachineVirtualCamera>();
+        _openVirtualCamera = transform.Find("Camera").Find("MultiSwitchDoorOpenVirtualCamera").GetComponentInChildren<CinemachineVirtualCamera>();
+        
         var lightPrefab = Resources.Load("Prefab/MultiSwitchDoorLight") as GameObject;
         var lightHolder = transform.Find("DoorLights").Find("Lights");
         _lightDictionary = new Dictionary<OnetimeSwitchFsm, GameObject>();
-        var isAllSwitchesPersistentEventsActive = true;
         for (int i = 0; i < SwitchFsms.Count; i++)
         {
             var position = Vector3.down * i * 2f;
@@ -39,11 +47,18 @@ public class MultiSwitchDoor : MonoBehaviour
             {
                 obj.GetComponentInChildren<Renderer>().material.SetFloat("_Weight", 1f);
             }
-            else
-            {
-                isAllSwitchesPersistentEventsActive = false;
-            }
+        }
+
+        if (SaveSystem.GetPersistentEventCompleted(persistentEvent))
+        {
+            _powerConnector.Source = true;
+            _openTrigger.enabled = false;
+            GetComponentInChildren<MovingPlatform>().JumpToEnd();
         } 
+        else if (IsAllSwitchesEnabled())
+        {
+            _openTrigger.enabled = true;
+        }
     }
 
     private void OnEnable()
@@ -61,6 +76,7 @@ public class MultiSwitchDoor : MonoBehaviour
 
         StartCoroutine(MaterialCoroutine());
         StartCoroutine(CameraCoroutine());
+        
 
         IEnumerator MaterialCoroutine()
         {
@@ -88,7 +104,7 @@ public class MultiSwitchDoor : MonoBehaviour
             _cameraFollow.position = _cameraStart.position;
             float t = 0;
             float duration = 1.25f;
-            _virtualCamera.Priority = 20;
+            _lightVirtualCamera.Priority = 20;
             yield return new WaitForSeconds(0.5f);
             while (t < duration)
             {
@@ -101,7 +117,43 @@ public class MultiSwitchDoor : MonoBehaviour
 
             
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
-            _virtualCamera.Priority = -10;
+            _lightVirtualCamera.Priority = -10;
+            
+            if (IsAllSwitchesEnabled())
+            {
+                _openTrigger.enabled = true;
+            }
+            
+            yield return null;
+        }
+    }
+
+    private bool IsAllSwitchesEnabled()
+    {
+        foreach (var switchFsm in SwitchFsms)
+        {
+            if (!SaveSystem.GetPersistentEventCompleted(switchFsm.persistentEvent)) return false;
+        }
+
+        return true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        SaveSystem.WritePersistentEvent(persistentEvent, 0);
+        _openTrigger.enabled = false;
+
+        StartCoroutine(CameraCoroutine());
+        
+        IEnumerator CameraCoroutine()
+        {
+            CutsceneManager.Singleton.SetPseudoCutsceneActive();
+            _openVirtualCamera.Priority = 20;
+            yield return new WaitForSeconds(0.75f);
+            _powerConnector.Source = true;
+            yield return new WaitForSeconds(2.5f);
+            CutsceneManager.Singleton.ClearPseudoCutsceneActive();
+            _openVirtualCamera.Priority = -10;
             yield return null;
         }
     }
