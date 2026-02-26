@@ -478,12 +478,21 @@ public partial class PlayerFsm
 
     private void HandleSlipAudio()
     {
+        
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerSlipWeight", _currentSlipWeight);
     }
 
     private void UpdateSlipWeight(Vector3 desiredMove, Vector3 afterTraction)
     {
         var footstepMod = 1f;
+        
+        //hack
+        if (Machine.IsInState(PlayerFsm.PlayerFsmState.Jumpsquat))
+        {
+            _currentSlipWeight = 0;
+            return;
+        }
+        
         if (Machine.IsInState(PlayerFsm.PlayerFsmState.GroundMove))
         {
             var tailLength = Mathf.Lerp(0.5f, 0.15f, Mathf.InverseLerp(0.3f, 0.5f, ComputeMomentumWeight()));
@@ -494,7 +503,6 @@ public partial class PlayerFsm
     
     private float GetSlipWeight(Vector3 desiredMove, Vector3 afterTraction)
     {
-        // Ignore vertical component (important!)
         Vector3 desiredFlat = new Vector3(desiredMove.x, 0f, desiredMove.z);
         Vector3 tractionFlat = new Vector3(afterTraction.x, 0f, afterTraction.z);
 
@@ -504,11 +512,9 @@ public partial class PlayerFsm
         if (desiredMag < 0.75f && tractionMag < 0.75f)
             return Mathf.Lerp(0f, 1f, Mathf.InverseLerp(0.4f, 0.75f, tractionMag));
 
-        // --- 1) Speed Difference Factor (0-1) ---
         float speedDifference = Mathf.Abs(desiredMag * (desiredMag < tractionMag ? 2f : 1f) - tractionMag) / desiredMag;
         float speedFactor = Mathf.Clamp01(speedDifference);
 
-        // --- 2) Direction Loss Factor (0-1) ---
         float directionFactor = 0f;
 
         if (tractionMag > 0.001f)
@@ -517,8 +523,6 @@ public partial class PlayerFsm
             directionFactor = Mathf.Clamp01(1f - dot);
         }
 
-        // --- 3) Combined Slip ---
-        // float slipWeight = speedFactor * directionFactor;
 
         float slipWeight = Mathf.Pow(speedFactor * directionFactor, 0.5f);
         return slipWeight;

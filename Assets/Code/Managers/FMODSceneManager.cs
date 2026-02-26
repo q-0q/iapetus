@@ -9,7 +9,10 @@ public class FMODSceneManager : MonoBehaviour
     public enum FMODSceneEvent
     {
         Ch1Music,
+        CogsMusic,
+        TimeGoesOnMusic,
         WindAmbience,
+        CaveAmbience,
     }
     
     private static Dictionary<FMODSceneEvent, EventInstance> _eventInstances;
@@ -42,7 +45,10 @@ public class FMODSceneManager : MonoBehaviour
         _eventInstances = new Dictionary<FMODSceneEvent, EventInstance>
         {
             [FMODSceneEvent.Ch1Music] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/CH1_Music")),
-            [FMODSceneEvent.WindAmbience] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/WindAmbience"))
+            [FMODSceneEvent.CogsMusic] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/Music2")),
+            [FMODSceneEvent.TimeGoesOnMusic] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/Music3")),
+            [FMODSceneEvent.WindAmbience] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/WindAmbience")),
+            [FMODSceneEvent.CaveAmbience] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/CaveAmbience")),
         };
     }
 

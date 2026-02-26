@@ -49,6 +49,9 @@ public partial class PlayerFsm
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
+                _currentSlipWeight = 0f;
+                HandleSlipAudio();
+                
                 var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
                 var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
                 transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
