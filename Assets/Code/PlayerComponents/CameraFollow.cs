@@ -10,25 +10,18 @@ public class CameraFollow : MonoBehaviour
 {
 
     private float YLerpRate = 2.75f;
-    private Vector3 _playerPos;
-    private Vector3 _playerWeaponPos;
-    private float _biasTowardsWeapon = 0.0f;
     private static CinemachineFreeLook _freeLook;
-    private static float _baseWaitTime;
-    private static float _baseCenteringTime;
 
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart;
+    private float _currentYOffset = 0;
     
 
     private void Start()
     {
-        _playerPos = PlayerFsm.Singleton.transform.position;
         transform.position = PlayerFsm.Singleton.transform.position;
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
         _freeLook = FindObjectOfType<CinemachineFreeLook>();
-        _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
-        _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
         
         var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
         OnCameraFollowTriggerStart?.Invoke(highestPriorityZone);
@@ -46,60 +39,6 @@ public class CameraFollow : MonoBehaviour
     {
         OnCameraFollowTriggerStay?.Invoke(null);
     }
-
-    private void OnEnable()
-    {
-        PlayerFsm.OnPlayerPositionUpdated += UpdatePlayerPosition;
-        PlayerWeaponFsm.OnPlayerWeaponPositionUpdated += UpdatePlayerWeaponPosition;
-    }
-
-    private void OnDisable()
-    {
-        PlayerFsm.OnPlayerPositionUpdated -= UpdatePlayerPosition;
-        PlayerWeaponFsm.OnPlayerWeaponPositionUpdated -= UpdatePlayerWeaponPosition;
-    }
-    
-    void UpdatePlayerPosition(Vector3 pos, bool grounded)
-    {
-
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
-        {
-            _playerPos = PlayerFsm.Singleton.transform.position;
-            return;
-        }
-        
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
-        {
-            _playerPos = Vector3.Lerp(_playerPos, PlayerFsm.Singleton.transform.position + Vector3.up * -5f, Time.deltaTime * 10f);
-            return;
-        }
-        
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
-        
-        pos = CameraFollowTarget.Singleton.transform.position;
-        var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)
-            ? YLerpRate * 4f
-            : YLerpRate;
-
-        var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))
-        {
-            pos += Vector3.up * Mathf.Lerp(-3f, 5f, Mathf.InverseLerp(0, 60f, playerYVelocity));
-        }
-        
-        yLerp = Mathf.Lerp(yLerp, yLerp * 1.25f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));
-
-
-        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
-        _playerPos = new Vector3(pos.x, newY, pos.z);
-    }
-    
-    void UpdatePlayerWeaponPosition(Vector3 pos, bool active)
-    {
-        _biasTowardsWeapon = Mathf.Lerp(_biasTowardsWeapon, active ? 1.0f: 0.0f, Time.deltaTime * 10f);
-        pos = new Vector3(pos.x, PlayerFsm.Singleton.transform.position.y, pos.z);
-        _playerWeaponPos = Vector3.Lerp(_playerWeaponPos, pos, Time.deltaTime * 5f);
-    }
     
     
     private void Update()
@@ -113,10 +52,47 @@ public class CameraFollow : MonoBehaviour
         //         return;
         //     }
         // }
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
+        {
+            transform.position = PlayerFsm.Singleton.transform.position;
+            return;
+        }
+        
+
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
+        
+        var pos = CameraFollowTarget.Singleton.transform.position;
+        var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)
+            ? YLerpRate * 4f
+            : YLerpRate;
+
+        var xzLerp = 100f;
+        var newYOffset = 0f;
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
+        {
+            newYOffset = -8f;
+        }
+
+        var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))
+        {
+            newYOffset = Mathf.Lerp(-3f, 5f, Mathf.InverseLerp(0, 60f, playerYVelocity));
+        }
+        
+        yLerp = Mathf.Lerp(yLerp, yLerp * 1.75f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));
+        _currentYOffset = Mathf.Lerp(_currentYOffset, newYOffset, Time.deltaTime * 2f);
+        pos += Vector3.up * _currentYOffset;
 
 
+        var newX = Mathf.Lerp(transform.position.x, pos.x, Time.deltaTime * xzLerp);
+        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
+        var newZ = Mathf.Lerp(transform.position.z, pos.z, Time.deltaTime * xzLerp);
+        transform.position = new Vector3(newX, newY, newZ);
 
-        transform.position = _playerPos;
+
         
         var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
         OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);

@@ -78,6 +78,14 @@ public class MinorCheckpoint : MonoBehaviour
         {
             OnPlayerMinorCheckpointSet?.Invoke(this);
         }
+        else if (playerDistance > 80f && _currentMinorCheckpoint == this)
+        {
+            _haloRenderer.enabled = true;
+            _light.enabled = false;
+            _triggerParticles.Stop();
+            _activeParticles.Stop();
+            _currentMinorCheckpoint = null;
+        }
         
     }
 

@@ -20,7 +20,7 @@ public partial class PlayerFsm
         var lookRotation = Quaternion.LookRotation(forward, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * FlankAlignmentRotationSpeed);
         
-        HandleCollisionMove(0.15f);
+        HandleCollisionMove(0.25f);
 
     }
     
@@ -105,6 +105,7 @@ public partial class PlayerFsm
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             
             .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jumpsquat, _ => _inputBuffer.IsBuffered("Jump"), 7)
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Dashsquat, @params => _inputBuffer.IsBuffered("Dash") && CanDash(@params), 8)
 
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0.4f)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => YVelocity > VaultMinimumYVelocity, 1)
