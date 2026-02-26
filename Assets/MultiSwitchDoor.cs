@@ -8,8 +8,8 @@ using UnityEngine;
 public class MultiSwitchDoor : MonoBehaviour
 {
 
-    public List<SwitchFsm> SwitchFsms;
-    private Dictionary<SwitchFsm, GameObject> _lightDictionary;
+    public List<OnetimeSwitchFsm> SwitchFsms;
+    private Dictionary<OnetimeSwitchFsm, GameObject> _lightDictionary;
     private CinemachineVirtualCamera _virtualCamera;
 
     public string persistentEventPrefix;
@@ -27,27 +27,36 @@ public class MultiSwitchDoor : MonoBehaviour
         _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         var lightPrefab = Resources.Load("Prefab/MultiSwitchDoorLight") as GameObject;
         var lightHolder = transform.Find("DoorLights").Find("Lights");
-        _lightDictionary = new Dictionary<SwitchFsm, GameObject>();
+        _lightDictionary = new Dictionary<OnetimeSwitchFsm, GameObject>();
+        var isAllSwitchesPersistentEventsActive = true;
         for (int i = 0; i < SwitchFsms.Count; i++)
         {
             var position = Vector3.down * i * 2f;
             var obj = Instantiate(lightPrefab, lightHolder);
             obj.transform.SetLocalPositionAndRotation(position, Quaternion.identity);
             _lightDictionary.Add(SwitchFsms[i], obj);
+            if (SaveSystem.GetPersistentEventCompleted(SwitchFsms[i].persistentEvent))
+            {
+                obj.GetComponentInChildren<Renderer>().material.SetFloat("_Weight", 1f);
+            }
+            else
+            {
+                isAllSwitchesPersistentEventsActive = false;
+            }
         } 
     }
 
     private void OnEnable()
     {
-        SwitchFsm.OnSwitchFsmTurnedOn += OnSwitch;
+        OnetimeSwitchFsm.OnOnetimeSwitchFsmTurnedOn += OnSwitch;
     }
 
     private void OnDisable()
     {
-        SwitchFsm.OnSwitchFsmTurnedOn -= OnSwitch;
+        OnetimeSwitchFsm.OnOnetimeSwitchFsmTurnedOn -= OnSwitch;
     }
 
-    private void OnSwitch(SwitchFsm switchFsm)
+    private void OnSwitch(OnetimeSwitchFsm switchFsm)
     {
 
         StartCoroutine(MaterialCoroutine());
@@ -55,11 +64,10 @@ public class MultiSwitchDoor : MonoBehaviour
 
         IEnumerator MaterialCoroutine()
         {
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(2f);
             float t = 0;
-            float duration = 0.75f;
+            float duration = 1.25f;
             var material = _lightDictionary[switchFsm].GetComponentInChildren<Renderer>().material;
-            _virtualCamera.Priority = 20;
             while (t < duration)
             {
                 material.SetFloat("_Weight", t / duration);
@@ -74,6 +82,7 @@ public class MultiSwitchDoor : MonoBehaviour
         
         IEnumerator CameraCoroutine()
         {
+            yield return new WaitForSeconds(1f);
             CutsceneManager.Singleton.SetPseudoCutsceneActive();
             yield return new WaitForSeconds(0.75f);
             _cameraFollow.position = _cameraStart.position;

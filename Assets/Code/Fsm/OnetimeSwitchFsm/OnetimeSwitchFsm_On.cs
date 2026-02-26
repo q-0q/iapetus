@@ -7,6 +7,7 @@ public partial class OnetimeSwitchFsm
             .OnEntry(_ =>
             {
                 _interactable.SetEnabled(false);
+                SaveSystem.WritePersistentEvent(persistentEvent, 0);
                 OnOnetimeSwitchFsmTurnedOn?.Invoke(this);
             });
     }

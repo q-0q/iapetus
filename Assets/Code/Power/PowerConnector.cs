@@ -19,8 +19,6 @@ public class PowerConnector : MonoBehaviour
     public bool Disabled = false;
     public bool RequireAllInputs = false;
     private bool _powered;
-    public string PersistentEvent = "";
-    private bool _persistentEventCached;
     
     void Awake()
     {
@@ -31,8 +29,6 @@ public class PowerConnector : MonoBehaviour
 
     private void Start()
     {
-        var data = SaveSystem.LoadSaveData(0);
-        _persistentEventCached = SaveSystem.GetPersistentEventCompleted(PersistentEvent);
         foreach (var powerConnector in outputs)
         {
             powerConnector.AddInput(this);
@@ -64,7 +60,6 @@ public class PowerConnector : MonoBehaviour
 
     public bool IsPowered()
     {
-        if (_persistentEventCached) return true;
         if (RequireAllInputs)
         {
             foreach (var input in _inputs)
@@ -74,11 +69,6 @@ public class PowerConnector : MonoBehaviour
         }
         HashSet<PowerConnector> visited = new HashSet<PowerConnector>();
         var isPoweredRecursive = IsPoweredRecursive(this, visited);
-        if (!_persistentEventCached && isPoweredRecursive && PersistentEvent != "")
-        {
-            SaveSystem.WritePersistentEvent(PersistentEvent, 0);
-            _persistentEventCached = true;
-        }
         return isPoweredRecursive;
     }
 

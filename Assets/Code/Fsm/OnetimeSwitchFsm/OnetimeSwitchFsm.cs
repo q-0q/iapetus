@@ -21,13 +21,18 @@ public partial class OnetimeSwitchFsm : Fsm
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
         TryGetComponent(out Animator);
+
+        if (SaveSystem.GetPersistentEventCompleted(persistentEvent))
+        {
+            _interactable.SetEnabled(false);
+            ReplaceAnimatorTrigger("OnLoop");
+        }
     }
 
     protected override void OnStart()
     {
         base.OnStart();
         InitState = OnetimeSwitchFsmState.Off;
-        _interactable.SetEnabled(true);
         _powerConnector = GetComponentInChildren<PowerConnector>();
     }
     
