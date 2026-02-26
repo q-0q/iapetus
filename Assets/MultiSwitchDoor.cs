@@ -12,6 +12,8 @@ public class MultiSwitchDoor : MonoBehaviour
     private Dictionary<SwitchFsm, GameObject> _lightDictionary;
     private CinemachineVirtualCamera _virtualCamera;
 
+    public string persistentEventPrefix;
+
     private Transform _cameraFollow;
     private Transform _cameraStart;
     private Transform _cameraEnd;
