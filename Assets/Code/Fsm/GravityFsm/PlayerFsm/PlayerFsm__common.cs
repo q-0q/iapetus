@@ -820,7 +820,7 @@ public partial class PlayerFsm
 
     public void InvokePlayerDeath()
     {
-        if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead)) return;
+        if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
         if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
         Machine.Jump(PlayerFsmState.Dying1);
     }
