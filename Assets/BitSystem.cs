@@ -30,13 +30,7 @@ public class BitSystem : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            for (int i = 0; i < 30; i++)
-            {
-                SpawnFromPool(PlayerFsm.Singleton.transform.position + Vector3.up * 2f);
-            }
-        }
+
     }
 
     GameObject InstantiatePrefabInPool()

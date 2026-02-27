@@ -47,11 +47,13 @@ public class BellCanvas : MonoBehaviour
     {
         BellController.OnBellRing += OnBellRung;
         BellController.OnPlayerNearbyRungBell += ResetShowTimer;
+        BellDoorController.OnPlayerNearbyUnopenedBellDoor += ResetShowTimer;
     }
 
     private void OnDisable()
     {
         BellController.OnBellRing -= OnBellRung;
         BellController.OnPlayerNearbyRungBell -= ResetShowTimer;
+        BellDoorController.OnPlayerNearbyUnopenedBellDoor -= ResetShowTimer;
     }
 }
