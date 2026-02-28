@@ -87,6 +87,8 @@ public class FoliageSystem : MonoBehaviour
                 ~LayerMask.GetMask(),
                 QueryTriggerInteraction.Ignore))
                 continue;
+            
+            if (Vector3.Angle(hit.normal, -rayDirection) > 60f) continue;
 
             if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
                 continue;
