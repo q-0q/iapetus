@@ -23,19 +23,24 @@ public class BellCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (SaveSystem.LoadSaveData(0).bells.Count == 0)
+        {
+            _canvasGroup.alpha = 0;
+            return;
+        }
         _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _showTimer < 0.5f ? 1f : 0, Time.deltaTime * 5f);
         _showTimer += Time.deltaTime;
+        UpdateBellCount();
     }
 
     private void OnBellRung()
     {
         _canvasGroup.alpha = 1f;
-        UpdateBellCount();
     }
 
     private void UpdateBellCount()
     {
-        _tmp.text = SaveSystem.LoadSaveData(0).bells.Count.ToString();
+        _tmp.text = SaveSystem.LoadSaveData(0).bellCount.ToString();
     }
 
     public void ResetShowTimer()

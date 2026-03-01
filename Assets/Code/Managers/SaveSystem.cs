@@ -53,6 +53,7 @@ public class SaveSystem : MonoBehaviour
         public List<TrialCompletionEntry> trialCompletions;
         public List<string> lemonCollections;
         public List<string> bells;
+        public int bellCount;
         public int bitCount;
         public List<string> bitDeposits;
             
@@ -67,6 +68,7 @@ public class SaveSystem : MonoBehaviour
             lemonCollections = new List<string>();
             bells = new List<string>();
             bitCount = 0;
+            bellCount = 0;
             bitDeposits = new List<string>();
         }
     }
@@ -94,7 +96,11 @@ public class SaveSystem : MonoBehaviour
     
     public static void WritePersistentEvent(string persistentEvent, int id)
     {
-        if (persistentEvent == "") return;
+        if (persistentEvent == "")
+        {
+            Debug.LogError("Tried to write empty persistent event");
+            return;
+        }
         SaveData data = LoadSaveData(id);
         if (data.persistentEvents.Contains(persistentEvent)) return;
         data.persistentEvents.Add(persistentEvent);
@@ -103,16 +109,32 @@ public class SaveSystem : MonoBehaviour
     
     public static void WriteBell(string metaName, int id)
     {
-        if (metaName == "") return;
+        if (metaName == "")         
+        {
+            Debug.LogError("Tried to write empty bell");
+            return;
+        }
         SaveData data = LoadSaveData(id);
         if (data.bells.Contains(metaName)) return;
+        data.bellCount++;
         data.bells.Add(metaName);
+        WriteSaveData(data, id);
+    }
+    
+    public static void ReduceBellCount(int amount, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        data.bellCount -= amount;
         WriteSaveData(data, id);
     }
 
     public static void WriteTrialCompletion(string metaName, float time, int id)
     {
-        if (metaName == "") return;
+        if (metaName == "")
+        {
+            Debug.LogError("Tried to write empty trial");
+            return;
+        };
         
         SaveData data = LoadSaveData(id);
 
@@ -147,7 +169,11 @@ public class SaveSystem : MonoBehaviour
     
     public static void WriteLemonCollection(string metaName, int id)
     {
-        if (metaName == "") return;
+        if (metaName == "")
+        {
+            Debug.LogError("Tried to write empty lemon");
+            return;
+        };
         
         SaveData data = LoadSaveData(id);
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
@@ -165,7 +191,12 @@ public class SaveSystem : MonoBehaviour
     
     public static void CollectBitDeposit(string metaName, int id)
     {
-        if (metaName == "") return;
+        if (metaName == "") 
+        {
+            Debug.LogError("Tried to write empty bit deposit");
+            return;
+        };
+        
         SaveData data = LoadSaveData(id);
         var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
         if (entry != null) return;
