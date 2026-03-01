@@ -834,6 +834,22 @@ public partial class PlayerFsm
         }
     }
 
+    private void UpdateMusicDistanceAttenuation()
+    {
+        foreach (var attenuator in MusicDistanceAttenuatorRegistry.Attenuators)
+        {
+            var attenuation = Mathf.InverseLerp(attenuator.maxDistance, attenuator.minDistance,
+                Vector3.Distance(transform.position, attenuator.transform.position));
+            
+            if (attenuation <= 0.01f) continue;
+
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("MusicDistance", attenuation);
+            return;
+        }
+        
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("MusicDistance", 0);
+    }
+
     private void HandleSlideTimer()
     {
         GetGroundedRaycastHit(out var groundedRaycastHit);

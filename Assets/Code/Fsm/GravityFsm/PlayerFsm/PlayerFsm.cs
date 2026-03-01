@@ -226,6 +226,7 @@ public partial class PlayerFsm : GravityFsm
         FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerMomentum", ComputeMomentumWeight());
         UpdateShaderGlobals();
         HandleSlideTimer();
+        UpdateMusicDistanceAttenuation();
 
         var previousPosition = transform.position;
 
