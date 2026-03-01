@@ -94,6 +94,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void WritePersistentEvent(string persistentEvent, int id)
     {
+        if (persistentEvent == "") return;
         SaveData data = LoadSaveData(id);
         if (data.persistentEvents.Contains(persistentEvent)) return;
         data.persistentEvents.Add(persistentEvent);
@@ -102,6 +103,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void WriteBell(string metaName, int id)
     {
+        if (metaName == "") return;
         SaveData data = LoadSaveData(id);
         if (data.bells.Contains(metaName)) return;
         data.bells.Add(metaName);
@@ -110,6 +112,8 @@ public class SaveSystem : MonoBehaviour
 
     public static void WriteTrialCompletion(string metaName, float time, int id)
     {
+        if (metaName == "") return;
+        
         SaveData data = LoadSaveData(id);
 
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
@@ -143,6 +147,8 @@ public class SaveSystem : MonoBehaviour
     
     public static void WriteLemonCollection(string metaName, int id)
     {
+        if (metaName == "") return;
+        
         SaveData data = LoadSaveData(id);
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         if (entry != null) return;
@@ -159,6 +165,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void CollectBitDeposit(string metaName, int id)
     {
+        if (metaName == "") return;
         SaveData data = LoadSaveData(id);
         var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
         if (entry != null) return;

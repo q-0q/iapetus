@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine;
 using Code.Misc;
 using DG.Tweening;
+using FMODUnity;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -23,6 +24,8 @@ public class BellController : MonoBehaviour
     public static event Action OnBellRing;
     
     public static event Action OnPlayerNearbyRungBell;
+
+    public EventReference _ringEventReference;
 
     private void Awake()
     {
@@ -75,8 +78,8 @@ public class BellController : MonoBehaviour
     {
         
         _interactable.SetEnabled(false);
-        
-        
+        FMODUnity.RuntimeManager.PlayOneShotAttached(_ringEventReference, gameObject);
+
         SaveSystem.WriteBell(metaName, 0);
         
         Util.ReplaceAnimatorTrigger(_animator, "Ring");
@@ -106,6 +109,7 @@ public class BellController : MonoBehaviour
             armHolder.gameObject.SetActive(false);
             _interactable.SetEnabled(false);
             OnBellRing?.Invoke();
+            
             
             Vector3 virtualCameraLookAtStartPosition = _virtualCameraLookAtTarget.position;
 
