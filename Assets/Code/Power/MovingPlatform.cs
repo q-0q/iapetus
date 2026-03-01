@@ -1,4 +1,7 @@
+using System;
+using FMOD.Studio;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MovingPlatform : MonoBehaviour
 {
@@ -18,17 +21,37 @@ public class MovingPlatform : MonoBehaviour
     private Quaternion startRotation;
     private PowerConnector _powerConnector;
 
+    private static string eventPath = "event:/StoneGrind";
+    private EventInstance _eventInstance;
+
+    // --- Added ---
+    private float _previousCycleValue;
+    private float _previousFrameTime;
+    // -------------
 
     public void JumpToEnd()
     {
         transitionTime = cycleDuration;
     }
-    
+
     private void Start()
     {
+        _eventInstance =
+            FMODUnity.RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference(eventPath));
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(_eventInstance, gameObject);
+        _eventInstance.setTimelinePosition(Random.Range(0, 5000));
+        _eventInstance.start();
+
         startPosition = transform.localPosition;
         startRotation = transform.localRotation;
         _powerConnector = GetComponentInChildren<PowerConnector>();
+
+        _previousFrameTime = Time.time;
+    }
+
+    private void OnDisable()
+    {
+        _eventInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 
     private void Update()
@@ -40,21 +63,21 @@ public class MovingPlatform : MonoBehaviour
         {
             if (loop)
             {
-                // Continuous linear motion (no snapping)
                 float time = Time.time + cycleOffset * cycleDuration;
                 float cycles = time / cycleDuration;
 
                 ApplyContinuousMotion(cycles);
+                UpdateStoneGrindParameter(cycles);
             }
             else
             {
-                // Ping-pong
                 float time = Time.time + cycleOffset * cycleDuration;
                 float normalizedTime = (time % cycleDuration) / cycleDuration;
                 float sine = Mathf.Sin(normalizedTime * Mathf.PI * 2f);
                 float t = (sine * 0.5f) + 0.5f;
 
                 ApplyLerpedMotion(t);
+                UpdateStoneGrindParameter(t);
             }
         }
         else
@@ -66,8 +89,29 @@ public class MovingPlatform : MonoBehaviour
 
             float t = transitionTime / cycleDuration;
             ApplyLerpedMotion(t);
+            UpdateStoneGrindParameter(t);
         }
     }
+
+    // --- Added ---
+    private void UpdateStoneGrindParameter(float currentValue)
+    {
+        currentValue = SharpSymmetric(currentValue, cycleSnapping);
+        float deltaTime = Time.time - _previousFrameTime;
+        if (deltaTime <= 0f) return;
+
+        float rate = Mathf.Abs(currentValue - _previousCycleValue) / deltaTime;
+
+        // Normalize rate so 1 full cycle per second = 1.0
+        float normalizedRate = Mathf.Clamp01(rate * cycleDuration);
+        print(normalizedRate);
+
+        _eventInstance.setParameterByName("StoneGrindAmount", normalizedRate);
+
+        _previousCycleValue = currentValue;
+        _previousFrameTime = Time.time;
+    }
+    // -------------
 
     private void ApplyContinuousMotion(float cycles)
     {

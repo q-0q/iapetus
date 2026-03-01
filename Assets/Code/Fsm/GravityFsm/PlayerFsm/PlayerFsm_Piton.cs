@@ -44,6 +44,7 @@ public partial class PlayerFsm
                 _currentPitonTransform.GetComponent<PitonController>().Rotate = true;
                 _wallsquattedSinceLeavingGround = true;
                 YVelocity = 0f;
+                _currentPitonTransform.GetComponent<PitonController>().PlayLatchEvent();
                 
                 if (_currentPitonTransform != parentTransform)
                 {
@@ -97,6 +98,7 @@ public partial class PlayerFsm
                 YVelocity = 36f;
                 _currentPitonTransform.DOShakeRotation(1f, 0.4f, 20);
                 _currentPitonTransform.DOShakePosition(1f, 0.4f, 20);
+                _currentPitonTransform.GetComponent<PitonController>().PlayFlipEvent();
             });
 
         Machine.Configure(PlayerFsmState.PitonInteractable)
