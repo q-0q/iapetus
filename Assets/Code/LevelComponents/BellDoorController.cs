@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using DG.Tweening;
 using FMOD.Studio;
 using UnityEngine;
 using Util = Code.Misc.Util;
@@ -26,14 +27,21 @@ public class BellDoorController : MonoBehaviour
     private const string _readyEventPath = "event:/BellDoorReady";
     private EventInstance _readyInstance;
     private Interactable _interactable;
+    private Collider _collider;
+
+    public bool DontWritePersistentEvent = false;
+
+    private CinemachineVirtualCamera _openCamera;
 
     private void Awake()
     {
         _playerLookAwayTimer = 0f;
         _animator = GetComponentInChildren<Animator>();
         _passiveCamera = transform.Find("BellDoorPassiveCamera").GetComponentInChildren<CinemachineVirtualCamera>();
+        _openCamera = transform.Find("OpenCamera").Find("BellDoorOpenCamera").GetComponentInChildren<CinemachineVirtualCamera>();
         _interactable = GetComponentInChildren<Interactable>();
         _interactable.SetEnabled(false);
+        TryGetComponent(out _collider);
 
         
         var lightPrefab = Resources.Load("Prefab/BellDoorLight") as GameObject;
@@ -65,6 +73,7 @@ public class BellDoorController : MonoBehaviour
         
             _interactable.SetEnabled(false);
             Util.ReplaceAnimatorTrigger(_animator, "Opened");
+            _collider.enabled = false;
         }
 
         else
@@ -118,7 +127,6 @@ public class BellDoorController : MonoBehaviour
 
     private void OnInteracted()
     {
-        _readyInstance.stop(STOP_MODE.ALLOWFADEOUT);
         for (int i = 0; i < _lightObjects.Count; i++)
         {
             _lightObjects[i].transform.Find("Mesh").Find("Halo").GetComponent<Renderer>().material.SetFloat("_Weight", 0);
@@ -126,10 +134,36 @@ public class BellDoorController : MonoBehaviour
         }
         
         _interactable.SetEnabled(false);
-        Util.ReplaceAnimatorTrigger(_animator, "Open");
-        SaveSystem.WritePersistentEvent(persistentEvent, 0);
+        
+        if (!DontWritePersistentEvent) SaveSystem.WritePersistentEvent(persistentEvent, 0);
         SaveSystem.ReduceBellCount(bellRequirement, 0);
 
+        StartCoroutine(Coroutine());
+        IEnumerator Coroutine()
+        {
+            _openCamera.Priority = 30;
+            CutsceneManager.Singleton.SetPseudoCutsceneActive();
+            yield return new WaitForSeconds(0.5f);
+            var vibrator = transform.Find("bell-door").Find("BellDoorArmature");
+            vibrator.DOShakePosition(0.75f, 0.2f, 25);
+            Util.ReplaceAnimatorTrigger(_animator, "Open");
+            yield return new WaitForSeconds(1.0f);
+            _readyInstance.stop(STOP_MODE.ALLOWFADEOUT);
+            var dolly = _openCamera.GetCinemachineComponent<CinemachineTrackedDolly>();
+            var t = 0f;
+            var d = 3f;
+            while (t < d)
+            {
+                dolly.m_PathPosition = Util.SmoothLerp01(t / d);
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            _collider.enabled = false;
+            _passiveCamera.Priority = -20;
+            _openCamera.Priority = -20;
+            CutsceneManager.Singleton.ClearPseudoCutsceneActive();
+        }
     }
 
     private void OnEnable()

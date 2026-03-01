@@ -23,7 +23,7 @@ public class BellCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SaveSystem.LoadSaveData(0).bells.Count == 0)
+        if (SaveSystem.LoadSaveData(0).bellCount == 0)
         {
             _canvasGroup.alpha = 0;
             return;
