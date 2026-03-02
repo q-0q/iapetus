@@ -12,7 +12,6 @@ public class CameraFollow : MonoBehaviour
     private float YLerpRate = 2.75f;
 
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
-    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart;
     private float _currentYOffset = 0;
     
 
@@ -20,8 +19,6 @@ public class CameraFollow : MonoBehaviour
     {
         transform.position = PlayerFsm.Singleton.transform.position;
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
-        
-        
         
     }
 

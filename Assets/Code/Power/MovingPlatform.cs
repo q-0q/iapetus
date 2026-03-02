@@ -104,7 +104,6 @@ public class MovingPlatform : MonoBehaviour
 
         // Normalize rate so 1 full cycle per second = 1.0
         float normalizedRate = Mathf.Clamp01(rate * cycleDuration);
-        print(normalizedRate);
 
         _eventInstance.setParameterByName("StoneGrindAmount", normalizedRate);
 

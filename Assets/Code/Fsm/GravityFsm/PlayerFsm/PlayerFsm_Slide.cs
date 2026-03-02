@@ -66,16 +66,15 @@ public partial class PlayerFsm
         {
             if (IsSlideTriggerCore(groundedRaycastHit))
             {
-
-                _currentSlideNormal = groundedRaycastHit.normal;
                 if (_currentSlideTransform != groundedRaycastHit.transform)
                 {
                     _currentSlideTransform = groundedRaycastHit.transform;
-                    if (TimeInCurrentState() >= 0.5f)
+                    if (TimeInCurrentState() >= 0.5f && Vector3.Angle(_currentSlideNormal, groundedRaycastHit.normal) > 20f)
                     {
                         YVelocity = 8f;
                     };
                 }
+                _currentSlideNormal = groundedRaycastHit.normal;
             }
         } 
         

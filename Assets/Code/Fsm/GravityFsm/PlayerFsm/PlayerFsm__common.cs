@@ -49,7 +49,6 @@ public partial class PlayerFsm
     private Vector3 _previousPositionDeltaNoTimescale;
     private float _currentSlipWeight;
     private const float MaxSlideTimer = 0.15f;
-    private float onStartCompleteCameraXAxisOffset;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;

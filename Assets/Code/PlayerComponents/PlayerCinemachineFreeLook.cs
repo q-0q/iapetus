@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Code.Fsm.TrialCollectibleFSM;
+using Code.Misc;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -41,6 +42,21 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _timeSincePlayerLookInput = 0f;
         _recenterTime = 1.5f;
         _rampUpTime = 8f;
+        
+        
+        var xAngle = Vector3.SignedAngle(Vector3.forward, PlayerFsm.Singleton.transform.forward, Vector3.up);
+        _freeLook.m_XAxis.Value = xAngle;
+        
+        var highestPriorityZone = CameraFollow.HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
+        if (highestPriorityZone != null)
+        {
+            highestPriorityZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
+            _freeLook.m_YAxis.Value = y;
+        }
+        
+        var saveData = SaveSystem.LoadSaveData(0);
+        var positionIdTransform = Util.FindGamePositionById(saveData.playerInGamePositionId, out var cameraRotationOffset);
+        AddXAxisOffset(cameraRotationOffset);
     }
 
     private void Update()
@@ -73,7 +89,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
-        CameraFollow.OnCameraFollowTriggerStart += OnCameraFollowTriggerStart;
         TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated += ForceRecenter;
     }
 
@@ -81,7 +96,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
-        CameraFollow.OnCameraFollowTriggerStart -= OnCameraFollowTriggerStart;
         TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated -= ForceRecenter;
     }
     
@@ -107,14 +121,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         };
     }
     
-    public void OnCameraFollowTriggerStart(CameraBehaviorZone cameraBehaviorZone)
-    {
-        var xAngle = Vector3.SignedAngle(Vector3.forward, PlayerFsm.Singleton.transform.forward, transform.up);
-        _freeLook.m_XAxis.Value = xAngle;
-        if (cameraBehaviorZone == null )return;
-        cameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
-        _freeLook.m_YAxis.Value = y;
-    }
     
     public void AddXAxisOffset(float value)
     {
