@@ -135,11 +135,12 @@ public partial class PlayerFsm : GravityFsm
         if (saveData != null )
         {
 
-            var positionIdTransform = Util.FindGamePositionById(saveData.playerInGamePositionId);
+            var positionIdTransform = Util.FindGamePositionById(saveData.playerInGamePositionId, out var cameraRotationOffset);
             if (positionIdTransform != null)
             {
                 transform.position = positionIdTransform.position;
                 transform.rotation = positionIdTransform.rotation;
+                onStartCompleteCameraXAxisOffset = cameraRotationOffset;
             }
             
             else if (saveData.playerInGamePosition != null)
@@ -159,6 +160,9 @@ public partial class PlayerFsm : GravityFsm
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
         Application.targetFrameRate = 240;
+        
+        var highestPriorityZone = CameraFollow.HighestPriorityZoneAtPosition(transform.position);
+        PlayerCinemachineFreeLook.Singleton.OnCameraFollowTriggerStart(highestPriorityZone);
     }
     
     protected override void OnStart()
@@ -192,6 +196,7 @@ public partial class PlayerFsm : GravityFsm
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
+        PlayerCinemachineFreeLook.Singleton.AddXAxisOffset(onStartCompleteCameraXAxisOffset);
         
         SnapToGround();
     }

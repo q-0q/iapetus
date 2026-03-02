@@ -10,7 +10,6 @@ public class CameraFollow : MonoBehaviour
 {
 
     private float YLerpRate = 2.75f;
-    private static CinemachineFreeLook _freeLook;
 
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStart;
@@ -21,10 +20,8 @@ public class CameraFollow : MonoBehaviour
     {
         transform.position = PlayerFsm.Singleton.transform.position;
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
-        _freeLook = FindObjectOfType<CinemachineFreeLook>();
         
-        var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
-        OnCameraFollowTriggerStart?.Invoke(highestPriorityZone);
+        
         
     }
 

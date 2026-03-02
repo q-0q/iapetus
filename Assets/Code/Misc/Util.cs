@@ -65,14 +65,16 @@ namespace Code.Misc
             sphereObject.GetComponent<SphereEffect>().SetConfig(initialScale, finalScale, ageMultiplier, distanceOffset);
         }
 
-        public static Transform FindGamePositionById(string id)
+        public static Transform FindGamePositionById(string id, out float cameraRotationOffset)
         {
+            cameraRotationOffset = 0;
             if (id == "") return null;
             
             foreach (var playerGamePosition in UnityEngine.Object.FindObjectsByType<PlayerGamePosition>(FindObjectsSortMode.None))
             {
                 if (playerGamePosition.Id == id)
                 {
+                    cameraRotationOffset = playerGamePosition.CameraRotationOffset;
                     return playerGamePosition.transform;
                 }
             }

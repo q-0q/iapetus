@@ -49,6 +49,7 @@ public partial class PlayerFsm
     private Vector3 _previousPositionDeltaNoTimescale;
     private float _currentSlipWeight;
     private const float MaxSlideTimer = 0.15f;
+    private float onStartCompleteCameraXAxisOffset;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -836,18 +837,20 @@ public partial class PlayerFsm
 
     private void UpdateMusicDistanceAttenuation()
     {
+
+        var newDistance = 0f;
         foreach (var attenuator in MusicDistanceAttenuatorRegistry.Attenuators)
         {
             var attenuation = Mathf.InverseLerp(attenuator.maxDistance, attenuator.minDistance,
                 Vector3.Distance(transform.position, attenuator.transform.position));
             
             if (attenuation <= 0.01f) continue;
-
-            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("MusicDistance", attenuation);
-            return;
+            newDistance = attenuation;
+            break;
         }
-        
-        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("MusicDistance", 0);
+
+        RuntimeManager.StudioSystem.getParameterByName("MusicDistance", out float currentDistance);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("MusicDistance", Mathf.Lerp(currentDistance, newDistance, Time.deltaTime * 2f));
     }
 
     private void HandleSlideTimer()

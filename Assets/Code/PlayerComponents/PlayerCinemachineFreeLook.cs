@@ -107,13 +107,18 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         };
     }
     
-    private void OnCameraFollowTriggerStart(CameraBehaviorZone cameraBehaviorZone)
+    public void OnCameraFollowTriggerStart(CameraBehaviorZone cameraBehaviorZone)
     {
         var xAngle = Vector3.SignedAngle(Vector3.forward, PlayerFsm.Singleton.transform.forward, transform.up);
         _freeLook.m_XAxis.Value = xAngle;
         if (cameraBehaviorZone == null )return;
         cameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
         _freeLook.m_YAxis.Value = y;
+    }
+    
+    public void AddXAxisOffset(float value)
+    {
+        _freeLook.m_XAxis.Value += value;
     }
 
     private void HandleCameraBehaviorZone()
