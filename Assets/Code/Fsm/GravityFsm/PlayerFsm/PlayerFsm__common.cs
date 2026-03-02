@@ -42,6 +42,7 @@ public partial class PlayerFsm
     private Material _material;
     private float _timeSinceDashFinished = 0f;
     private float _slideTimer = 0f;
+    private float _slideNormalExitTimer = 0f;
     private ParticleSystem _teleportParticles;
     private ParticleSystem _deathParticles;
     private bool isSprinting;

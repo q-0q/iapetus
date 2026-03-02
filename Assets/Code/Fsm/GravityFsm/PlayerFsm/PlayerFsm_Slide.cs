@@ -254,12 +254,13 @@ public partial class PlayerFsm
             var flattenedNormal = new Vector3(_currentSlideNormal.x, 0, _currentSlideNormal.z);
             originOffset = flattenedNormal.normalized;
         }
-            
+
         if (Physics.Raycast(hit.point + originOffset + Vector3.up * 3f, Vector3.down, out RaycastHit recast, 6f,
                 GetEnvironmentalLayermask()))
         {
             ray = recast;
         }
+        else return true; // <- perhaps my favorite line of code i have ever written
 
         var val = Vector3.Angle(ray.normal, ray.transform.up) < 10f && Vector3.Angle(ray.normal, Vector3.up) < 60f;
         if (!val)
