@@ -116,8 +116,7 @@ public partial class PlayerFsm : GravityFsm
         
         public static int StartUpdraft;
         public static int EndUpdraft;
-
-        public static int ArriveAtPiton;
+        
         public static int EnterPitonTrigger;
 
 
@@ -125,6 +124,9 @@ public partial class PlayerFsm : GravityFsm
         public static int IdleMomentumThresholdPassedDecelerating;
 
         public static int VaultHangFarFromLedge;
+        
+        public static int SoftTurnLeft;
+        public static int SoftTurnRight;
     }
     
     protected override void OnAwake()

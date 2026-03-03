@@ -50,6 +50,7 @@ public partial class PlayerFsm
     private Vector3 _previousPositionDeltaNoTimescale;
     private float _currentSlipWeight;
     private const float MaxSlideTimer = 0.15f;
+    private const float MinSlideStateTimer = 0.25f;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -149,7 +150,7 @@ public partial class PlayerFsm
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
     public const float WallsquatMinimumDuration = 0.2f;
-    private const float WallstepMinimumYVelocityGain = 12f;
+    private const float WallstepMinimumYVelocityGain = 18f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
     private const float WallstepMinimumDuration = 0.35f;
     private const float ForceWallRotationSpeed = 3f;

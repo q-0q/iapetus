@@ -36,6 +36,15 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.HardTurn);
         }
 
+        var signedAngle = Vector3.SignedAngle(v3.normalized, transform.forward.normalized, Vector3.up);
+        if (signedAngle > 70f)
+        {
+            Machine.Fire(PlayerFsmTrigger.SoftTurnLeft);
+        } else if (signedAngle < -70f)
+        {
+            Machine.Fire(PlayerFsmTrigger.SoftTurnRight);
+        }
+
         if (_momentum < NoMomentumThreshold)
         {
             Machine.Fire(PlayerFsmTrigger.NoMomentum);

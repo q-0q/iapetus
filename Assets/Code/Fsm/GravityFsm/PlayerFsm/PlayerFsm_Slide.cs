@@ -139,6 +139,9 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.SlideLateral)
             .SubstateOf(PlayerFsmState.Slide)
             .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlideLateral, _ => YVelocity < 0.5f, 6)
+            .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnLeft, PlayerFsmState.SlideDown, _ => _currentFlankType == FlankType.Right && TimeInCurrentState() > MinSlideStateTimer)
+            .PermitIf(PlayerFsm.PlayerFsmTrigger.HardTurn, PlayerFsmState.SlideDown, _ => TimeInCurrentState() > MinSlideStateTimer, 2)
+            .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnRight, PlayerFsmState.SlideDown, _ => _currentFlankType == FlankType.Left && TimeInCurrentState() > MinSlideStateTimer)
             .OnEntry(@params =>
             {
                 YVelocity += 10f;
@@ -146,7 +149,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
 
-                _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
+                _momentum = Mathf.Max(_momentum, 13f);
                 // IncrementCombo();
 
                 if (@params is not RaycastHitParam raycastHitParam) return;
@@ -175,6 +178,8 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.SlideDown)
             .SubstateOf(PlayerFsmState.Slide)
+            .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnLeft, PlayerFsmState.SlideLateral, _ => TimeInCurrentState() > MinSlideStateTimer)
+            .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnRight, PlayerFsmState.SlideLateral, _ => TimeInCurrentState() > MinSlideStateTimer)
             .OnEntry(@params =>
             {
                 _wallsquattedSinceLeavingGround = false;
@@ -184,9 +189,17 @@ public partial class PlayerFsm
                 _currentComboLength = 0;
                 OnPlayerComboReset?.Invoke();
             })
+            .OnExitFrom(PlayerFsm.PlayerFsmTrigger.SoftTurnLeft, _ =>
+            {
+                _currentFlankType = FlankType.Left;
+            })
+            .OnExitFrom(PlayerFsm.PlayerFsmTrigger.SoftTurnRight, _ =>
+            {
+                _currentFlankType = FlankType.Right;
+            })
             .OnExit(_ =>
             {
-                _momentum = 9f;
+                // _momentum = 9f;
             });
 
         Machine.Configure(PlayerFsmState.SlideInteractable)
