@@ -61,7 +61,8 @@ public partial class TrialCollectibleFsm
 
                 IncrementKeyframeIndex();
                 OnPlayerBeganTrial?.Invoke();
-                SaveSystem.WritePlayerInGamePosition(_playerReturnTransform.position, "", _playerReturnTransform.rotation.y, 0);
+                SaveSystem.WritePlayerInGamePosition(_playerReturnTransform.position, "", _playerReturnTransform.rotation.eulerAngles.y, 0);
+                
             });
     }
 
