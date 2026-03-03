@@ -59,7 +59,7 @@ public partial class TrialCollectibleFsm
             .position;
         var seekParticlesEndPosition = _keyframes[_currentKeyframeIndex].transform.position;
         float t = 0f;
-        var duration = Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.03f;
+        var duration = Mathf.Min(Vector3.Distance(seekParticlesStartPosition, seekParticlesEndPosition) * 0.03f, 2f);
         // var seekMain = _seekParticles.main;
         // var curve = seekMain.startLifetime;
         // curve.constantMax = duration;

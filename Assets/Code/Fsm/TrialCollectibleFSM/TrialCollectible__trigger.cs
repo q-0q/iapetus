@@ -21,7 +21,7 @@ public partial class TrialCollectibleFsm
             Machine.Fire(TrialCollectibleFsmTrigger.PlayerEnteredEndingZone);
         }
         
-        else if (_timeOnCurrentKeyframe > _keyframes[_currentKeyframeIndex].duration)
+        else if (_timeOnCurrentKeyframe > 20f)
         {
             Machine.Fire(TrialCollectibleFsmTrigger.KeyframeTimeout);
         }

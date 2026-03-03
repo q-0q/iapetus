@@ -24,7 +24,7 @@ public partial class PlayerFsm
             {
                 FMODUnity.RuntimeManager.PlayOneShot(deathFmodEvent);
                 Time.timeScale = 1f;
-                transform.DOShakePosition(0.5f, 0.4f, 30);
+                transform.DOShakePosition(0.5f, 0.4f, 40);
                 Shader.SetGlobalColor("_PlayerTintColor", Color.white);
                 Animator.StartPlayback();
                 Animator.enabled = false;

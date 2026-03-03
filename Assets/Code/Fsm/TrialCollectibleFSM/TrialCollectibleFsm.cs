@@ -39,7 +39,7 @@ public partial class TrialCollectibleFsm : Fsm
         _timeOnCurrentKeyframe = 0f;
         _marker = transform.Find("Marker");
         _playerReturnTransform = transform.Find("PlayerReturnTransform");
-        _marker.position = _keyframes[0].transform.position;
+        
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
         _marker.Find("ActiveParticles").TryGetComponent(out _activeParticles);
         _marker.Find("ActiveFinalParticles").TryGetComponent(out _activeFinalParticles);
@@ -61,6 +61,7 @@ public partial class TrialCollectibleFsm : Fsm
 
         
         NormalizeKeyframeHeights();
+        _marker.position = _keyframes[0].transform.position;
         
         SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime, 0);
         _seeking = false;

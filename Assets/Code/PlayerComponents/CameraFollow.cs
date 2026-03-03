@@ -67,7 +67,7 @@ public class CameraFollow : MonoBehaviour
         
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
         {
-            newYOffset = -8f;
+            newYOffset = -5f;
         }
 
         var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();

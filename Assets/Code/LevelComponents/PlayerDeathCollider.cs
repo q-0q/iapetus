@@ -18,7 +18,7 @@ public class PlayerDeathCollider : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (requireGroundedState && !PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.Grounded)) return;
+        if (requireGroundedState && (!PlayerFsm.Singleton.Machine.IsInState(GravityFsm.GravityFsmState.Grounded) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Jumpsquat))) return;
         PlayerFsm.Singleton.InvokePlayerDeath();
     }
 }

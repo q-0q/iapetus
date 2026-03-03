@@ -69,9 +69,15 @@ public partial class PlayerFsm
                 if (_currentSlideTransform != groundedRaycastHit.transform)
                 {
                     _currentSlideTransform = groundedRaycastHit.transform;
-                    if (TimeInCurrentState() >= 0.5f && Vector3.Angle(_currentSlideNormal, groundedRaycastHit.normal) > 20f)
+                    if (Vector3.Angle(_currentSlideNormal, groundedRaycastHit.normal) > 20f)
                     {
-                        YVelocity = 8f;
+                        if (Machine.IsInState(PlayerFsmState.SlideDown))
+                        {
+                            YVelocity = 0f;
+                            Machine.Jump(PlayerFsmState.SlideLateral,
+                                new RaycastHitParam() { Hit = groundedRaycastHit });
+                        }
+                        else if (TimeInCurrentState() >= 0.5f) YVelocity = 8f;
                     };
                 }
                 _currentSlideNormal = groundedRaycastHit.normal;
@@ -139,9 +145,9 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.SlideLateral)
             .SubstateOf(PlayerFsmState.Slide)
             .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.FallAfterSlideLateral, _ => YVelocity < 0.5f, 6)
-            .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnLeft, PlayerFsmState.SlideDown, _ => _currentFlankType == FlankType.Right && TimeInCurrentState() > MinSlideStateTimer)
+            // .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnLeft, PlayerFsmState.SlideDown, _ => _currentFlankType == FlankType.Right && TimeInCurrentState() > MinSlideStateTimer)
             .PermitIf(PlayerFsm.PlayerFsmTrigger.HardTurn, PlayerFsmState.SlideDown, _ => TimeInCurrentState() > MinSlideStateTimer, 2)
-            .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnRight, PlayerFsmState.SlideDown, _ => _currentFlankType == FlankType.Left && TimeInCurrentState() > MinSlideStateTimer)
+            // .PermitIf(PlayerFsm.PlayerFsmTrigger.SoftTurnRight, PlayerFsmState.SlideDown, _ => _currentFlankType == FlankType.Left && TimeInCurrentState() > MinSlideStateTimer)
             .OnEntry(@params =>
             {
                 YVelocity += 10f;
@@ -150,7 +156,7 @@ public partial class PlayerFsm
                 _previousWallrunSide = FlankType.None;
 
                 _momentum = Mathf.Max(_momentum, 13f);
-                // IncrementCombo();
+                IncrementCombo();
 
                 if (@params is not RaycastHitParam raycastHitParam) return;
                 var flattenedNormal = new Vector3(raycastHitParam.Hit.normal.x, 0, raycastHitParam.Hit.normal.z);
@@ -159,6 +165,18 @@ public partial class PlayerFsm
                 OnPlayerEnteredSlideLateral?.Invoke(flip);
                 _currentFlankType = flip ? FlankType.Right : FlankType.Left;
                 Animator.SetFloat("Flip", flip ? 0f : 1f);
+            })
+            .OnEntryFrom(PlayerFsmTrigger.SoftTurnRight, _ =>
+            {
+                OnPlayerEnteredSlideLateral?.Invoke(true);
+                _currentFlankType = FlankType.Right;
+                Animator.SetFloat("Flip", 0f);
+            })
+            .OnEntryFrom(PlayerFsmTrigger.SoftTurnLeft, _ =>
+            {
+                OnPlayerEnteredSlideLateral?.Invoke(false);
+                _currentFlankType = FlankType.Left;
+                Animator.SetFloat("Flip", 1f);
             })
             .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, _ =>
             {
@@ -186,8 +204,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _momentum = Mathf.Max(_momentum, 3f);
-                _currentComboLength = 0;
-                OnPlayerComboReset?.Invoke();
+                IncrementCombo();
             })
             .OnExitFrom(PlayerFsm.PlayerFsmTrigger.SoftTurnLeft, _ =>
             {
@@ -199,7 +216,7 @@ public partial class PlayerFsm
             })
             .OnExit(_ =>
             {
-                // _momentum = 9f;
+                _momentum = 9f;
             });
 
         Machine.Configure(PlayerFsmState.SlideInteractable)
