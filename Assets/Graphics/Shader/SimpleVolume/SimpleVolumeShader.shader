@@ -159,7 +159,7 @@ Shader "Unlit/SimpleVolumeShader"
                     }
                 }
 
-                float fakeFogAlphaMod = clamp(0.0f, 1.0f, InverseLerp(100.0f, 20.0f, surfaceDistance));
+                float fakeFogAlphaMod = clamp(0.0f, 1.0f, InverseLerp(150.0f, 20.0f, surfaceDistance));
                 accumulatedColor.a *= fakeFogAlphaMod;
                 accumulatedColor.rgb *= fakeFogAlphaMod;
                 return accumulatedColor;
