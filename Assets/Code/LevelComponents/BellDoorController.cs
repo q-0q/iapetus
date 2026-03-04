@@ -25,6 +25,7 @@ public class BellDoorController : MonoBehaviour
     private const float lightPlacementSeparationAngle = 25f;
 
     private const string _readyEventPath = "event:/BellDoorReady";
+    private const string _openEventPath = "event:/BellDoorOpen";
     private EventInstance _readyInstance;
     private Interactable _interactable;
     private Collider _collider;
@@ -143,7 +144,9 @@ public class BellDoorController : MonoBehaviour
         {
             _openCamera.Priority = 30;
             CutsceneManager.Singleton.SetPseudoCutsceneActive();
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.25f);
+            FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(_openEventPath), gameObject);
+            yield return new WaitForSeconds(0.25f);
             var vibrator = transform.Find("bell-door").Find("BellDoorArmature");
             vibrator.DOShakePosition(0.75f, 0.2f, 25);
             Util.ReplaceAnimatorTrigger(_animator, "Open");
