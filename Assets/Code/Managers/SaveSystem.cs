@@ -40,6 +40,7 @@ public class SaveSystem : MonoBehaviour
     {
         public string metaName;
         public float time;
+        public float goldTime;
     }
 
     
@@ -128,7 +129,7 @@ public class SaveSystem : MonoBehaviour
         WriteSaveData(data, id);
     }
 
-    public static void WriteTrialCompletion(string metaName, float time, int id)
+    public static void WriteTrialCompletion(string metaName, float time, float goldTime, int id)
     {
         if (metaName == "")
         {
@@ -150,7 +151,8 @@ public class SaveSystem : MonoBehaviour
             data.trialCompletions.Add(new TrialCompletionEntry
             {
                 metaName = metaName,
-                time = time
+                time = time,
+                goldTime = goldTime
             });
         }
 
@@ -165,6 +167,14 @@ public class SaveSystem : MonoBehaviour
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
         if (entry != null) playerRecordTime = entry.time;
         return entry != null;
+    }
+    
+    public static bool GetTrialGolded(string metaName, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
+        if (entry == null) return false;
+        return entry.time < entry.goldTime;
     }
     
     public static void WriteLemonCollection(string metaName, int id)

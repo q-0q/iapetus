@@ -109,7 +109,7 @@ public class TrialCanvas : MonoBehaviour
             yield return null;
         }
         _canvasGroup.alpha = 1;
-        SaveSystem.WriteTrialCompletion(trial.metaName, playerTime, 0);
+        SaveSystem.WriteTrialCompletion(trial.metaName, playerTime, trial.goldTime, 0);
 
         duration = 4f;
         t = 0f;

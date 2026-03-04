@@ -18,6 +18,7 @@ public class CompletionCanvas : MonoBehaviour
 
     private void OnCanvasTriggerEnter()
     {
+        GetComponentInChildren<CompletionProfileCanvas>().UpdateCompletionProfile("c1");
         _show = true;
     }
     
