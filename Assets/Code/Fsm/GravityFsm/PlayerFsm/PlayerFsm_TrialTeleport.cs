@@ -14,11 +14,11 @@ public partial class PlayerFsm
         
         if (TimeInCurrentState() > TrialTeleportStartupDuration && PreviousTimeInCurrentState() < TrialTeleportStartupDuration)
         {
-            // var highestPriorityZoneAtPosition = CameraFollow.HighestPriorityZoneAtPosition(_teleportDestination);
-            // if (highestPriorityZoneAtPosition is null) return;
-            // var cameraDirection = highestPriorityZoneAtPosition
-            //     .GetCameraForward(_teleportDestination, out _);
             PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(_teleportDirection, TrialTeleportDuration - TrialTeleportStartupDuration);
+
+            _teleportCamera.transform.position = (_teleportDestination + Vector3.up * 20f) - (_teleportDirection * 20f);
+            _teleportCameraLookAt.position = _teleportDestination;
+            _teleportCamera.Priority = 20;
         }
     }
     
@@ -36,6 +36,7 @@ public partial class PlayerFsm
                 _teleportParticles.transform.position = transform.position;
                 _teleportParticles.Play();
                 MakeAllRenderersInvisible();
+                
             })
             .OnExit(_ =>
             {
@@ -47,6 +48,7 @@ public partial class PlayerFsm
                 _teleportParticles.transform.position = transform.position;
                 _teleportParticles.Play();
                 MakeAllRenderersVisible();
+                _teleportCamera.Priority = -20;
             });
     }
 

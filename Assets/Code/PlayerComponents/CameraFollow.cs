@@ -47,11 +47,7 @@ public class CameraFollow : MonoBehaviour
         //     }
         // }
         
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
-        {
-            transform.position = PlayerFsm.Singleton.transform.position;
-            return;
-        }
+
         
 
         

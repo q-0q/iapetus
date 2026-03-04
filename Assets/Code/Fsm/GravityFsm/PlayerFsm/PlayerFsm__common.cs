@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using FMOD.Studio;
 using FMODUnity;
 using Unity.VisualScripting;
@@ -70,6 +71,8 @@ public partial class PlayerFsm
     private Vector3 _teleportDestination;
     private Vector3 _teleportOrigin;
     private Vector3 _teleportDirection;
+    private CinemachineVirtualCamera _teleportCamera;
+    private Transform _teleportCameraLookAt;
     private Transform _currentPitonTransform;
     private static readonly Vector3 PitonTargetOffset = Vector3.up * -2f;
 
@@ -203,8 +206,8 @@ public partial class PlayerFsm
     private const float ArriveAtWalkPositionTargetDistance = 1.5f;
     private const float ArriveAtWalkPositionTargetRangedDistance = 100f;
 
-    private const float TrialTeleportStartupDuration = 0.7f;
-    private const float TrialTeleportDuration = 2f;
+    private const float TrialTeleportStartupDuration = 0.5f;
+    private const float TrialTeleportDuration = 1.5f;
 
     private const float PitonMaximumWallInteractYVelocity = 5f;
 

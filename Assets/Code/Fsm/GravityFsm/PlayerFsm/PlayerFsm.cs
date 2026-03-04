@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security;
+using Cinemachine;
 using Code.PlayerComponents;
 using DG.Tweening;
 using FMOD.Studio;
@@ -190,6 +191,8 @@ public partial class PlayerFsm : GravityFsm
         _deathParticles = transform.Find("DeathParticles").GetComponent<ParticleSystem>();
         _teleportParticles.transform.SetParent(null);
         _deathParticles.transform.SetParent(null);
+        _teleportCamera = transform.parent.Find("PlayerTeleportCamera").GetComponent<CinemachineVirtualCamera>();
+        _teleportCameraLookAt = transform.parent.Find("PlayerTeleportCameraLookAt");
         
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _renderers = GetComponentsInChildren<Renderer>().ToList();
