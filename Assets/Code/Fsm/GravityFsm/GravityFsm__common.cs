@@ -49,7 +49,7 @@ public abstract partial class GravityFsm
     {
         var raycastLength = GroundedRaycastLength * GetRaycastTimeModifier();
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
-        var f = 1f;
+        var f = 2f;
         var minDistance = 0.1f;
         
         var sphereCastOrigin = transform.position + Vector3.up * (f * raycastLength) + forward;
