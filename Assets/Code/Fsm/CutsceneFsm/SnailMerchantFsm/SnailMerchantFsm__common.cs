@@ -12,8 +12,11 @@ public partial class SnailMerchantFsm
 {
     private Interactable _interactable;
     private DialogueController _dialogueController;
-    
+    private const int QuestBitRequirement = 500;
 
 
-
+    private bool IsQuestCompleted()
+    {
+        return SaveSystem.GetBitCount() > QuestBitRequirement;
+    }
 }

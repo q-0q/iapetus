@@ -43,10 +43,12 @@ public class BitCanvas : MonoBehaviour
     private void OnEnable()
     {
         BitController.OnBitCountUpdated += OnBitCountUpdated;
+        BitSystem.OnBitsDecremented += OnBitCountUpdated;
     }
 
     private void OnDisable()
     {
         BitController.OnBitCountUpdated -= OnBitCountUpdated;
+        BitSystem.OnBitsDecremented -= OnBitCountUpdated;
     }
 }

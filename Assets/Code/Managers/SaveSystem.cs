@@ -202,6 +202,13 @@ public class SaveSystem : MonoBehaviour
         Singleton._cachedSaveData = data;
     }
     
+    public static void RemoveBit(int amount, int id)
+    {
+        SaveData data = LoadSaveData(id);
+        data.bitCount -= amount;
+        Singleton._cachedSaveData = data;
+    }
+    
     public static void CollectBitDeposit(string metaName, int id)
     {
         if (metaName == "") 
@@ -241,6 +248,12 @@ public class SaveSystem : MonoBehaviour
     {
         var data = LoadSaveData(0);
         return data.bells.Contains(metaName);
+    }
+
+    public static int GetBitCount()
+    {
+        var data = LoadSaveData(0);
+        return data.bitCount;
     }
     
     private static void WriteSaveData(SaveData saveData, int id)
@@ -348,4 +361,6 @@ public static class MetaSaveSystem
     {
         return WriteMetaSaveData(0, 1f, true, true);
     }
+    
+    
 }
