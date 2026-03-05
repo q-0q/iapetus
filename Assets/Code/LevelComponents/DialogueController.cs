@@ -22,6 +22,7 @@ public class DialogueController : MonoBehaviour
     public string DialogueName = "Unnamed dialogue";
     private Interactable _interactable;
     public event Action OnCompleted;
+    public event Action<int> OnProgressed;
     public Transform LookAtOverride;
     
     private void OnEnable()
@@ -64,5 +65,10 @@ public class DialogueController : MonoBehaviour
         {
             DialogueCanvas.Singleton.EndDialogue();
         }
+    }
+
+    public void ProgressionSignal(int textIndex)
+    {
+        OnProgressed?.Invoke(textIndex);
     }
 }

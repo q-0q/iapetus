@@ -98,6 +98,15 @@ public class SaveSystem : MonoBehaviour
         WriteSaveData(data, id);
     }
     
+    public static void ClearPlayerInGamePosition(int id)
+    {
+        SaveData data = LoadSaveData(id);
+        data.playerInGamePosition = null;
+        data.playerInGamePositionId = "";
+        data.playerInGameYAngle = 0;
+        WriteSaveData(data, id);
+    }
+    
     public static void WritePersistentEvent(string persistentEvent, int id)
     {
         if (persistentEvent == "")

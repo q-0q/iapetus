@@ -32,6 +32,8 @@ public partial class SnailMerchantFsm : CutsceneFsm
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
         _dialogueController = GetComponentInChildren<DialogueController>();
+        _attenuator = GetComponentInChildren<MusicDistanceAttenuator>();
+        _canvasGroup = GetComponentInChildren<CanvasGroup>();
         Animator = GetComponentInChildren<Animator>();
 
     }
@@ -46,7 +48,16 @@ public partial class SnailMerchantFsm : CutsceneFsm
     public override void OnUpdate()
     {
         base.OnUpdate();
-        
+
+        if (Machine.IsInState(SnailMerchantFsmState.QuestChannel))
+        {
+            var attenuationDistance = Mathf.Lerp(0, 10f, Mathf.InverseLerp(0, 7f, TimeInCurrentState()));
+            _attenuator.minDistance = attenuationDistance;
+            _attenuator.maxDistance = attenuationDistance * 10f;
+
+            _canvasGroup.alpha = Mathf.InverseLerp(3f, 8f, TimeInCurrentState());
+            _haloRenderer.material.SetFloat("_Weight", Mathf.InverseLerp(0.5f, 1.5f, TimeInCurrentState()));
+        }
     }
 
     protected override void OnStartComplete()
@@ -65,11 +76,13 @@ public partial class SnailMerchantFsm : CutsceneFsm
     {
         _interactable.OnInteracted += OnInteracted;
         _dialogueController.OnCompleted += OnDialogueCompleted;
+        _dialogueController.OnProgressed += OnDialogueProgressed;
     }
 
     private void OnDisable()
     {
         _interactable.OnInteracted -= OnInteracted;
         _dialogueController.OnCompleted -= OnDialogueCompleted;
+        _dialogueController.OnProgressed -= OnDialogueProgressed;
     }
 }

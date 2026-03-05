@@ -6,6 +6,7 @@ using UnityEngine;
 public class SceneLoadInteractable : MonoBehaviour
 {
 
+    public string DestinationId;
     public string SceneName;
     private Interactable _interactable;
 
@@ -26,6 +27,7 @@ public class SceneLoadInteractable : MonoBehaviour
 
     private void OnInteracted()
     {
+        SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, 0, 0);
         SceneLoader.Singleton.LoadScene(SceneName);
     }
 }

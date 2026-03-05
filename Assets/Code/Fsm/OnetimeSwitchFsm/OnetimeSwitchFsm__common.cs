@@ -13,6 +13,7 @@ public partial class OnetimeSwitchFsm
     
     public static Action<OnetimeSwitchFsm> OnOnetimeSwitchFsmTurnedOn;
     public string persistentEvent;
+    private const string _eventPath = "event:/OnetimeSwitch";
 
     private void StartPlayerInteraction()
     {

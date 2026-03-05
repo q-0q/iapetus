@@ -12,17 +12,37 @@ public partial class SnailMerchantFsm
 
         Machine.Configure(SnailMerchantFsmState.Idle)
             .Permit(SnailMerchantFsmTrigger.OnInteracted, SnailMerchantFsmState.SpeakingDefault)
-            .PermitIf(SnailMerchantFsmTrigger.OnInteracted, SnailMerchantFsmState.SpeakingQuestReady, _ => IsQuestCompleted() && _dialogueController.currentDialogueIndex >= 4, 2);
+            .PermitIf(SnailMerchantFsmTrigger.OnInteracted, SnailMerchantFsmState.SpeakingQuestReady, _ => IsBitRequirementMet() && _dialogueController.currentDialogueIndex >= 4, 2)
+            .PermitIf(SnailMerchantFsmTrigger.OnInteracted, SnailMerchantFsmState.SpeakingQuestComplete, _ => SaveSystem.GetPersistentEventCompleted(PersistentEvent), 3);;
         
         Machine.Configure(SnailMerchantFsmState.SpeakingDefault)
             .Permit(SnailMerchantFsmTrigger.OnDialogueCompleted, SnailMerchantFsmState.Idle);
         
         Machine.Configure(SnailMerchantFsmState.SpeakingQuestReady)
-            .Permit(SnailMerchantFsmTrigger.OnDialogueCompleted, SnailMerchantFsmState.Idle)
+            .Permit(SnailMerchantFsmTrigger.OnDialogueCompleted, SnailMerchantFsmState.QuestChannel)
             .OnEntry(_ =>
             {
-                BitSystem.Singleton.RemoveBits(500);
                 _dialogueController.currentDialogueIndex = 5;
+            });
+        
+        Machine.Configure(SnailMerchantFsmState.SpeakingQuestComplete)
+            .Permit(SnailMerchantFsmTrigger.OnDialogueCompleted, SnailMerchantFsmState.QuestChannel)
+            .OnEntry(_ =>
+            {
+                _dialogueController.currentDialogueIndex = 6;
+            });
+
+        Machine.Configure(SnailMerchantFsmState.QuestChannel)
+            .Permit(FsmTrigger.Timeout, SnailMerchantFsmState.Idle)
+            .OnExit(_ =>
+            {
+                SaveSystem.ClearPlayerInGamePosition(0);
+                SceneLoader.Singleton.LoadScene("C1-Snail");
+            })
+            .OnEntry(_ =>
+            {
+                CutsceneManager.Singleton.SetPseudoCutsceneActive();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference("event:/SnailChannel"), gameObject);
             });
 
     }
@@ -30,8 +50,14 @@ public partial class SnailMerchantFsm
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
+        
+        StateMapConfig.Duration.Add(SnailMerchantFsmState.QuestChannel, 10f);
+        
+        
         StateMapConfig.AnimationTrigger.Add(SnailMerchantFsmState.Idle, "Eating");
         StateMapConfig.AnimationTrigger.Add(SnailMerchantFsmState.SpeakingDefault, "Stand");
         StateMapConfig.AnimationTrigger.Add(SnailMerchantFsmState.SpeakingQuestReady, "Stand");
+        StateMapConfig.AnimationTrigger.Add(SnailMerchantFsmState.SpeakingQuestComplete, "Stand");
+        StateMapConfig.AnimationTrigger.Add(SnailMerchantFsmState.QuestChannel, "Channel");
     }
 }

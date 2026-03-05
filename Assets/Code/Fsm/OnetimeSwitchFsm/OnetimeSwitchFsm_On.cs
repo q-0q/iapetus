@@ -9,6 +9,7 @@ public partial class OnetimeSwitchFsm
                 _interactable.SetEnabled(false);
                 SaveSystem.WritePersistentEvent(persistentEvent, 0);
                 OnOnetimeSwitchFsmTurnedOn?.Invoke(this);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(_eventPath), gameObject);
             });
     }
 }

@@ -92,6 +92,7 @@ public class MultiSwitchDoor : MonoBehaviour
             }
             
             Util.InvokeSphereEffect(_lightDictionary[switchFsm].transform.position + Vector3.down, Vector3.one * 2f, 1.25f, 1f, 0f);
+            FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference("event:/MultiSwitchDoorLight"), _lightDictionary[switchFsm].gameObject);
             
             yield return null;
         }
