@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Code.Misc;
 using DG.Tweening;
+using FMOD.Studio;
 using UnityEngine;
+using Util = Code.Misc.Util;
 
 public class Lemon : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class Lemon : MonoBehaviour
     private Transform _bone;
 
     public string MetaName;
+
+    private EventInstance _passiveInstance;
     
     // Start is called before the first frame update
     void Start()
@@ -36,6 +39,10 @@ public class Lemon : MonoBehaviour
             _readyParticles.Stop();
             _readyParticles.Clear();
             GetComponent<Collider>().enabled = false;
+        }
+        else
+        {
+            _passiveInstance.start();
         }
         
         
@@ -63,6 +70,8 @@ public class Lemon : MonoBehaviour
         main.simulationSpeed = 2.75f;
         GetComponent<Collider>().enabled = false;
         SaveSystem.WriteLemonCollection(MetaName, 0);
+        FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference("event:/LemonCollect"), gameObject);
+        _passiveInstance.stop(STOP_MODE.ALLOWFADEOUT);
         StartCoroutine(DoCollectionTintWeight());
     }
 
@@ -82,5 +91,18 @@ public class Lemon : MonoBehaviour
         yield return new WaitForSeconds(0.75f);
         Util.InvokeSphereEffect(transform.position + Vector3.up * 5.5f, Vector3.one * 6f, 1.25f, 0.8f, -1f);
         // _renderer.enabled = false;
+    }
+
+    private void Awake()
+    {
+        _passiveInstance =
+            FMODUnity.RuntimeManager.CreateInstance(
+                FMODUnity.RuntimeManager.PathToEventReference("event:/LemonPassive"));
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(_passiveInstance, gameObject);
+    }
+
+    private void OnDisable()
+    {
+        _passiveInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 }
