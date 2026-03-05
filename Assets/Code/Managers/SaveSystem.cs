@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 public class SaveSystem : MonoBehaviour
@@ -47,6 +48,7 @@ public class SaveSystem : MonoBehaviour
     [System.Serializable]
     public class SaveData
     {
+        public string scene;
         public float[] playerInGamePosition;
         public string playerInGamePositionId;
         public float playerInGameYAngle;
@@ -61,6 +63,7 @@ public class SaveSystem : MonoBehaviour
 
         public SaveData()
         {
+            scene = "";
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
             playerInGamePositionId = "";
@@ -247,11 +250,17 @@ public class SaveSystem : MonoBehaviour
             Directory.CreateDirectory(directory);
         
         SaveData data = saveData;
+        data.scene = SceneManager.GetActiveScene().name;
         Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(id), json);
         Debug.Log("Saved file to: " + GetPath(id));
+    }
+    
+    public static void WriteCachedSave(int id)
+    {
+        WriteSaveData(Singleton._cachedSaveData, id);
     }
 
     public static SaveData LoadSaveData(int id)

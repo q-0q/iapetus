@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,20 +12,31 @@ public class MainMenu : MonoBehaviour
     private GameObject _credits;
     private GameObject _current;
     private GameObject _back;
+
+    private string _scene;
     // Start is called before the first frame update
     void Start()
     {
+        
+        FMODSceneManager.Singleton.StopAll();
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.Confined;
         
         _main = transform.Find("Main").gameObject;
         _back = transform.Find("Back").gameObject;
         _levelSelect = transform.Find("LevelSelect").gameObject;
-        _settings = transform.Find("SettingsMenu").gameObject;
-        _credits = transform.Find("Credits").gameObject;
+        // _settings = transform.Find("SettingsMenu").gameObject;
+        // _credits = transform.Find("Credits").gameObject;
         
-        _settings.SetActive(false);
-        _credits.SetActive(false);
+        // _settings.SetActive(false);
+        // _credits.SetActive(false);
+
+        var saveData = SaveSystem.LoadSaveData(0);
+        _scene = saveData.scene;
+        _levelSelect.transform.Find("Buttons").Find("Demo").GetComponentInChildren<TextMeshProUGUI>().text =
+            _scene == "" ? "New Game" : "Continue";
+        
+        
         _levelSelect.SetActive(false);
         _back.SetActive(false);
     }
@@ -70,14 +82,14 @@ public class MainMenu : MonoBehaviour
     {
         _back.SetActive(false);
         _levelSelect.SetActive(false);
-        _credits.SetActive(false);
+        // _credits.SetActive(false);
         _main.SetActive(true);
         _main.transform.Find("Buttons").Find("Play").GetComponent<Button>().Select();
     }
 
     public void OnLevelSelected(string scene)
     {
-        SceneLoader.Singleton.LoadScene(scene);
+        SceneLoader.Singleton.LoadScene(_scene == "" ? "C1-Brazier" : _scene);
     }
 
     // Update is called once per frame

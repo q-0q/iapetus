@@ -62,6 +62,14 @@ public class FMODSceneManager : MonoBehaviour
     {
         _eventInstances[fmodSceneEvent].stop(STOP_MODE.ALLOWFADEOUT);
     }
+
+    public void StopAll()
+    {
+        foreach (var (_, instance) in _eventInstances)
+        {
+            instance.stop(STOP_MODE.ALLOWFADEOUT);
+        }
+    }
     
     
     

@@ -15,7 +15,10 @@ public partial class SnailMerchantFsm : CutsceneFsm
     public class SnailMerchantFsmState : CutsceneFsmState
     {
         public static int Idle;
-        public static int Speaking;
+        public static int SpeakingDefault;
+        public static int SpeakingQuestReady;
+        public static int QuestChannel;
+        public static int SpeakingQuestComplete;
     }
 
     public class SnailMerchantFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
