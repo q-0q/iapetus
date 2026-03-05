@@ -874,4 +874,13 @@ public partial class PlayerFsm
             _slideTimer = 0;
         }
     }
+
+
+    private void HandleRaycastKill()
+    {
+        if (CurrentFallDistance() > -50f) return;
+        if (Physics.Raycast(transform.position, Vector3.down, 100f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+        if (TimeInCurrentState() < 1f) return;
+        InvokePlayerDeath();
+    }
 }

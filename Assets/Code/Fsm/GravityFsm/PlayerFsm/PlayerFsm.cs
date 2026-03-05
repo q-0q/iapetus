@@ -458,10 +458,7 @@ public partial class PlayerFsm : GravityFsm
             SaveSystem.WritePlayerInGamePosition(transform.position, "", 0, 0);
         }
         
-        // if (transform.position.y < -80f)
-        // {
-        //     InvokePlayerDeath();
-        // }
+        HandleRaycastKill();
 
         
 
