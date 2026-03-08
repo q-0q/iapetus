@@ -9,14 +9,16 @@ public class SettingsMenu : MonoBehaviour
     
     public static event Action OnSettingsMenuClosed;
     private Slider _cameraSensitivitySlider;
-    private Toggle _ambientParticlesToggle;
+    // private Toggle _ambientParticlesToggle;
+    private Toggle _autocamEnabledToggle;
     private Toggle _fpsToggle;
     
     // Start is called before the first frame update
     void Awake()
     {
         _cameraSensitivitySlider = transform.Find("Holder").Find("CameraSensitivitySlider").GetComponent<Slider>();
-        _ambientParticlesToggle = transform.Find("Holder").Find("AmbientParticlesToggle").GetComponent<Toggle>();
+        // _ambientParticlesToggle = transform.Find("Holder").Find("AmbientParticlesToggle").GetComponent<Toggle>();
+        _autocamEnabledToggle = transform.Find("Holder").Find("AutocamEnabledToggle").GetComponent<Toggle>();
         _fpsToggle = transform.Find("Holder").Find("FPSToggle").GetComponent<Toggle>();
     }
 
@@ -30,9 +32,9 @@ public class SettingsMenu : MonoBehaviour
     {
         var metaSaveData = MetaSaveSystem.LoadMetaSaveData();
         if (metaSaveData == null) return;
-        _cameraSensitivitySlider.normalizedValue =
-            Mathf.InverseLerp(0.25f, 1.75f, metaSaveData.cameraSensitivityModifier);
-        _ambientParticlesToggle.isOn = metaSaveData.enableAmbientParticles;
+        _cameraSensitivitySlider.value = metaSaveData.cameraSensitivityModifier;
+        // _ambientParticlesToggle.isOn = metaSaveData.enableAmbientParticles;
+        _autocamEnabledToggle.isOn = metaSaveData.autoCamEnabled;
         _fpsToggle.isOn = metaSaveData.enableFpsDisplay;
     }
 
@@ -44,15 +46,16 @@ public class SettingsMenu : MonoBehaviour
 
     public void OnApplyClicked()
     {
-        var cameraSensitivityModifier = Mathf.Lerp(0.25f, 1.75f, _cameraSensitivitySlider.normalizedValue);
-        MetaSaveSystem.WriteMetaSaveData(0, cameraSensitivityModifier, _ambientParticlesToggle.isOn, _fpsToggle.isOn);
+        var cameraSensitivityModifier = _cameraSensitivitySlider.value;
+        MetaSaveSystem.WriteMetaSaveData(0, (int)cameraSensitivityModifier, true, _fpsToggle.isOn, _autocamEnabledToggle.isOn);
         OnBackClicked();
     }
     
     public void OnResetClicked()
     {
-        _cameraSensitivitySlider.normalizedValue = 0.5f;
-        _ambientParticlesToggle.isOn = true;
+        _cameraSensitivitySlider.value = 10;
+        // _ambientParticlesToggle.isOn = true;
+        _autocamEnabledToggle.isOn = true;
         _fpsToggle.isOn = true;
     }
     

@@ -157,7 +157,6 @@ public partial class PlayerFsm : GravityFsm
             }
         }
 
-        ApplyMetaSaveData(MetaSaveSystem.LoadMetaSaveData());
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
@@ -194,6 +193,7 @@ public partial class PlayerFsm : GravityFsm
         _teleportCamera = transform.parent.Find("PlayerTeleportCamera").GetComponent<CinemachineVirtualCamera>();
         _teleportCameraLookAt = transform.parent.Find("PlayerTeleportCameraLookAt");
         
+        ApplyMetaSaveData(MetaSaveSystem.LoadMetaSaveData());
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _renderers = GetComponentsInChildren<Renderer>().ToList();
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();

@@ -28,12 +28,18 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private float _scriptDuration;
     private float _timeInScript;
 
+    private bool _isAutocamEnabled;
+
+    private bool _settingsMenuOpen;
+
     void Awake()
     {
         Singleton = this;
         TryGetComponent(out _freeLook);
+        _isAutocamEnabled = true;
         _baseXSpeed = _freeLook.m_XAxis.m_MaxSpeed;
         _baseYSpeed = _freeLook.m_YAxis.m_MaxSpeed;
+        _settingsMenuOpen = false;
     }
 
     private void Start()
@@ -72,6 +78,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         HandleCameraBehaviorZone();
         
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>();
+        lookVector2 = lookVector2.normalized * Mathf.Min(lookVector2.magnitude, 1000f);
         _timeSincePlayerLookInput += Time.deltaTime;
         _timeSinceRecenter += Time.deltaTime;
         if (_currentCameraBehaviorZone == null) _timeSinceRecenter = 0f;
@@ -101,10 +108,21 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     
     private void OnMetaSaveDataUpdated(MetaSaveSystem.MetaSaveData metaSaveData)
     {
-        _freeLook.m_XAxis.m_MaxSpeed = _baseXSpeed * metaSaveData.cameraSensitivityModifier;
-        _freeLook.m_YAxis.m_MaxSpeed = _baseYSpeed * metaSaveData.cameraSensitivityModifier;
+        _isAutocamEnabled = metaSaveData.autoCamEnabled;
+        _freeLook.m_XAxis.m_MaxSpeed = _baseXSpeed * metaSaveData.cameraSensitivityModifier * 0.1f;
+        _freeLook.m_YAxis.m_MaxSpeed = _baseYSpeed * metaSaveData.cameraSensitivityModifier * 0.1f;
     }
-    
+
+    // private void OnSettingsMenuOpened()
+    // {
+    //     _settingsMenuOpen = true;
+    // }
+    //
+    // private void OnSettingsMenuClosed()
+    // {
+    //     _settingsMenuOpen = false;
+    // }
+    //
     private void OnCameraFollowTriggerStay(CameraBehaviorZone cameraBehaviorZone)
     {
         if (cameraBehaviorZone == null || _currentCameraBehaviorZone == null)
@@ -129,6 +147,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private void HandleCameraBehaviorZone()
     {
+        
+        if(!_isAutocamEnabled) return;
         if (_timeSincePlayerLookInput < _recenterTime) return;
         if (_currentCameraBehaviorZone == null) return;
         var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
@@ -184,4 +204,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         }
         
     }
+
+    
 }

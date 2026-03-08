@@ -46,7 +46,7 @@ public class GameMenu : MonoBehaviour
             else
             {
                 Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.Confined;
+                Cursor.lockState = CursorLockMode.None;
                 _menu.SetActive(true);
                 _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
                 Time.timeScale = 0.000001f;

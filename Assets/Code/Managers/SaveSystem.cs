@@ -314,16 +314,18 @@ public static class MetaSaveSystem
     {
 
         public int saveId;
-        public float cameraSensitivityModifier;
+        public int cameraSensitivityModifier;
         public bool enableAmbientParticles;
         public bool enableFpsDisplay;
+        public bool autoCamEnabled;
         
-        public MetaSaveData(int saveId, float cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay)
+        public MetaSaveData(int saveId, int cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay, bool autoCamEnabled)
         {
             this.saveId = saveId;
             this.cameraSensitivityModifier = cameraSensitivityModifier;
             this.enableAmbientParticles = enableAmbientParticles;
             this.enableFpsDisplay = enableFpsDisplay;
+            this.autoCamEnabled = autoCamEnabled;
         }
     }
     
@@ -337,13 +339,13 @@ public static class MetaSaveSystem
         return Path.Combine(GetDirectory(), "meta.json");
     }
 
-    public static MetaSaveData WriteMetaSaveData(int saveId, float cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay)
+    public static MetaSaveData WriteMetaSaveData(int saveId, int cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay, bool autoCamEnabled)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         
-        MetaSaveData data = new MetaSaveData(saveId, cameraSensitivityModifier, enableAmbientParticles, enableFpsDisplay);
+        MetaSaveData data = new MetaSaveData(saveId, cameraSensitivityModifier, enableAmbientParticles, enableFpsDisplay, autoCamEnabled);
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(), json);
@@ -368,7 +370,7 @@ public static class MetaSaveSystem
 
     public static MetaSaveData WriteDefaultMetaSaveData()
     {
-        return WriteMetaSaveData(0, 1f, true, true);
+        return WriteMetaSaveData(0, 10, true, true, true);
     }
     
     
