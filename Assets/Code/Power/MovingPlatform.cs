@@ -24,6 +24,8 @@ public class MovingPlatform : MonoBehaviour
     private static string eventPath = "event:/StoneGrind";
     private EventInstance _eventInstance;
 
+    public bool Mute = false;
+
     // --- Added ---
     private float _previousCycleValue;
     private float _previousFrameTime;
@@ -96,6 +98,12 @@ public class MovingPlatform : MonoBehaviour
     // --- Added ---
     private void UpdateStoneGrindParameter(float currentValue)
     {
+        if (Mute)
+        {
+            _eventInstance.setParameterByName("StoneGrindAmount", 0);
+            return;
+        }
+        
         currentValue = SharpSymmetric(currentValue, cycleSnapping);
         float deltaTime = Time.time - _previousFrameTime;
         if (deltaTime <= 0f) return;

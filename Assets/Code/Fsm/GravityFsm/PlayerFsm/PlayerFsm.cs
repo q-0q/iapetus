@@ -453,10 +453,10 @@ public partial class PlayerFsm : GravityFsm
             InvokePlayerDeath();
         }
         
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            SaveSystem.WritePlayerInGamePosition(transform.position, "", 0, 0);
-        }
+        // if (Input.GetKeyDown(KeyCode.X))
+        // {
+        //     SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y, 0);
+        // }
         
         HandleRaycastKill();
 

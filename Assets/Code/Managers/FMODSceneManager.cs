@@ -8,11 +8,16 @@ public class FMODSceneManager : MonoBehaviour
 {
     public enum FMODSceneEvent
     {
+        
+        // DO NOT CHANGE THE ORDER OF THESE! ONLY ADD TO THE END OF THE LIST!!!
+        // OTHERWISE ALL EXISTING AUDIO REQUESTORS WILL BE MESSED UP!
         Ch1Music,
         CogsMusic,
         TimeGoesOnMusic,
         WindAmbience,
         CaveAmbience,
+        SnailMusic,
+        
     }
     
     private static Dictionary<FMODSceneEvent, EventInstance> _eventInstances;
@@ -47,6 +52,7 @@ public class FMODSceneManager : MonoBehaviour
             [FMODSceneEvent.Ch1Music] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/CH1_Music")),
             [FMODSceneEvent.CogsMusic] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/Music2")),
             [FMODSceneEvent.TimeGoesOnMusic] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/Music3")),
+            [FMODSceneEvent.SnailMusic] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/SnailMusic")),
             [FMODSceneEvent.WindAmbience] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/WindAmbience")),
             [FMODSceneEvent.CaveAmbience] = RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference("event:/CaveAmbience")),
         };

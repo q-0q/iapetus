@@ -10,7 +10,6 @@ public class CameraPathKeyframe : MonoBehaviour
     public bool reflectionEnabled;
     public float reflectionAngle;
 
-    public float reflectionDeadzoneSize = 10f;
     private Quaternion reflectionAxisStore;
     
     

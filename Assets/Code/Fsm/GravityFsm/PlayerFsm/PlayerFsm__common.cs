@@ -660,7 +660,7 @@ public partial class PlayerFsm
 
     private void ApplyMetaSaveData(MetaSaveSystem.MetaSaveData metaSaveData)
     {
-        CameraLookSensitivityProcessor.SetSensitivityModifier(metaSaveData.cameraSensitivityModifier);
+        // CameraLookSensitivityProcessor.SetSensitivityModifier(metaSaveData.cameraSensitivityModifier);
         transform.Find("AmbientParticles").gameObject.SetActive(metaSaveData.enableAmbientParticles);
     }
 

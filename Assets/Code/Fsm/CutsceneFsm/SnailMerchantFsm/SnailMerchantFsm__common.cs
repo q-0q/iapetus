@@ -21,7 +21,7 @@ public partial class SnailMerchantFsm
 
     private bool IsBitRequirementMet()
     {
-        return SaveSystem.GetBitCount() > QuestBitRequirement;
+        return SaveSystem.GetBitCount() >= QuestBitRequirement;
     }
 
     private void OnDialogueProgressed(int textIndex)
