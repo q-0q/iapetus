@@ -54,14 +54,14 @@ public class GameMenu : MonoBehaviour
         }
 
 
-        if (IsMenuOpen() && NeedToSelect(_menu.transform.Find("Buttons").gameObject))
+        if (IsMenuOpen() && NeedToSelect())
         {
             _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
         }
 
     }
     
-    private bool NeedToSelect(GameObject currentObject)
+    private bool NeedToSelect()
     {
         foreach (var selectable in GetComponentsInChildren<Selectable>())
         {
