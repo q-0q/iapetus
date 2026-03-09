@@ -57,7 +57,7 @@ public class SettingsMenu : MonoBehaviour
     {
         _cameraSensitivitySlider.value = 10;
         // _ambientParticlesToggle.isOn = true;
-        _autocamEnabledToggle.isOn = true;
+        _autocamEnabledToggle.isOn = false;
         _fpsToggle.isOn = true;
     }
     

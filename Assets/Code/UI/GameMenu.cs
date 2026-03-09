@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,23 +12,22 @@ public class GameMenu : MonoBehaviour
 {
     public static GameMenu Singleton;
     private PlayerInput _playerInput;
+    private PlayerInput _defaultPlayerInput;
     private GameObject _menu;
     private CinemachineFreeLook _freeLook;
     private GameObject _settings;
     private GameObject _buttons;
+    
 
     private void Awake()
     {
         Singleton = this;
     }
-
-    public bool IsMenuOpen()
-    {
-        return _menu.activeInHierarchy;
-    }
+    
 
     private void Start()
     {
+        transform.Find("DefaultPlayerInput").TryGetComponent(out _defaultPlayerInput);
         TryGetComponent(out _playerInput);
         _menu = transform.Find("Menu").gameObject;
         _settings = transform.Find("Menu").Find("SettingsMenu").gameObject;
@@ -48,10 +48,27 @@ public class GameMenu : MonoBehaviour
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 _menu.SetActive(true);
-                _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
+                // _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
                 Time.timeScale = 0.000001f;
             }
         }
+
+
+        if (IsMenuOpen() && NeedToSelect(_menu.transform.Find("Buttons").gameObject))
+        {
+            _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
+        }
+
+    }
+    
+    private bool NeedToSelect(GameObject currentObject)
+    {
+        foreach (var selectable in GetComponentsInChildren<Selectable>())
+        {
+            if (EventSystem.current.currentSelectedGameObject == selectable.gameObject) return false;
+        }
+
+        return _defaultPlayerInput.actions["Navigate"].ReadValue<Vector2>().magnitude > 0.1f;
     }
 
     private void OnEnable()
@@ -66,7 +83,7 @@ public class GameMenu : MonoBehaviour
 
     private void OnSettingsClosed()
     {
-        _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
+        // _menu.transform.Find("Buttons").Find("Continue").GetComponent<Button>().Select();
         _buttons.SetActive(true);
         _settings.SetActive(false);
     }
@@ -95,5 +112,10 @@ public class GameMenu : MonoBehaviour
     public void OnMenuReset()
     {
         SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    public bool IsMenuOpen()
+    {
+        return _menu.activeInHierarchy;
     }
 }

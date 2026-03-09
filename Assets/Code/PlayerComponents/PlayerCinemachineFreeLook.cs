@@ -71,6 +71,12 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         if (_scriptActive) return;
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport)) return;
+        if (GameMenu.Singleton.IsMenuOpen())
+        {
+            _freeLook.m_XAxis.m_InputAxisValue = 0;
+            _freeLook.m_YAxis.m_InputAxisValue = 0;
+            return;
+        }
 
         if (_currentCameraBehaviorZone != null)
         {

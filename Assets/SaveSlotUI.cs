@@ -5,13 +5,14 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class SaveSlotUI : MonoBehaviour
 {
     public int saveId = 0;
 
-    public Image _Image;
+    public Image ScreenCaptureImage;
     public TextMeshProUGUI _idTmp;
     public TextMeshProUGUI _newGameTmp;
     public TextMeshProUGUI _timeTmp;
@@ -19,6 +20,7 @@ public class SaveSlotUI : MonoBehaviour
     public TextMeshProUGUI _lemonsTmp;
     public TextMeshProUGUI _trialsTmp;
     public GameObject _completion;
+    public GameObject image;
 
     private void Awake()
     {
@@ -29,7 +31,8 @@ public class SaveSlotUI : MonoBehaviour
         {
             _timeTmp.gameObject.SetActive(false);
             _completion.SetActive(false);
-            _Image.transform.parent.gameObject.SetActive(false);
+            image.SetActive(false);
+            ScreenCaptureImage.transform.parent.gameObject.SetActive(false);
         }
         else
         {
@@ -66,8 +69,8 @@ public class SaveSlotUI : MonoBehaviour
                 new Vector2(0.5f, 0.5f)
             );
 
-            _Image.sprite = sprite;
-            _Image.preserveAspect = true;
+            ScreenCaptureImage.sprite = sprite;
+            ScreenCaptureImage.preserveAspect = true;
         }
         else
         {
