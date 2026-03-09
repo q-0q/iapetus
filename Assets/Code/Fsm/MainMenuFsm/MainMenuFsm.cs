@@ -47,8 +47,9 @@ public partial class MainMenuFsm : Fsm
         _savesObject.SetActive(false);
         _chaptersObject.SetActive(false);
         _backButtonObject.SetActive(false);
-        
-        
+        Time.timeScale = 1f;
+        FMODSceneManager.Singleton.StopAll();
+        FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.WindAmbience);
     }
     
     public override void OnUpdate()
@@ -63,6 +64,11 @@ public partial class MainMenuFsm : Fsm
         if (Machine.IsInState(MainMenuFsmState.Saves))
         {
             if (NeedToSelect(_savesObject)) _savesObject.transform.Find("Buttons").Find("SaveSlot1").GetComponent<Button>().Select();
+        }
+        
+        if (Machine.IsInState(MainMenuFsmState.NewGame))
+        {
+            if (NeedToSelect(_savesObject)) _newGameObject.transform.Find("Buttons").Find("Back").GetComponent<Button>().Select();
         }
         
     }

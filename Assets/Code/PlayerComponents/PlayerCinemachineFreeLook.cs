@@ -40,6 +40,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _baseXSpeed = _freeLook.m_XAxis.m_MaxSpeed;
         _baseYSpeed = _freeLook.m_YAxis.m_MaxSpeed;
         _settingsMenuOpen = false;
+        
+        OnMetaSaveDataUpdated(MetaSaveSystem.LoadCachedMetaSaveData());
     }
 
     private void Start()

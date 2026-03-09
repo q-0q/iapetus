@@ -28,11 +28,16 @@ public partial class MainMenuFsm
     public void OnSaveClicked(int saveId)
     {
         MetaSaveSystem.WriteSaveId(saveId);
-        var saveData = SaveSystem.LoadSaveDataFromDisk(saveId);
+        var saveData = SaveSystem.LoadSaveDataFromId(saveId);
         if (saveData != null)
         {
             SceneLoader.Singleton.LoadScene(saveData.scene);
         }
+        else
+        {
+            SaveSystem.ClearCache();
+        }
+        
         Machine.Fire(MainMenuFsmTrigger.SaveClicked, new IntParam() {i = saveId});
     }
 }

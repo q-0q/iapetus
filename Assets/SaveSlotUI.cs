@@ -23,7 +23,7 @@ public class SaveSlotUI : MonoBehaviour
     {
         _idTmp.text = "0" + (saveId + 1);
 
-        var saveData = SaveSystem.LoadSaveDataFromDisk(saveId);
+        var saveData = SaveSystem.LoadSaveDataFromId(saveId);
         if (saveData == null)
         {
             _timeTmp.gameObject.SetActive(false);

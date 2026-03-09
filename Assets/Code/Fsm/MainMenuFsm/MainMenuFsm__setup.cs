@@ -15,7 +15,6 @@ public partial class MainMenuFsm
             {
                 _homeObject.SetActive(true);
                 _backButtonObject.SetActive(false);
-                _homeObject.transform.Find("Buttons").Find("Play").GetComponent<Button>().Select();
             })
             .OnExit(_ =>
             {
@@ -28,14 +27,14 @@ public partial class MainMenuFsm
             .PermitIf(MainMenuFsmTrigger.SaveClicked, MainMenuFsmState.NewGame, @params =>
             {
                 if (@params is not IntParam intParam) return false;
-                var saveData = SaveSystem.LoadSaveDataFromDisk(intParam.i);
+                var saveData = SaveSystem.LoadSaveDataFromId(intParam.i);
                 return (saveData == null);
             })
             .OnEntry(_ =>
             {
                 _savesObject.SetActive(true);
                 _backButtonObject.SetActive(true);
-                _savesObject.transform.Find("Buttons").Find("SaveSlot1").GetComponent<Button>().Select();
+                // _savesObject.transform.Find("Buttons").Find("SaveSlot1").GetComponent<Button>().Select();
             })
             .OnExit(_ =>
             {

@@ -94,7 +94,7 @@ public class SaveSystem : MonoBehaviour
         return Path.Combine(Application.persistentDataPath, "saves");
     }
 
-    private static string GetPath()
+    private static string GetCurrentSaveIdPath()
     {
         var id = MetaSaveSystem.LoadCachedMetaSaveData().saveId;
         return Path.Combine(GetDirectory(), id + ".json");
@@ -289,8 +289,8 @@ public class SaveSystem : MonoBehaviour
         Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
 
-        File.WriteAllText(GetPath(), json);
-        Debug.Log("Saved file to: " + GetPath());
+        File.WriteAllText(GetCurrentSaveIdPath(), json);
+        Debug.Log("Saved file to: " + GetCurrentSaveIdPath());
     }
     
     public static void WriteCachedSave()
@@ -302,7 +302,7 @@ public class SaveSystem : MonoBehaviour
     {
         if (Singleton._cachedSaveData == null)
         {
-            string path = GetPath();
+            string path = GetCurrentSaveIdPath();
             if (!File.Exists(path))
             {
                 Singleton._cachedSaveData = new SaveData();
@@ -312,22 +312,26 @@ public class SaveSystem : MonoBehaviour
                 string json = File.ReadAllText(path);
                 Singleton._cachedSaveData = JsonUtility.FromJson<SaveData>(json);
             }
-        };
+        }
         
         return Singleton._cachedSaveData;
     }
-    
-    
-    public static SaveData LoadSaveDataFromDisk(int id)
+
+    public static void ClearCache()
     {
-        var path = GetPath();
+        Singleton._cachedSaveData = null;
+    }
+    public static SaveData LoadSaveDataFromId(int id)
+    {
+        var path = Path.Combine(GetDirectory(), id + ".json");
         if (!File.Exists(path))
         {
             return null;
         }
 
         var json = File.ReadAllText(path);
-        return JsonUtility.FromJson<SaveData>(json);
+        Singleton._cachedSaveData = JsonUtility.FromJson<SaveData>(json);
+        return Singleton._cachedSaveData;
     }
 }
 
@@ -432,20 +436,24 @@ public class MetaSaveSystem : MonoBehaviour
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(), json);
+        OnMetaSaveDataUpdated?.Invoke(data);
         Debug.Log("Saved file to: " + GetPath());
     }
 
     public static MetaSaveData LoadCachedMetaSaveData()
     {
-        string path = GetPath();
-        if (!File.Exists(path))
+        if (Singleton._cachedMetaSaveData == null)
         {
-            Singleton._cachedMetaSaveData = new MetaSaveData();
-        }
-        else
-        {
-            string json = File.ReadAllText(path);
-            Singleton._cachedMetaSaveData = JsonUtility.FromJson<MetaSaveData>(json);
+            string path = GetPath();
+            if (!File.Exists(path))
+            {
+                Singleton._cachedMetaSaveData = new MetaSaveData();
+            }
+            else
+            {
+                string json = File.ReadAllText(path);
+                Singleton._cachedMetaSaveData = JsonUtility.FromJson<MetaSaveData>(json);
+            }
         }
 
         return Singleton._cachedMetaSaveData;

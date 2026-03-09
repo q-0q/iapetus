@@ -25,6 +25,11 @@ public partial class MainMenuFsm
         Application.Quit();
     }
 
+    public void OnNewGameConfirmClicked()
+    {
+        SceneLoader.Singleton.LoadScene(SaveSystem.LoadCachedSaveData().scene);
+    }
+
     private bool NeedToSelect(GameObject currentObject)
     {
         foreach (var selectable in GetComponentsInChildren<Selectable>())
