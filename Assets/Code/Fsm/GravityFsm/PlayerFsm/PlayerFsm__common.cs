@@ -57,7 +57,7 @@ public partial class PlayerFsm
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 3.0f;
-    private const float ComboMoveSpeedModifier = 1.15f;
+    private const float ComboMoveSpeedModifier = 1.3f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -115,8 +115,8 @@ public partial class PlayerFsm
     private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 20f;
-    private const float MomentumLossRate = 25f;
-    private const float MomentumTurnLoss = 3f;
+    private const float MomentumLossRate = 30f;
+    private const float MomentumTurnLoss = 2.5f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 6.75f;
     private const float LowMomentumRotationMod = 5.25f;
@@ -185,7 +185,7 @@ public partial class PlayerFsm
     private const float DashForwardSpeed = 18f;
     private const float DashRaycastHeightOffset = 0f;
     private const float SkipWindowDuration = 0.2f;
-    private const float SkipForwardBonusSpeed = 2.25f;
+    private const float SkipForwardBonusSpeed = 3.25f;
     private const float SkipYVelocity = 25f;
     
     
