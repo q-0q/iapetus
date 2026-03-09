@@ -29,7 +29,7 @@ public partial class SnailMerchantFsm
         if (textIndex != 2) return;
         if (!Machine.IsInState(SnailMerchantFsmState.SpeakingQuestReady)) return;
         if (SaveSystem.GetPersistentEventCompleted(PersistentEvent)) return;
-        SaveSystem.WritePersistentEvent(PersistentEvent, 0);
+        SaveSystem.WritePersistentEvent(PersistentEvent);
         BitSystem.Singleton.RemoveBits(500);
     }
 }

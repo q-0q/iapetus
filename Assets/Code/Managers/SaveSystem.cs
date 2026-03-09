@@ -96,7 +96,7 @@ public class SaveSystem : MonoBehaviour
 
     private static string GetPath()
     {
-        var id = MetaSaveSystem.LoadMetaSaveData().saveId;
+        var id = MetaSaveSystem.LoadCachedMetaSaveData().saveId;
         return Path.Combine(GetDirectory(), id + ".json");
     }
     
@@ -331,9 +331,38 @@ public class SaveSystem : MonoBehaviour
     }
 }
 
-public static class MetaSaveSystem
+public class MetaSaveSystem : MonoBehaviour
 {
     public static event Action<MetaSaveSystem.MetaSaveData> OnMetaSaveDataUpdated;
+    private MetaSaveData _cachedMetaSaveData;
+
+    private static MetaSaveSystem _singleton;
+    private static MetaSaveSystem Singleton
+    {
+        get
+        {
+            if (_singleton == null)
+            {
+                var go = new GameObject("MetaSaveSystem");
+                _singleton = go.AddComponent<MetaSaveSystem>();
+            }
+            return _singleton;
+        }
+    }
+    
+    void Awake()
+    {
+        if (_singleton != null && _singleton != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _cachedMetaSaveData = null;
+        _singleton = this;
+        DontDestroyOnLoad(gameObject);
+    }
+    
         
     [System.Serializable]
     public class MetaSaveData
@@ -345,13 +374,13 @@ public static class MetaSaveSystem
         public bool enableFpsDisplay;
         public bool autoCamEnabled;
         
-        public MetaSaveData(int saveId, int cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay, bool autoCamEnabled)
+        public MetaSaveData()
         {
-            this.saveId = saveId;
-            this.cameraSensitivityModifier = cameraSensitivityModifier;
-            this.enableAmbientParticles = enableAmbientParticles;
-            this.enableFpsDisplay = enableFpsDisplay;
-            this.autoCamEnabled = autoCamEnabled;
+            this.saveId = 0;
+            this.cameraSensitivityModifier = 10;
+            this.enableAmbientParticles = true;
+            this.enableFpsDisplay = true;
+            this.autoCamEnabled = false;
         }
     }
     
@@ -365,51 +394,61 @@ public static class MetaSaveSystem
         return Path.Combine(GetDirectory(), "meta.json");
     }
 
-    public static MetaSaveData WriteSaveId(int saveId)
+    public static void WriteSaveId(int saveId)
     {
-        var data = LoadMetaSaveData();
+        var data = LoadCachedMetaSaveData();
         data.saveId = saveId;
-        string json = JsonUtility.ToJson(data, true);
-
-        File.WriteAllText(GetPath(), json);
-        Debug.Log("Saved file to: " + GetPath());
-        OnMetaSaveDataUpdated?.Invoke(data);
-        return data;
+        WriteMetaSaveData(data);
     }
     
-    public static MetaSaveData WriteMetaSaveData(int saveId, int cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay, bool autoCamEnabled)
+    public static void WriteCameraSensitivityModifier(int cameraSensitivityModifier)
+    {
+        MetaSaveData data = LoadCachedMetaSaveData();
+        data.cameraSensitivityModifier = cameraSensitivityModifier;
+        WriteMetaSaveData(data);
+    }
+    
+    public static void WriteEnableFpsDisplay(bool enableFpsDisplay)
+    {
+        MetaSaveData data = LoadCachedMetaSaveData();
+        data.enableFpsDisplay = enableFpsDisplay;
+        WriteMetaSaveData(data);
+    }
+    
+    public static void WriteEnableAutocam(bool enableAutocam)
+    {
+        MetaSaveData data = LoadCachedMetaSaveData();
+        data.autoCamEnabled = enableAutocam;
+        WriteMetaSaveData(data);
+    }
+
+    private static void WriteMetaSaveData(MetaSaveData data)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
             Directory.CreateDirectory(directory);
         
-        MetaSaveData data = new MetaSaveData(saveId, cameraSensitivityModifier, enableAmbientParticles, enableFpsDisplay, autoCamEnabled);
+        Singleton._cachedMetaSaveData = data;
         string json = JsonUtility.ToJson(data, true);
 
         File.WriteAllText(GetPath(), json);
         Debug.Log("Saved file to: " + GetPath());
-        OnMetaSaveDataUpdated?.Invoke(data);
-        return data;
     }
 
-    public static MetaSaveData LoadMetaSaveData()
+    public static MetaSaveData LoadCachedMetaSaveData()
     {
         string path = GetPath();
         if (!File.Exists(path))
         {
-            return WriteDefaultMetaSaveData();
+            Singleton._cachedMetaSaveData = new MetaSaveData();
+        }
+        else
+        {
+            string json = File.ReadAllText(path);
+            Singleton._cachedMetaSaveData = JsonUtility.FromJson<MetaSaveData>(json);
         }
 
-        string json = File.ReadAllText(path);
-        MetaSaveData data = JsonUtility.FromJson<MetaSaveData>(json);
-        OnMetaSaveDataUpdated?.Invoke(data);
-        return data;
+        return Singleton._cachedMetaSaveData;
     }
-
-    public static MetaSaveData WriteDefaultMetaSaveData()
-    {
-        return WriteMetaSaveData(0, 10, true, true, true);
-    }
-    
     
 }

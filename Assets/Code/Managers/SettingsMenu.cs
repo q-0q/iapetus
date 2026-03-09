@@ -30,7 +30,7 @@ public class SettingsMenu : MonoBehaviour
 
     private void OnEnable()
     {
-        var metaSaveData = MetaSaveSystem.LoadMetaSaveData();
+        var metaSaveData = MetaSaveSystem.LoadCachedMetaSaveData();
         if (metaSaveData == null) return;
         _cameraSensitivitySlider.value = metaSaveData.cameraSensitivityModifier;
         // _ambientParticlesToggle.isOn = metaSaveData.enableAmbientParticles;
@@ -46,8 +46,10 @@ public class SettingsMenu : MonoBehaviour
 
     public void OnApplyClicked()
     {
-        var cameraSensitivityModifier = _cameraSensitivitySlider.value;
-        MetaSaveSystem.WriteMetaSaveData(0, (int)cameraSensitivityModifier, true, _fpsToggle.isOn, _autocamEnabledToggle.isOn);
+        // TODO: Batch these to save on IO
+        MetaSaveSystem.WriteCameraSensitivityModifier((int)_cameraSensitivitySlider.value);
+        MetaSaveSystem.WriteEnableFpsDisplay(_fpsToggle.isOn);
+        MetaSaveSystem.WriteEnableAutocam(_autocamEnabledToggle.isOn);
         OnBackClicked();
     }
     

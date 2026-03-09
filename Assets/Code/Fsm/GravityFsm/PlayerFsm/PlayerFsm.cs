@@ -193,7 +193,7 @@ public partial class PlayerFsm : GravityFsm
         _teleportCamera = transform.parent.Find("PlayerTeleportCamera").GetComponent<CinemachineVirtualCamera>();
         _teleportCameraLookAt = transform.parent.Find("PlayerTeleportCameraLookAt");
         
-        ApplyMetaSaveData(MetaSaveSystem.LoadMetaSaveData());
+        ApplyMetaSaveData(MetaSaveSystem.LoadCachedMetaSaveData());
         // transform.Find("KiIndicatorParticles").SetParent(null);
         _renderers = GetComponentsInChildren<Renderer>().ToList();
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
