@@ -200,7 +200,7 @@ public partial class PlayerFsm : GravityFsm
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
-        
+        SaveSystem.UpdateScreenshot(0.3f);
         SnapToGround();
     }
 

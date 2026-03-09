@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -98,6 +99,17 @@ public class SaveSystem : MonoBehaviour
     {
         var id = MetaSaveSystem.LoadCachedMetaSaveData().saveId;
         return Path.Combine(GetDirectory(), id + ".json");
+    }
+    
+    private static string GetCurrentSaveIdImagePath()
+    {
+        var id = MetaSaveSystem.LoadCachedMetaSaveData().saveId;
+        return Path.Combine(GetDirectory(), id + ".png");
+    }
+    
+    public static string GetImagePathFromSaveId(int id)
+    {
+        return Path.Combine(GetDirectory(), id + ".png");
     }
     
     public static void WritePlayerInGamePosition(Vector3 gamePosition, string gamePositionId, float yAngle)
@@ -276,7 +288,7 @@ public class SaveSystem : MonoBehaviour
         return data.bitCount;
     }
     
-    private static void WriteSaveData(SaveData saveData)
+    private static void WriteSaveData(SaveData saveData, bool screenCapture = true)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
@@ -288,14 +300,26 @@ public class SaveSystem : MonoBehaviour
         Singleton._timeSinceLastSave = 0;
         Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
-
+        
+        if (screenCapture) UpdateScreenshot();
         File.WriteAllText(GetCurrentSaveIdPath(), json);
         Debug.Log("Saved file to: " + GetCurrentSaveIdPath());
+    }
+
+    public static void UpdateScreenshot(float delay = 0)
+    {
+        Singleton.StartCoroutine(CaptureScreenshot(delay));
+    }
+    private static IEnumerator CaptureScreenshot(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        ScreenCapture.CaptureScreenshot(GetCurrentSaveIdImagePath(), 1);
+        yield return null;
     }
     
     public static void WriteCachedSave()
     {
-        WriteSaveData(Singleton._cachedSaveData);
+        WriteSaveData(Singleton._cachedSaveData, false);
     }
 
     public static SaveData LoadCachedSaveData()
