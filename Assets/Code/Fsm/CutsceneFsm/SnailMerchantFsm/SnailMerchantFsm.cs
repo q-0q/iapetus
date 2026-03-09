@@ -63,7 +63,7 @@ public partial class SnailMerchantFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
-        var saveData = SaveSystem.LoadSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData(0);
         
     }
 

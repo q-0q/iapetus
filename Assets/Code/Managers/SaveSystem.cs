@@ -8,6 +8,8 @@ using UnityEngine.Serialization;
 
 public class SaveSystem : MonoBehaviour
 {
+
+    private float _timeSinceLastSave;
     
     private static SaveSystem _singleton;
     private static SaveSystem Singleton
@@ -33,9 +35,15 @@ public class SaveSystem : MonoBehaviour
 
         _cachedSaveData = null;
         _singleton = this;
+        _timeSinceLastSave = 0;
         DontDestroyOnLoad(gameObject);
     }
-    
+
+    private void Update()
+    {
+        _timeSinceLastSave += Time.deltaTime;
+    }
+
     [System.Serializable]
     public class TrialCompletionEntry
     {
@@ -59,11 +67,12 @@ public class SaveSystem : MonoBehaviour
         public int bellCount;
         public int bitCount;
         public List<string> bitDeposits;
+        public float playTime;
             
 
         public SaveData()
         {
-            scene = "";
+            scene = "C1-Brazier";
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
             playerInGamePositionId = "";
@@ -73,6 +82,7 @@ public class SaveSystem : MonoBehaviour
             bells = new List<string>();
             bitCount = 0;
             bellCount = 0;
+            playTime = 0;
             bitDeposits = new List<string>();
         }
     }
@@ -91,7 +101,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void WritePlayerInGamePosition(Vector3 gamePosition, string gamePositionId, float yAngle, int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         data.playerInGamePosition = new []{ gamePosition.x, gamePosition.y, gamePosition.z};
         data.playerInGamePositionId = gamePositionId;
         data.playerInGameYAngle = yAngle;
@@ -100,7 +110,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void ClearPlayerInGamePosition(int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         data.playerInGamePosition = null;
         data.playerInGamePositionId = "";
         data.playerInGameYAngle = 0;
@@ -114,7 +124,7 @@ public class SaveSystem : MonoBehaviour
             Debug.LogError("Tried to write empty persistent event");
             return;
         }
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         if (data.persistentEvents.Contains(persistentEvent)) return;
         data.persistentEvents.Add(persistentEvent);
         WriteSaveData(data, id);
@@ -127,7 +137,7 @@ public class SaveSystem : MonoBehaviour
             Debug.LogError("Tried to write empty bell");
             return;
         }
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         if (data.bells.Contains(metaName)) return;
         data.bellCount++;
         data.bells.Add(metaName);
@@ -136,7 +146,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void ReduceBellCount(int amount, int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         data.bellCount -= amount;
         WriteSaveData(data, id);
     }
@@ -149,7 +159,7 @@ public class SaveSystem : MonoBehaviour
             return;
         };
         
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
 
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
 
@@ -175,7 +185,7 @@ public class SaveSystem : MonoBehaviour
     public static bool GetTrialCompletion(string metaName, out float playerRecordTime, int id)
     {
         playerRecordTime = -1f;
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
         if (entry != null) playerRecordTime = entry.time;
         return entry != null;
@@ -183,7 +193,7 @@ public class SaveSystem : MonoBehaviour
     
     public static bool GetTrialGolded(string metaName, int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
         if (entry == null) return false;
         return entry.time < entry.goldTime;
@@ -197,7 +207,7 @@ public class SaveSystem : MonoBehaviour
             return;
         };
         
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         if (entry != null) return;
         data.lemonCollections.Add(metaName);
@@ -206,14 +216,14 @@ public class SaveSystem : MonoBehaviour
     
     public static void AddBit(int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         data.bitCount++;
         Singleton._cachedSaveData = data;
     }
     
     public static void RemoveBit(int amount, int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         data.bitCount -= amount;
         Singleton._cachedSaveData = data;
     }
@@ -226,7 +236,7 @@ public class SaveSystem : MonoBehaviour
             return;
         };
         
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
         if (entry != null) return;
         data.bitDeposits.Add(metaName);
@@ -235,33 +245,33 @@ public class SaveSystem : MonoBehaviour
     
     public static bool GetBitDeposit(string metaName, int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
         return entry != null;
     }
     
     public static bool GetLemonCollection(string metaName, int id)
     {
-        SaveData data = LoadSaveData(id);
+        SaveData data = LoadCachedSaveData(id);
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         return entry != null;
     }
 
     public static bool GetPersistentEventCompleted(string persistentEvent)
     {
-        var data = LoadSaveData(0);
+        var data = LoadCachedSaveData(0);
         return data.persistentEvents.Contains(persistentEvent);
     }
     
     public static bool GetBell(string metaName)
     {
-        var data = LoadSaveData(0);
+        var data = LoadCachedSaveData(0);
         return data.bells.Contains(metaName);
     }
 
     public static int GetBitCount()
     {
-        var data = LoadSaveData(0);
+        var data = LoadCachedSaveData(0);
         return data.bitCount;
     }
     
@@ -273,6 +283,8 @@ public class SaveSystem : MonoBehaviour
         
         SaveData data = saveData;
         data.scene = SceneManager.GetActiveScene().name;
+        data.playTime += Singleton._timeSinceLastSave;
+        Singleton._timeSinceLastSave = 0;
         Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
 
@@ -285,7 +297,7 @@ public class SaveSystem : MonoBehaviour
         WriteSaveData(Singleton._cachedSaveData, id);
     }
 
-    public static SaveData LoadSaveData(int id)
+    public static SaveData LoadCachedSaveData(int id)
     {
         if (Singleton._cachedSaveData == null)
         {
@@ -302,6 +314,19 @@ public class SaveSystem : MonoBehaviour
         };
         
         return Singleton._cachedSaveData;
+    }
+    
+    
+    public static SaveData LoadSaveDataFromDisk(int id)
+    {
+        var path = GetPath(id);
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        var json = File.ReadAllText(path);
+        return JsonUtility.FromJson<SaveData>(json);
     }
 }
 
@@ -339,6 +364,18 @@ public static class MetaSaveSystem
         return Path.Combine(GetDirectory(), "meta.json");
     }
 
+    public static MetaSaveData WriteSaveId(int saveId)
+    {
+        var data = LoadMetaSaveData();
+        data.saveId = saveId;
+        string json = JsonUtility.ToJson(data, true);
+
+        File.WriteAllText(GetPath(), json);
+        Debug.Log("Saved file to: " + GetPath());
+        OnMetaSaveDataUpdated?.Invoke(data);
+        return data;
+    }
+    
     public static MetaSaveData WriteMetaSaveData(int saveId, int cameraSensitivityModifier, bool enableAmbientParticles, bool enableFpsDisplay, bool autoCamEnabled)
     {
         string directory = GetDirectory();

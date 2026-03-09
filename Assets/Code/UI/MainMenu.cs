@@ -31,7 +31,7 @@ public class MainMenu : MonoBehaviour
         // _settings.SetActive(false);
         // _credits.SetActive(false);
 
-        var saveData = SaveSystem.LoadSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData(0);
         _scene = saveData.scene;
         _levelSelect.transform.Find("Buttons").Find("Demo").GetComponentInChildren<TextMeshProUGUI>().text =
             _scene == "" ? "New Game" : "Continue";

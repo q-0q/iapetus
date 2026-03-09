@@ -86,7 +86,7 @@ public class BellDoorController : MonoBehaviour
 
     private void UpdatePlayerBellStatus()
     {
-        var playerBellCount = SaveSystem.LoadSaveData(0).bellCount;
+        var playerBellCount = SaveSystem.LoadCachedSaveData(0).bellCount;
         for (int i = 0; i < _lightObjects.Count; i++)
         {
             var weight = i < playerBellCount ? 1f : 0f;

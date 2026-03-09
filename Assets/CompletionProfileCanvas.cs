@@ -21,7 +21,7 @@ public class CompletionProfileCanvas : MonoBehaviour
     public void UpdateCompletionProfile(string profileName)
     {
         var profile = CompletionSystem.CompletionProfiles[profileName];
-        var saveData = SaveSystem.LoadSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData(0);
 
         var maxBells = 0;
         var playerBells = 0;

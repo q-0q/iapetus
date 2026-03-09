@@ -92,7 +92,7 @@ public partial class SavapheFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
-        var saveData = SaveSystem.LoadSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData(0);
 
         Machine.Jump(SaveSystem.GetPersistentEventCompleted(CutscenePersistentEvent)
             ? SavapheFsmState.Crossed

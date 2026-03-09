@@ -134,7 +134,7 @@ public partial class PlayerFsm : GravityFsm
     {
         Singleton = this;
         
-        var saveData = SaveSystem.LoadSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData(0);
         if (saveData != null )
         {
 
