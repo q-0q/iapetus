@@ -7,7 +7,7 @@ public partial class OnetimeSwitchFsm
             .OnEntry(_ =>
             {
                 _interactable.SetEnabled(false);
-                SaveSystem.WritePersistentEvent(persistentEvent, 0);
+                SaveSystem.WritePersistentEvent(persistentEvent);
                 OnOnetimeSwitchFsmTurnedOn?.Invoke(this);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(_eventPath), gameObject);
             });

@@ -21,7 +21,7 @@ public class CompletionProfileCanvas : MonoBehaviour
     public void UpdateCompletionProfile(string profileName)
     {
         var profile = CompletionSystem.CompletionProfiles[profileName];
-        var saveData = SaveSystem.LoadCachedSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData();
 
         var maxBells = 0;
         var playerBells = 0;
@@ -41,13 +41,13 @@ public class CompletionProfileCanvas : MonoBehaviour
         foreach (var lemon in profile.lemons)
         {
             maxLemons++;
-            if (SaveSystem.GetLemonCollection(lemon, 0)) playerLemons++;
+            if (SaveSystem.GetLemonCollection(lemon)) playerLemons++;
         }
         
         foreach (var trial in profile.trials)
         {
             maxTrials++;
-            if (SaveSystem.GetTrialGolded(trial, 0)) playerTrials++;
+            if (SaveSystem.GetTrialGolded(trial)) playerTrials++;
         }
 
         bellTmp.text = playerBells.ToString() + " / " + maxBells.ToString();

@@ -27,7 +27,7 @@ public class SceneLoadInteractable : MonoBehaviour
 
     private void OnInteracted()
     {
-        SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, 0, 0);
+        SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, 0);
         SceneLoader.Singleton.LoadScene(SceneName);
     }
 }
