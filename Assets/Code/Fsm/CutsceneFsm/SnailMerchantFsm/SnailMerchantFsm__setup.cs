@@ -36,7 +36,7 @@ public partial class SnailMerchantFsm
             .Permit(FsmTrigger.Timeout, SnailMerchantFsmState.Idle)
             .OnExit(_ =>
             {
-                SaveSystem.WritePlayerInGamePosition(Vector3.zero, "Entrance", 0, 0);
+                SaveSystem.WritePlayerInGamePosition(Vector3.zero, "Entrance", 0);
                 SceneLoader.Singleton.LoadScene("C1-Snail");
             })
             .OnEntry(_ =>

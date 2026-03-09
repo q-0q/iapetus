@@ -86,7 +86,7 @@ public class BellDoorController : MonoBehaviour
 
     private void UpdatePlayerBellStatus()
     {
-        var playerBellCount = SaveSystem.LoadCachedSaveData(0).bellCount;
+        var playerBellCount = SaveSystem.LoadCachedSaveData().bellCount;
         for (int i = 0; i < _lightObjects.Count; i++)
         {
             var weight = i < playerBellCount ? 1f : 0f;
@@ -136,8 +136,8 @@ public class BellDoorController : MonoBehaviour
         
         _interactable.SetEnabled(false);
         
-        if (!DontWritePersistentEvent) SaveSystem.WritePersistentEvent(persistentEvent, 0);
-        SaveSystem.ReduceBellCount(bellRequirement, 0);
+        if (!DontWritePersistentEvent) SaveSystem.WritePersistentEvent(persistentEvent);
+        SaveSystem.ReduceBellCount(bellRequirement);
 
         StartCoroutine(Coroutine());
         IEnumerator Coroutine()

@@ -56,7 +56,7 @@ public partial class SavapheFsm
                 
                 _marker.position = _endPosition.position;
                 _marker.rotation = _endPosition.rotation;
-                SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
+                SaveSystem.WritePersistentEvent(CutscenePersistentEvent);
         });
     }
 

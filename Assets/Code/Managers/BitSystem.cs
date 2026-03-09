@@ -81,7 +81,7 @@ public class BitSystem : MonoBehaviour
             for (int i = 0; i < amount; i+=10)
             {
                 FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(DecrementEventPath), PlayerFsm.Singleton.gameObject);
-                SaveSystem.RemoveBit(10, 0);
+                SaveSystem.RemoveBit(10);
                 OnBitsDecremented?.Invoke();
                 yield return new WaitForSeconds(Random.Range(0.02f, 0.04f));
             }

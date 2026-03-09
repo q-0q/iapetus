@@ -37,7 +37,7 @@ public class BitCanvas : MonoBehaviour
 
     private void UpdateBitCount()
     {
-        _tmp.text = SaveSystem.LoadCachedSaveData(0).bitCount.ToString();
+        _tmp.text = SaveSystem.LoadCachedSaveData().bitCount.ToString();
     }
 
     private void OnEnable()

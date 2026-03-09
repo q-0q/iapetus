@@ -94,64 +94,65 @@ public class SaveSystem : MonoBehaviour
         return Path.Combine(Application.persistentDataPath, "saves");
     }
 
-    private static string GetPath(int id)
+    private static string GetPath()
     {
+        var id = MetaSaveSystem.LoadMetaSaveData().saveId;
         return Path.Combine(GetDirectory(), id + ".json");
     }
     
-    public static void WritePlayerInGamePosition(Vector3 gamePosition, string gamePositionId, float yAngle, int id)
+    public static void WritePlayerInGamePosition(Vector3 gamePosition, string gamePositionId, float yAngle)
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         data.playerInGamePosition = new []{ gamePosition.x, gamePosition.y, gamePosition.z};
         data.playerInGamePositionId = gamePositionId;
         data.playerInGameYAngle = yAngle;
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
     
-    public static void ClearPlayerInGamePosition(int id)
+    public static void ClearPlayerInGamePosition()
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         data.playerInGamePosition = null;
         data.playerInGamePositionId = "";
         data.playerInGameYAngle = 0;
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
     
-    public static void WritePersistentEvent(string persistentEvent, int id)
+    public static void WritePersistentEvent(string persistentEvent)
     {
         if (persistentEvent == "")
         {
             Debug.LogError("Tried to write empty persistent event");
             return;
         }
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         if (data.persistentEvents.Contains(persistentEvent)) return;
         data.persistentEvents.Add(persistentEvent);
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
     
-    public static void WriteBell(string metaName, int id)
+    public static void WriteBell(string metaName)
     {
         if (metaName == "")         
         {
             Debug.LogError("Tried to write empty bell");
             return;
         }
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         if (data.bells.Contains(metaName)) return;
         data.bellCount++;
         data.bells.Add(metaName);
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
     
-    public static void ReduceBellCount(int amount, int id)
+    public static void ReduceBellCount(int amount)
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         data.bellCount -= amount;
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
 
-    public static void WriteTrialCompletion(string metaName, float time, float goldTime, int id)
+    public static void WriteTrialCompletion(string metaName, float time, float goldTime)
     {
         if (metaName == "")
         {
@@ -159,7 +160,7 @@ public class SaveSystem : MonoBehaviour
             return;
         };
         
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
 
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
 
@@ -178,28 +179,28 @@ public class SaveSystem : MonoBehaviour
             });
         }
 
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
 
     
-    public static bool GetTrialCompletion(string metaName, out float playerRecordTime, int id)
+    public static bool GetTrialCompletion(string metaName, out float playerRecordTime)
     {
         playerRecordTime = -1f;
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
         if (entry != null) playerRecordTime = entry.time;
         return entry != null;
     }
     
-    public static bool GetTrialGolded(string metaName, int id)
+    public static bool GetTrialGolded(string metaName)
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         var entry = data.trialCompletions.FirstOrDefault(e => e.metaName == metaName);
         if (entry == null) return false;
         return entry.time < entry.goldTime;
     }
     
-    public static void WriteLemonCollection(string metaName, int id)
+    public static void WriteLemonCollection(string metaName)
     {
         if (metaName == "")
         {
@@ -207,28 +208,28 @@ public class SaveSystem : MonoBehaviour
             return;
         };
         
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         if (entry != null) return;
         data.lemonCollections.Add(metaName);
-        WriteSaveData(data, id);
+        WriteSaveData(data);
     }
     
-    public static void AddBit(int id)
+    public static void AddBit()
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         data.bitCount++;
         Singleton._cachedSaveData = data;
     }
     
-    public static void RemoveBit(int amount, int id)
+    public static void RemoveBit(int amount)
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         data.bitCount -= amount;
         Singleton._cachedSaveData = data;
     }
     
-    public static void CollectBitDeposit(string metaName, int id)
+    public static void CollectBitDeposit(string metaName)
     {
         if (metaName == "") 
         {
@@ -236,7 +237,7 @@ public class SaveSystem : MonoBehaviour
             return;
         };
         
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
         if (entry != null) return;
         data.bitDeposits.Add(metaName);
@@ -245,37 +246,37 @@ public class SaveSystem : MonoBehaviour
     
     public static bool GetBitDeposit(string metaName, int id)
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         var entry = data.bitDeposits.FirstOrDefault(e => e == metaName);
         return entry != null;
     }
     
-    public static bool GetLemonCollection(string metaName, int id)
+    public static bool GetLemonCollection(string metaName)
     {
-        SaveData data = LoadCachedSaveData(id);
+        SaveData data = LoadCachedSaveData();
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         return entry != null;
     }
 
     public static bool GetPersistentEventCompleted(string persistentEvent)
     {
-        var data = LoadCachedSaveData(0);
+        var data = LoadCachedSaveData();
         return data.persistentEvents.Contains(persistentEvent);
     }
     
     public static bool GetBell(string metaName)
     {
-        var data = LoadCachedSaveData(0);
+        var data = LoadCachedSaveData();
         return data.bells.Contains(metaName);
     }
 
     public static int GetBitCount()
     {
-        var data = LoadCachedSaveData(0);
+        var data = LoadCachedSaveData();
         return data.bitCount;
     }
     
-    private static void WriteSaveData(SaveData saveData, int id)
+    private static void WriteSaveData(SaveData saveData)
     {
         string directory = GetDirectory();
         if (!Directory.Exists(directory))
@@ -288,20 +289,20 @@ public class SaveSystem : MonoBehaviour
         Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
 
-        File.WriteAllText(GetPath(id), json);
-        Debug.Log("Saved file to: " + GetPath(id));
+        File.WriteAllText(GetPath(), json);
+        Debug.Log("Saved file to: " + GetPath());
     }
     
-    public static void WriteCachedSave(int id)
+    public static void WriteCachedSave()
     {
-        WriteSaveData(Singleton._cachedSaveData, id);
+        WriteSaveData(Singleton._cachedSaveData);
     }
 
-    public static SaveData LoadCachedSaveData(int id)
+    public static SaveData LoadCachedSaveData()
     {
         if (Singleton._cachedSaveData == null)
         {
-            string path = GetPath(id);
+            string path = GetPath();
             if (!File.Exists(path))
             {
                 Singleton._cachedSaveData = new SaveData();
@@ -319,7 +320,7 @@ public class SaveSystem : MonoBehaviour
     
     public static SaveData LoadSaveDataFromDisk(int id)
     {
-        var path = GetPath(id);
+        var path = GetPath();
         if (!File.Exists(path))
         {
             return null;

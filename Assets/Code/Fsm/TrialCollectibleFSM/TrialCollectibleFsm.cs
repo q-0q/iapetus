@@ -63,7 +63,7 @@ public partial class TrialCollectibleFsm : Fsm
         NormalizeKeyframeHeights();
         _marker.position = _keyframes[0].transform.position;
         
-        SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime, 0);
+        SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime);
         _seeking = false;
     }
 

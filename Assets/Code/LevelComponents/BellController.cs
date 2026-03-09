@@ -80,7 +80,7 @@ public class BellController : MonoBehaviour
         _interactable.SetEnabled(false);
         FMODUnity.RuntimeManager.PlayOneShotAttached(_ringEventReference, gameObject);
 
-        SaveSystem.WriteBell(metaName, 0);
+        SaveSystem.WriteBell(metaName);
         
         Util.ReplaceAnimatorTrigger(_animator, "Ring");
 

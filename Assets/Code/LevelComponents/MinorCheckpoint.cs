@@ -114,8 +114,7 @@ public class MinorCheckpoint : MonoBehaviour
         _seekParticles.Stop();
         SaveSystem.WritePlayerInGamePosition(_playerSpawnTransform.position,
             "",
-            _playerSpawnTransform.rotation.eulerAngles.y, 
-            0);
+            _playerSpawnTransform.rotation.eulerAngles.y);
 
     }
     

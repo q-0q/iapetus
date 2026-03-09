@@ -131,8 +131,8 @@ public partial class TestCutsceneFsm
                 gondola.DOShakePosition(1.5f, 1f);
                 gondola.transform.position = _endPosition.position;
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
-                SaveSystem.WritePersistentEvent(CutscenePersistentEvent, 0);
-                SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, "", 0f, 0);
+                SaveSystem.WritePersistentEvent(CutscenePersistentEvent);
+                SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, "", 0f);
             });
         
         // Machine.Configure(TestCutsceneFsmState.FinalCamera)

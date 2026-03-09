@@ -33,7 +33,7 @@ public class Lemon : MonoBehaviour
             transform.position = hit.point;
         }
 
-        if (SaveSystem.GetLemonCollection(MetaName, 0))
+        if (SaveSystem.GetLemonCollection(MetaName))
         {
             _renderer.enabled = false;
             _readyParticles.Stop();
@@ -69,7 +69,7 @@ public class Lemon : MonoBehaviour
         var main = _readyParticles.main;
         main.simulationSpeed = 2.75f;
         GetComponent<Collider>().enabled = false;
-        SaveSystem.WriteLemonCollection(MetaName, 0);
+        SaveSystem.WriteLemonCollection(MetaName);
         FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference("event:/LemonCollect"), gameObject);
         _passiveInstance.stop(STOP_MODE.ALLOWFADEOUT);
         StartCoroutine(DoCollectionTintWeight());

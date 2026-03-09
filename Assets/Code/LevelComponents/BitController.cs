@@ -50,7 +50,7 @@ public class BitController : MonoBehaviour
         if (timer >= _lifetime)
         {
             Util.InvokeSphereEffect(transform.position - Vector3.up, Vector3.one * Random.Range(0.75f, 1.25f), 1.25f, 1f, -2f);
-            SaveSystem.AddBit(0);
+            SaveSystem.AddBit();
             OnBitCountUpdated?.Invoke();
             FMODUnity.RuntimeManager.PlayOneShotAttached(_collectionEvent, PlayerFsm.Singleton.gameObject);
             BitSystem.Singleton.ReturnObject(gameObject);

@@ -52,8 +52,6 @@ public partial class SavaphePitonUpperFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
-        var saveData = SaveSystem.LoadCachedSaveData(0);
-
         Machine.Jump(SaveSystem.GetBell(bell.metaName)
             ? SavaphePitonUpperFsmState.Rung
             : SavaphePitonUpperFsmState.NotRung);

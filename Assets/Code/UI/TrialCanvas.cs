@@ -47,7 +47,7 @@ public class TrialCanvas : MonoBehaviour
 
     private IEnumerator Open(TrialCollectibleFsm trial, float playerTime)
     {
-        var playerAlreadyCompletedTrial = SaveSystem.GetTrialCompletion(trial.metaName, out var previousRecordTime, 0);
+        var playerAlreadyCompletedTrial = SaveSystem.GetTrialCompletion(trial.metaName, out var previousRecordTime);
         _previousRecordTmp.text = previousRecordTime.ToString("F2");
         _goldTimeTmp.text = trial.goldTime.ToString("F2");
         _goldTimeTmp.color = _goldColor * _brightnessMod;
@@ -109,7 +109,7 @@ public class TrialCanvas : MonoBehaviour
             yield return null;
         }
         _canvasGroup.alpha = 1;
-        SaveSystem.WriteTrialCompletion(trial.metaName, playerTime, trial.goldTime, 0);
+        SaveSystem.WriteTrialCompletion(trial.metaName, playerTime, trial.goldTime);
 
         duration = 4f;
         t = 0f;

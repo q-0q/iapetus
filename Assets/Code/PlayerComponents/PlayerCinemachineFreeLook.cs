@@ -60,7 +60,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
             _freeLook.m_YAxis.Value = y;
         }
         
-        var saveData = SaveSystem.LoadCachedSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData();
         var positionIdTransform = Util.FindGamePositionById(saveData.playerInGamePositionId, out var cameraRotationOffset);
         AddXAxisOffset(cameraRotationOffset);
     }

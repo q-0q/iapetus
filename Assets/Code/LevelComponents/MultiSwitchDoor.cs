@@ -141,7 +141,7 @@ public class MultiSwitchDoor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        SaveSystem.WritePersistentEvent(persistentEvent, 0);
+        SaveSystem.WritePersistentEvent(persistentEvent);
         _openTrigger.enabled = false;
 
         StartCoroutine(CameraCoroutine());

@@ -42,7 +42,7 @@ public class BitDeposit : MonoBehaviour
             BitSystem.Singleton.SpawnFromPool(_renderer.transform.position + Vector3.up * 2f);
         }
         
-        SaveSystem.CollectBitDeposit(metaName, 0);
+        SaveSystem.CollectBitDeposit(metaName);
         FMODUnity.RuntimeManager.PlayOneShotAttached(_breakEvent, gameObject);
         Util.InvokeSphereEffect(transform.position + (Vector3.up * 2f), Vector3.one * 15f, 1.35f, 1f, -5f);
         _renderer.transform.DOShakePosition(0.35f, 0.5f, 25);

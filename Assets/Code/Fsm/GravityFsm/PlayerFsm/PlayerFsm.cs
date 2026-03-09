@@ -134,7 +134,7 @@ public partial class PlayerFsm : GravityFsm
     {
         Singleton = this;
         
-        var saveData = SaveSystem.LoadCachedSaveData(0);
+        var saveData = SaveSystem.LoadCachedSaveData();
         if (saveData != null )
         {
 
@@ -455,7 +455,7 @@ public partial class PlayerFsm : GravityFsm
         
         if (Input.GetKeyDown(KeyCode.X))
         {
-            SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y, 0);
+            SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
         }
         
         HandleRaycastKill();

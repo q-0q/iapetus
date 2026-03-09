@@ -23,7 +23,7 @@ public class BellCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SaveSystem.LoadCachedSaveData(0).bellCount == 0)
+        if (SaveSystem.LoadCachedSaveData().bellCount == 0)
         {
             _canvasGroup.alpha = 0;
             return;
@@ -40,7 +40,7 @@ public class BellCanvas : MonoBehaviour
 
     private void UpdateBellCount()
     {
-        _tmp.text = SaveSystem.LoadCachedSaveData(0).bellCount.ToString();
+        _tmp.text = SaveSystem.LoadCachedSaveData().bellCount.ToString();
     }
 
     public void ResetShowTimer()
