@@ -886,11 +886,13 @@ public partial class PlayerFsm
 
     private void FireSwimTrigger()
     {
+        if (WaterRaycast(out var hit)) Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, new RaycastHitParam() { Hit = hit });
+    }
+
+    private bool WaterRaycast(out RaycastHit hit)
+    {
         var origin = transform.position + Vector3.up * 5f;
         var maxDistance = 10f;
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, maxDistance, LayerMask.GetMask("Water")))
-        {
-           Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, new RaycastHitParam() { Hit = hit });
-        }
+        return (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")));
     }
 }

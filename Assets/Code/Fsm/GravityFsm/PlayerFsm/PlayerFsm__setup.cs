@@ -53,6 +53,8 @@ public partial class PlayerFsm
         PitonConfigure();
         DeathConfigure();
         StepConfigure();
+        
+        SwimConfigure();
     }
 
     public override void SetupStateMaps()
@@ -143,6 +145,7 @@ public partial class PlayerFsm
         StateMapConfig.IsAbstract.Add(PlayerFsmState.AirControl, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.WalkToPosition, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Slide, true);
+        StateMapConfig.IsAbstract.Add(PlayerFsmState.Swim, true);
 
         // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
@@ -151,6 +154,7 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SlideDown, 0.35f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.PitonFlip, 0.75f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Swim, 0.75f);
         
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);

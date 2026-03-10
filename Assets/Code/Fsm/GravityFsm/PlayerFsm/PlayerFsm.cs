@@ -453,6 +453,16 @@ public partial class PlayerFsm : GravityFsm
         {
             DyingOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.Swim))
+        {
+            SwimOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.SwimSurfaceRise))
+        {
+            SwimSurfaceRiseOnUpdate();
+        }
 
         
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())

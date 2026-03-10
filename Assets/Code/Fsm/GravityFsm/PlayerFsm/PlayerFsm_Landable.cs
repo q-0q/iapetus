@@ -7,7 +7,14 @@ public partial class PlayerFsm
     private void LandableConfigure()
     {
         Machine.Configure(PlayerFsmState.Landable)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params => !IsSlideTrigger(@params))
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params =>
+            {
+                if (WaterRaycast(out var hit))
+                {
+                    if (IsSwimTrigger(new RaycastHitParam() { Hit = hit })) return false;
+                }
+                return !IsSlideTrigger(@params);
+            })
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat,
                 _ => Machine.IsInState(PlayerFsmState.FallAfterDash) && _inputBuffer.IsBuffered("Jump"),
                 3) // ANTI PATTERN
