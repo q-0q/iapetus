@@ -39,6 +39,7 @@ public class GameMenu : MonoBehaviour
     {
         if (_playerInput.actions["Menu"].WasPressedThisFrame())
         {
+            print("menu pressed");
             if (_menu.activeInHierarchy)
             {
                 OnMenuClosed();

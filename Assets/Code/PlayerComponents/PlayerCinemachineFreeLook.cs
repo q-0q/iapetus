@@ -85,8 +85,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         HandleCameraBehaviorZone();
         
-        var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>();
-        lookVector2 = lookVector2.normalized * Mathf.Min(lookVector2.magnitude, 1000f);
+        var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * Time.deltaTime;
         _timeSincePlayerLookInput += Time.deltaTime;
         _timeSinceRecenter += Time.deltaTime;
         if (_currentCameraBehaviorZone == null) _timeSinceRecenter = 0f;
