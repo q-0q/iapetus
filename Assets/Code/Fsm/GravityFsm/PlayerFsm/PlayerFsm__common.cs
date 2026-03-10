@@ -883,4 +883,14 @@ public partial class PlayerFsm
         if (TimeInCurrentState() < 1f) return;
         InvokePlayerDeath();
     }
+
+    private void FireSwimTrigger()
+    {
+        var origin = transform.position + Vector3.up * 5f;
+        var maxDistance = 10f;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, maxDistance, LayerMask.GetMask("Water")))
+        {
+           Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, new RaycastHitParam() { Hit = hit });
+        }
+    }
 }

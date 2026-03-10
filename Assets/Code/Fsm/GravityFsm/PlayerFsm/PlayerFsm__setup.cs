@@ -131,6 +131,9 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Idle, "Idle");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepStart, "StepStart");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepEnd, "StepEnd");
+        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurfaceRise, "SwimSurfaceRise");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurface, "SwimSurface");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

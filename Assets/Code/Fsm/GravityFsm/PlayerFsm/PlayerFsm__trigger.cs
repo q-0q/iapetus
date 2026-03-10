@@ -83,7 +83,9 @@ public partial class PlayerFsm
             var param = new PitonParam() { Piton = neighbor.transform.parent};
             Machine.Fire(PlayerFsmTrigger.EnterPitonTrigger, param);
         }
-        
+
+        FireSwimTrigger();
+
     }
 
     private void FireFaceTriggers()

@@ -22,7 +22,8 @@ public partial class PlayerFsm
             {
                 if (@params is not RaycastHitParam param) return;
                 // print("startframegrounded: " + param.Hit.collider.name );
-            });
+            })
+            .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurfaceRise, IsSwimTrigger);
 
     }
     

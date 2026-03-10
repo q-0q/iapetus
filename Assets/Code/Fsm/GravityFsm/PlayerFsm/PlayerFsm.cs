@@ -91,6 +91,10 @@ public partial class PlayerFsm : GravityFsm
         public static int Dead;
         public static int FallAfterSlide;
         public static int FallAfterSlideLateral;
+
+        public static int Swim;
+        public static int SwimSurfaceRise;
+        public static int SwimSurface;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -128,6 +132,8 @@ public partial class PlayerFsm : GravityFsm
         
         public static int SoftTurnLeft;
         public static int SoftTurnRight;
+
+        public static int SwimTriggerRaycastHit;
     }
     
     protected override void OnAwake()
