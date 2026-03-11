@@ -116,23 +116,41 @@ public class RippleEffect : MonoBehaviour
         }
     }
 
-    public void AddRipple(float strength, float radius)
+// Helper to convert World Position to UV coordinate relative to Player
+    private Vector2 WorldToSimulationUV(Vector3 worldPos)
     {
-        Vector2 uv = new Vector2(0.5f, 0.5f);
+        // Calculate the offset from the player (center of simulation)
+        Vector3 diff = worldPos - playerTransform.position;
+
+        // Map world distance (-worldSize/2 to worldSize/2) to UV (0 to 1)
+        float u = (diff.x / worldSize) + 0.5f;
+        float v = (diff.z / worldSize) + 0.5f;
+
+        return new Vector2(u, v);
+    }
+
+    public void AddRipple(Vector3 worldPos, float strength, float radius)
+    {
+        Vector2 uv = WorldToSimulationUV(worldPos);
+    
+        // Safety check: Don't stamp if it's outside our simulation bounds
+        if (uv.x < 0 || uv.x > 1 || uv.y < 0 || uv.y > 1) return;
+
         rippleStampMaterial.SetVector(CenterID, new Vector4(uv.x, uv.y, strength, radius));
 
-        // Stamp Ripple (Uses Ripple's temp)
         Graphics.Blit(currRT, tempRT, rippleStampMaterial);
         RenderTexture t = currRT; currRT = tempRT; tempRT = t;
     }
-    
-    public void AddWake(float strength, float radius)
+
+    public void AddWake(Vector3 worldPos, float strength, float radius)
     {
-        Vector2 uv = new Vector2(0.5f, 0.5f);
-        rippleStampMaterial.SetVector(CenterID, new Vector4(uv.x, uv.y, strength, radius));
-        
-        // Stamp Wake (Uses Wake's temp)
+        Vector2 uv = WorldToSimulationUV(worldPos);
+
+        if (uv.x < 0 || uv.x > 1 || uv.y < 0 || uv.y > 1) return;
+    
+        // Apply the specific wake multipliers you had previously
         rippleStampMaterial.SetVector(CenterID, new Vector4(uv.x, uv.y, strength * 6f, radius * 5f));
+    
         Graphics.Blit(wakeRT, wakeTempRT, rippleStampMaterial);
         RenderTexture w = wakeRT; wakeRT = wakeTempRT; wakeTempRT = w;
     }

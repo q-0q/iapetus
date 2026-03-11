@@ -43,7 +43,7 @@ public partial class PlayerFsm
             transform.position += ComputeCollisionMove((hit.point + Vector3.up * -0.80f) - transform.position);
         }
 
-        OnPlayerWakeGenerated?.Invoke(Mathf.Lerp(0.075f, 0.075f, ComputeMomentumWeight()), Mathf.Lerp(0.001f, 0.00075f, ComputeMomentumWeight()));
+        OnPlayerWakeGenerated?.Invoke(GetRipplePosition(), Mathf.Lerp(0.075f, 0.075f, ComputeMomentumWeight()), Mathf.Lerp(0.0011f, 0.0009f, ComputeMomentumWeight()));
         if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         HandleCollisionMove(0.0925f);
     }
@@ -51,9 +51,14 @@ public partial class PlayerFsm
     private IEnumerator SwimSurfaceRippleCoroutine()
     {
         _swimSurfaceRippleQueued = true;
-        OnPlayerRippleGenerated?.Invoke(0.5f, 0.001f);
+        OnPlayerRippleGenerated?.Invoke(GetRipplePosition(), 0.5f, 0.001f);
         yield return new WaitForSeconds(Mathf.Lerp(SwimSurfaceRippleTimer * 7f, SwimSurfaceRippleTimer, ComputeMomentumWeight()));
         _swimSurfaceRippleQueued = false;
+    }
+
+    private Vector3 GetRipplePosition()
+    {
+        return transform.position + transform.forward * Mathf.Lerp(0f, 1f, ComputeMomentumWeight());
     }
 
     private void SwimConfigure()
@@ -76,8 +81,13 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Swim)
             .OnEntry(_ =>
             {
-                OnPlayerRippleGenerated?.Invoke(1.0f, 0.005f);
-                OnPlayerWakeGenerated?.Invoke(2.0f, 0.005f);
+                if (WaterRaycast(out var hit))
+                {
+                    _splashParticles.transform.position = hit.point;
+                    _splashParticles.Play();
+                }
+                OnPlayerRippleGenerated?.Invoke(transform.position, 1.0f, 0.005f);
+                OnPlayerWakeGenerated?.Invoke(transform.position, 1.0f, 0.0075f);
             });
         
         Machine.Configure(PlayerFsmState.SwimSurface)

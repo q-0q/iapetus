@@ -52,6 +52,7 @@ public partial class PlayerFsm
     private float _currentSlipWeight;
     private const float MaxSlideTimer = 0.15f;
     private const float MinSlideStateTimer = 0.5f;
+    private ParticleSystem _splashParticles;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -85,8 +86,8 @@ public partial class PlayerFsm
     public static event Action<Transform, float, float> OnPlayerParentTransformChanged;
     public static event Action<int> OnPlayerComboIncremented;
     public static event Action OnPlayerComboReset;
-    public static event Action<float, float> OnPlayerRippleGenerated;
-    public static event Action<float, float> OnPlayerWakeGenerated;
+    public static event Action<Vector3, float, float> OnPlayerRippleGenerated;
+    public static event Action<Vector3, float, float> OnPlayerWakeGenerated;
 
     private const float SwimSurfaceRippleTimer = 0.08f;
     private bool _swimSurfaceRippleQueued = false;
@@ -333,7 +334,7 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f && Machine.IsInState(PlayerFsmState.GroundMove))
+        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f && (Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim)))
         {
             ResetCombo();
             isSprinting = false;
