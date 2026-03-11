@@ -127,7 +127,7 @@ public partial class PlayerFsm
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.85f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
-    private const float SprintMomentumGainMultiplier = 2f;
+    private const float SprintMomentumGainMultiplier = 2.3f;
     private const float SprintTurnLossMultiplier = 1.5f;
     private const float IdleMomentumThreshold = 3f;
     
@@ -368,7 +368,7 @@ public partial class PlayerFsm
         }
         else
         {
-            if (Machine.IsInState(PlayerFsmState.GroundMove))
+            if (Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim))
             {
                 ResetCombo();
                 isSprinting = false;
@@ -893,6 +893,18 @@ public partial class PlayerFsm
     {
         var origin = transform.position + Vector3.up * 5f;
         var maxDistance = 10f;
-        return (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")));
+        if (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")))
+        {
+            return true;
+        };
+
+        if (Physics.CheckSphere(transform.position, 0.5f, LayerMask.GetMask("Water")))
+        {
+            hit = new RaycastHit() { point = origin };
+            return true;
+        }
+
+        return false;
+
     }
 }

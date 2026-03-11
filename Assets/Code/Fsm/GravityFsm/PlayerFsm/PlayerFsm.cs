@@ -242,6 +242,7 @@ public partial class PlayerFsm : GravityFsm
         HandleSlideTimer();
         UpdateMusicDistanceAttenuation();
 
+
         var previousPosition = transform.position;
 
 
@@ -462,6 +463,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.SwimSurfaceRise))
         {
             SwimSurfaceRiseOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.SwimSurface))
+        {
+            SwimSurfaceOnUpdate();
         }
 
         

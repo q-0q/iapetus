@@ -15,7 +15,7 @@ public partial class PlayerFsm
         
         HandleInputMomentumChange();
         HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);
-        HandleCollisionMove(0.25f);
+        
 
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
@@ -26,10 +26,22 @@ public partial class PlayerFsm
     {
         if (WaterRaycast(out var hit))
         {
-            var desiredYVelocity = Mathf.Lerp(0f, 25f, Mathf.InverseLerp(4f, -2f, hit.distance));
+            var desiredYVelocity = Mathf.Lerp(0f, 25f, Mathf.InverseLerp(4f, -0.80f, hit.distance));
             YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity,
-                Time.deltaTime * Mathf.Lerp(1f, 20f, Mathf.InverseLerp(0, 0.35f, TimeInCurrentState())));
+                Time.deltaTime * Mathf.Lerp(1f, 20f, Mathf.InverseLerp(0, 0.45f, TimeInCurrentState())));
         }
+        
+        HandleCollisionMove(Mathf.Lerp(0.1925f, 0.0925f, Mathf.InverseLerp(0, 0.4f, TimeInCurrentState())));
+    }
+    
+    private void SwimSurfaceOnUpdate()
+    {
+        if (WaterRaycast(out var hit))
+        {
+            transform.position += ComputeCollisionMove((hit.point + Vector3.up * -0.80f) - transform.position);
+        }
+        
+        HandleCollisionMove(0.0925f);
     }
 
     private void SwimConfigure()
@@ -38,10 +50,17 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(PlayerFsmState.WallInteractable)
-            .SubstateOf(GravityFsmState.DontLoseYVelocity);
+            .SubstateOf(GravityFsmState.DontLoseYVelocity)
+            .OnEntry(_ =>
+            {
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+            });
         
         Machine.Configure(PlayerFsmState.SwimSurfaceRise)
-            .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurface, @params => IsSwimTriggerAtSurface(@params) && YVelocity < 1f)
+            .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurface, @params => IsSwimTriggerAtSurface(@params) && YVelocity < 2f)
             .SubstateOf(PlayerFsmState.Swim);
         
         Machine.Configure(PlayerFsmState.SwimSurface)

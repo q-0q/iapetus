@@ -9,6 +9,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Landable)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params =>
             {
+                if (YVelocity > 0.5f) return false;
                 if (WaterRaycast(out var hit))
                 {
                     if (IsSwimTrigger(new RaycastHitParam() { Hit = hit })) return false;
@@ -19,10 +20,24 @@ public partial class PlayerFsm
                 _ => Machine.IsInState(PlayerFsmState.FallAfterDash) && _inputBuffer.IsBuffered("Jump"),
                 3) // ANTI PATTERN
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand,
-                _ => CurrentFallDistance() < HardLandAirDiff,
+                _ =>
+                {
+                    if (WaterRaycast(out var hit))
+                    {
+                        if (IsSwimTrigger(new RaycastHitParam() { Hit = hit })) return false;
+                    }
+                    return CurrentFallDistance() < HardLandAirDiff;
+                },
                 2)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
-                _ => (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum), 4)
+                _ =>
+                {
+                    if (WaterRaycast(out var hit))
+                    {
+                        if (IsSwimTrigger(new RaycastHitParam() { Hit = hit })) return false;
+                    }
+                    return (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum);
+                }, 4)
         // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5)
             .SubstateOf(PlayerFsmState.SlideInteractable)
             .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, @params =>
