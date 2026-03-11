@@ -85,6 +85,10 @@ public partial class PlayerFsm
     public static event Action<Transform, float, float> OnPlayerParentTransformChanged;
     public static event Action<int> OnPlayerComboIncremented;
     public static event Action OnPlayerComboReset;
+    public static event Action<float, float> OnPlayerRippleGenerated;
+
+    private const float SwimSurfaceRippleTimer = 0.08f;
+    private bool _swimSurfaceRippleQueued = false;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;

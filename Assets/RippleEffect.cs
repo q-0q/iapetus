@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -7,20 +8,31 @@ public class RippleEffect : MonoBehaviour
     public int textureSize = 512;
     [Range(0.9f, 0.995f)]
     public float damping = 0.98f;
+    public float speed = 0.4f;
     
     [Header("Resources")]
     public Shader rippleShader;
     public Material rippleStampMaterial;
+    
+    [Header("Movement Settings")]
+    public Transform playerTransform;
+    public float worldSize = 20f; // The world diameter the texture covers
+    private Vector3 lastPlayerPos;
+    private Material offsetMat;
 
     private RenderTexture currRT, prevRT, tempRT;
     private Material rippleMat;
     private static readonly int PrevTexID = Shader.PropertyToID("_PrevRT");
     private static readonly int CurrTexID = Shader.PropertyToID("_CurrentRT");
     private static readonly int DampingID = Shader.PropertyToID("_Damping");
+    private static readonly int SpeedID = Shader.PropertyToID("_Speed");
     private static readonly int CenterID = Shader.PropertyToID("_Center");
 
     void Start()
     {
+
+        playerTransform = transform.parent;
+        
         // 1. Initialize RenderTextures with Linear ReadWrite to avoid Gamma shifts
         currRT = CreateRT();
         prevRT = CreateRT();
@@ -34,7 +46,10 @@ public class RippleEffect : MonoBehaviour
         ClearRT(tempRT);
 
         // 3. Assign to the object's renderer
-        GetComponent<Renderer>().material.SetTexture("_RippleTex", currRT);
+        Shader.SetGlobalTexture("_PlayerRippleSimulationTexture", currRT);
+        
+        offsetMat = new Material(Shader.Find("Hidden/RippleOffset"));
+        lastPlayerPos = playerTransform.position;
 
         StartCoroutine(SimulationLoop());
     }
@@ -58,20 +73,22 @@ public class RippleEffect : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            AddRipple(1.0f, 0.02f);
-        }
+
     }
 
     IEnumerator SimulationLoop()
     {
         while (true)
         {
+            
+            ApplyWorldShift();
+            
             // Set shader properties
             rippleMat.SetTexture(PrevTexID, prevRT);
             rippleMat.SetTexture(CurrTexID, currRT);
             rippleMat.SetFloat(DampingID, damping);
+            rippleMat.SetFloat(SpeedID, speed);
+            
 
             // Calculate new state into tempRT
             Graphics.Blit(null, tempRT, rippleMat);
@@ -101,5 +118,40 @@ public class RippleEffect : MonoBehaviour
         RenderTexture t = currRT;
         currRT = tempRT;
         tempRT = t;
+    }
+    
+    void ApplyWorldShift()
+    {
+        Vector3 delta = playerTransform.position - lastPlayerPos;
+        if (delta.sqrMagnitude < 0.0001f) return;
+
+        // Convert world movement to UV offset (0 to 1 range)
+        // Assuming ripples are on the XZ plane
+        Vector2 uvOffset = new Vector2(delta.x / worldSize, delta.z / worldSize);
+
+        offsetMat.SetVector("_Offset", uvOffset);
+
+        // Shift BOTH the current and previous frames so the simulation remains consistent
+        ShiftTexture(currRT);
+        ShiftTexture(prevRT);
+
+        lastPlayerPos = playerTransform.position;
+    }
+
+    void ShiftTexture(RenderTexture rt)
+    {
+        // Use tempRT as a buffer to perform the shift
+        Graphics.Blit(rt, tempRT, offsetMat);
+        Graphics.Blit(tempRT, rt); 
+    }
+
+    private void OnEnable()
+    {
+        PlayerFsm.OnPlayerRippleGenerated += AddRipple;
+    }
+    
+    private void OnDisable()
+    {
+        PlayerFsm.OnPlayerRippleGenerated -= AddRipple;
     }
 }

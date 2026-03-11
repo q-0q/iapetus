@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using Wasp;
@@ -40,8 +42,17 @@ public partial class PlayerFsm
         {
             transform.position += ComputeCollisionMove((hit.point + Vector3.up * -0.80f) - transform.position);
         }
-        
+
+        if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         HandleCollisionMove(0.0925f);
+    }
+
+    private IEnumerator SwimSurfaceRippleCoroutine()
+    {
+        _swimSurfaceRippleQueued = true;
+        OnPlayerRippleGenerated?.Invoke(0.5f, 0.002f);
+        yield return new WaitForSeconds(Mathf.Lerp(SwimSurfaceRippleTimer * 7f, SwimSurfaceRippleTimer, ComputeMomentumWeight()));
+        _swimSurfaceRippleQueued = false;
     }
 
     private void SwimConfigure()
@@ -61,7 +72,11 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.SwimSurfaceRise)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurface, @params => IsSwimTriggerAtSurface(@params) && YVelocity < 2f)
-            .SubstateOf(PlayerFsmState.Swim);
+            .SubstateOf(PlayerFsmState.Swim)
+            .OnEntry(_ =>
+            {
+                OnPlayerRippleGenerated?.Invoke(1.0f, 0.01f);
+            });
         
         Machine.Configure(PlayerFsmState.SwimSurface)
             .OnEntry(_ =>
