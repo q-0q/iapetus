@@ -1,56 +1,63 @@
-using System;
 using System.Collections;
 using UnityEngine;
 
 public class RippleEffect : MonoBehaviour
 {
-    [Header("Settings")]
+    [Header("Ripple Settings")]
     public int textureSize = 512;
-    [Range(0.9f, 0.995f)]
-    public float damping = 0.98f;
+    [Range(0.9f, 0.995f)] public float damping = 0.98f;
     public float speed = 0.4f;
+    
+    [Header("Wake Settings")]
+    public float wakeDecaySpeed = 2.0f; // Higher = faster fade
+    
     
     [Header("Resources")]
     public Shader rippleShader;
+    public Shader wakeFadeShader; // New Shader for simple fading
     public Material rippleStampMaterial;
     
     [Header("Movement Settings")]
     public Transform playerTransform;
-    public float worldSize = 20f; // The world diameter the texture covers
+    public float worldSize = 20f;
     private Vector3 lastPlayerPos;
     private Material offsetMat;
 
-    private RenderTexture currRT, prevRT, tempRT;
-    private Material rippleMat;
+    private RenderTexture currRT, prevRT, tempRT, wakeRT, wakeTempRT;
+    private Material rippleMat, wakeMat;
+    
     private static readonly int PrevTexID = Shader.PropertyToID("_PrevRT");
     private static readonly int CurrTexID = Shader.PropertyToID("_CurrentRT");
     private static readonly int DampingID = Shader.PropertyToID("_Damping");
     private static readonly int SpeedID = Shader.PropertyToID("_Speed");
     private static readonly int CenterID = Shader.PropertyToID("_Center");
+    private static readonly int WakeFadeID = Shader.PropertyToID("_WakeFade");
 
     void Start()
     {
-
         playerTransform = transform.parent;
         
-        // 1. Initialize RenderTextures with Linear ReadWrite to avoid Gamma shifts
         currRT = CreateRT();
         prevRT = CreateRT();
         tempRT = CreateRT();
+        wakeRT = CreateRT(); // Initialize Wake Texture
+        wakeTempRT = CreateRT(); // Create the second temp buffer
 
         rippleMat = new Material(rippleShader);
+        wakeMat = new Material(wakeFadeShader);
+        offsetMat = new Material(Shader.Find("Hidden/RippleOffset"));
 
-        // 2. Initial Clear
         ClearRT(currRT);
         ClearRT(prevRT);
         ClearRT(tempRT);
+        ClearRT(wakeRT);
+        ClearRT(wakeTempRT);
 
-        // 3. Assign to the object's renderer
+        // Set Globals for Shader Graph
         Shader.SetGlobalTexture("_PlayerRippleSimulationTexture", currRT);
+        Shader.SetGlobalTexture("_PlayerWakeTexture", wakeRT);
         
-        offsetMat = new Material(Shader.Find("Hidden/RippleOffset"));
         lastPlayerPos = playerTransform.position;
-
         StartCoroutine(SimulationLoop());
     }
 
@@ -58,7 +65,7 @@ public class RippleEffect : MonoBehaviour
     {
         RenderTexture rt = new RenderTexture(textureSize, textureSize, 0, RenderTextureFormat.RFloat, RenderTextureReadWrite.Linear);
         rt.filterMode = FilterMode.Bilinear;
-        rt.wrapMode = TextureWrapMode.Clamp; // Vital: Prevents edge-to-edge feedback explosion
+        rt.wrapMode = TextureWrapMode.Clamp;
         rt.Create();
         return rt;
     }
@@ -67,40 +74,43 @@ public class RippleEffect : MonoBehaviour
     {
         RenderTexture active = RenderTexture.active;
         RenderTexture.active = rt;
-        GL.Clear(false, true, Color.clear); // Clears to 0,0,0,0
+        GL.Clear(false, true, Color.clear);
         RenderTexture.active = active;
-    }
-
-    void Update()
-    {
-
     }
 
     IEnumerator SimulationLoop()
     {
         while (true)
         {
-            
             ApplyWorldShift();
-            
-            // Set shader properties
+        
+            // --- 1. Ripple Simulation ---
             rippleMat.SetTexture(PrevTexID, prevRT);
             rippleMat.SetTexture(CurrTexID, currRT);
             rippleMat.SetFloat(DampingID, damping);
             rippleMat.SetFloat(SpeedID, speed);
-            
-
-            // Calculate new state into tempRT
+        
             Graphics.Blit(null, tempRT, rippleMat);
 
-            // Cycle textures: Temp becomes Current, Current becomes Previous
+            // Cycle Ripple textures
             RenderTexture oldPrev = prevRT;
             prevRT = currRT;
             currRT = tempRT;
             tempRT = oldPrev; 
 
-            // Update the display texture
-            GetComponent<Renderer>().material.SetTexture("_RippleTex", currRT);
+            // --- 2. Wake Simulation ---
+            float frameFade = Mathf.Pow(0.5f, Time.deltaTime * wakeDecaySpeed);
+            wakeMat.SetFloat(WakeFadeID, frameFade);
+        
+            Graphics.Blit(wakeRT, wakeTempRT, wakeMat);
+        
+            RenderTexture wTemp = wakeRT;
+            wakeRT = wakeTempRT;
+            wakeTempRT = wTemp;
+
+            // --- 3. Update Globals ---
+            Shader.SetGlobalTexture("_PlayerRippleSimulationTexture", currRT);
+            Shader.SetGlobalTexture("_PlayerWakeTexture", wakeRT);
 
             yield return null;
         }
@@ -108,39 +118,49 @@ public class RippleEffect : MonoBehaviour
 
     public void AddRipple(float strength, float radius)
     {
-        Vector2 uv = new Vector2(0.5f, 0.5f); // Center of the screen
+        Vector2 uv = new Vector2(0.5f, 0.5f);
         rippleStampMaterial.SetVector(CenterID, new Vector4(uv.x, uv.y, strength, radius));
 
-        // Stamp onto current state
+        // Stamp Ripple (Uses Ripple's temp)
         Graphics.Blit(currRT, tempRT, rippleStampMaterial);
-        
-        // Swap temp back into current so simulation picks it up
-        RenderTexture t = currRT;
-        currRT = tempRT;
-        tempRT = t;
+        RenderTexture t = currRT; currRT = tempRT; tempRT = t;
     }
+    
+    public void AddWake(float strength, float radius)
+    {
+        Vector2 uv = new Vector2(0.5f, 0.5f);
+        rippleStampMaterial.SetVector(CenterID, new Vector4(uv.x, uv.y, strength, radius));
+        
+        // Stamp Wake (Uses Wake's temp)
+        rippleStampMaterial.SetVector(CenterID, new Vector4(uv.x, uv.y, strength * 6f, radius * 5f));
+        Graphics.Blit(wakeRT, wakeTempRT, rippleStampMaterial);
+        RenderTexture w = wakeRT; wakeRT = wakeTempRT; wakeTempRT = w;
+    }
+
+    // Update Shift to be generic so it doesn't accidentally use the Ripple temp for the Wake
+        void ShiftTexture(RenderTexture rt, RenderTexture buffer)
+        {
+            Graphics.Blit(rt, buffer, offsetMat);
+            Graphics.Blit(buffer, rt); 
+        }
     
     void ApplyWorldShift()
     {
         Vector3 delta = playerTransform.position - lastPlayerPos;
         if (delta.sqrMagnitude < 0.0001f) return;
 
-        // Convert world movement to UV offset (0 to 1 range)
-        // Assuming ripples are on the XZ plane
         Vector2 uvOffset = new Vector2(delta.x / worldSize, delta.z / worldSize);
-
         offsetMat.SetVector("_Offset", uvOffset);
 
-        // Shift BOTH the current and previous frames so the simulation remains consistent
-        ShiftTexture(currRT);
-        ShiftTexture(prevRT);
+        ShiftTexture(currRT, tempRT);
+        ShiftTexture(prevRT, tempRT);
+        ShiftTexture(wakeRT, wakeTempRT); // Use wakeTempRT for the wake shift
 
         lastPlayerPos = playerTransform.position;
     }
 
     void ShiftTexture(RenderTexture rt)
     {
-        // Use tempRT as a buffer to perform the shift
         Graphics.Blit(rt, tempRT, offsetMat);
         Graphics.Blit(tempRT, rt); 
     }
@@ -148,10 +168,12 @@ public class RippleEffect : MonoBehaviour
     private void OnEnable()
     {
         PlayerFsm.OnPlayerRippleGenerated += AddRipple;
+        PlayerFsm.OnPlayerWakeGenerated += AddWake;
     }
-    
+
     private void OnDisable()
     {
         PlayerFsm.OnPlayerRippleGenerated -= AddRipple;
+        PlayerFsm.OnPlayerWakeGenerated -= AddWake;
     }
 }

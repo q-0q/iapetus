@@ -86,6 +86,7 @@ public partial class PlayerFsm
     public static event Action<int> OnPlayerComboIncremented;
     public static event Action OnPlayerComboReset;
     public static event Action<float, float> OnPlayerRippleGenerated;
+    public static event Action<float, float> OnPlayerWakeGenerated;
 
     private const float SwimSurfaceRippleTimer = 0.08f;
     private bool _swimSurfaceRippleQueued = false;
