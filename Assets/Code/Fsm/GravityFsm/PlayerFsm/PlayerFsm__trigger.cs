@@ -86,6 +86,11 @@ public partial class PlayerFsm
 
         FireSwimTrigger();
 
+        if (Physics.Raycast(transform.position, Vector3.down, out var hit, 20f, LayerMask.GetMask("Water")))
+        {
+            Machine.Fire(PlayerFsmTrigger.IsAboveWater);
+        }
+
     }
 
     private void FireFaceTriggers()

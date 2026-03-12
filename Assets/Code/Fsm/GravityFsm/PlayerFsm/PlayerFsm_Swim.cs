@@ -6,10 +6,6 @@ using Wasp;
 
 public partial class PlayerFsm
 {
-    private void PlungeOnUpdate()
-    {
-        
-    }
 
     private void SwimOnUpdate()
     {
@@ -33,7 +29,7 @@ public partial class PlayerFsm
                 Time.deltaTime * Mathf.Lerp(1f, 20f, Mathf.InverseLerp(0, 0.45f, TimeInCurrentState())));
         }
         
-        HandleCollisionMove(Mathf.Lerp(0.1925f, 0.0925f, Mathf.InverseLerp(0, 0.4f, TimeInCurrentState())));
+        HandleCollisionMove(Mathf.Lerp(0.1925f, 0.0925f * 0.75f, Mathf.InverseLerp(0, 0.4f, TimeInCurrentState())));
     }
     
     private void SwimSurfaceOnUpdate()
@@ -45,7 +41,7 @@ public partial class PlayerFsm
 
         OnPlayerWakeGenerated?.Invoke(GetRipplePosition(), Mathf.Lerp(0.075f, 0.075f, ComputeMomentumWeight()), Mathf.Lerp(0.0011f, 0.0009f, ComputeMomentumWeight()));
         if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
-        HandleCollisionMove(0.0925f);
+        HandleCollisionMove(0.0925f * 0.75f);
     }
 
     private IEnumerator SwimSurfaceRippleCoroutine()
@@ -87,7 +83,7 @@ public partial class PlayerFsm
                     _splashParticles.Play();
                 }
                 OnPlayerRippleGenerated?.Invoke(transform.position, 1.0f, 0.005f);
-                OnPlayerWakeGenerated?.Invoke(transform.position, 1.0f, 0.0075f);
+                OnPlayerWakeGenerated?.Invoke(transform.position, 1.0f, 0.0025f);
             });
         
         Machine.Configure(PlayerFsmState.SwimSurface)
@@ -112,4 +108,5 @@ public partial class PlayerFsm
         var distance = raycastHitParam.Hit.distance;
         return distance > 3f;
     }
+    
 }

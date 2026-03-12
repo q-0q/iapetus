@@ -134,6 +134,7 @@ public partial class PlayerFsm : GravityFsm
         public static int SoftTurnRight;
 
         public static int SwimTriggerRaycastHit;
+        public static int IsAboveWater;
     }
     
     protected override void OnAwake()
