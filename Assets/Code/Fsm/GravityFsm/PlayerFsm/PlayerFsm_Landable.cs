@@ -12,6 +12,7 @@ public partial class PlayerFsm
                 if (YVelocity > 0.5f) return false;
                 if (WaterRaycast(out var hit))
                 {
+                    if (Machine.IsInState(PlayerFsmState.SwimSurfaceRise)) return false;
                     if (IsSwimTrigger(new RaycastHitParam() { Hit = hit })) return false;
                 }
                 return !IsSlideTrigger(@params);

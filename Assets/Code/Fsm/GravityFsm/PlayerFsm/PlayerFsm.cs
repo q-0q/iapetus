@@ -245,6 +245,11 @@ public partial class PlayerFsm : GravityFsm
         UpdateShaderGlobals();
         HandleSlideTimer();
         UpdateMusicDistanceAttenuation();
+        
+        
+        aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)
+            ? transform.forward * Mathf.Lerp(0, 1.5f, Mathf.InverseLerp(-10, -4, YVelocity))
+            : Vector3.zero;
 
 
         var previousPosition = transform.position;

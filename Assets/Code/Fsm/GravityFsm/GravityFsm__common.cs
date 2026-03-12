@@ -23,7 +23,8 @@ public abstract partial class GravityFsm
     protected Vector3 _previousParentTransformPosition;
     protected Quaternion _previousParentRotation;
     public GravityFsmSpringCollider springCollider;
-    
+    protected Vector3 aerialMomentumOffset;
+
 
     private const float GroundedYPositionLerpStrength = 50f;
     protected const float GroundedRaycastLength = 2f;
@@ -51,12 +52,15 @@ public abstract partial class GravityFsm
         var forward = transform.forward * (GroundedRaycastForwardOffset * GetRaycastTimeModifier());
         var f = 1.5f;
         var minDistance = 0.1f;
+
+
+
         
-        var sphereCastOrigin = transform.position + Vector3.up * (f * raycastLength) + forward;
+        var sphereCastOrigin = transform.position + Vector3.up * (f * raycastLength) + forward + aerialMomentumOffset;
         var sphereCastMaxDistance = raycastLength * f * 2f;
         var sphereSpherecastDirection = -Vector3.up;
         
-        Debug.DrawRay(sphereCastOrigin, sphereSpherecastDirection * sphereCastMaxDistance, Color.red);
+        Debug.DrawRay(sphereCastOrigin, sphereSpherecastDirection * sphereCastMaxDistance, Color.magenta);
         
         if (Physics.SphereCast(sphereCastOrigin, 0.35f, sphereSpherecastDirection,
                 out hit,

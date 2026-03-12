@@ -7978,8 +7978,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3600708144320890767}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.57874995, y: -0.38323674, z: 0.35380238, w: 0.62689877}
-  m_LocalPosition: {x: 5.8800535, y: 25, z: 25.988184}
+  m_LocalRotation: {x: 0.5604682, y: -0.41389218, z: 0.3821031, w: 0.6070963}
+  m_LocalPosition: {x: 5.9617157, y: 25, z: 26.169237}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10360,7 +10360,7 @@ GameObject:
   - component: {fileID: 5388967371565778947}
   - component: {fileID: 2092968682901252348}
   m_Layer: 3
-  m_Name: Cube
+  m_Name: SplashParticlesTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10375,7 +10375,7 @@ Transform:
   m_GameObject: {fileID: 6854128913018459777}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.52, z: 0}
+  m_LocalPosition: {x: 0, y: -1.25, z: 0}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10816,6 +10816,7 @@ GameObject:
   - component: {fileID: 4227119060586210983}
   - component: {fileID: 6352523221497825521}
   - component: {fileID: 3270925731181967889}
+  - component: {fileID: 7897711192736199797}
   m_Layer: 3
   m_Name: SplashParticles
   m_TagString: Untagged
@@ -11471,7 +11472,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 0
+    angle: 5
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -14664,15 +14665,16 @@ ParticleSystem:
     collidesWithDynamic: 1
     interiorCollisions: 0
   TriggerModule:
-    enabled: 0
+    enabled: 1
     serializedVersion: 2
     inside: 1
     outside: 0
-    enter: 0
+    enter: 2
     exit: 0
     colliderQueryMode: 0
     radiusScale: 1
-    primitives: []
+    primitives:
+    - {fileID: 5388967371565778947}
   SubModule:
     serializedVersion: 2
     enabled: 0
@@ -15694,6 +15696,18 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
+--- !u!114 &7897711192736199797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7659989455003401460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4cfe3080ea074a4ca8f7507496b272d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7797458155509764096
 GameObject:
   m_ObjectHideFlags: 0
@@ -26497,7 +26511,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9130809501994490205}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5248343, y: -0.000034275978, z: 0.000021133827, w: 0.85120445}
+  m_LocalRotation: {x: 0.5248343, y: -0.000034553042, z: 0.000021304659, w: 0.85120445}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

@@ -201,12 +201,14 @@ public class RippleEffect : MonoBehaviour
     private void OnEnable()
     {
         PlayerFsm.OnPlayerRippleGenerated += AddRipple;
+        PlayerSplashParticles.OnPlayerSplashParticleTriggerEnter += AddRipple;
         PlayerFsm.OnPlayerWakeGenerated += AddWake;
     }
 
     private void OnDisable()
     {
         PlayerFsm.OnPlayerRippleGenerated -= AddRipple;
+        PlayerSplashParticles.OnPlayerSplashParticleTriggerEnter -= AddRipple;
         PlayerFsm.OnPlayerWakeGenerated -= AddWake;
     }
 }
