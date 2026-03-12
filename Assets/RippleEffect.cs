@@ -78,32 +78,47 @@ public class RippleEffect : MonoBehaviour
         RenderTexture.active = active;
     }
 
+    [Header("Optimization")]
+    private float simulationFrequency = 240f;
+    private float timer = 0f;
+
     IEnumerator SimulationLoop()
     {
+        float fixedStep = 1f / simulationFrequency;
+
         while (true)
         {
             ApplyWorldShift();
         
-            // --- 1. Ripple Simulation ---
-            rippleMat.SetTexture(PrevTexID, prevRT);
-            rippleMat.SetTexture(CurrTexID, currRT);
-            rippleMat.SetFloat(DampingID, damping);
-            rippleMat.SetFloat(SpeedID, speed);
+            timer += Time.deltaTime;
+
+            // Run the simulation steps needed to catch up to real time
+            while (timer >= fixedStep)
+            {
+                // --- 1. Ripple Simulation ---
+                rippleMat.SetTexture(PrevTexID, prevRT);
+                rippleMat.SetTexture(CurrTexID, currRT);
+                rippleMat.SetFloat(DampingID, damping);
+                rippleMat.SetFloat(SpeedID, speed);
         
-            Graphics.Blit(null, tempRT, rippleMat);
+                Graphics.Blit(null, tempRT, rippleMat);
 
-            // Cycle Ripple textures
-            RenderTexture oldPrev = prevRT;
-            prevRT = currRT;
-            currRT = tempRT;
-            tempRT = oldPrev; 
+                // Cycle Ripple textures
+                RenderTexture oldPrev = prevRT;
+                prevRT = currRT;
+                currRT = tempRT;
+                tempRT = oldPrev;
 
-            // --- 2. Wake Simulation ---
+                timer -= fixedStep;
+            }
+
+            // --- 2. Wake Simulation (Already mostly FPS independent, but kept here) ---
+            // Note: Wake decay is linear/exponential per frame, 
+            // which is fine as long as deltaTime is used.
             float frameFade = Mathf.Pow(0.5f, Time.deltaTime * wakeDecaySpeed);
             wakeMat.SetFloat(WakeFadeID, frameFade);
-        
             Graphics.Blit(wakeRT, wakeTempRT, wakeMat);
-        
+    
             RenderTexture wTemp = wakeRT;
             wakeRT = wakeTempRT;
             wakeTempRT = wTemp;

@@ -77,6 +77,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Swim)
             .OnEntry(_ =>
             {
+                if (YVelocity > -5f) return;
                 if (WaterRaycast(out var hit))
                 {
                     _splashParticles.transform.position = hit.point;
