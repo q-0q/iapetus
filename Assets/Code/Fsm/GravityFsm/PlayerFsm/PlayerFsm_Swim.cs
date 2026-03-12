@@ -92,6 +92,9 @@ public partial class PlayerFsm
                 YVelocity = 0;
             })
             .SubstateOf(PlayerFsmState.Swim);
+
+        Machine.Configure(PlayerFsmState.DiveFall)
+            .SubstateOf(PlayerFsmState.Fall);
     }
 
 

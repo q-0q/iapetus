@@ -136,6 +136,7 @@ public partial class PlayerFsm
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurfaceRise, "SwimSurfaceRise");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurface, "SwimSurface");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DiveFall, "DiveFall");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

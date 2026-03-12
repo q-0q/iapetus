@@ -95,6 +95,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Swim;
         public static int SwimSurfaceRise;
         public static int SwimSurface;
+        public static int DiveFall;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

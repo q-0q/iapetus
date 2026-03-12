@@ -11,6 +11,11 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
+            .PermitIf(PlayerFsmTrigger.IsAboveWater, PlayerFsmState.DiveFall, _ =>
+            {
+                if (Machine.IsInState(PlayerFsmState.FallAfterDash)) return false;
+                return true;
+            })
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, @params => CanDash(@params) && TimeInCurrentState() > 0.1f); // microfall dash prevention hack.
 
     }

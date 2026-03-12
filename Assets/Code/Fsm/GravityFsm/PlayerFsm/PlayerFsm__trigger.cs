@@ -86,9 +86,12 @@ public partial class PlayerFsm
 
         FireSwimTrigger();
 
-        if (Physics.Raycast(transform.position, Vector3.down, out var hit, 20f, LayerMask.GetMask("Water")))
+        if (YVelocity < 15f && _momentum > 12f)
         {
-            Machine.Fire(PlayerFsmTrigger.IsAboveWater);
+            if (Physics.Raycast(transform.position, Vector3.down, out var hit, 20f, GetEnvironmentalLayermask()))
+            {
+                if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Water")) Machine.Fire(PlayerFsmTrigger.IsAboveWater);
+            }
         }
 
     }
