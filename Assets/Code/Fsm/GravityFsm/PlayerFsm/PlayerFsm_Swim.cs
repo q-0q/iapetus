@@ -62,7 +62,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Swim)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.Landable)
-            .SubstateOf(PlayerFsmState.WallInteractable)
+
             .SubstateOf(GravityFsmState.DontLoseYVelocity)
             .OnEntry(_ =>
             {
@@ -88,6 +88,14 @@ public partial class PlayerFsm
             });
         
         Machine.Configure(PlayerFsmState.SwimSurface)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
+                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
+            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
+                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
+            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
+                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .OnEntry(_ =>
             {
                 YVelocity = 0;
