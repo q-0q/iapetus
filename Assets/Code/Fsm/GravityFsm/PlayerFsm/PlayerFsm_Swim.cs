@@ -14,7 +14,6 @@ public partial class PlayerFsm
         HandleInputMomentumChange();
         HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);
         
-
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
     }
@@ -32,11 +31,24 @@ public partial class PlayerFsm
         HandleCollisionMove(Mathf.Lerp(0.1925f, 0.0925f * 0.75f, Mathf.InverseLerp(0, 0.4f, TimeInCurrentState())));
     }
     
+    
+    private void DrownOnUpdate()
+    {
+        if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
+        transform.position += Vector3.down * (Time.deltaTime * 0.75f);
+    }
+    
     private void SwimSurfaceOnUpdate()
     {
         if (WaterRaycast(out var hit))
         {
             transform.position += ComputeCollisionMove((hit.point + Vector3.up * -0.80f) - transform.position);
+            
+            if (hit.collider.TryGetComponent(out PlayerDrownIndicator _))
+            {
+                _momentum = Mathf.Lerp(_momentum, 0,
+                    Time.deltaTime * Mathf.Lerp(2f, 15f, Mathf.InverseLerp(0, 0.75f, TimeInCurrentState())));
+            };
         }
 
         OnPlayerWakeGenerated?.Invoke(GetRipplePosition(), Mathf.Lerp(0.075f, 0.075f, ComputeMomentumWeight()), Mathf.Lerp(0.0011f, 0.0009f, ComputeMomentumWeight()));
@@ -88,6 +100,12 @@ public partial class PlayerFsm
             });
         
         Machine.Configure(PlayerFsmState.SwimSurface)
+            .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.Drown, @params =>
+            {
+                if (_momentum > 5f) return false;
+                if (@params is not RaycastHitParam raycastHitParam) return false;
+                return raycastHitParam.Hit.collider.TryGetComponent(out PlayerDrownIndicator _);
+            })
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
@@ -104,6 +122,9 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.DiveFall)
             .SubstateOf(PlayerFsmState.Fall);
+
+        Machine.Configure(PlayerFsmState.Drown)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Dying1);
     }
 
 

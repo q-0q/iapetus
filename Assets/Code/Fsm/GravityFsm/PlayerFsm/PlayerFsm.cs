@@ -96,6 +96,7 @@ public partial class PlayerFsm : GravityFsm
         public static int SwimSurfaceRise;
         public static int SwimSurface;
         public static int DiveFall;
+        public static int Drown;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -477,6 +478,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.SwimSurface))
         {
             SwimSurfaceOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Drown))
+        {
+            DrownOnUpdate();
         }
 
         
