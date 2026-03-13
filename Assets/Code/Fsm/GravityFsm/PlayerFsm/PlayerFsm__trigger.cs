@@ -97,6 +97,20 @@ public partial class PlayerFsm
 
     }
 
+    private bool ProbeHighLedge()
+    {
+        var origin = transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset());
+        if (Physics.Raycast(origin,
+                transform.forward,
+                out var hit, 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        {
+            Debug.DrawRay(origin, transform.forward, Color.magenta, 1f);
+            return true;
+        }
+
+        return false;
+    }
+
     private void FireFaceTriggers()
     {
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
@@ -107,19 +121,21 @@ public partial class PlayerFsm
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
-            if (slope > minSlope) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
+            if (slope > minSlope - 30f) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up *
                        (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                        out hit, forwardRaycastDistance + skew, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
+            if (ProbeHighLedge()) return;
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > minSlope) Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
+            if (ProbeHighLedge()) return;
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
             if (slope > minSlope) Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});

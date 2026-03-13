@@ -248,7 +248,7 @@ public partial class PlayerFsm : GravityFsm
         
         
         aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)
-            ? transform.forward * Mathf.Lerp(0, 1.5f, Mathf.InverseLerp(-10, -4, YVelocity))
+            ? transform.forward * Mathf.Lerp(0, 1.5f, ComputeMomentumWeight())
             : Vector3.zero;
 
 
