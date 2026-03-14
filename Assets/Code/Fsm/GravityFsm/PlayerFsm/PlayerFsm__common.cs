@@ -892,21 +892,33 @@ public partial class PlayerFsm
 
     private void FireSwimTrigger()
     {
-        if (WaterRaycast(out var hit)) Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, new RaycastHitParam() { Hit = hit });
+        if (WaterRaycast(out var hit, out bool drown))
+        {
+            Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, new SwimRaycastParam() { Hit = hit, drown = drown });
+        }
     }
 
-    private bool WaterRaycast(out RaycastHit hit)
+    private bool WaterRaycast(out RaycastHit hit, out bool drown)
     {
+        drown = false;
         var origin = transform.position + Vector3.up * 5f;
         var maxDistance = 10f;
         if (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")))
         {
+            drown = hit.transform.TryGetComponent(out PlayerDrownIndicator _);
             return true;
         };
 
-        if (Physics.CheckSphere(transform.position, 0.5f, LayerMask.GetMask("Water")))
+
+        var colliders = Physics.OverlapSphere(transform.position, 0.5f, LayerMask.GetMask("Water"));
+        foreach (var c in colliders)
         {
-            hit = new RaycastHit() { point = origin };
+            hit = new RaycastHit()
+            {
+                point = origin,
+            };
+            
+            drown = c.transform.TryGetComponent(out PlayerDrownIndicator _);
             return true;
         }
 

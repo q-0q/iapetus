@@ -13,7 +13,7 @@ public partial class PlayerFsm
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
 
-        if (WaterRaycast(out var hit))
+        if (WaterRaycast(out var hit, out var _))
         {
             if (hit.distance > 3f && !_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         }
