@@ -21,11 +21,18 @@ public partial class PlayerFsm
     
     private void SwimSurfaceRiseOnUpdate()
     {
-        if (WaterRaycast(out var hit, out var _))
+        if (WaterRaycast(out var hit, out var drown))
         {
             var desiredYVelocity = Mathf.Lerp(0f, 25f, Mathf.InverseLerp(4f, -0.80f, hit.distance));
             YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity,
                 Time.deltaTime * Mathf.Lerp(1f, 20f, Mathf.InverseLerp(0, 0.45f, TimeInCurrentState())));
+            
+            
+            if (drown)
+            {
+                _momentum = Mathf.Lerp(_momentum, 0,
+                    Time.deltaTime * Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
+            };
         }
         
         HandleCollisionMove(Mathf.Lerp(0.1925f, 0.0925f * 0.75f, Mathf.InverseLerp(0, 0.4f, TimeInCurrentState())));
@@ -35,14 +42,14 @@ public partial class PlayerFsm
     private void DrownOnUpdate()
     {
         if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
-        transform.position += Vector3.down * (Time.deltaTime * 1.25f);
+        transform.position += Vector3.down * (Time.deltaTime * 0.5f);
     }
     
     private void SwimSurfaceOnUpdate()
     {
         if (WaterRaycast(out var hit, out var drown))
         {
-            transform.position += ComputeCollisionMove((hit.point + Vector3.up * -0.80f) - transform.position);
+            transform.position += ComputeCollisionMove(((hit.point + Vector3.up * -0.80f) - transform.position) * Time.deltaTime * 15f);
             
             if (drown)
             {
@@ -87,12 +94,12 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.SwimSurfaceRise)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurface, @params => IsSwimTriggerAtSurface(@params) && YVelocity < 2f)
             .SubstateOf(PlayerFsmState.Swim)
-            .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.Drown, @params =>
-            {
-                if (TimeInCurrentState() < 0.25f) return false;
-                if (@params is not SwimRaycastParam SwimRaycastParam) return false;
-                return SwimRaycastParam.drown;
-            }, 2)
+            // .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.Drown, @params =>
+            // {
+            //     if (TimeInCurrentState() < 0.75f) return false;
+            //     if (@params is not SwimRaycastParam SwimRaycastParam) return false;
+            //     return SwimRaycastParam.drown;
+            // }, 2)
             .OnEntry(_ =>
             {
                 if (YVelocity > -5f) return;
@@ -108,10 +115,10 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.SwimSurface)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.Drown, @params =>
             {
-                if (_momentum > 5f) return false;
+                if (_momentum > 7f) return false;
                 if (@params is not SwimRaycastParam SwimRaycastParam) return false;
                 return SwimRaycastParam.drown;
-            })
+            },3)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
