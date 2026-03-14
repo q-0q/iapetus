@@ -29,7 +29,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .SubstateOf(PlayerFsmState.Landable)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.Fall)
