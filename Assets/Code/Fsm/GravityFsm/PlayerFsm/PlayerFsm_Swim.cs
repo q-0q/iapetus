@@ -54,7 +54,7 @@ public partial class PlayerFsm
             if (drown)
             {
                 _momentum = Mathf.Lerp(_momentum, 0,
-                    Time.deltaTime * Mathf.Lerp(2f, 15f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
+                    Time.deltaTime * Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
             };
         }
 
@@ -137,6 +137,11 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Fall);
 
         Machine.Configure(PlayerFsmState.Drown)
+            .OnEntry(_ =>
+            {
+                _currentComboLength = 0;
+                OnPlayerComboReset?.Invoke();
+            })
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Dying1);
     }
 

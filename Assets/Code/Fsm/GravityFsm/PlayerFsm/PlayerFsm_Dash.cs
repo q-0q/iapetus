@@ -18,7 +18,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.PitonInteractable)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterDash)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Skipsquat, _ => _inputBuffer.IsBuffered("Jump"), 1)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, _ => YVelocity < 0.5)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.DashVault, _ => true, 2)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.DashVault, _ => true, 10)
             .OnEntry(_ =>

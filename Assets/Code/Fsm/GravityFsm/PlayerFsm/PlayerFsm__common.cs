@@ -900,12 +900,23 @@ public partial class PlayerFsm
 
     private bool WaterRaycast(out RaycastHit hit, out bool drown)
     {
+
+        bool IsDrown(Vector3 position)
+        {
+            foreach (var dualWaterPoint in DualWaterPointRegistry.DualWaterPoints)
+            {
+                if (Vector3.Distance(position, dualWaterPoint.transform.position) < dualWaterPoint.Radius) return false;
+            }
+
+            return true;
+        }
+        
         drown = false;
         var origin = transform.position + Vector3.up * 5f;
         var maxDistance = 10f;
         if (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")))
         {
-            drown = hit.transform.TryGetComponent(out PlayerDrownIndicator _);
+            drown = IsDrown(hit.point);
             return true;
         };
 
@@ -917,8 +928,8 @@ public partial class PlayerFsm
             {
                 point = origin,
             };
-            
-            drown = c.transform.TryGetComponent(out PlayerDrownIndicator _);
+
+            drown = IsDrown(origin);
             return true;
         }
 
