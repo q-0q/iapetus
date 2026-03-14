@@ -1,5 +1,13 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+
+public static class DualWaterPointRegistry
+{
+    public static readonly List<DualWaterPoint> DualWaterPoints = new();
+}
 
 public class RippleEffect : MonoBehaviour
 {
@@ -60,6 +68,9 @@ public class RippleEffect : MonoBehaviour
         lastPlayerPos = playerTransform.position;
         StartCoroutine(SimulationLoop());
     }
+
+    
+
 
     RenderTexture CreateRT()
     {
@@ -210,5 +221,37 @@ public class RippleEffect : MonoBehaviour
         PlayerFsm.OnPlayerRippleGenerated -= AddRipple;
         PlayerSplashParticles.OnPlayerSplashParticleTriggerEnter -= AddRipple;
         PlayerFsm.OnPlayerWakeGenerated -= AddWake;
+    }
+    
+    
+    // ----- Update DualWater shader positions and radii
+    
+    private Vector4[] _positions = new Vector4[64]; // Max 64 points
+    private static readonly int PointsID = Shader.PropertyToID("_Points");
+    private static readonly int CountID = Shader.PropertyToID("_PointCount");
+    private void Update()
+    {
+        
+        if (DualWaterPointRegistry.DualWaterPoints == null || DualWaterPointRegistry.DualWaterPoints.Count == 0) return;
+
+        int count = Mathf.Min(DualWaterPointRegistry.DualWaterPoints.Count, 64);
+        
+        for (int i = 0; i < count; i++)
+        {
+            if (DualWaterPointRegistry.DualWaterPoints[i] != null)
+            {
+                Vector3 pos = DualWaterPointRegistry.DualWaterPoints[i].transform.position;
+                // We store position in xyz and radius in w
+                
+                
+                _positions[i] = new Vector4(pos.x, pos.y, pos.z, DualWaterPointRegistry.DualWaterPoints[i].Radius);
+                
+                print(_positions[i]);
+            }
+        }
+
+        // Send the data to all shaders globally
+        Shader.SetGlobalVectorArray(PointsID, _positions);
+        Shader.SetGlobalInt(CountID, count);
     }
 }
