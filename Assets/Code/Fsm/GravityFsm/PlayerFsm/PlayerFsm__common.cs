@@ -885,7 +885,9 @@ public partial class PlayerFsm
     private void HandleRaycastKill()
     {
         if (CurrentFallDistance() > -50f) return;
-        if (Physics.Raycast(transform.position, Vector3.down, 100f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+        var origin = transform.position + Vector3.up * 3f;
+        if (Physics.Raycast(origin, Vector3.down, 100f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+        if (Physics.Raycast(origin, Vector3.down, 100f, LayerMask.GetMask("Water"))) return;
         if (TimeInCurrentState() < 1f) return;
         InvokePlayerDeath();
     }
