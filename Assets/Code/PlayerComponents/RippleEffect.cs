@@ -232,21 +232,23 @@ public class RippleEffect : MonoBehaviour
     private void Update()
     {
         
-        if (DualWaterPointRegistry.DualWaterPoints == null || DualWaterPointRegistry.DualWaterPoints.Count == 0) return;
+        // if (DualWaterPointRegistry.DualWaterPoints == null || DualWaterPointRegistry.DualWaterPoints.Count == 0) return;
 
         int count = Mathf.Min(DualWaterPointRegistry.DualWaterPoints.Count, 64);
         
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < 64; i++)
         {
-            if (DualWaterPointRegistry.DualWaterPoints[i] != null)
+            if (i < count)
             {
                 Vector3 pos = DualWaterPointRegistry.DualWaterPoints[i].transform.position;
                 // We store position in xyz and radius in w
                 
                 
                 _positions[i] = new Vector4(pos.x, pos.y, pos.z, DualWaterPointRegistry.DualWaterPoints[i].Radius);
-                
-                print(_positions[i]);
+            }
+            else
+            {
+                _positions[i] = new Vector4(0,0,0, 0);
             }
         }
 
