@@ -88,7 +88,7 @@ public partial class PlayerFsm
 
         if (YVelocity < 15f && _momentum > 12f)
         {
-            if (Physics.Raycast(transform.position + transform.forward * GetRaycastTimeModifier() * 5f, Vector3.down, out var hit, 55f, ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player")))
+            if (Physics.Raycast(transform.position + transform.forward * GetRaycastTimeModifier() * 5f, Vector3.down, out var hit, 55f, ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player", "FoliageSystems")))
             {
                 Debug.DrawRay(hit.point, Vector3.up, Color.red, 1f);
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Water")) Machine.Fire(PlayerFsmTrigger.IsAboveWater);

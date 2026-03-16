@@ -839,7 +839,7 @@ public partial class PlayerFsm
     private void SnapToGround()
     {
         ReplaceAnimatorTrigger("GroundMove");
-        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit,20f, GetEnvironmentalLayermask()))
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit,20f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             transform.position = hit.point;
         }

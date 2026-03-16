@@ -72,7 +72,7 @@ public abstract partial class GravityFsm
                     GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) hit = recast;
             
             var angle = Vector3.Angle(hit.GetCorrectNormalForSphere(sphereSpherecastDirection), Vector3.up);
-            if (angle > 60f) return false;
+            if (angle > 75f) return false;
             var slopeMinDistanceOffset =
                 Mathf.Lerp(0, 2f, Mathf.InverseLerp(0f, 90f, angle));
 
