@@ -23,7 +23,7 @@ public partial class PlayerFsm
         // if (_playerInput.actions["Sprint"].IsPressed()) isSprinting = true;
         
         // HandleInputMomentumChange();
-        HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
+        HandleTurning(0, true, 1f, false, 1f);
         
         // SetAnimatorMomentum();
         // SetAnimatorSpeedMod();
