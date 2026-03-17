@@ -112,4 +112,50 @@ public class RopeSwing : MonoBehaviour
 
         return tangentialAccel + centripetalAccel;
     }
+    
+    public Vector3 GetSwingVelocity()
+    {
+        if (_radius <= 0) return Vector3.zero;
+
+        // 1. Convert our 2D angular storage into a 3D Angular Velocity vector (omega)
+        // In your setup: 
+        // _angularVelocity.x rotates around the local X-axis
+        // _angularVelocity.y rotates around the local Z-axis
+        Vector3 localOmega = new Vector3(_angularVelocity.x, 0, _angularVelocity.y);
+    
+        // 2. Transform omega to world space
+        Vector3 worldOmega = _rotator.TransformDirection(localOmega);
+
+        // 3. Get the vector from the pivot to the player (the radius vector)
+        Vector3 radiusVector = GetWorldspaceAttachPoint() - _rotator.position;
+
+        // 4. Linear Velocity = Angular Velocity x Radius Vector
+        // This produces the tangential velocity vector in world space
+        Vector3 velocity = Vector3.Cross(worldOmega, radiusVector);
+
+        return velocity;
+    }
+    
+    public Vector3 GetWorldSwingDirection()
+    {
+        if (_radius <= 0) return _rotator.forward;
+
+        // 1. Get the vector from Pivot to Attach Point
+        Vector3 offset = GetWorldspaceAttachPoint() - _rotator.position;
+
+        // 2. Flatten the vector to the XZ plane (top-down view)
+        offset.y = 0;
+
+
+        if (offset.sqrMagnitude < 2)
+        {
+            return PlayerFsm.Singleton.transform.forward; 
+        }
+        
+        print(offset.sqrMagnitude);
+
+        // 4. Return normalized direction
+        return offset.normalized;
+    }
+    
 }

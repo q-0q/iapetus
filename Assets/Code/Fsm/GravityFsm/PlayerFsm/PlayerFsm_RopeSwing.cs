@@ -10,7 +10,7 @@ public partial class PlayerFsm
     private void RopeSwingHomingOnUpdate()
     {
         
-        Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(0, 0.25f, Mathf.InverseLerp(0, 0.1f, TimeInCurrentState())));
+        Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(0, 0.1f, Mathf.InverseLerp(0, 0.1f, TimeInCurrentState())));
         
         HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
         var desiredPosition = _currentRopeSwing.GetWorldspaceAttachPoint();
@@ -85,6 +85,11 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _currentRopeSwing.SetPlayerMomentum(_momentum);
+            })
+            .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
+            {
+                transform.forward = new Vector3(_currentRopeSwing.GetWorldSwingDirection().x, 0, _currentRopeSwing.GetWorldSwingDirection().z).normalized;
+                _momentum = 10f;
             })
             .OnExit(_ =>
             {
