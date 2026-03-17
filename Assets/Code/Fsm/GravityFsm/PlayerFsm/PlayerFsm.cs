@@ -100,6 +100,7 @@ public partial class PlayerFsm : GravityFsm
 
         public static int RopeSwingInteractable;
         public static int RopeSwing;
+        public static int RopeSwingHoming;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -241,6 +242,7 @@ public partial class PlayerFsm : GravityFsm
         _timeSinceDashFinished += Time.deltaTime;
         _comboTimer += Time.deltaTime;
         _timeSinceLastFootstep += Time.deltaTime;
+        _timeSinceRopeSwing += Time.deltaTime;
         
         if (_comboTimer > ComboTimeoutDuration)
         {

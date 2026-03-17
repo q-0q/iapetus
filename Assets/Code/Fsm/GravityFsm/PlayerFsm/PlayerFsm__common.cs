@@ -77,7 +77,7 @@ public partial class PlayerFsm
     private Transform _currentPitonTransform;
     private static readonly Vector3 PitonTargetOffset = Vector3.up * -2f;
     private RopeSwing _currentRopeSwing;
-
+    private float _timeSinceRopeSwing;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;

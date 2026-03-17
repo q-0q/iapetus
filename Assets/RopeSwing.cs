@@ -3,8 +3,8 @@ using UnityEngine;
 public class RopeSwing : MonoBehaviour
 {
     [Header("Settings")]
-    private float Gravity = 100f;
-    private float Damping = 0.5f; // Velocity loss over time
+    private const float Gravity = 125f;
+    private const float Damping = 2f; // Velocity loss over time
 
     private Transform _rotator;
     private float _radius; 
@@ -16,13 +16,16 @@ public class RopeSwing : MonoBehaviour
         _rotator = transform.Find("Rotator");
     }
 
-    public void SetPlayerAttachment(Vector3 playerPos, float momentum)
+    public void SetPlayerPosition(Vector3 playerPos)
+    {
+        _radius = Vector3.Distance(_rotator.position, playerPos);
+        _radius = Mathf.Max(_radius, 0.5f); // Prevent division by zero
+    }
+    public void SetPlayerMomentum(float momentum)
     {
         momentum *= 2f;
         
         // 1. Calculate the radius (L) from the pivot
-        _radius = Vector3.Distance(_rotator.position, playerPos);
-        _radius = Mathf.Max(_radius, 0.5f); // Prevent division by zero
 
         // 2. Convert player's world forward momentum into local angular velocity
         // We project the player's forward direction into the rotator's local space
@@ -36,8 +39,6 @@ public class RopeSwing : MonoBehaviour
 
         _angularVelocity = new Vector2(omegaX, omegaZ);
         
-        Debug.DrawRay(playerPos, _angularVelocity, Color.yellow, 2f);
-
         // 3. Initialize current angles based on current rotation
         Vector3 startAngles = _rotator.localEulerAngles;
         _currentAngles.x = NormalizeAngle(startAngles.x);

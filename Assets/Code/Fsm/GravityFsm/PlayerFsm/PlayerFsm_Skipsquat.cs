@@ -17,8 +17,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                _wallsquattedSinceLeavingGround = false;
-                _dashSinceLeavingGround = false;
+                _currentRopeSwing = null;
                 OnPlayerFootstep();
             });
     }

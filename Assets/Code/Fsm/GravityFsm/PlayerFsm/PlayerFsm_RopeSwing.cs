@@ -26,13 +26,36 @@ public partial class PlayerFsm
     {
 
         Machine.Configure(PlayerFsmState.RopeSwingInteractable)
-            .PermitIf(PlayerFsmTrigger.EnterRopeSwingTrigger, PlayerFsmState.RopeSwing, @params =>
+            .PermitIf(PlayerFsmTrigger.EnterRopeSwingTrigger, PlayerFsmState.RopeSwingHoming, @params =>
             {
-                if (Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.1f) return false;
-                return YVelocity < 15f;
+                if (@params is not RopeSwingHitParam ropeSwingHitParam) return false;
+                if (ropeSwingHitParam.RopeSwing == _currentRopeSwing) return TimeInCurrentState() > 0.6f;
+                return true;
             });
-        
-        
+
+        Machine.Configure(PlayerFsmState.RopeSwingHoming)
+            .SubstateOf(GravityFsmState.Aerial)
+            .SubstateOf(PlayerFsmState.ForceWallRotation)
+            .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(GravityFsmState.IgnoreDepenetration)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.RopeSwing)
+            .OnEntry(_ =>
+            {
+                // _momentum = 0;
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+                _currentRopeSwing = null;
+            })
+            .OnEntryFrom(PlayerFsmTrigger.EnterRopeSwingTrigger, @params =>
+            {
+                if (@params is not RopeSwingHitParam ropeSwingHitParam) return;
+                _currentRopeSwing = ropeSwingHitParam.RopeSwing;
+                _currentRopeSwing.SetPlayerPosition(transform.position);
+            });
+
         Machine.Configure(PlayerFsmState.RopeSwing)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.Landable)
@@ -41,19 +64,14 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0)
             .OnEntry(_ =>
             {
-                // _momentum = 0;
-                _wallsquattedSinceLeavingGround = false;
-                _dashSinceLeavingGround = false;
-                _previousWallrunSide = FlankType.None;
-                _currentFlankType = FlankType.None;
+                _currentRopeSwing.SetPlayerMomentum(_momentum);
             })
-            .OnEntryFrom(PlayerFsmTrigger.EnterRopeSwingTrigger, @params =>
+            .OnExit(_ =>
             {
-                if (@params is not RopeSwingHitParam ropeSwingHitParam) return;
-                _currentRopeSwing = ropeSwingHitParam.RopeSwing;
-                _currentRopeSwing.SetPlayerAttachment(transform.position, _momentum);
+                _timeSinceRopeSwing = 0;
             });
-        
+
+
     }
     
 }

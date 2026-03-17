@@ -46,6 +46,7 @@ public partial class PlayerFsm
                 _currentFlankType = FlankType.None;
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
+                _currentRopeSwing = null;
             });
 
         Machine.Configure(PlayerFsmState.GroundMoveAfterVault)
