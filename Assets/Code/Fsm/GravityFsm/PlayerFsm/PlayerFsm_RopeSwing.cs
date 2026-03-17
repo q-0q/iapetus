@@ -7,6 +7,17 @@ using Wasp;
 public partial class PlayerFsm
 {
 
+    private void RopeSwingHomingOnUpdate()
+    {
+        
+        Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(0, 0.25f, Mathf.InverseLerp(0, 0.1f, TimeInCurrentState())));
+        
+        HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
+        var desiredPosition = _currentRopeSwing.GetWorldspaceAttachPoint();
+        transform.position = Vector3.Lerp(transform.position, desiredPosition,
+            Time.deltaTime * Mathf.Lerp(8f, 40f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
+    }
+    
     private void RopeSwingOnUpdate()
     {
         // if (_playerInput.actions["Sprint"].IsPressed()) isSprinting = true;
@@ -20,6 +31,11 @@ public partial class PlayerFsm
         var desiredPosition = _currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
             Time.deltaTime * Mathf.Lerp(8f, 40f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
+        
+        var dot = Vector3.Dot(transform.forward, _currentRopeSwing.GetWorldAcceleration());
+        var swingAmount = Mathf.InverseLerp(50f, -50f, dot);
+        Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(Animator.GetFloat("RopeSwingDirection"), swingAmount, Time.deltaTime * 20f));
+        
     }
     
     private void RopeSwingConfigure()
@@ -48,6 +64,7 @@ public partial class PlayerFsm
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
                 _currentRopeSwing = null;
+                Animator.SetFloat("RopeSwingDirection", 0);
             })
             .OnEntryFrom(PlayerFsmTrigger.EnterRopeSwingTrigger, @params =>
             {

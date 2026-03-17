@@ -491,6 +491,11 @@ public partial class PlayerFsm : GravityFsm
         {
             DrownOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.RopeSwingHoming))
+        {
+            RopeSwingHomingOnUpdate();
+        }
 
         if (Machine.IsInState(PlayerFsmState.RopeSwing))
         {
