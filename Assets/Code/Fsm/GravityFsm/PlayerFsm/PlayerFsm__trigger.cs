@@ -79,7 +79,7 @@ public partial class PlayerFsm
             if (yDelta > 4f) continue;
             if (yDelta < -2f) continue;
             
-            if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask())) continue;
+            if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) continue;
             var param = new PitonParam() { Piton = neighbor.transform.parent};
             Machine.Fire(PlayerFsmTrigger.EnterPitonTrigger, param);
         }
@@ -90,9 +90,20 @@ public partial class PlayerFsm
         {
             if (Physics.Raycast(transform.position + transform.forward * GetRaycastTimeModifier() * 5f, Vector3.down, out var hit, 55f, ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player", "FoliageSystems")))
             {
-                Debug.DrawRay(hit.point, Vector3.up, Color.red, 1f);
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Water")) Machine.Fire(PlayerFsmTrigger.IsAboveWater);
             }
+        }
+        
+        
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2.75f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
+        {
+            // var yDelta = neighbor.transform.position.y - transform.position.y;
+            // if (yDelta > 4f) continue;
+            // if (yDelta < -2f) continue;
+            
+            if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) continue;
+            var param = new RopeSwingHitParam() { RopeSwing = neighbor.transform.parent.parent.GetComponent<RopeSwing>()};
+            Machine.Fire(PlayerFsmTrigger.EnterRopeSwingTrigger, param);
         }
 
     }

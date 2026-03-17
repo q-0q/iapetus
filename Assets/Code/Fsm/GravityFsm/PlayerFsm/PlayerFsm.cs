@@ -97,6 +97,9 @@ public partial class PlayerFsm : GravityFsm
         public static int SwimSurface;
         public static int DiveFall;
         public static int Drown;
+
+        public static int RopeSwingInteractable;
+        public static int RopeSwing;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -137,6 +140,8 @@ public partial class PlayerFsm : GravityFsm
 
         public static int SwimTriggerRaycastHit;
         public static int IsAboveWater;
+
+        public static int EnterRopeSwingTrigger;
     }
     
     protected override void OnAwake()
@@ -483,6 +488,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Drown))
         {
             DrownOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.RopeSwing))
+        {
+            RopeSwingOnUpdate();
         }
 
         
