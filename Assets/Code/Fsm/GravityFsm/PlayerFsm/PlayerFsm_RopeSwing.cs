@@ -36,6 +36,9 @@ public partial class PlayerFsm
         var swingAmount = Mathf.InverseLerp(50f, -40f, dot);
         Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(Animator.GetFloat("RopeSwingDirection"), swingAmount, Time.deltaTime * 20f));
         
+        
+        _currentRopeSwing.SetWorldPlayerInput(GetInputMovementVector3());
+        
     }
     
     private void RopeSwingConfigure()
@@ -86,6 +89,7 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 _timeSinceRopeSwing = 0;
+                _currentRopeSwing.SetWorldPlayerInput(Vector3.zero);
             });
 
 

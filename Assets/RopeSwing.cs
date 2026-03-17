@@ -3,43 +3,46 @@ using UnityEngine;
 public class RopeSwing : MonoBehaviour
 {
     [Header("Settings")]
-    private const float Gravity = 125f;
-    private const float Damping = 2f; // Velocity loss over time
+    [SerializeField] private float Gravity = 125f;
+    [SerializeField] private float Damping = 2f; 
+    [SerializeField] private float InputPower = 60f; // Force of the player's push
 
     private Transform _rotator;
     private float _radius; 
-    private Vector2 _angularVelocity; // X is swing around X-axis, Y is swing around Z-axis
-    private Vector2 _currentAngles;   // Current X and Z rotation values
+    private Vector2 _angularVelocity; 
+    private Vector2 _currentAngles;   
+    private Vector3 _worldInput; // Now storing the Worldspace Vector3
 
     private void Awake()
     {
         _rotator = transform.Find("Rotator");
     }
 
+    /// <summary>
+    /// Accepts a world-space direction (e.g., from Camera or Keyboard).
+    /// Assumes y = 0 as requested.
+    /// </summary>
+    public void SetWorldPlayerInput(Vector3 worldDir)
+    {
+        _worldInput = worldDir;
+    }
+
     public void SetPlayerPosition(Vector3 playerPos)
     {
         _radius = Vector3.Distance(_rotator.position, playerPos);
-        _radius = Mathf.Max(_radius, 0.5f); // Prevent division by zero
+        _radius = Mathf.Max(_radius, 0.5f); 
     }
+
     public void SetPlayerMomentum(float momentum)
     {
         momentum *= 2f;
-        
-        // 1. Calculate the radius (L) from the pivot
-
-        // 2. Convert player's world forward momentum into local angular velocity
-        // We project the player's forward direction into the rotator's local space
         Vector3 localDir = _rotator.InverseTransformDirection(PlayerFsm.Singleton.transform.forward);
         
-        // Linear velocity v = angular velocity w * radius -> w = v / r
-        // Note: Moving forward (Z) creates rotation around the X-axis
-        // Moving right (X) creates rotation around the Z-axis
         float omegaX = -(localDir.z * momentum) / _radius;
         float omegaZ = (localDir.x * momentum) / _radius;
 
         _angularVelocity = new Vector2(omegaX, omegaZ);
         
-        // 3. Initialize current angles based on current rotation
         Vector3 startAngles = _rotator.localEulerAngles;
         _currentAngles.x = NormalizeAngle(startAngles.x);
         _currentAngles.y = NormalizeAngle(startAngles.z);
@@ -49,23 +52,32 @@ public class RopeSwing : MonoBehaviour
     {
         if (_radius <= 0) return;
 
-        // 1. Calculate Restoring Acceleration (Gravity)
-        // a = -(g/L) * sin(theta)
+        // 1. Convert World Input to Local Swing Space
+        // We project the world-space input into the rotator's local space
+        Vector3 localInput = _rotator.InverseTransformDirection(_worldInput);
+
+        // 2. Calculate Restoring Acceleration (Gravity)
         float accelX = -(Gravity / _radius) * Mathf.Sin(_currentAngles.x * Mathf.Deg2Rad);
         float accelZ = -(Gravity / _radius) * Mathf.Sin(_currentAngles.y * Mathf.Deg2Rad);
 
-        // 2. Update Angular Velocity
-        _angularVelocity.x += accelX * Time.deltaTime;
-        _angularVelocity.y += accelZ * Time.deltaTime;
+        // 3. Add Player Input (Mapping local movement to angular change)
+        // Local Z movement (forward/back) creates rotation around Local X axis
+        // Local X movement (left/right) creates rotation around Local Z axis
+        float playerAccelX = -(localInput.z * InputPower) / _radius;
+        float playerAccelZ = (localInput.x * InputPower) / _radius;
 
-        // 3. Apply Damping (Linear Drag)
+        // 4. Update Angular Velocity
+        _angularVelocity.x += (accelX + playerAccelX) * Time.deltaTime;
+        _angularVelocity.y += (accelZ + playerAccelZ) * Time.deltaTime;
+
+        // 5. Apply Damping
         _angularVelocity -= _angularVelocity * Damping * Time.deltaTime;
 
-        // 4. Update the Angles
+        // 6. Update the Angles
         _currentAngles.x += _angularVelocity.x * Mathf.Rad2Deg * Time.deltaTime;
         _currentAngles.y += _angularVelocity.y * Mathf.Rad2Deg * Time.deltaTime;
 
-        // 5. Apply to Transform
+        // 7. Apply to Transform
         _rotator.localRotation = Quaternion.Euler(_currentAngles.x, 0, _currentAngles.y);
     }
 
@@ -77,7 +89,6 @@ public class RopeSwing : MonoBehaviour
 
     public Vector3 GetWorldspaceAttachPoint()
     {
-        // Returns the point at the bottom of the rope based on current rotation
         return _rotator.position + (_rotator.up * -_radius);
     }
 
