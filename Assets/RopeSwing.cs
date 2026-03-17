@@ -21,6 +21,7 @@ public class RopeSwing : MonoBehaviour
     private Vector3 _worldInput;
 
     private List<GameObject> segments;
+    private int currentEffectiveSegmentCount = 0;
 
     private void Awake()
     {
@@ -34,7 +35,7 @@ public class RopeSwing : MonoBehaviour
         for (int i = 0; i < NumSegments; i++)
         {
             var offset = Vector3.down * SegmentDistance * i;
-            var segment = GameObject.Instantiate(segmentPrefab, transform);
+            var segment = GameObject.Instantiate(segmentPrefab, transform.Find("Physics"));
             segment.transform.SetLocalPositionAndRotation(offset, Quaternion.identity);
             segments.Add(segment);
 
@@ -43,6 +44,7 @@ public class RopeSwing : MonoBehaviour
             {
                 rigidbody.useGravity = false;
                 rigidbody.isKinematic = true;
+                rigidbody.freezeRotation = true;
             }
             else
             {
@@ -65,6 +67,7 @@ public class RopeSwing : MonoBehaviour
 
     public void SetPlayerMomentum(float momentum)
     {
+        
         momentum *= 2f;
         Vector3 localDir = _rotator.InverseTransformDirection(PlayerFsm.Singleton.transform.forward);
         _angularVelocity = new Vector2(-(localDir.z * momentum) / _radius, (localDir.x * momentum) / _radius);
@@ -72,31 +75,44 @@ public class RopeSwing : MonoBehaviour
         Vector3 startAngles = _rotator.localEulerAngles;
         _currentAngles.x = NormalizeAngle(startAngles.x);
         _currentAngles.y = NormalizeAngle(startAngles.z);
+
+
+        var segmentIndex = Mathf.Clamp(Mathf.FloorToInt(_radius / SegmentDistance), 0, NumSegments - 1);
+        currentEffectiveSegmentCount = NumSegments - segmentIndex;
+        segments[0].transform.position = PlayerFsm.Singleton.transform.position;
+        for (int i = 0; i < NumSegments; i++)
+        {
+            segments[i].transform.localPosition = Vector3.down * SegmentDistance * i;
+            segments[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
+            segments[i].SetActive(i < currentEffectiveSegmentCount);
+        }
     }
 
     private void Update()
     {
         UpdateMotion();
-        
+        UpdateRopeVisuals();
+
     }
 
     private void FixedUpdate()
     {
-        
+    }
+
+    private void UpdateRopeVisuals()
+    {
         if (DoSwingPhysics())
         {
-            var segmentIndex = Mathf.Clamp(Mathf.FloorToInt(_radius / SegmentDistance), 0, NumSegments - 1);
-            Rigidbody playerSegmentRb = segments[segmentIndex].GetComponent<Rigidbody>();
-        
+            
+            Rigidbody playerSegmentRb = segments[0].GetComponent<Rigidbody>();
             playerSegmentRb.transform.position = PlayerFsm.Singleton.transform.position;
             playerSegmentRb.transform.rotation = Quaternion.identity;
         }
 
         else
         {
-            
+            segments[0].transform.localPosition = Vector3.zero;
         }
-        
     }
 
     private bool DoSwingPhysics()
