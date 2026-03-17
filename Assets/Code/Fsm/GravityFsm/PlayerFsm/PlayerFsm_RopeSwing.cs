@@ -33,7 +33,7 @@ public partial class PlayerFsm
             Time.deltaTime * Mathf.Lerp(8f, 40f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
         
         var dot = Vector3.Dot(transform.forward, _currentRopeSwing.GetWorldAcceleration());
-        var swingAmount = Mathf.InverseLerp(50f, -50f, dot);
+        var swingAmount = Mathf.InverseLerp(50f, -40f, dot);
         Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(Animator.GetFloat("RopeSwingDirection"), swingAmount, Time.deltaTime * 20f));
         
     }
