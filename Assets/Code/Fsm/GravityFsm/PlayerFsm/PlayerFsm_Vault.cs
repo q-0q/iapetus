@@ -39,7 +39,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                _currentRopeSwing = null;
+                currentRopeSwing = null;
                 
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
                 OnPlayerFootstep();

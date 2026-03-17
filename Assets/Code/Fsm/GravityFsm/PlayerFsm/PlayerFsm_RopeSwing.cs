@@ -13,7 +13,7 @@ public partial class PlayerFsm
         Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(0, 0.1f, Mathf.InverseLerp(0, 0.1f, TimeInCurrentState())));
         
         HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
-        var desiredPosition = _currentRopeSwing.GetWorldspaceAttachPoint();
+        var desiredPosition = currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
             Time.deltaTime * Mathf.Lerp(8f, 40f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
     }
@@ -28,16 +28,16 @@ public partial class PlayerFsm
         // SetAnimatorMomentum();
         // SetAnimatorSpeedMod();
 
-        var desiredPosition = _currentRopeSwing.GetWorldspaceAttachPoint();
+        var desiredPosition = currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
             Time.deltaTime * Mathf.Lerp(8f, 40f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
         
-        var dot = Vector3.Dot(transform.forward, _currentRopeSwing.GetWorldAcceleration());
+        var dot = Vector3.Dot(transform.forward, currentRopeSwing.GetWorldAcceleration());
         var swingAmount = Mathf.InverseLerp(50f, -40f, dot);
         Animator.SetFloat("RopeSwingDirection", Mathf.Lerp(Animator.GetFloat("RopeSwingDirection"), swingAmount, Time.deltaTime * 20f));
         
         
-        _currentRopeSwing.SetWorldPlayerInput(GetInputMovementVector3());
+        currentRopeSwing.SetWorldPlayerInput(GetInputMovementVector3());
         
     }
     
@@ -48,7 +48,7 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.EnterRopeSwingTrigger, PlayerFsmState.RopeSwingHoming, @params =>
             {
                 if (@params is not RopeSwingHitParam ropeSwingHitParam) return false;
-                if (ropeSwingHitParam.RopeSwing == _currentRopeSwing) return TimeInCurrentState() > 0.6f;
+                if (ropeSwingHitParam.RopeSwing == currentRopeSwing) return TimeInCurrentState() > 0.6f;
                 return true;
             });
 
@@ -66,14 +66,14 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                _currentRopeSwing = null;
+                currentRopeSwing = null;
                 Animator.SetFloat("RopeSwingDirection", 0);
             })
             .OnEntryFrom(PlayerFsmTrigger.EnterRopeSwingTrigger, @params =>
             {
                 if (@params is not RopeSwingHitParam ropeSwingHitParam) return;
-                _currentRopeSwing = ropeSwingHitParam.RopeSwing;
-                _currentRopeSwing.SetPlayerPosition(transform.position);
+                currentRopeSwing = ropeSwingHitParam.RopeSwing;
+                currentRopeSwing.SetPlayerPosition(transform.position);
             });
 
         Machine.Configure(PlayerFsmState.RopeSwing)
@@ -84,17 +84,17 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0)
             .OnEntry(_ =>
             {
-                _currentRopeSwing.SetPlayerMomentum(_momentum);
+                currentRopeSwing.SetPlayerMomentum(_momentum);
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
-                transform.forward = new Vector3(_currentRopeSwing.GetWorldSwingDirection().x, 0, _currentRopeSwing.GetWorldSwingDirection().z).normalized;
+                transform.forward = new Vector3(currentRopeSwing.GetWorldSwingDirection().x, 0, currentRopeSwing.GetWorldSwingDirection().z).normalized;
                 _momentum = 10f;
             })
             .OnExit(_ =>
             {
                 _timeSinceRopeSwing = 0;
-                _currentRopeSwing.SetWorldPlayerInput(Vector3.zero);
+                currentRopeSwing.SetWorldPlayerInput(Vector3.zero);
             });
 
 

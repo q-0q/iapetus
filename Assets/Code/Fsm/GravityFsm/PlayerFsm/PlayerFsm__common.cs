@@ -76,7 +76,7 @@ public partial class PlayerFsm
     private Transform _teleportCameraLookAt;
     private Transform _currentPitonTransform;
     private static readonly Vector3 PitonTargetOffset = Vector3.up * -2f;
-    private RopeSwing _currentRopeSwing;
+    public RopeSwing currentRopeSwing;
     private float _timeSinceRopeSwing;
 
     public static event Action<float> OnPlayerMomentumUpdated;

@@ -31,7 +31,7 @@ public partial class PlayerFsm
                 OnPlayerEnterUpdraft?.Invoke();
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                _currentRopeSwing = null;
+                currentRopeSwing = null;
             });
     }
 }

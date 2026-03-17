@@ -30,7 +30,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                _currentRopeSwing = null;
+                currentRopeSwing = null;
                 
                 _movementAnimationMirror = !_movementAnimationMirror;
                 var flip = _movementAnimationMirror ? 0 : 1f;

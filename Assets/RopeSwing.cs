@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RopeSwing : MonoBehaviour
@@ -8,16 +10,46 @@ public class RopeSwing : MonoBehaviour
     private const float InputPower = 50f; 
     private const float MaxInputAngle = 10f;
 
+    private const int NumSegments = 30;
+    private const float SegmentDistance = 1f;
+    
+    
     private Transform _rotator;
     private float _radius; 
     private Vector2 _angularVelocity; 
     private Vector2 _currentAngles;   
-    
     private Vector3 _worldInput;
+
+    private List<GameObject> segments;
 
     private void Awake()
     {
         _rotator = transform.Find("Rotator");
+    }
+
+    private void Start()
+    {
+        var segmentPrefab = Resources.Load("Prefab/RopeSwingSegment") as GameObject;
+        segments = new List<GameObject>();
+        for (int i = 0; i < NumSegments; i++)
+        {
+            var offset = Vector3.down * SegmentDistance * i;
+            var segment = GameObject.Instantiate(segmentPrefab, transform);
+            segment.transform.SetLocalPositionAndRotation(offset, Quaternion.identity);
+            segments.Add(segment);
+
+            segment.TryGetComponent(out Rigidbody rigidbody);
+            if (i == 0)
+            {
+                rigidbody.useGravity = false;
+                rigidbody.isKinematic = true;
+            }
+            else
+            {
+                segment.TryGetComponent(out ConfigurableJoint joint);
+                joint.connectedBody = segments[i - 1].GetComponent<Rigidbody>();
+            }
+        }
     }
 
     public void SetWorldPlayerInput(Vector3 worldDir)
@@ -43,6 +75,38 @@ public class RopeSwing : MonoBehaviour
     }
 
     private void Update()
+    {
+        UpdateMotion();
+        
+    }
+
+    private void FixedUpdate()
+    {
+        
+        if (DoSwingPhysics())
+        {
+            var segmentIndex = Mathf.Clamp(Mathf.FloorToInt(_radius / SegmentDistance), 0, NumSegments - 1);
+            Rigidbody playerSegmentRb = segments[segmentIndex].GetComponent<Rigidbody>();
+        
+            playerSegmentRb.transform.position = PlayerFsm.Singleton.transform.position;
+            playerSegmentRb.transform.rotation = Quaternion.identity;
+        }
+
+        else
+        {
+            
+        }
+        
+    }
+
+    private bool DoSwingPhysics()
+    {
+        if (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwing)) return false;
+        if (PlayerFsm.Singleton.currentRopeSwing != this) return false;
+        return true;
+    }
+
+    private void UpdateMotion()
     {
         if (_radius <= 0) return;
 
