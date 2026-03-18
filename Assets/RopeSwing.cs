@@ -13,8 +13,8 @@ public class RopeSwing : MonoBehaviour
 
     private const int NumSegments = 35;
     private const float SegmentDistance = 1f;
-    
-    
+
+    private const float RadiusOffset = 2f;
     private Transform _rotator;
     private float _radius; 
     private Vector2 _angularVelocity; 
@@ -42,7 +42,6 @@ public class RopeSwing : MonoBehaviour
             segments.Add(segment);
 
             segment.TryGetComponent(out Rigidbody rb);
-            segment.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
             rb.isKinematic = true;
             
             if (i == 0)
@@ -72,7 +71,7 @@ public class RopeSwing : MonoBehaviour
 
     public void SetPlayerPosition(Vector3 playerPos)
     {
-        _radius = Vector3.Distance(_rotator.position, playerPos);
+        _radius = Vector3.Distance(_rotator.position, playerPos) - RadiusOffset;
         _radius = Mathf.Max(_radius, 0.5f); 
     }
 
@@ -197,7 +196,7 @@ public class RopeSwing : MonoBehaviour
 
     private float NormalizeAngle(float angle) => angle > 180 ? angle - 360 : angle;
 
-    public Vector3 GetWorldspaceAttachPoint() => _rotator.position + (_rotator.up * -_radius);
+    public Vector3 GetWorldspaceAttachPoint() => _rotator.position + (_rotator.up * (-_radius - RadiusOffset));
     
     public Vector3 GetWorldAcceleration()
     {

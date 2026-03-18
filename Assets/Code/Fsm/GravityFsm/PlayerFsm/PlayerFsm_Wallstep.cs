@@ -17,6 +17,7 @@ public partial class PlayerFsm
                 _ => YVelocity > MediumVaultHangMinimumYVelocity, 1)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
+            .SubstateOf(PlayerFsmState.RopeSwingInteractable)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
