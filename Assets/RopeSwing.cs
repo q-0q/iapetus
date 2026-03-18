@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class RopeSwing : MonoBehaviour
@@ -10,7 +11,7 @@ public class RopeSwing : MonoBehaviour
     private const float InputPower = 50f; 
     private const float MaxInputAngle = 10f;
 
-    private const int NumSegments = 30;
+    private const int NumSegments = 35;
     private const float SegmentDistance = 1f;
     
     
@@ -30,10 +31,7 @@ public class RopeSwing : MonoBehaviour
         _rotator = transform.Find("Rotator");
         _lineRenderer = GetComponentInChildren<LineRenderer>();
         _lineRenderer.positionCount = NumSegments;
-    }
-
-    private void Start()
-    {
+        
         var segmentPrefab = Resources.Load("Prefab/RopeSwingSegment") as GameObject;
         segments = new List<GameObject>();
         for (int i = 0; i < NumSegments; i++)
@@ -44,10 +42,12 @@ public class RopeSwing : MonoBehaviour
             segments.Add(segment);
 
             segment.TryGetComponent(out Rigidbody rb);
+            segment.GetComponentInChildren<TextMeshProUGUI>().text = i.ToString();
+            rb.isKinematic = true;
+            
             if (i == 0)
             {
                 rb.useGravity = false;
-                rb.isKinematic = true;
                 rb.freezeRotation = true;
                 segment.transform.SetParent(_rotator);
             }
@@ -58,10 +58,13 @@ public class RopeSwing : MonoBehaviour
                 segment.transform.SetParent(transform);
             }
             
-            segment.transform.SetLocalPositionAndRotation(offset, Quaternion.identity);
+            segment.transform.localPosition = offset; 
+            rb.rotation = Quaternion.identity;
+
+
         }
     }
-
+    
     public void SetWorldPlayerInput(Vector3 worldDir)
     {
         _worldInput = worldDir;
@@ -109,7 +112,7 @@ public class RopeSwing : MonoBehaviour
                     segments[i].transform.SetLocalPositionAndRotation(Vector3.down * (SegmentDistance * i), Quaternion.identity);
                     segments[i].GetComponent<Rigidbody>().isKinematic = true;
                     segments[i].transform.SetParent(_rotator);
-
+        
                 }
                 else
                 {
