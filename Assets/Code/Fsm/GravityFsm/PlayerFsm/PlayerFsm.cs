@@ -101,6 +101,7 @@ public partial class PlayerFsm : GravityFsm
         public static int RopeSwingInteractable;
         public static int RopeSwing;
         public static int RopeSwingHoming;
+        public static int RopeSwingJump;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

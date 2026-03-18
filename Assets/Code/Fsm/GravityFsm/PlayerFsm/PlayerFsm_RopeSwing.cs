@@ -23,7 +23,11 @@ public partial class PlayerFsm
         // if (_playerInput.actions["Sprint"].IsPressed()) isSprinting = true;
         
         // HandleInputMomentumChange();
-        HandleTurning(0, true, 1f, false, 1f);
+        
+        var v3 = GetInputMovementVector3();
+        var angle = Vector3.Angle(transform.forward, v3);
+        var turnStrength = Mathf.Lerp(0, 0.075f, Mathf.InverseLerp(45f, 30f, Mathf.Abs(angle - 90)));
+        HandleTurning(turnStrength, true, 1f, false, 1f);
         
         // SetAnimatorMomentum();
         // SetAnimatorSpeedMod();
@@ -81,15 +85,17 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.DontLoseYVelocity)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() > 0)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.RopeSwingJump, _ => TimeInCurrentState() > 0)
             .OnEntry(_ =>
             {
                 currentRopeSwing.SetPlayerMomentum(_momentum);
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
+                YVelocity = JumpYVelocity;
+                _inputBuffer.ConsumeBuffer("Jump");
                 transform.forward = new Vector3(currentRopeSwing.GetWorldSwingDirection().x, 0, currentRopeSwing.GetWorldSwingDirection().z).normalized;
-                _momentum = 10f;
+                _momentum = MaxMomentum;
             })
             .OnExit(_ =>
             {
@@ -97,6 +103,8 @@ public partial class PlayerFsm
                 currentRopeSwing.SetWorldPlayerInput(Vector3.zero);
             });
 
+        Machine.Configure(PlayerFsmState.RopeSwingJump)
+            .SubstateOf(PlayerFsmState.Jump);
 
     }
     

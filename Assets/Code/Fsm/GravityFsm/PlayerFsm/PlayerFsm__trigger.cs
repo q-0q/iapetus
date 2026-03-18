@@ -95,7 +95,7 @@ public partial class PlayerFsm
         }
         
         
-        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2.75f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 3.75f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
         {
             // var yDelta = neighbor.transform.position.y - transform.position.y;
             // if (yDelta > 4f) continue;

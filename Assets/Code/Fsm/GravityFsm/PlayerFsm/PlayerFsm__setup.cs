@@ -141,6 +141,7 @@ public partial class PlayerFsm
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingHoming, "RopeSwing");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwing, "RopeSwing");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingJump, "RopeSwingJump");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

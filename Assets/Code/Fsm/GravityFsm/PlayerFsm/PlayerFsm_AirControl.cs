@@ -11,6 +11,7 @@ public partial class PlayerFsm
         var decreaseMultiplier = AirControlMomentumDecayModifier;
         var turningMultiplier = AirControlTurningMultiplier;
         var forceForwardInput = true;
+        var animationTurnMod = 1f;
         if (Machine.IsInState(PlayerFsmState.Updraft))
         {
             increaseMultiplier = Mathf.Lerp(0.1f, 0.8f, Mathf.InverseLerp(60f, 0f, YVelocity));
@@ -25,14 +26,21 @@ public partial class PlayerFsm
             // turningMultiplier = Mathf.Lerp(AirControlTurningMultiplier * 1.5f, AirControlTurningMultiplier, Mathf.InverseLerp(60f, 20f, YVelocity));
             forceForwardInput = false;
         }
-
+        
+        if (Machine.IsInState(PlayerFsmState.RopeSwingJump))
+        {
+            // increaseMultiplier = Mathf.Lerp(0.1f, 0.8f, Mathf.InverseLerp(60f, 0f, YVelocity));
+            // turningMultiplier = Mathf.Lerp(AirControlTurningMultiplier * 1.5f, AirControlTurningMultiplier, Mathf.InverseLerp(60f, 20f, YVelocity));
+            animationTurnMod = Mathf.Lerp(0, 1f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState()));
+        }
+        
         if (_momentum < 8f)
         {
             increaseMultiplier = 1.5f;
             turningMultiplier = 1.5f;
         }
 
-        HandleTurning(turningMultiplier, forceForwardInput, AirControlTurningMomentumDecayModifier);
+        HandleTurning(turningMultiplier, forceForwardInput, AirControlTurningMomentumDecayModifier, false, animationTurnMod);
         HandleInputMomentumChange(increaseMultiplier, decreaseMultiplier);
     }
 }
