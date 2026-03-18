@@ -101,6 +101,7 @@ public partial class PlayerFsm : GravityFsm
         public static int RopeSwingInteractable;
         public static int RopeSwing;
         public static int RopeSwingHoming;
+        public static int RopeSwingJumpsquat;
         public static int RopeSwingJump;
     }
 
@@ -501,6 +502,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.RopeSwing))
         {
             RopeSwingOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.RopeSwingJumpsquat))
+        {
+            RopeSwingJumpsquatOnUpdate();
         }
 
         

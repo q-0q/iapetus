@@ -27,7 +27,7 @@ public partial class PlayerFsm
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(transform.forward, v3);
         var turnStrength = Mathf.Lerp(0, 0.075f, Mathf.InverseLerp(45f, 30f, Mathf.Abs(angle - 90)));
-        HandleTurning(turnStrength, true, 1f, false, 1f);
+        HandleTurning(turnStrength, true, 1f, false, 0f);
         
         // SetAnimatorMomentum();
         // SetAnimatorSpeedMod();
@@ -43,6 +43,12 @@ public partial class PlayerFsm
         
         currentRopeSwing.SetWorldPlayerInput(GetInputMovementVector3());
         
+    }
+
+    private void RopeSwingJumpsquatOnUpdate()
+    {
+        HandleCollisionMove(0.5f);
+
     }
     
     private void RopeSwingConfigure()
@@ -85,15 +91,13 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.DontLoseYVelocity)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.RopeSwingJump, _ => TimeInCurrentState() > 0)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.RopeSwingJumpsquat, _ => TimeInCurrentState() > 0)
             .OnEntry(_ =>
             {
                 currentRopeSwing.SetPlayerMomentum(_momentum);
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
-                YVelocity = JumpYVelocity;
-                _inputBuffer.ConsumeBuffer("Jump");
                 transform.forward = new Vector3(currentRopeSwing.GetWorldSwingDirection().x, 0, currentRopeSwing.GetWorldSwingDirection().z).normalized;
                 _momentum = MaxMomentum;
             })
@@ -101,6 +105,19 @@ public partial class PlayerFsm
             {
                 _timeSinceRopeSwing = 0;
                 currentRopeSwing.SetWorldPlayerInput(Vector3.zero);
+            });
+
+        Machine.Configure(PlayerFsmState.RopeSwingJumpsquat)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.RopeSwingJump, _ => true, 2)
+            .OnEntry(_ =>
+            {
+                Animator.SetLayerWeight(1, 0);
+                _inputBuffer.ConsumeBuffer("Jump");
+            })
+            .OnExitFrom(FsmTrigger.Timeout, _ =>
+            {
+                YVelocity = JumpYVelocity; 
+                Animator.SetLayerWeight(1, 0);
             });
 
         Machine.Configure(PlayerFsmState.RopeSwingJump)
