@@ -23,9 +23,13 @@ public class RopeSwing : MonoBehaviour
     private List<GameObject> segments;
     private int currentEffectiveSegmentCount = 0;
 
+    private LineRenderer _lineRenderer;
+
     private void Awake()
     {
         _rotator = transform.Find("Rotator");
+        _lineRenderer = GetComponentInChildren<LineRenderer>();
+        _lineRenderer.positionCount = NumSegments;
     }
 
     private void Start()
@@ -35,22 +39,26 @@ public class RopeSwing : MonoBehaviour
         for (int i = 0; i < NumSegments; i++)
         {
             var offset = Vector3.down * SegmentDistance * i;
-            var segment = GameObject.Instantiate(segmentPrefab, transform.Find("Physics"));
-            segment.transform.SetLocalPositionAndRotation(offset, Quaternion.identity);
+            var segment = GameObject.Instantiate(segmentPrefab);
+            
             segments.Add(segment);
 
-            segment.TryGetComponent(out Rigidbody rigidbody);
+            segment.TryGetComponent(out Rigidbody rb);
             if (i == 0)
             {
-                rigidbody.useGravity = false;
-                rigidbody.isKinematic = true;
-                rigidbody.freezeRotation = true;
+                rb.useGravity = false;
+                rb.isKinematic = true;
+                rb.freezeRotation = true;
+                segment.transform.SetParent(_rotator);
             }
             else
             {
                 segment.TryGetComponent(out ConfigurableJoint joint);
                 joint.connectedBody = segments[i - 1].GetComponent<Rigidbody>();
+                segment.transform.SetParent(transform);
             }
+            
+            segment.transform.SetLocalPositionAndRotation(offset, Quaternion.identity);
         }
     }
 
@@ -75,17 +83,7 @@ public class RopeSwing : MonoBehaviour
         Vector3 startAngles = _rotator.localEulerAngles;
         _currentAngles.x = NormalizeAngle(startAngles.x);
         _currentAngles.y = NormalizeAngle(startAngles.z);
-
-
-        var segmentIndex = Mathf.Clamp(Mathf.FloorToInt(_radius / SegmentDistance), 0, NumSegments - 1);
-        currentEffectiveSegmentCount = NumSegments - segmentIndex;
-        segments[0].transform.position = PlayerFsm.Singleton.transform.position;
-        for (int i = 0; i < NumSegments; i++)
-        {
-            segments[i].transform.localPosition = Vector3.down * SegmentDistance * i;
-            segments[i].GetComponent<Rigidbody>().velocity = Vector3.zero;
-            segments[i].SetActive(i < currentEffectiveSegmentCount);
-        }
+        
     }
 
     private void Update()
@@ -103,15 +101,40 @@ public class RopeSwing : MonoBehaviour
     {
         if (DoSwingPhysics())
         {
-            
-            Rigidbody playerSegmentRb = segments[0].GetComponent<Rigidbody>();
-            playerSegmentRb.transform.position = PlayerFsm.Singleton.transform.position;
-            playerSegmentRb.transform.rotation = Quaternion.identity;
-        }
+            var segmentIndex = Mathf.Clamp(Mathf.FloorToInt(_radius / SegmentDistance), 0, NumSegments - 1);
+            for (int i = 0; i < NumSegments; i++)
+            {
+                if (i <= segmentIndex)
+                {
+                    segments[i].transform.SetLocalPositionAndRotation(Vector3.down * (SegmentDistance * i), Quaternion.identity);
+                    segments[i].GetComponent<Rigidbody>().isKinematic = true;
+                    segments[i].transform.SetParent(_rotator);
 
+                }
+                else
+                {
+                    segments[i].GetComponent<Rigidbody>().isKinematic = false;
+                    segments[i].GetComponent<Rigidbody>().drag = 1f;
+                    segments[i].transform.SetParent(transform);
+                }
+            }
+            
+            segments[segmentIndex].transform.rotation = Quaternion.identity;
+            
+        }
+        
         else
         {
-            segments[0].transform.localPosition = Vector3.zero;
+            for (int i = 1; i < NumSegments; i++)
+            {
+                segments[i].GetComponent<Rigidbody>().isKinematic = false;
+                segments[i].GetComponent<Rigidbody>().drag = 10f;
+            }
+        }
+
+        for (int i = 0; i < NumSegments; i++)
+        {
+            _lineRenderer.SetPosition(i, segments[i].transform.position);
         }
     }
 

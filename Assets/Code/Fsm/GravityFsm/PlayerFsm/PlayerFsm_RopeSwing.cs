@@ -30,7 +30,7 @@ public partial class PlayerFsm
 
         var desiredPosition = currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
-            Time.deltaTime * Mathf.Lerp(8f, 40f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
+            Time.deltaTime * Mathf.Lerp(8f, 60f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
         
         var dot = Vector3.Dot(transform.forward, currentRopeSwing.GetWorldAcceleration());
         var swingAmount = Mathf.InverseLerp(50f, -40f, dot);
