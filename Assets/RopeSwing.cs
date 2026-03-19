@@ -12,7 +12,8 @@ public class RopeSwing : MonoBehaviour
     private const float InputPower = 50f; 
     private const float MaxInputAngle = 10f;
 
-    private const int NumSegments = 35;
+    public float length = 60f;
+    private int NumSegments = 60;
     private const float SegmentDistance = 1f;
 
     private const float RadiusOffset = 2f;
@@ -29,6 +30,13 @@ public class RopeSwing : MonoBehaviour
 
     private void Awake()
     {
+
+        NumSegments = Mathf.FloorToInt(length / SegmentDistance);
+        var collider = GetComponentInChildren<CapsuleCollider>();
+        collider.center = new Vector3(0, -length * 0.5f, 0);
+        collider.height = length;
+        
+        
         _rotator = transform.Find("Rotator");
         _lineRenderer = GetComponentInChildren<LineRenderer>();
         _lineRenderer.positionCount = NumSegments;
