@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class RopeSwing : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class RopeSwing : MonoBehaviour
         _lineRenderer.positionCount = NumSegments;
         
         var segmentPrefab = Resources.Load("Prefab/RopeSwingSegment") as GameObject;
+        var leafPrefab = Resources.Load("Prefab/RopeLeafHolder") as GameObject;
         segments = new List<GameObject>();
         for (int i = 0; i < NumSegments; i++)
         {
@@ -59,6 +61,14 @@ public class RopeSwing : MonoBehaviour
             
             segment.transform.localPosition = offset; 
             rb.rotation = Quaternion.identity;
+
+            var leafCount = Random.Range(0, 3);
+            var leafRotationOffset = Random.Range(0, 3) * 120f;
+            for (int l = 0; l < leafCount; l++)
+            {
+                var leaf = GameObject.Instantiate(leafPrefab, segment.transform.Find("Leaves"));
+                leaf.transform.rotation = Quaternion.Euler(0, leafRotationOffset + (l * 120f), 0);
+            }
 
 
         }
