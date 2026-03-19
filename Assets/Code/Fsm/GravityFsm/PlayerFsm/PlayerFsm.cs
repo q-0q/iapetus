@@ -520,6 +520,12 @@ public partial class PlayerFsm : GravityFsm
             SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
         }
         
+                
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            Time.timeScale = 0.01f;
+        }
+        
         HandleRaycastKill();
 
         
