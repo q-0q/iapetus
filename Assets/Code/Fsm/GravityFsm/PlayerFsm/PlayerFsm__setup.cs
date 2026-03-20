@@ -89,7 +89,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.FallAfterSlideLateral, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
-        StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.1f);
+        StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingJumpsquat, 0.15f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
@@ -163,6 +163,7 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.PitonFlip, 0.75f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Swim, 0.75f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.RopeSwingJump, 0.95f);
         
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);

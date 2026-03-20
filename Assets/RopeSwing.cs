@@ -126,7 +126,7 @@ public class RopeSwing : MonoBehaviour
             {
                 if (i <= segmentIndex)
                 {
-                    segments[i].transform.SetLocalPositionAndRotation(Vector3.down * (SegmentDistance * i), Quaternion.identity);
+                    segments[i].transform.SetLocalPositionAndRotation(Vector3.Lerp(segments[i].transform.localPosition, Vector3.down * (SegmentDistance * i), Time.deltaTime * 70f), Quaternion.identity);
                     segments[i].GetComponent<Rigidbody>().isKinematic = true;
                     segments[i].transform.SetParent(_rotator);
         
