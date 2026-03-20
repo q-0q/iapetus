@@ -13,8 +13,12 @@ public class WaterCleanseStation : MonoBehaviour
     private CinemachineTrackedDolly _dolly;
     private Transform _marker;
     private SplineContainer _spline;
+    private Material _haloMaterial;
 
     public float cameraCoroutineDurationMod = 1f;
+
+    public string PersistentEvent = "";
+    public string RequiredPersistentEvent = "";
 
     // Optimized: Store the Component directly to avoid GetComponent calls later
     private Dictionary<DualWaterPoint, bool> _pointsActivated;
@@ -29,6 +33,7 @@ public class WaterCleanseStation : MonoBehaviour
         _dolly = _virtualCamera.GetCinemachineComponent<CinemachineTrackedDolly>();
         _marker = transform.Find("Marker");
         _spline = GetComponentInChildren<SplineContainer>();
+        _haloMaterial = transform.Find("Halo").GetComponentInChildren<Renderer>().material;
         
         _pointsActivated = new Dictionary<DualWaterPoint, bool>();
         _sqrActivationDistance = PointActivationDistance * PointActivationDistance;
@@ -37,21 +42,45 @@ public class WaterCleanseStation : MonoBehaviour
         {
             _pointsActivated[dwp] = false;
         }
+        
+        HandlePersistentEvents(SaveSystem.LoadCachedSaveData());
     }
 
-    private void OnEnable() => _interactable.OnInteracted += OnInteracted;
-    private void OnDisable() => _interactable.OnInteracted -= OnInteracted;
+    private void OnEnable()
+    {
+        _interactable.OnInteracted += OnInteracted;
+        SaveSystem.OnSaveDataUpdated += HandlePersistentEvents;
+    }
+
+    private void OnDisable()
+    {
+        _interactable.OnInteracted -= OnInteracted;
+        SaveSystem.OnSaveDataUpdated -= HandlePersistentEvents;
+    }
 
     private void OnInteracted() => StartCoroutine(MainCoroutine());
 
     private IEnumerator MainCoroutine()
     {
+        Util.InvokeSphereEffect(transform.position + (Vector3.down * 2f), Vector3.one * 17f, 1.35f, 1f, -5f);
+        float t = 0f;
+        float duration = 0.5f;
+        
+        while (t < duration)
+        {
+            float w = Util.SmoothLerp01(t / duration);
+            _haloMaterial.SetFloat("_Weight", 1f - w);
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+        
         _virtualCamera.Priority = 30;
         _marker.GetComponentInChildren<ParticleSystem>().Play();
         CutsceneManager.Singleton.SetPseudoCutsceneActive();
 
-        float t = 0f;
-        float duration = 3f;
+        t = 0f;
+        duration = 3f;
 
         while (t < Mathf.Max(duration, duration / cameraCoroutineDurationMod))
         {
@@ -69,6 +98,7 @@ public class WaterCleanseStation : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         _virtualCamera.Priority = -20;
+        SaveSystem.WritePersistentEvent(PersistentEvent);
         CutsceneManager.Singleton.ClearPseudoCutsceneActive();
     }
 
@@ -146,5 +176,39 @@ public class WaterCleanseStation : MonoBehaviour
         }
         
         Destroy(haloObject);
+    }
+
+    private void HandlePersistentEvents(SaveSystem.SaveData saveData)
+    {
+
+        if (SaveSystem.GetPersistentEventCompleted(PersistentEvent))
+        {
+            SetStationInactive();
+            foreach (var (t, _) in _pointsActivated)
+            {
+                t.GetComponent<DualWaterPoint>().Radius = t.GetComponent<DualWaterPoint>().DesiredRadius;
+            }
+            return;
+        }
+        
+        if (RequiredPersistentEvent != "" && !SaveSystem.GetPersistentEventCompleted(RequiredPersistentEvent))
+        {
+            SetStationInactive();
+            return;
+        }
+        
+        SetStationActive();
+    }
+
+    private void SetStationInactive()
+    {
+        _interactable.SetEnabled(false);
+        _haloMaterial.SetFloat("_Weight", 0);
+    }
+    
+    private void SetStationActive()
+    {
+        _interactable.SetEnabled(true);
+        _haloMaterial.SetFloat("_Weight", 1f);
     }
 }

@@ -13,6 +13,8 @@ public class SaveSystem : MonoBehaviour
     private float _timeSinceLastSave;
     
     private static SaveSystem _singleton;
+
+    public static event Action<SaveData> OnSaveDataUpdated; 
     private static SaveSystem Singleton
     {
         get
@@ -303,6 +305,9 @@ public class SaveSystem : MonoBehaviour
         
         if (screenCapture) UpdateScreenshot();
         File.WriteAllText(GetCurrentSaveIdPath(), json);
+        
+        OnSaveDataUpdated?.Invoke(data);
+
         Debug.Log("Saved file to: " + GetCurrentSaveIdPath());
     }
 
