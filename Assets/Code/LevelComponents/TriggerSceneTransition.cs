@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Debug = FMOD.Debug;
 
 public class TriggerSceneTransition : MonoBehaviour
 {

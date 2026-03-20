@@ -14,6 +14,7 @@ public class WaterCleanseStation : MonoBehaviour
     private Transform _marker;
     private SplineContainer _spline;
     private Material _haloMaterial;
+    public bool DontWritePersistentEvent = false;
 
     public float cameraCoroutineDurationMod = 1f;
 
@@ -63,6 +64,12 @@ public class WaterCleanseStation : MonoBehaviour
     private IEnumerator MainCoroutine()
     {
         Util.InvokeSphereEffect(transform.position + (Vector3.down * 2f), Vector3.one * 17f, 1.35f, 1f, -5f);
+        
+        
+        StartCoroutine(MainCameraCoroutine());
+        StartCoroutine(MainMarkerCoroutine());
+        CutsceneManager.Singleton.SetPseudoCutsceneActive();
+        
         float t = 0f;
         float duration = 0.5f;
         
@@ -75,31 +82,54 @@ public class WaterCleanseStation : MonoBehaviour
             yield return null;
         }
         
-        _virtualCamera.Priority = 30;
+
+        
+
+
+        
+    }
+
+    private IEnumerator MainMarkerCoroutine()
+    {
+        float t = 0f;
+        float duration = 3f;
+
+        yield return new WaitForSeconds(0.5f);
         _marker.GetComponentInChildren<ParticleSystem>().Play();
-        CutsceneManager.Singleton.SetPseudoCutsceneActive();
-
-        t = 0f;
-        duration = 3f;
-
-        while (t < Mathf.Max(duration, duration / cameraCoroutineDurationMod))
+        while (t < duration)
         {
-            float markerW = Util.SmoothLerp01(t / duration);
-            _marker.position = _spline.EvaluatePosition(markerW);
-            
-            float cameraW = Util.SmoothLerp01(t * cameraCoroutineDurationMod / duration);
-            _dolly.m_PathPosition = cameraW;
-            
+            float w = Util.SmoothLerp01(t / duration);
+            _marker.position = _spline.EvaluatePosition(w);
             InvokePointCoroutines();
-
             t += Time.deltaTime;
             yield return null;
         }
+        
+        if (!DontWritePersistentEvent) SaveSystem.WritePersistentEvent(PersistentEvent);
 
+        CutsceneManager.Singleton.ClearPseudoCutsceneActive();
+        
+    }
+
+    private IEnumerator MainCameraCoroutine()
+    {
+        _virtualCamera.Priority = 30;
+        float t = 0f;
+        float duration = 3f;
+        duration *= cameraCoroutineDurationMod;
+        yield return new WaitForSeconds(0.5f);
+        while (t < duration)
+        {
+            float w = Util.SmoothLerp01(t / duration);
+            _dolly.m_PathPosition = w;
+            t += Time.deltaTime;
+            yield return null;
+        }
+        
         yield return new WaitForSeconds(0.5f);
         _virtualCamera.Priority = -20;
-        SaveSystem.WritePersistentEvent(PersistentEvent);
-        CutsceneManager.Singleton.ClearPseudoCutsceneActive();
+        
+
     }
 
     private void InvokePointCoroutines()
@@ -196,7 +226,9 @@ public class WaterCleanseStation : MonoBehaviour
             SetStationInactive();
             return;
         }
-        
+
+        StartCoroutine(InvokeSphereEffect(transform.position, 20f));
+        Util.InvokeSphereEffect(transform.position + (Vector3.down * 2f), Vector3.one * 17f, 1.35f, 1f, -5f);
         SetStationActive();
     }
 
