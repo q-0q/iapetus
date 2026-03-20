@@ -53,7 +53,7 @@ public class WaterCleanseStation : MonoBehaviour
         float t = 0f;
         float duration = 3f;
 
-        while (t < duration)
+        while (t < Mathf.Max(duration, duration / cameraCoroutineDurationMod))
         {
             float markerW = Util.SmoothLerp01(t / duration);
             _marker.position = _spline.EvaluatePosition(markerW);

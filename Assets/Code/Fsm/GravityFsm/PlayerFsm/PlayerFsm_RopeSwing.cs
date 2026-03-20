@@ -15,7 +15,7 @@ public partial class PlayerFsm
         HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
         var desiredPosition = currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
-            Time.deltaTime * Mathf.Lerp(1f, 9f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState())));
+            Time.deltaTime * Mathf.Lerp(4f, 12f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState())));
     }
     
     private void RopeSwingOnUpdate()

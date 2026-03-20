@@ -15,6 +15,7 @@ public class RopeSwing : MonoBehaviour
     public float length = 60f;
     private int NumSegments = 60;
     private const float SegmentDistance = 1f;
+    private const float CapsuleShorten = 1f;
 
     private const float RadiusOffset = 2f;
     private Transform _rotator;
@@ -33,8 +34,8 @@ public class RopeSwing : MonoBehaviour
 
         NumSegments = Mathf.FloorToInt(length / SegmentDistance);
         var collider = GetComponentInChildren<CapsuleCollider>();
-        collider.center = new Vector3(0, -length * 0.5f, 0);
-        collider.height = length;
+        collider.center = new Vector3(0, -(length - CapsuleShorten) * 0.5f, 0);
+        collider.height = length - CapsuleShorten;
         
         
         _rotator = transform.Find("Rotator");
@@ -148,7 +149,7 @@ public class RopeSwing : MonoBehaviour
             for (int i = 1; i < NumSegments; i++)
             {
                 segments[i].GetComponent<Rigidbody>().isKinematic = false;
-                segments[i].GetComponent<Rigidbody>().drag = 10f;
+                segments[i].GetComponent<Rigidbody>().drag = 7f;
             }
         }
 
