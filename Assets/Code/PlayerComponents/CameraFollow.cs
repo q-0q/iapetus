@@ -65,6 +65,13 @@ public class CameraFollow : MonoBehaviour
         {
             newYOffset = -5f;
         }
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwing))
+        {
+            yLerp *= 0.5f;
+            xzLerp *= 0.6f;
+            // newYOffset = -5f;
+        }
 
         var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))
@@ -75,6 +82,8 @@ public class CameraFollow : MonoBehaviour
         yLerp = Mathf.Lerp(yLerp, yLerp * 2.75f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));
         _currentYOffset = Mathf.Lerp(_currentYOffset, newYOffset, Time.deltaTime * 2f);
         pos += Vector3.up * _currentYOffset;
+
+
 
 
         var newX = Mathf.Lerp(transform.position.x, pos.x, Time.deltaTime * xzLerp);

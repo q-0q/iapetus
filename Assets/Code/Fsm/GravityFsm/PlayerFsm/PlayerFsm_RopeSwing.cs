@@ -15,7 +15,7 @@ public partial class PlayerFsm
         HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
         var desiredPosition = currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
-            Time.deltaTime * Mathf.Lerp(4f, 12f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState())));
+            Time.deltaTime * Mathf.Lerp(1f, 0.5f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState())));
     }
     
     private void RopeSwingOnUpdate()
@@ -26,7 +26,7 @@ public partial class PlayerFsm
         
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(transform.forward, v3);
-        var turnStrength = Mathf.Lerp(0, 0.075f, Mathf.InverseLerp(45f, 30f, Mathf.Abs(angle - 90)));
+        var turnStrength = Mathf.Lerp(0, 0.175f, Mathf.InverseLerp(45f, 30f, Mathf.Abs(angle - 90)));
         HandleTurning(turnStrength, true, 1f, false, 0f);
         
         // SetAnimatorMomentum();

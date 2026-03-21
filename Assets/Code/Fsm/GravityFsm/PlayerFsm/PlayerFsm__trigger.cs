@@ -95,14 +95,11 @@ public partial class PlayerFsm
         }
         
         
-        foreach (var neighbor in Physics.OverlapSphere(transform.position, 3.75f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
         {
-            // var yDelta = neighbor.transform.position.y - transform.position.y;
-            // if (yDelta > 4f) continue;
-            // if (yDelta < -2f) continue;
-            
             if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) continue;
-            var param = new RopeSwingHitParam() { RopeSwing = neighbor.transform.parent.parent.GetComponent<RopeSwing>()};
+            var ropeSwing = neighbor.transform.parent.parent.GetComponent<RopeSwing>();
+            var param = new RopeSwingHitParam() { RopeSwing = ropeSwing};
             Machine.Fire(PlayerFsmTrigger.EnterRopeSwingTrigger, param);
         }
 

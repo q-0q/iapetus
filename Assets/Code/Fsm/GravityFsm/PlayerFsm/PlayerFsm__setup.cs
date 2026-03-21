@@ -89,7 +89,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.FallAfterSlideLateral, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
-        StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.15f);
+        StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.115f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingJumpsquat, 0.15f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");

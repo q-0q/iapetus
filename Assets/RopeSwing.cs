@@ -7,10 +7,10 @@ using Random = UnityEngine.Random;
 public class RopeSwing : MonoBehaviour
 {
     private const float Gravity = 125f;
-    private const float Damping = 2f; 
+    private const float Damping = 2.5f; 
     
     private const float InputPower = 50f; 
-    private const float MaxInputAngle = 10f;
+    private const float MaxInputAngle = 20f;
 
     public float length = 60f;
     private int NumSegments = 60;
@@ -97,7 +97,7 @@ public class RopeSwing : MonoBehaviour
     public void SetPlayerMomentum(float momentum)
     {
         
-        momentum *= 2f;
+        momentum *= 2.5f;
         Vector3 localDir = _rotator.InverseTransformDirection(PlayerFsm.Singleton.transform.forward);
         _angularVelocity = new Vector2(-(localDir.z * momentum) / _radius, (localDir.x * momentum) / _radius);
         
@@ -127,7 +127,7 @@ public class RopeSwing : MonoBehaviour
             {
                 if (i <= segmentIndex)
                 {
-                    segments[i].transform.SetLocalPositionAndRotation(Vector3.Lerp(segments[i].transform.localPosition, Vector3.down * (SegmentDistance * i), Time.deltaTime * 70f), Quaternion.identity);
+                    segments[i].transform.SetLocalPositionAndRotation(Vector3.Lerp(segments[i].transform.localPosition, Vector3.down * (SegmentDistance * i), Time.deltaTime * 120f), Quaternion.identity);
                     segments[i].GetComponent<Rigidbody>().isKinematic = true;
                     segments[i].transform.SetParent(_rotator);
         
