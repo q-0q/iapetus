@@ -546,6 +546,11 @@ public partial class PlayerFsm
         if (jump) Machine.Fire(PlayerFsmTrigger.Jump);
         _momentum = MaxMomentum * momentumWeight;
     }
+
+    public Vector3 GetPreviousPositionDelta()
+    {
+        return _previousPositionDeltaNoTimescale;
+    }
     
 
     

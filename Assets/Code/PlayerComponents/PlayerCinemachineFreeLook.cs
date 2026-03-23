@@ -105,6 +105,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
         TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated += ForceRecenter;
+        TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
     }
 
     private void OnDisable()
@@ -112,6 +113,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
         TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated -= ForceRecenter;
+        TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
     }
     
     private void OnMetaSaveDataUpdated(MetaSaveSystem.MetaSaveData metaSaveData)
@@ -119,6 +121,19 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _isAutocamEnabled = metaSaveData.autoCamEnabled;
         _freeLook.m_XAxis.m_MaxSpeed = _baseXSpeed * metaSaveData.cameraSensitivityModifier * 0.1f;
         _freeLook.m_YAxis.m_MaxSpeed = _baseYSpeed * metaSaveData.cameraSensitivityModifier * 0.1f;
+    }
+
+    private void OnWarp(Vector3 delta)
+    {
+        // StartCoroutine(Coroutine());
+        CinemachineCore.Instance.OnTargetObjectWarped(_freeLook.Follow, delta);
+        // IEnumerator Coroutine()
+        // {
+        //     for (int i = 0; i < 6; i++)
+        //     {
+        //         yield return null;
+        //     }
+        // }
     }
 
     // private void OnSettingsMenuOpened()

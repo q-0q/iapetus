@@ -96,6 +96,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                TutorialCanvas.Singleton.ShowTutorialText("Look", "Look");
                 _interactable.SetEnabled(false);
                 _interactable.transform.localPosition = _interactablePosB;
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
@@ -107,7 +108,6 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                TutorialCanvas.Singleton.ShowTutorialText("Look", "Look");
                 _interactable.SetEnabled(true);
                 _interactableParticles.Play();
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
@@ -143,6 +143,13 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                var gondolaDestination = new Vector3(_endPosition.position.x, gondola.transform.position.y, _endPosition.position.z);
+                var delta = gondolaDestination - gondola.transform.position;
+                PlayerFsm.Singleton.transform.position += delta;
+                gondola.transform.position = gondolaDestination;
+                PlayerFsm.Singleton.ForceParentTransformSync();
+                OnIntroCutsceneGondolaTeleported?.Invoke(delta);
+                armVibrator.DOShakePosition(2f, 0.0025f, 20);
                 _virtualCamera.Priority = 20;
                 _creakEventInstance.stop(STOP_MODE.IMMEDIATE);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
@@ -155,6 +162,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                armVibrator.DOShakePosition(1.5f, 0.005f, 20);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaBreakEventReference, gondola.gameObject);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
                 innerCube.DOShakePosition(0.75f, 0.5f);
@@ -165,6 +173,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                
                 TutorialCanvas.Singleton.ShowTutorialText("Jump", "Jump");
             });
         
@@ -247,9 +256,14 @@ public partial class TestCutsceneFsm
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.Shake2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.FinalCamera, false);
         
+        StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableChannel1, false);
         StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableReady2, false);
         StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableChannel2, false);
         StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableReady3, false);
+        
+        StateMapConfig.AnimationTrigger.Add(TestCutsceneFsmState.MoveForward, "MoveForward");
+        StateMapConfig.AnimationTrigger.Add(TestCutsceneFsmState.Shake1, "BreakStartup");
+        StateMapConfig.AnimationTrigger.Add(TestCutsceneFsmState.MoveCubeDown1, "Break");
         
         StateMapConfig.IsAbstract.Add(TestCutsceneFsmState.MoveForward, true);
     }

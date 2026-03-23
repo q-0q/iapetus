@@ -48,6 +48,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
         _interactableParticles = transform.Find("InteractableParticles").GetComponent<ParticleSystem>();
+        innerCube.TryGetComponent(out Animator);
 
         // TryGetComponent(out _interactable);
     }
@@ -64,8 +65,6 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _playerTransformOnStart = transform.Find("PlayerTransformOnStart");
         _textTmp = GetComponentInChildren<TextMeshProUGUI>();
         transform.Find("ImpactParticles").TryGetComponent(out _impactParticles);
-        _endPosition = transform.Find("EndPosition");
-        _endPosition.SetParent(null);
         _stateGondolaStartingPosition = transform.position;
 
         _interactablePosA = transform.Find("InteractablePosA").localPosition;
@@ -163,6 +162,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
                 print("a");
                 StartCoroutine(SpawnBackgroundElementCoroutine());
             }
+
+            _lineRenderer.transform.position = gondola.transform.position;
 
         }
 

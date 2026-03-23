@@ -33,7 +33,21 @@ public class CameraFollow : MonoBehaviour
     {
         OnCameraFollowTriggerStay?.Invoke(null);
     }
-    
+
+    private void OnEnable()
+    {
+        TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
+    }
+
+    private void OnDisable()
+    {
+        TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
+    }
+
+    private void OnWarp(Vector3 delta)
+    {
+        transform.position += delta;
+    }
     
     private void Update()
     {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
@@ -5,9 +6,11 @@ using Code.TriggerParams;
 using FMOD.Studio;
 using FMODUnity;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using Random = UnityEngine.Random;
 
 public partial class TestCutsceneFsm
 {
@@ -25,17 +28,22 @@ public partial class TestCutsceneFsm
     private float _textClock;
     private ParticleSystem _impactParticles;
     private const string CutscenePersistentEvent = "IntroCutsceneCompleted";
+    public static event Action<Vector3> OnIntroCutsceneGondolaTeleported;
 
     private Interactable _interactable;
     private ParticleSystem _interactableParticles;
 
-    private Transform _endPosition;
+    [SerializeField] private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
 
     private Vector3 _interactablePosA;
     private Vector3 _interactablePosB;
     private Vector3 _interactableParticlesPosA;
     private Vector3 _interactableParticlesPosB;
+
+    [SerializeField] private Transform armVibrator;
+
+    [SerializeField] private LineRenderer _lineRenderer;
     
     public EventReference musicEventReference;
     public EventReference windEventReference;
