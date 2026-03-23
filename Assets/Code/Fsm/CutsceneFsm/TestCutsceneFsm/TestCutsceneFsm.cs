@@ -181,6 +181,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         
         if (Machine.IsInState(TestCutsceneFsmState.Shake1))
         {
+            _lineRenderer.transform.position = gondola.transform.position;
             // gondola.transform.position += gondola.forward * (Mathf.Lerp(10f, 0f, Mathf.InverseLerp(0, 1.5f, TimeInCurrentState())) * Time.deltaTime);
         }
         
