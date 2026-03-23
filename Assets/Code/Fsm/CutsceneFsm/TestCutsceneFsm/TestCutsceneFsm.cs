@@ -40,6 +40,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int PlayerInputJump;
         public static int PlayerInJumpState;
         public static int OnInteracted;
+        public static int OnTriggersCompleted;
     }
 
     protected override void OnAwake()
@@ -80,7 +81,9 @@ public partial class TestCutsceneFsm : CutsceneFsm
         
         _initialFogEndDistance = RenderSettings.fogEndDistance;
         _initialFogStartDistance = RenderSettings.fogStartDistance;
-        
+
+        _currentNeededTriggerId = "a";
+
 
     }
     
@@ -221,10 +224,12 @@ public partial class TestCutsceneFsm : CutsceneFsm
     private void OnEnable()
     {
         _interactable.OnInteracted += OnInteracted;
+        IntroCutsceneTrigger.OnEnter += OnTrigger;
     }
 
     private void OnDisable()
     {
         _interactable.OnInteracted -= OnInteracted;
+        IntroCutsceneTrigger.OnEnter -= OnTrigger;
     }
 }

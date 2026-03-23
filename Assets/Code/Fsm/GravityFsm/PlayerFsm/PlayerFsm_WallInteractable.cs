@@ -7,7 +7,8 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WallInteractable)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
-            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ =>
+                (!Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity) && !CutsceneManager.Singleton.IsCutscenePlayerDisabled())
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.MediumVaultHang,
@@ -22,6 +23,7 @@ public partial class PlayerFsm
 
     private bool CanVault(TriggerParams t)
     {
+        if (CutsceneManager.Singleton.IsCutscenePlayerDisabled()) return false;
         if (Machine.IsInState(PlayerFsmState.PitonFlip)) return YVelocity < PitonMaximumWallInteractYVelocity;
         return (YVelocity > VaultMinimumYVelocity && _momentum > VaultMinimumMomentum);
     }

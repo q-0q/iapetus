@@ -36,7 +36,7 @@ public partial class TestCutsceneFsm
     private Vector3 _interactablePosB;
     private Vector3 _interactableParticlesPosA;
     private Vector3 _interactableParticlesPosB;
-
+    
     public EventReference musicEventReference;
     public EventReference windEventReference;
     
@@ -45,6 +45,8 @@ public partial class TestCutsceneFsm
     public EventReference gondolaBreakEventReference;
     public EventReference gondolaCrashEventReference;
     private EventInstance _creakEventInstance;
+
+    private string _currentNeededTriggerId;
 
     private int _currentTextId;
     private List<string> texts = new List<string>()
@@ -81,5 +83,11 @@ public partial class TestCutsceneFsm
     {
         yield return new WaitForSeconds(duration);
         Destroy(obj);
+    }
+
+    private void OnTrigger(string id)
+    {
+        if (_currentNeededTriggerId == "a" && id == "a") _currentNeededTriggerId = "b";
+        if (_currentNeededTriggerId == "b" && id == "b") Machine.Fire(TestCutsceneFsmTrigger.OnTriggersCompleted);
     }
 }

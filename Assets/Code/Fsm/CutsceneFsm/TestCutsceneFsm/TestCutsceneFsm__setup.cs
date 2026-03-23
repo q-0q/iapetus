@@ -67,10 +67,11 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.PlayerControl)
             .SubstateOf(TestCutsceneFsmState.MoveForward)
-            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.InteractableReady1)
+            .Permit(TestCutsceneFsmTrigger.OnTriggersCompleted, TestCutsceneFsmState.InteractableReady1)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                TutorialCanvas.Singleton.ShowTutorialText("Move", "Move");
                 innerCube.DOShakePosition(3.75f, 0.25f);
                 innerCube.DOShakeRotation(3.75f, 0.5f);
             });
@@ -81,6 +82,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                TutorialCanvas.Singleton.HideTutorialText();
                 _interactable.SetEnabled(true);
                 _interactableParticles.Play();
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
@@ -105,6 +107,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                TutorialCanvas.Singleton.ShowTutorialText("Look", "Look");
                 _interactable.SetEnabled(true);
                 _interactableParticles.Play();
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
@@ -118,6 +121,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                TutorialCanvas.Singleton.HideTutorialText();
                 _interactable.SetEnabled(false);
                 _interactable.transform.localPosition = _interactablePosA;
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
@@ -239,7 +243,7 @@ public partial class TestCutsceneFsm
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableChannel2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady3, false);
-        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.MoveCubeDown2, false);
+        // StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.MoveCubeDown2, t);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.Shake2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.FinalCamera, false);
         
