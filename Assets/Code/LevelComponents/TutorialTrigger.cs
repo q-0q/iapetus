@@ -11,6 +11,7 @@ using UnityEngine.Serialization;
 
 public class TutorialTrigger : MonoBehaviour
 {
+    public string action = "";
     public string text = "Tutorial text";
     public string playerHideState = "";
     private int playerHideStateInt = -1;
@@ -41,7 +42,7 @@ public class TutorialTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (PlayerFsm.Singleton.Machine.IsInState(playerHideStateInt)) return;
-        TutorialCanvas.Singleton.ShowTutorialText(text);
+        TutorialCanvas.Singleton.ShowTutorialText(text, action);
         active = true;
     }
 

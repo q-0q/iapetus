@@ -16,7 +16,11 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int ShowText;
         public static int TextFade;
         public static int PlayerControl;
-        public static int InteractableReady;
+        public static int InteractableReady1;
+        public static int InteractableChannel1;
+        public static int InteractableReady2;
+        public static int InteractableChannel2;
+        public static int InteractableReady3;
         public static int Channel;
         public static int CanvasFade;
         public static int Shake1;
@@ -35,13 +39,14 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int TextComplete;
         public static int PlayerInputJump;
         public static int PlayerInJumpState;
+        public static int OnInteracted;
     }
 
     protected override void OnAwake()
     {
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
-        _interactableParticles = _interactable.transform.Find("Particles").GetComponent<ParticleSystem>();
+        _interactableParticles = transform.Find("InteractableParticles").GetComponent<ParticleSystem>();
 
         // TryGetComponent(out _interactable);
     }
@@ -61,6 +66,11 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _endPosition = transform.Find("EndPosition");
         _endPosition.SetParent(null);
         _stateGondolaStartingPosition = transform.position;
+
+        _interactablePosA = transform.Find("InteractablePosA").localPosition;
+        _interactablePosB = transform.Find("InteractablePosB").localPosition;
+        _interactableParticlesPosA = transform.Find("InteractableParticlesPosA").localPosition;
+        _interactableParticlesPosB = transform.Find("InteractableParticlesPosB").localPosition;
 
         var cameraFollow = FindObjectOfType<CameraFollow>().transform;
         _virtualCamera.Follow = cameraFollow;
@@ -152,6 +162,18 @@ public partial class TestCutsceneFsm : CutsceneFsm
             }
 
         }
+
+        if (Machine.IsInState(TestCutsceneFsmState.InteractableChannel1))
+        {
+            _interactableParticles.transform.localPosition = Vector3.Lerp(_interactableParticles.transform.localPosition,
+                _interactableParticlesPosB, Time.deltaTime * 5f);
+        }
+        
+        if (Machine.IsInState(TestCutsceneFsmState.InteractableChannel2))
+        {
+            _interactableParticles.transform.localPosition = Vector3.Lerp(_interactableParticles.transform.localPosition,
+                _interactableParticlesPosA, Time.deltaTime * 5f);
+        }
         
         if (Machine.IsInState(TestCutsceneFsmState.Shake1))
         {
@@ -198,11 +220,11 @@ public partial class TestCutsceneFsm : CutsceneFsm
 
     private void OnEnable()
     {
-        // _interactable.OnInteracted += OnInteracted;
+        _interactable.OnInteracted += OnInteracted;
     }
 
     private void OnDisable()
     {
-        // _interactable.OnInteracted -= OnInteracted;
+        _interactable.OnInteracted -= OnInteracted;
     }
 }

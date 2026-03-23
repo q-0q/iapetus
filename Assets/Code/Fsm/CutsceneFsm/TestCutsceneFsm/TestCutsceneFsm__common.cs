@@ -32,6 +32,11 @@ public partial class TestCutsceneFsm
     private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
 
+    private Vector3 _interactablePosA;
+    private Vector3 _interactablePosB;
+    private Vector3 _interactableParticlesPosA;
+    private Vector3 _interactableParticlesPosB;
+
     public EventReference musicEventReference;
     public EventReference windEventReference;
     

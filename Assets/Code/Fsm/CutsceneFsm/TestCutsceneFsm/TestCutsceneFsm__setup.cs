@@ -67,7 +67,7 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.PlayerControl)
             .SubstateOf(TestCutsceneFsmState.MoveForward)
-            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.InteractableReady)
+            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.InteractableReady1)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
@@ -75,8 +75,9 @@ public partial class TestCutsceneFsm
                 innerCube.DOShakeRotation(3.75f, 0.5f);
             });
         
-        Machine.Configure(TestCutsceneFsmState.InteractableReady)
+        Machine.Configure(TestCutsceneFsmState.InteractableReady1)
             .SubstateOf(TestCutsceneFsmState.MoveForward)
+            .Permit(TestCutsceneFsmTrigger.OnInteracted, TestCutsceneFsmState.InteractableChannel1)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
@@ -85,6 +86,52 @@ public partial class TestCutsceneFsm
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
                 innerCube.DOShakePosition(3.75f, 0.25f);
                 innerCube.DOShakeRotation(3.75f, 0.5f);
+            });
+        
+        Machine.Configure(TestCutsceneFsmState.InteractableChannel1)
+            .SubstateOf(TestCutsceneFsmState.MoveForward)
+            .Permit(TestCutsceneFsmTrigger.Timeout, TestCutsceneFsmState.InteractableReady2)
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _interactable.SetEnabled(false);
+                _interactable.transform.localPosition = _interactablePosB;
+                Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+            });
+        
+        Machine.Configure(TestCutsceneFsmState.InteractableReady2)
+            .SubstateOf(TestCutsceneFsmState.MoveForward)
+            .Permit(TestCutsceneFsmTrigger.OnInteracted, TestCutsceneFsmState.InteractableChannel2)
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _interactable.SetEnabled(true);
+                _interactableParticles.Play();
+                Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+                innerCube.DOShakePosition(3.75f, 0.25f);
+                innerCube.DOShakeRotation(3.75f, 0.5f);
+            });
+        
+        Machine.Configure(TestCutsceneFsmState.InteractableChannel2)
+            .SubstateOf(TestCutsceneFsmState.MoveForward)
+            .Permit(TestCutsceneFsmTrigger.Timeout, TestCutsceneFsmState.InteractableReady3)
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _interactable.SetEnabled(false);
+                _interactable.transform.localPosition = _interactablePosA;
+                Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+            });
+        
+        Machine.Configure(TestCutsceneFsmState.InteractableReady3)
+            .SubstateOf(TestCutsceneFsmState.MoveForward)
+            .Permit(TestCutsceneFsmTrigger.OnInteracted, TestCutsceneFsmState.Shake1)
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _interactable.SetEnabled(true);
+                _interactableParticles.Play();
+                Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
             });
         
         Machine.Configure(TestCutsceneFsmState.Shake1)
@@ -114,7 +161,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                TutorialCanvas.Singleton.ShowTutorialText("South button / space: Jump");
+                TutorialCanvas.Singleton.ShowTutorialText("Jump", "Jump");
             });
         
         Machine.Configure(TestCutsceneFsmState.WaitForJumpsquat)
@@ -187,10 +234,18 @@ public partial class TestCutsceneFsm
         StateMapConfig.Duration.Add(TestCutsceneFsmState.PlayerControl, 4f);
         
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.PlayerControl, false);
-        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady, false);
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady1, false);
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableChannel1, false);
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady2, false);
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableChannel2, false);
+        StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady3, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.MoveCubeDown2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.Shake2, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.FinalCamera, false);
+        
+        StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableReady2, false);
+        StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableChannel2, false);
+        StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableReady3, false);
         
         StateMapConfig.IsAbstract.Add(TestCutsceneFsmState.MoveForward, true);
     }
