@@ -144,6 +144,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                _interactable.SetEnabled(false);
                 _interactableParticles.Stop();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
                 var gondolaDestination = new Vector3(_endPosition.position.x, gondola.transform.position.y, _endPosition.position.z);

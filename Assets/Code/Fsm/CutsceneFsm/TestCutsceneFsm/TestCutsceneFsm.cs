@@ -48,6 +48,9 @@ public partial class TestCutsceneFsm : CutsceneFsm
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
         _interactableParticles = transform.Find("InteractableParticles").GetComponent<ParticleSystem>();
+        _particlesHalo = _interactableParticles.transform.Find("Halo");
+        _particlesHaloMaterial = _particlesHalo.GetComponent<Renderer>().material;
+        _particlesHalo.SetParent(null);
         innerCube.TryGetComponent(out Animator);
 
         // TryGetComponent(out _interactable);
@@ -89,6 +92,9 @@ public partial class TestCutsceneFsm : CutsceneFsm
     public override void OnUpdate()
     {
         base.OnUpdate();
+        
+        _particlesHaloMaterial.SetFloat("_Weight", Mathf.Lerp(_particlesHaloMaterial.GetFloat("_Weight"), _interactable.isEnabled ? 1f : 0f, Time.deltaTime * 4f));
+        if (_interactable.isEnabled) _particlesHalo.position = _interactableParticles.transform.position;
         
         if (Machine.IsInState(TestCutsceneFsmState.ShowText))
         {

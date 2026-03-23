@@ -32,6 +32,7 @@ public partial class TestCutsceneFsm
 
     private Interactable _interactable;
     private ParticleSystem _interactableParticles;
+    private Material _particlesHaloMaterial;
 
     [SerializeField] private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
@@ -71,20 +72,21 @@ public partial class TestCutsceneFsm
     private float _initialFogStartDistance;
 
     private bool _waitingToSpawnBackgroundElement;
+    private Transform _particlesHalo;
 
     private IEnumerator SpawnBackgroundElementCoroutine()
     {
         if (_waitingToSpawnBackgroundElement) yield break; 
         _waitingToSpawnBackgroundElement = true;
-        yield return new WaitForSeconds(Random.Range(1.5f, 3.0f));
         var prefab = Resources.Load("Prefab/GondolaBackgroundRock") as GameObject;
         var forwardOffset = Vector3.forward * 70f;
         var sideOffset = (Random.Range(-1f, 1f) > 0 ? Vector3.left : Vector3.right) * Random.Range(40f, 50f);
         var obj = Instantiate(prefab, transform.position + forwardOffset + sideOffset, Quaternion.Euler(0f, Random.Range(0, 360f), 0), null);
         var s = Random.Range(0.5f, 1.5f);
         obj.transform.localScale = new Vector3(s, s, s);
-        _waitingToSpawnBackgroundElement = false;
         StartCoroutine(DestroyObjectAfterDuration(obj, 25f));
+        yield return new WaitForSeconds(Random.Range(1.5f, 3.0f));
+        _waitingToSpawnBackgroundElement = false;
     }
 
     private IEnumerator DestroyObjectAfterDuration(GameObject obj, float duration)
