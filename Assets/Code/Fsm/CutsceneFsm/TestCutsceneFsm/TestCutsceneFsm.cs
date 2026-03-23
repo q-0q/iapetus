@@ -15,7 +15,10 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int AlignCamera;
         public static int ShowText;
         public static int TextFade;
-        public static int MoveCubeForward;
+        public static int PlayerControl;
+        public static int InteractableReady;
+        public static int Channel;
+        public static int CanvasFade;
         public static int Shake1;
         public static int MoveCubeDown1;
         public static int WaitForInput;
@@ -23,6 +26,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int MoveCubeDown2;
         public static int Shake2;
         public static int FinalCamera;
+        public static int MoveForward;
 
     }
 
@@ -36,6 +40,9 @@ public partial class TestCutsceneFsm : CutsceneFsm
     protected override void OnAwake()
     {
         base.OnAwake();
+        _interactable = GetComponentInChildren<Interactable>();
+        _interactableParticles = _interactable.transform.Find("Particles").GetComponent<ParticleSystem>();
+
         // TryGetComponent(out _interactable);
     }
 
@@ -103,36 +110,47 @@ public partial class TestCutsceneFsm : CutsceneFsm
             }
         }
 
-        if (Machine.IsInState(TestCutsceneFsmState.MoveCubeForward))
+        if (Machine.IsInState(TestCutsceneFsmState.CanvasFade))
         {
-            var position = _endPosition.position;
-            gondola.transform.position = Vector3.Lerp(_stateGondolaStartingPosition,
-                new Vector3(position.x, _stateGondolaStartingPosition.y,
-                    position.z), Mathf.InverseLerp(0, _moveCubeForwardDuration, TimeInCurrentState()));
+            // var position = _endPosition.position;
+            // gondola.transform.position = Vector3.Lerp(_stateGondolaStartingPosition,
+            //     new Vector3(position.x, _stateGondolaStartingPosition.y,
+            //         position.z), Mathf.InverseLerp(0, _moveCubeForwardDuration, TimeInCurrentState()));
             
-            _mainCanvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, 5f, TimeInCurrentState()));
+            _mainCanvasGroup.alpha = Mathf.Lerp(1f, 0.0f, Mathf.InverseLerp(0f, CanvasFadeDuration, TimeInCurrentState()));
 
-            if (_playerInput.actions["Interact"].WasPressedThisFrame())
-            {
-                Machine.Fire(CutsceneFsmTrigger.Skip);
-            }
+            // if (_playerInput.actions["Interact"].WasPressedThisFrame())
+            // {
+            //     Machine.Fire(CutsceneFsmTrigger.Skip);
+            // }
 
                 
-            if (TimeInCurrentState() > 6f && !_moveCubeForwardShake1)
-            {
-                _moveCubeForwardShake1 = true;
-                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
-                innerCube.DOShakePosition(6.75f, 0.25f);
-                innerCube.DOShakeRotation(6.75f, 0.5f);
-            }
+            // if (TimeInCurrentState() > 6f && !_moveCubeForwardShake1)
+            // {
+            //     _moveCubeForwardShake1 = true;
+            //     FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
+            //     innerCube.DOShakePosition(6.75f, 0.25f);
+            //     innerCube.DOShakeRotation(6.75f, 0.5f);
+            // }
             
-            if (TimeInCurrentState() > 12f && !_moveCubeForwardShake2)
+            // if (TimeInCurrentState() > 12f && !_moveCubeForwardShake2)
+            // {
+            //     _moveCubeForwardShake2 = true;
+            //     FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
+            //     innerCube.DOShakePosition(6.75f, 0.25f);
+            //     innerCube.DOShakeRotation(6.75f, 0.5f);
+            // }
+        }
+        
+        if (Machine.IsInState(TestCutsceneFsmState.MoveForward))
+        {
+            gondola.transform.position += Vector3.forward * (Time.deltaTime * 8f);
+            if (!_waitingToSpawnBackgroundElement)
             {
-                _moveCubeForwardShake2 = true;
-                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
-                innerCube.DOShakePosition(6.75f, 0.25f);
-                innerCube.DOShakeRotation(6.75f, 0.5f);
+                print("a");
+                StartCoroutine(SpawnBackgroundElementCoroutine());
             }
+
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.Shake1))

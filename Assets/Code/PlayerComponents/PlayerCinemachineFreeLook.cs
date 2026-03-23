@@ -71,6 +71,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         if (_scriptActive) return;
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport)) return;
+        if (CutsceneManager.Singleton.IsCutsceneCameraDisabled()) return;
         if (GameMenu.Singleton.IsMenuOpen())
         {
             _freeLook.m_XAxis.m_InputAxisValue = 0;
@@ -210,6 +211,13 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
             _scriptActive = false;  
         }
         
+    }
+
+    public void SetAxes(float xValue, float yValue)
+    {
+        _freeLook.m_XAxis.Value = xValue;
+        _freeLook.m_YAxis.Value = yValue;
+
     }
 
     

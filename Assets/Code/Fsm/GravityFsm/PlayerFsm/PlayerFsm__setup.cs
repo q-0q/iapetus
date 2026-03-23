@@ -120,7 +120,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlideLateral, "FallAfterSlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "Idle");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Updraft, "Updraft");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TrialTeleport, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Climb, "Climb");

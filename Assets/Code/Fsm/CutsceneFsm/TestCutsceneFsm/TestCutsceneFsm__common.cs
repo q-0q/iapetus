@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Code.TriggerParams;
@@ -25,6 +26,9 @@ public partial class TestCutsceneFsm
     private ParticleSystem _impactParticles;
     private const string CutscenePersistentEvent = "IntroCutsceneCompleted";
 
+    private Interactable _interactable;
+    private ParticleSystem _interactableParticles;
+
     private Transform _endPosition;
     private Vector3 _stateGondolaStartingPosition;
 
@@ -46,8 +50,31 @@ public partial class TestCutsceneFsm
         "As the braziers of the summit flame lay bare, the world falls dormant, perhaps never to wake again..."
     };
 
-    private float _moveCubeForwardDuration = 20f;
+    private const float CanvasFadeDuration = 5f;
     private CinemachineVirtualCamera _finalVirtualCamera;
     private float _initialFogEndDistance;
     private float _initialFogStartDistance;
+
+    private bool _waitingToSpawnBackgroundElement;
+
+    private IEnumerator SpawnBackgroundElementCoroutine()
+    {
+        if (_waitingToSpawnBackgroundElement) yield break; 
+        _waitingToSpawnBackgroundElement = true;
+        yield return new WaitForSeconds(Random.Range(1.5f, 3.0f));
+        var prefab = Resources.Load("Prefab/GondolaBackgroundRock") as GameObject;
+        var forwardOffset = Vector3.forward * 70f;
+        var sideOffset = (Random.Range(-1f, 1f) > 0 ? Vector3.left : Vector3.right) * Random.Range(40f, 50f);
+        var obj = Instantiate(prefab, transform.position + forwardOffset + sideOffset, Quaternion.Euler(0f, Random.Range(0, 360f), 0), null);
+        var s = Random.Range(0.5f, 1.5f);
+        obj.transform.localScale = new Vector3(s, s, s);
+        _waitingToSpawnBackgroundElement = false;
+        StartCoroutine(DestroyObjectAfterDuration(obj, 25f));
+    }
+
+    private IEnumerator DestroyObjectAfterDuration(GameObject obj, float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        Destroy(obj);
+    }
 }

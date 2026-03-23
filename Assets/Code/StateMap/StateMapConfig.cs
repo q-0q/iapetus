@@ -11,4 +11,5 @@ public class StateMapConfig
     public StateMap<Vector3> TightropeLineOffset;
     public StateMap<float> TightropeLineYLerpStrength;
     public StateMap<bool> CutscenePlayerDisabled;
+    public StateMap<bool> CutsceneCameraDisabled;
 }

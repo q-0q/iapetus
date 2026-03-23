@@ -50,4 +50,11 @@ public class CutsceneManager : MonoBehaviour
         if (_activeCutscene == null) return false;
         return _activeCutscene.StateMapConfig.CutscenePlayerDisabled.Get(_activeCutscene);
     }
+    
+    public bool IsCutsceneCameraDisabled()
+    {
+        if (_pseudoCutsceneActive) return true;
+        if (_activeCutscene == null) return false;
+        return _activeCutscene.StateMapConfig.CutsceneCameraDisabled.Get(_activeCutscene);
+    }
 }
