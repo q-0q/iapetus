@@ -10,6 +10,8 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using UnityEngine.Splines;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public partial class TestCutsceneFsm
@@ -29,6 +31,8 @@ public partial class TestCutsceneFsm
     private ParticleSystem _impactParticles;
     private const string CutscenePersistentEvent = "IntroCutsceneCompleted";
     public static event Action<Vector3> OnIntroCutsceneGondolaTeleported;
+    public static event Action OnChannelStarted;
+    private Transform _backgroundParent;
 
     private Interactable _interactable;
     private ParticleSystem _interactableParticles;
@@ -57,6 +61,13 @@ public partial class TestCutsceneFsm
 
     private string _currentNeededTriggerId;
 
+    private SplineContainer _minorSpline;
+
+    private CinemachineVirtualCamera _channelCamera;
+    private SplineContainer _channelSpline;
+    private CinemachineTrackedDolly _channelDolly;
+
+    public Image textAdvanceImage;
     private int _currentTextId;
     private List<string> texts = new List<string>()
     {
@@ -66,7 +77,7 @@ public partial class TestCutsceneFsm
         "As the braziers of the summit flame lay bare, the world falls dormant, perhaps never to wake again..."
     };
 
-    private const float CanvasFadeDuration = 5f;
+    private const float CanvasFadeDuration = 7f;
     private CinemachineVirtualCamera _finalVirtualCamera;
     private float _initialFogEndDistance;
     private float _initialFogStartDistance;
@@ -81,7 +92,7 @@ public partial class TestCutsceneFsm
         var prefab = Resources.Load("Prefab/GondolaBackgroundRock") as GameObject;
         var forwardOffset = Vector3.forward * 70f;
         var sideOffset = (Random.Range(-1f, 1f) > 0 ? Vector3.left : Vector3.right) * Random.Range(40f, 50f);
-        var obj = Instantiate(prefab, transform.position + forwardOffset + sideOffset, Quaternion.Euler(0f, Random.Range(0, 360f), 0), null);
+        var obj = Instantiate(prefab, transform.position + forwardOffset + sideOffset, Quaternion.Euler(0f, Random.Range(0, 360f), 0), _backgroundParent);
         var s = Random.Range(0.5f, 1.5f);
         obj.transform.localScale = new Vector3(s, s, s);
         StartCoroutine(DestroyObjectAfterDuration(obj, 25f));
@@ -92,6 +103,7 @@ public partial class TestCutsceneFsm
     private IEnumerator DestroyObjectAfterDuration(GameObject obj, float duration)
     {
         yield return new WaitForSeconds(duration);
+        if (obj == null) yield break;
         Destroy(obj);
     }
 

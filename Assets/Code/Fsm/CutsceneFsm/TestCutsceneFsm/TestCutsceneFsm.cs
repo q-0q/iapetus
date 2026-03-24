@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Code.Misc;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Splines;
 using Wasp;
 
 public partial class TestCutsceneFsm : CutsceneFsm
@@ -22,6 +24,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         public static int InteractableChannel2;
         public static int InteractableReady3;
         public static int Channel;
+        public static int ChannelEnd;
         public static int CanvasFade;
         public static int Shake1;
         public static int MoveCubeDown1;
@@ -52,6 +55,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _particlesHaloMaterial = _particlesHalo.GetComponent<Renderer>().material;
         _particlesHalo.SetParent(null);
         innerCube.TryGetComponent(out Animator);
+        _backgroundParent = transform.Find("BackgroundParent");
+        _backgroundParent.SetParent(null);
 
         // TryGetComponent(out _interactable);
     }
@@ -63,6 +68,10 @@ public partial class TestCutsceneFsm : CutsceneFsm
         InitState = TestCutsceneFsmState.Inactive;
         transform.Find("TestCutsceneVirtualCamera").TryGetComponent(out _virtualCamera);
         transform.Find("TestCutsceneFinalVirtualCamera").TryGetComponent(out _finalVirtualCamera);
+        transform.Find("TestCutsceneChannelVirtualCamera").TryGetComponent(out _channelCamera);
+        _channelDolly = _channelCamera.GetCinemachineComponent<CinemachineTrackedDolly>();
+        
+        
         transform.Find("IntroCutsceneCanvas").TryGetComponent(out _mainCanvasGroup);
         transform.Find("IntroCutsceneCanvas").Find("TextCanvasGroup").TryGetComponent(out _textCanvasGroup);
         _playerTransformOnStart = transform.Find("PlayerTransformOnStart");
@@ -84,6 +93,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
         _initialFogEndDistance = RenderSettings.fogEndDistance;
         _initialFogStartDistance = RenderSettings.fogStartDistance;
 
+        _channelSpline = transform.Find("ChannelSpline").GetComponent<SplineContainer>();
+        _minorSpline = transform.Find("MinorSpline").GetComponent<SplineContainer>();
         _currentNeededTriggerId = "a";
 
 
@@ -104,16 +115,24 @@ public partial class TestCutsceneFsm : CutsceneFsm
             var newTextStr = text.Substring(0, textCharId) + "<alpha=#00>" + text.Substring(textCharId);
             _textTmp.text = newTextStr;
 
+            if ((int)(_textClock / 0.04f) >= text.Length + 25)
+            {
+                textAdvanceImage.enabled = true;
+                textAdvanceImage.sprite = InputTypeManager.Singleton.GetSpriteForAction("Interact");
+            }
+
             if (_playerInput.actions["Interact"].WasPressedThisFrame())
             {
                 if (textCharId < text.Length) _textClock = 100f;
                 else if (_currentTextId < texts.Count - 1)
                 {
+                    textAdvanceImage.enabled = false;
                     _currentTextId++;
                     _textClock = 0f;
                 }
                 else
                 {
+                    textAdvanceImage.enabled = false;
                     Machine.Fire(TestCutsceneFsmTrigger.TextComplete);
                 }
             }
@@ -163,9 +182,8 @@ public partial class TestCutsceneFsm : CutsceneFsm
         if (Machine.IsInState(TestCutsceneFsmState.MoveForward))
         {
             gondola.transform.position += Vector3.forward * (Time.deltaTime * 8f);
-            if (!_waitingToSpawnBackgroundElement)
+            if (!_waitingToSpawnBackgroundElement && !Machine.IsInState(TestCutsceneFsmState.Channel))
             {
-                print("a");
                 StartCoroutine(SpawnBackgroundElementCoroutine());
             }
 
@@ -175,20 +193,29 @@ public partial class TestCutsceneFsm : CutsceneFsm
 
         if (Machine.IsInState(TestCutsceneFsmState.InteractableChannel1))
         {
-            _interactableParticles.transform.localPosition = Vector3.Lerp(_interactableParticles.transform.localPosition,
-                _interactableParticlesPosB, Time.deltaTime * 5f);
+            var pos = _minorSpline.EvaluatePosition(Util.SmoothLerp01(1f - (TimeInCurrentState() / 1f)));
+            _interactableParticles.transform.position = Vector3.Lerp(_interactableParticles.transform.position, pos, Time.deltaTime * 15f);
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.InteractableChannel2))
         {
-            _interactableParticles.transform.localPosition = Vector3.Lerp(_interactableParticles.transform.localPosition,
-                _interactableParticlesPosA, Time.deltaTime * 5f);
+            var pos = _minorSpline.EvaluatePosition(Util.SmoothLerp01(TimeInCurrentState() / 1f));
+            _interactableParticles.transform.position = Vector3.Lerp(_interactableParticles.transform.position, pos, Time.deltaTime * 15f);
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.Shake1))
         {
             _lineRenderer.transform.position = gondola.transform.position;
             // gondola.transform.position += gondola.forward * (Mathf.Lerp(10f, 0f, Mathf.InverseLerp(0, 1.5f, TimeInCurrentState())) * Time.deltaTime);
+        }
+        
+        if (Machine.IsInState(TestCutsceneFsmState.Channel))
+        {
+            _lineRenderer.transform.position = gondola.transform.position;
+
+            var w = (TimeInCurrentState() - 1.5f) / 2f;
+            _channelDolly.m_PathPosition = Util.SmoothLerp01(w);
+            _interactableParticles.transform.position = _channelSpline.EvaluatePosition(w);
         }
         
         if (Machine.IsInState(TestCutsceneFsmState.MoveCubeDown1))

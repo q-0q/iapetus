@@ -23,7 +23,7 @@ public partial class TestCutsceneFsm
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
 
         Machine.Configure(TestCutsceneFsmState.AlignCamera)
-            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.CanvasFade) // ShowText
+            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.ShowText) // ShowText
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
@@ -44,11 +44,11 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.TextFade)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.CanvasFade)
-            .Permit(CutsceneFsmTrigger.Skip, TestCutsceneFsmState.Shake2)
+            // .Permit(CutsceneFsmTrigger.Skip, TestCutsceneFsmState.Shake2)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
         {
-            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneIdle);
+            // PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneIdle);
             _creakEventInstance = FMODUnity.RuntimeManager.CreateInstance(gondolaCreakEventReference);
             FMODUnity.RuntimeManager.AttachInstanceToGameObject(_creakEventInstance, gondola.gameObject);
             _creakEventInstance.start();
@@ -130,13 +130,51 @@ public partial class TestCutsceneFsm
         
         Machine.Configure(TestCutsceneFsmState.InteractableReady3)
             .SubstateOf(TestCutsceneFsmState.MoveForward)
-            .Permit(TestCutsceneFsmTrigger.OnInteracted, TestCutsceneFsmState.Shake1)
+            .Permit(TestCutsceneFsmTrigger.OnInteracted, TestCutsceneFsmState.Channel)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                _mainCanvasGroup.alpha = 0f;
                 _interactable.SetEnabled(true);
                 _interactableParticles.Play();
                 Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+            });
+        
+        Machine.Configure(TestCutsceneFsmState.Channel)
+            .SubstateOf(TestCutsceneFsmState.MoveForward)
+            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.ChannelEnd)
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                OnChannelStarted?.Invoke();
+                foreach (Transform child in _backgroundParent.transform)
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+                _interactable.SetEnabled(false);
+                _channelCamera.Priority = 20;
+            })
+            .OnExit(_ =>
+            {
+                Util.InvokeSphereEffect(_interactableParticles.transform.position - Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+                _channelCamera.Priority = -20;
+            });
+        
+        Machine.Configure(TestCutsceneFsmState.ChannelEnd)
+            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.Shake1)
+            .SubstateOf(CutsceneFsmState.Active)
+            .OnEntry(_ =>
+            {
+                _interactable.SetEnabled(false);
+                _interactableParticles.Stop();
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
+
+                armVibrator.DOShakePosition(2f, 0.0025f, 20);
+                _virtualCamera.Priority = 20;
+                _creakEventInstance.stop(STOP_MODE.IMMEDIATE);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaMinorBangEventReference, gondola.gameObject);
+                innerCube.DOShakePosition(0.75f, 0.5f);
+                innerCube.DOShakeRotation(3.75f, 0.5f);
             });
         
         Machine.Configure(TestCutsceneFsmState.Shake1)
@@ -242,13 +280,15 @@ public partial class TestCutsceneFsm
     {
         base.SetupStateMaps();
         
-        StateMapConfig.Duration.Add(TestCutsceneFsmState.TextFade, 3f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.TextFade, 4f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.CanvasFade, CanvasFadeDuration);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake2, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.625f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.PlayerControl, 4f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.Channel, 3.5f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.ChannelEnd, 2f);
         
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.PlayerControl, false);
         StateMapConfig.CutscenePlayerDisabled.Add(TestCutsceneFsmState.InteractableReady1, false);
