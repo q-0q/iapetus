@@ -10,7 +10,9 @@ public class StateMapConfig
     public StateMap<bool> LockSpringCollider;
     public StateMap<Vector3> TightropeLineOffset;
     public StateMap<float> TightropeLineYLerpStrength;
+    
     public StateMap<bool> CutscenePlayerDisabled;
     public StateMap<bool> CutsceneCameraDisabled;
     public StateMap<bool> CutsceneJumpDisabled;
+    public StateMap<bool> CutsceneHardLand;
 }

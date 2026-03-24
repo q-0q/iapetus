@@ -293,7 +293,7 @@ public partial class TestCutsceneFsm
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake1, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Shake2, 3f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown1, 0.725f);
-        StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.625f);
+        StateMapConfig.Duration.Add(TestCutsceneFsmState.MoveCubeDown2, 0.725f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.PlayerControl, 4f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.Channel, 3.5f);
         StateMapConfig.Duration.Add(TestCutsceneFsmState.ChannelEnd, 2f);
@@ -315,6 +315,9 @@ public partial class TestCutsceneFsm
         StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableReady2, false);
         StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableChannel2, false);
         StateMapConfig.CutsceneCameraDisabled.Add(TestCutsceneFsmState.InteractableReady3, false);
+        
+        StateMapConfig.CutsceneHardLand.Add(TestCutsceneFsmState.MoveCubeDown2, true);
+        StateMapConfig.CutsceneHardLand.Add(TestCutsceneFsmState.Shake2, true);
         
         StateMapConfig.AnimationTrigger.Add(TestCutsceneFsmState.MoveForward, "MoveForward");
         StateMapConfig.AnimationTrigger.Add(TestCutsceneFsmState.Shake1, "BreakStartup");

@@ -65,6 +65,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.145f);
         StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.HardLand, 0.65f);
+        StateMapConfig.Duration.Add(PlayerFsmState.CutsceneHardLand, 2.8f, 1);
         StateMapConfig.Duration.Add(PlayerFsmState.HardLandRoll, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
@@ -98,6 +99,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterDash, "FallAfterDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMove, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardLand, "HardLand");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneHardLand, "CutsceneHardLand", 1);
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardLandRoll, "HardLandRoll");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.HardTurn, "HardTurn");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.InteractWithSwitch, "InteractWithSwitch");

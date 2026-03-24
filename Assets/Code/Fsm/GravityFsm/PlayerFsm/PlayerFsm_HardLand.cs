@@ -20,8 +20,17 @@ public partial class PlayerFsm
                 isSprinting = false;
                 ResetCombo();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(hardlandEventReference, gameObject);
                 OnPlayerFootstep();
                 _momentum = HardLandExitMomentum;
+            });
+
+        Machine.Configure(PlayerFsmState.CutsceneHardLand)
+            .SubstateOf(PlayerFsmState.HardLand)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Idle, _ => true, 2)
+            .OnEntry(_ =>
+            {
+                FMODUnity.RuntimeManager.PlayOneShotAttached(hardlandCinematicEventReference, gameObject);
             });
     }
 }

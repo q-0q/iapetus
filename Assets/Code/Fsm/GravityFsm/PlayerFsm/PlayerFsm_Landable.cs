@@ -30,6 +30,16 @@ public partial class PlayerFsm
                     return CurrentFallDistance() < HardLandAirDiff;
                 },
                 2)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.CutsceneHardLand,
+                _ =>
+                {
+                    if (WaterRaycast(out var hit, out var _))
+                    {
+                        if (IsSwimTrigger(new SwimRaycastParam() { Hit = hit })) return false;
+                    }
+                    return CurrentFallDistance() < HardLandAirDiff && CutsceneManager.Singleton.IsCutsceneHardLand();
+                },
+                10)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
                 _ =>
                 {

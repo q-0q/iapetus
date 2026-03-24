@@ -235,8 +235,11 @@ public partial class PlayerFsm
     public EventReference deathFmodEvent;
     public EventReference slideFmodEvent;
     public EventReference slipAmbientEvent;
+    public EventReference hardlandCinematicEventReference;
+    public EventReference hardlandEventReference;
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
+    
     
     
     private EventInstance slipAmbientFmodInstance;

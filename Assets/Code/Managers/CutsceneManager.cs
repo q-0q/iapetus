@@ -64,4 +64,11 @@ public class CutsceneManager : MonoBehaviour
         if (_activeCutscene == null) return false;
         return _activeCutscene.StateMapConfig.CutsceneJumpDisabled.Get(_activeCutscene);
     }
+    
+    public bool IsCutsceneHardLand()
+    {
+        if (_pseudoCutsceneActive) return true;
+        if (_activeCutscene == null) return false;
+        return _activeCutscene.StateMapConfig.CutsceneHardLand.Get(_activeCutscene);
+    }
 }

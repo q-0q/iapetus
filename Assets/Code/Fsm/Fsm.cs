@@ -79,6 +79,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.CutscenePlayerDisabled = new StateMap<bool>(true);
         StateMapConfig.CutsceneCameraDisabled = new StateMap<bool>(true);
         StateMapConfig.CutsceneJumpDisabled = new StateMap<bool>(true);
+        StateMapConfig.CutsceneHardLand = new StateMap<bool>(false);
     }
 
     public virtual void SetupMachine()
