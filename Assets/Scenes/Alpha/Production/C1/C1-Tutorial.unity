@@ -5579,14 +5579,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 500803801}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.36607412, y: -0.35136032, z: 0.15163288, w: 0.8482589}
-  m_LocalPosition: {x: 112.8, y: 78.060005, z: 851.08}
+  m_LocalRotation: {x: 0.39222497, y: -0.346485, z: 0.16246496, w: 0.8364885}
+  m_LocalPosition: {x: 313.6, y: 17.612, z: 106.385}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 971042561}
   m_Father: {fileID: 1031908554}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -0.102, y: 0, z: 0}
 --- !u!114 &500803803
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5606,7 +5606,7 @@ MonoBehaviour:
   m_Priority: 0
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 0}
+  m_Follow: {fileID: 2043128564}
   m_Lens:
     FieldOfView: 80
     OrthographicSize: 10
@@ -5620,7 +5620,7 @@ MonoBehaviour:
     m_SensorSize: {x: 1, y: 1}
   m_Transitions:
     m_BlendHint: 0
-    m_InheritPosition: 1
+    m_InheritPosition: 0
     m_OnCameraLive:
       m_PersistentCalls:
         m_Calls: []
@@ -11168,7 +11168,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 10, y: 17, z: -10}
+  m_FollowOffset: {x: -10, y: 17, z: -10}
   m_XDamping: 0
   m_YDamping: 0
   m_ZDamping: 0
@@ -16214,6 +16214,34 @@ MonoBehaviour:
       Data3: -359083901
       Data4: 1423294569
     Path: event:/GondolaCrash
+  gondolaGroanEventReference:
+    Guid:
+      Data1: 266907430
+      Data2: 1253754443
+      Data3: -879222367
+      Data4: -424487716
+    Path: event:/GondolaGroan
+  gondolaInteractEventReference:
+    Guid:
+      Data1: -1823793932
+      Data2: 1321255945
+      Data3: -1774876236
+      Data4: 861811463
+    Path: event:/GondolaInteract
+  gondolaInteractReadyEventReference:
+    Guid:
+      Data1: 233734363
+      Data2: 1191699965
+      Data3: -1302428014
+      Data4: -1075166769
+    Path: event:/GondolaInteractReady
+  gondolaInteractChannelEventReference:
+    Guid:
+      Data1: -1893164429
+      Data2: 1279339449
+      Data3: 697946020
+      Data4: -1140587970
+    Path: event:/GondolaInteractChannel
   textAdvanceImage: {fileID: 1035557965}
 --- !u!1 &1035557963
 GameObject:
@@ -16504,7 +16532,7 @@ MonoBehaviour:
           w: 0.71717024
     - Position:
         x: -0.10998535
-        y: -10.757999
+        y: -17.647999
         z: -18.684998
       TangentIn:
         x: 0
@@ -16517,9 +16545,9 @@ MonoBehaviour:
       Rotation:
         value:
           x: 0
-          y: 0.7997532
+          y: 0.7997531
           z: 0
-          w: 0.60032904
+          w: 0.6003289
     - Position:
         x: 10.910004
         y: 1.6220002
@@ -16558,22 +16586,22 @@ MonoBehaviour:
           w: 0.4702701
     - Position:
         x: 1.1900024
-        y: -13.798
+        y: -15.498
         z: -26.915
       TangentIn:
         x: 0
         y: 0
-        z: -4.870331
+        z: -6.006113
       TangentOut:
         x: 0
         y: 0
-        z: 2.4351652
+        z: 6.006113
       Rotation:
         value:
-          x: 0.600431
-          y: 0.5115183
-          z: 0.48114172
-          w: 0.38253644
+          x: 0.6004386
+          y: 0.51171166
+          z: 0.4811189
+          w: 0.38229463
     - Position:
         x: 13.410004
         y: -3.3179998
@@ -16619,7 +16647,7 @@ MonoBehaviour:
       Tension: 0.5
     - Mode: 2
       Tension: 0.5
-    - Mode: 3
+    - Mode: 2
       Tension: 0.5
     - Mode: 2
       Tension: 0.5
@@ -16763,7 +16791,7 @@ PrefabInstance:
     - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 74.26
       objectReference: {fileID: 0}
     - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -18014,7 +18042,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BindingMode: 1
-  m_FollowOffset: {x: 10, y: 15, z: -10}
+  m_FollowOffset: {x: -10, y: 15, z: -10}
   m_XDamping: 0
   m_YDamping: 0
   m_ZDamping: 0
@@ -27925,6 +27953,12 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!4 &2043128564 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2708302335789184839, guid: 7ca548f80e0954fd7b1e7beda817b941,
+    type: 3}
+  m_PrefabInstance: {fileID: 1398636611}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2119309133
 GameObject:
   m_ObjectHideFlags: 0

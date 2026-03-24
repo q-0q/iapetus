@@ -15,7 +15,7 @@ public partial class PlayerFsm
         
         if (_inputBuffer.IsBuffered("Jump"))
         {
-            Machine.Fire(PlayerFsmTrigger.Jump);
+            if (!CutsceneManager.Singleton.IsCutsceneJumpDisabled()) Machine.Fire(PlayerFsmTrigger.Jump);
         }
         
         if (_inputBuffer.IsBuffered("Dash"))

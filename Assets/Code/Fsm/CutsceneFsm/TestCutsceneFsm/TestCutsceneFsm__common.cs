@@ -57,7 +57,12 @@ public partial class TestCutsceneFsm
     public EventReference gondolaMinorBangEventReference;
     public EventReference gondolaBreakEventReference;
     public EventReference gondolaCrashEventReference;
+    public EventReference gondolaGroanEventReference;
     private EventInstance _creakEventInstance;
+
+    public EventReference gondolaInteractEventReference;
+    public EventReference gondolaInteractReadyEventReference;
+    public EventReference gondolaInteractChannelEventReference;
 
     private string _currentNeededTriggerId;
 

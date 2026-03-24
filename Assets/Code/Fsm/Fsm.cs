@@ -78,6 +78,7 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(50f);
         StateMapConfig.CutscenePlayerDisabled = new StateMap<bool>(true);
         StateMapConfig.CutsceneCameraDisabled = new StateMap<bool>(true);
+        StateMapConfig.CutsceneJumpDisabled = new StateMap<bool>(true);
     }
 
     public virtual void SetupMachine()

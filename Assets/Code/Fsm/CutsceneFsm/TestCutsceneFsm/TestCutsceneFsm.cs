@@ -188,6 +188,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
             }
 
             _lineRenderer.transform.position = gondola.transform.position;
+            _lineRenderer.materials[0].SetFloat("_Scroll", gondola.transform.position.z);
 
         }
 
