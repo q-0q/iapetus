@@ -245,6 +245,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
         FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.WindAmbience);
         if (SaveSystem.GetPersistentEventCompleted(CutscenePersistentEvent))
         {
+            ReplaceAnimatorTrigger("Break");
             Machine.Jump(CutsceneFsmState.Inactive);
             return;
         }

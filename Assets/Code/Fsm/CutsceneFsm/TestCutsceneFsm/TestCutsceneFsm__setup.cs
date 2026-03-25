@@ -23,7 +23,7 @@ public partial class TestCutsceneFsm
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
 
         Machine.Configure(TestCutsceneFsmState.AlignCamera)
-            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.ShowText) // ShowText
+            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.CanvasFade) // ShowText
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
@@ -252,6 +252,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                PlayerCinemachineFreeLook.Singleton.SetAxes(-45f, 0.7f);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaCrashEventReference, gondola.gameObject);
 
                 if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneIdle))
@@ -268,8 +269,8 @@ public partial class TestCutsceneFsm
                 gondola.DOShakePosition(1.5f, 1f);
                 gondola.transform.position = _endPosition.position;
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByName("TimeScale", 1f);
-                // SaveSystem.WritePersistentEvent(CutscenePersistentEvent);
-                // SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, "", 0f);
+                SaveSystem.WritePersistentEvent(CutscenePersistentEvent);
+                SaveSystem.WritePlayerInGamePosition(_endPosition.position + Vector3.up * 5f, "", 0f);
             });
         
         // Machine.Configure(TestCutsceneFsmState.FinalCamera)
