@@ -30,6 +30,7 @@ public partial class TestCutsceneFsm
                 PlayerFsm.Singleton.transform.position = _playerTransformOnStart.position;
                 PlayerFsm.Singleton.transform.rotation = _playerTransformOnStart.rotation;
                 _mainCanvasGroup.alpha = 1f;
+                fogController.LockHeight(-100f);
                 
                 _currentTextId = 0;
                 _moveCubeForwardShake1 = false;
@@ -191,6 +192,7 @@ public partial class TestCutsceneFsm
             {
                 _interactable.SetEnabled(false);
                 _interactableParticles.Stop();
+                fogController.Unlock();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
                 var gondolaDestination = new Vector3(_endPosition.position.x, gondola.transform.position.y, _endPosition.position.z);
                 var delta = gondolaDestination - gondola.transform.position;

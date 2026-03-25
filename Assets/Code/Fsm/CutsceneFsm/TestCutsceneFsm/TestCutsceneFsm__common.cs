@@ -90,6 +90,8 @@ public partial class TestCutsceneFsm
     private bool _waitingToSpawnBackgroundElement;
     private Transform _particlesHalo;
 
+    public FogController fogController;
+
     private IEnumerator SpawnBackgroundElementCoroutine()
     {
         if (_waitingToSpawnBackgroundElement) yield break; 

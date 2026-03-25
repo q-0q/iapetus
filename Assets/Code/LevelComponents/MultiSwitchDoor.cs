@@ -75,6 +75,7 @@ public class MultiSwitchDoor : MonoBehaviour
     {
 
         StartCoroutine(MaterialCoroutine());
+        if (!IsAllSwitchesEnabled()) return;
         StartCoroutine(CameraCoroutine());
         
 
@@ -114,7 +115,7 @@ public class MultiSwitchDoor : MonoBehaviour
                 t += Time.deltaTime;
             }
             
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1.2f);
 
             
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();

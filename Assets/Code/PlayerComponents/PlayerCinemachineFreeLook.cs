@@ -70,9 +70,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private void Update()
     {
         if (_scriptActive) return;
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport)) return;
-        if (CutsceneManager.Singleton.IsCutsceneCameraDisabled()) return;
-        if (GameMenu.Singleton.IsMenuOpen())
+        if (GameMenu.Singleton.IsMenuOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
         {
             _freeLook.m_XAxis.m_InputAxisValue = 0;
             _freeLook.m_YAxis.m_InputAxisValue = 0;

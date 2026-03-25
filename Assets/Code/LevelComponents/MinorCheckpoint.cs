@@ -75,7 +75,7 @@ public class MinorCheckpoint : MonoBehaviour
     {
         var playerDistance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
         var playerYDelta = PlayerFsm.Singleton.transform.position.y - transform.position.y;
-        if (playerDistance < 20f && playerYDelta > -5f)
+        if (playerDistance < 25f && playerYDelta > -5f)
         {
             OnPlayerMinorCheckpointSet?.Invoke(this);
         }
