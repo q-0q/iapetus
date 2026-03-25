@@ -25,6 +25,7 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, @params => !IsSlideTrigger(@params) && YVelocity < 0.5f, 1)
             .OnEntry(_ =>
             {
+                
                 _momentum = 13f;
                 IncrementCombo();
                 _inputBuffer.ConsumeBuffer("Jump");

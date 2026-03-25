@@ -6,7 +6,8 @@ public partial class PlayerFsm
     {
         HandleTurning(AirControlTurningMultiplier, true, AirControlTurningMomentumDecayModifier);
         Animator.SetLayerWeight(1, 0);
-        var collisionMove = ComputeCollisionMove(transform.forward * (DashForwardSpeed * Time.deltaTime));
+        var dashForwardSpeed = Mathf.Lerp(DashForwardSpeed, DashForwardSpeed - 8f, Mathf.InverseLerp(0.4f, 0.65f, TimeInCurrentState()));
+        var collisionMove = ComputeCollisionMove(transform.forward * (dashForwardSpeed * Time.deltaTime));
         transform.position += collisionMove;
     }
 
@@ -24,6 +25,8 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.DashVault, _ => true, 10)
             .OnEntry(_ =>
             {
+
+                _playerDashParticles.Invoke();
                 isSprinting = true;
                 IncrementCombo();
                 YVelocity = 0;

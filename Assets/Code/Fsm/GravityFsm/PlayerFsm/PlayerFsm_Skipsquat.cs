@@ -13,6 +13,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Skip)
             .OnEntry(_ =>
             {
+                FMODUnity.RuntimeManager.PlayOneShotAttached(dashWhooshEventReference, gameObject);
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;

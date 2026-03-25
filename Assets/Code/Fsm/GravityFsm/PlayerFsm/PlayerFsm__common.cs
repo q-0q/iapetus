@@ -53,6 +53,7 @@ public partial class PlayerFsm
     private const float MaxSlideTimer = 0.15f;
     private const float MinSlideStateTimer = 0.5f;
     private ParticleSystem _splashParticles;
+    private PlayerDashParticles _playerDashParticles;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -189,7 +190,7 @@ public partial class PlayerFsm
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
-    private const float DashForwardSpeed = 18f;
+    private const float DashForwardSpeed = 24f;
     private const float DashRaycastHeightOffset = 0f;
     private const float SkipWindowDuration = 0.2f;
     private const float SkipForwardBonusSpeed = 3.25f;
@@ -237,6 +238,7 @@ public partial class PlayerFsm
     public EventReference slipAmbientEvent;
     public EventReference hardlandCinematicEventReference;
     public EventReference hardlandEventReference;
+    public EventReference dashWhooshEventReference;
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
     

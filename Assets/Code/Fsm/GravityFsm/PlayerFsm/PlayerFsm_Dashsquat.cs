@@ -17,6 +17,7 @@ public partial class PlayerFsm
             // .SubstateOf(PlayerFsmState.LockMomentum)
             .OnEntry(_ =>
             {
+                FMODUnity.RuntimeManager.PlayOneShotAttached(dashWhooshEventReference, gameObject);
                 _inputBuffer.ConsumeBuffer("Dash");
             });
     }

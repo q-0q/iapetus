@@ -75,7 +75,7 @@ public class SaveSystem : MonoBehaviour
 
         public SaveData()
         {
-            scene = "C1-Brazier";
+            scene = "C1-Tutorial";
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
             playerInGamePositionId = "";
