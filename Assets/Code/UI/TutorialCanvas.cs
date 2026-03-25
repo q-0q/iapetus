@@ -56,6 +56,11 @@ public class TutorialCanvas : MonoBehaviour
         this.action = action;
         _open = true;
         _tmpText.text = text;
+        
+        _tmpText.CalculateLayoutInputHorizontal();
+        
+        // Force the parent to reposition the icon and text based on new width
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_tmpText.transform.parent.GetComponent<RectTransform>());
     }
     
 }

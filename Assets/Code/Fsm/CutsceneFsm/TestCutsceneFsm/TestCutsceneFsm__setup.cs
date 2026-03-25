@@ -23,7 +23,7 @@ public partial class TestCutsceneFsm
             .Permit(CutsceneFsmTrigger.StartCutscene, TestCutsceneFsmState.AlignCamera);
 
         Machine.Configure(TestCutsceneFsmState.AlignCamera)
-            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.CanvasFade) // ShowText
+            .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.ShowText) // ShowText
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
