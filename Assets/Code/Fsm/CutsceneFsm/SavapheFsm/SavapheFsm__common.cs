@@ -32,6 +32,6 @@ public partial class SavapheFsm
     private void OnNotCrossedDialogueComplete()
     {
         _tutorialTrigger.gameObject.SetActive(true);
-        ReplaceAnimatorTrigger("NotCrossedDialogueComplete");
+        // ReplaceAnimatorTrigger("NotCrossedDialogueComplete");
     }
 }

@@ -54,6 +54,7 @@ public class TutorialCanvas : MonoBehaviour
     public void ShowTutorialText(string text, string action)
     {
         this.action = action;
+        Image.gameObject.SetActive(action != "");
         _open = true;
         _tmpText.text = text;
         

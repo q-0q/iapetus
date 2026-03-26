@@ -11,6 +11,6 @@ public partial class SavapheFsm
 
     private void OnInteracted()
     {
-        ReplaceAnimatorTrigger("NotCrossedDialogue");
+        // ReplaceAnimatorTrigger("NotCrossedDialogue");
     }
 }

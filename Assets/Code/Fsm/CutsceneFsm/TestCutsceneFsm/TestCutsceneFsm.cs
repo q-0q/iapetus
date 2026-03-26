@@ -145,6 +145,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
             {
                 Machine.Fire(CutsceneFsmTrigger.Skip);
             }
+            PlayerCinemachineFreeLook.Singleton.SetAxes(-45f, 0.7f);
         }
 
         if (Machine.IsInState(TestCutsceneFsmState.CanvasFade))

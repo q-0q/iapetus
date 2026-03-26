@@ -313,6 +313,7 @@ public class SaveSystem : MonoBehaviour
 
     public static void UpdateScreenshot(float delay = 0)
     {
+        return;
         Singleton.StartCoroutine(CaptureScreenshot(delay));
     }
     private static IEnumerator CaptureScreenshot(float delay)
