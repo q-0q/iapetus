@@ -24,7 +24,7 @@ public partial class PlayerFsm
     private bool CanVault(TriggerParams t)
     {
         if (CutsceneManager.Singleton.IsCutscenePlayerDisabled()) return false;
-        if (Machine.IsInState(PlayerFsmState.PitonFlip)) return YVelocity < PitonMaximumWallInteractYVelocity;
+        if (Machine.IsInState(PlayerFsmState.PitonFlip) && YVelocity > PitonMaximumWallInteractYVelocity) return false;
         return (YVelocity > VaultMinimumYVelocity && _momentum > VaultMinimumMomentum);
     }
 

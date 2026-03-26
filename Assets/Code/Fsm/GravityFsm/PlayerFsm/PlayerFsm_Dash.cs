@@ -26,7 +26,7 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
 
-                _playerDashParticles.Invoke();
+                _playerDashParticles.InvokeDash();
                 isSprinting = true;
                 IncrementCombo();
                 YVelocity = 0;

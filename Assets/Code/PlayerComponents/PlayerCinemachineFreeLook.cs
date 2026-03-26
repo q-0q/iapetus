@@ -94,6 +94,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
             _timeSincePlayerLookInput = 0f;
             _timeSinceRecenter = 0f;
         }
+
+        if (InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Pad) lookVector2 *= 5f;
         _freeLook.m_XAxis.m_InputAxisValue = lookVector2.x;
         _freeLook.m_YAxis.m_InputAxisValue = lookVector2.y;
     }

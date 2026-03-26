@@ -123,7 +123,7 @@ public partial class PlayerFsm
     private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 20f;
-    private const float MomentumLossRate = 30f;
+    private const float MomentumLossRate = 35f;
     private const float MomentumTurnLoss = 2.5f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 6.75f;
@@ -239,6 +239,7 @@ public partial class PlayerFsm
     public EventReference hardlandCinematicEventReference;
     public EventReference hardlandEventReference;
     public EventReference dashWhooshEventReference;
+    public EventReference skipWhooshEventReference;
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
     

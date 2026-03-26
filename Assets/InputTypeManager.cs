@@ -77,4 +77,9 @@ public class InputTypeManager : MonoBehaviour
         return null;
     }
 
+    public InputType GetCurrentInputType()
+    {
+        return _currentInputType;
+    }
+
 }
