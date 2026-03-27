@@ -50,7 +50,7 @@ public partial class TestCutsceneFsm : CutsceneFsm
     {
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
-        _interactableParticles = transform.Find("InteractableParticles").GetComponent<ParticleSystem>();
+        _interactableParticles = transform.Find("GondolaInteractableParticles").GetComponent<ParticleSystem>();
         _particlesHalo = _interactableParticles.transform.Find("Halo");
         _particlesHaloMaterial = _particlesHalo.GetComponent<Renderer>().material;
         _particlesHalo.SetParent(null);
