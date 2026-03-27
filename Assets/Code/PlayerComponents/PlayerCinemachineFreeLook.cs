@@ -15,8 +15,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private float _baseXSpeed;
     private float _baseYSpeed;
     private float _timeSincePlayerLookInput;
-    private float _timeSinceRecenter;
-    private float _recenterTime;
 
     private CameraBehaviorZone _currentCameraBehaviorZone;
     private float _rampUpTime;
@@ -48,7 +46,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         PlayerFsm.Singleton.gameObject.TryGetComponent(out _playerInput);
         _timeSincePlayerLookInput = 0f;
-        _recenterTime = 1.5f;
         _rampUpTime = 8f;
         
         
@@ -86,14 +83,23 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * Time.deltaTime;
         _timeSincePlayerLookInput += Time.deltaTime;
-        _timeSinceRecenter += Time.deltaTime;
-        if (_currentCameraBehaviorZone == null) _timeSinceRecenter = 0f;
-        if (lookVector2.magnitude < 0.01f && _timeSincePlayerLookInput > _recenterTime) return;
-        if (lookVector2.magnitude > 0.01f)
+
+        if (_timeSincePlayerLookInput >= 1.75f)
         {
-            _timeSincePlayerLookInput = 0f;
-            _timeSinceRecenter = 0f;
+            var y = 0.7f;
+            if (DialogueCanvas.Singleton.currentDialogueController != null)
+            {
+                y = DialogueCanvas.Singleton.currentDialogueController.CameraY;
+            }
+            _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * Mathf.Lerp(0.25f, 2f, Mathf.InverseLerp(1.75f, 2.5f, _timeSincePlayerLookInput)));
         }
+        if (lookVector2.magnitude < 0.01f)
+        {
+            _freeLook.m_XAxis.m_InputAxisValue = 0;
+            _freeLook.m_YAxis.m_InputAxisValue = 0;
+            return;
+        }
+        _timeSincePlayerLookInput = 0f;
 
         if (InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Pad) lookVector2 *= 5f;
         _freeLook.m_XAxis.m_InputAxisValue = lookVector2.x;
@@ -156,7 +162,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         if (cameraBehaviorZone.priority > _currentCameraBehaviorZone.priority)
         {
-            _timeSinceRecenter = 0f;
             _currentCameraBehaviorZone = cameraBehaviorZone;
             
         };
@@ -172,7 +177,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         
         if(!_isAutocamEnabled) return;
-        if (_timeSincePlayerLookInput < _recenterTime) return;
         if (_currentCameraBehaviorZone == null) return;
         var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
 
@@ -189,13 +193,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         // converting to quats prevents wraparound issues
         var newXQuat = Quaternion.Euler(0, xAngle, 0);
         
-        
-        var lerpStrength = Mathf.Lerp(1f, 4f, Mathf.InverseLerp(_recenterTime, _recenterTime + _rampUpTime, _timeSinceRecenter));
-        
-        _freeLook.m_XAxis.Value = Quaternion.Lerp(oldXQuat, newXQuat, Time.deltaTime * lerpStrength).eulerAngles.y;
-        _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * lerpStrength);
-
-
     }
 
     private void ForceRecenter()

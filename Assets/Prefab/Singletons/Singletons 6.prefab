@@ -7538,7 +7538,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2627795629744639428}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15236518, y: 0.000000040122778, z: -0.000000019398243, w: 0.9883243}
+  m_LocalRotation: {x: -0.074175395, y: 0.000000043461167, z: -0.000000009861858,
+    w: 0.99724525}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -8599,8 +8600,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3600708144320890767}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3783392, y: -0.00000002296396, z: 0.000000010000494, w: 0.92566705}
-  m_LocalPosition: {x: 4.1, y: 16.450857, z: 13.183044}
+  m_LocalRotation: {x: 0.14814128, y: -0.000000044074277, z: 0.000000006602065, w: 0.9889662}
+  m_LocalPosition: {x: 4.1, y: 10, z: 6.8999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8803,7 +8804,7 @@ Transform:
   m_GameObject: {fileID: 3755428595461647392}
   serializedVersion: 2
   m_LocalRotation: {x: 0.14814128, y: -0.000000044074277, z: 0.000000006602065, w: 0.9889662}
-  m_LocalPosition: {x: 4.1, y: 16.450857, z: 13.183044}
+  m_LocalPosition: {x: 4.1, y: 10, z: 6.8999996}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9290,7 +9291,7 @@ Transform:
   m_GameObject: {fileID: 4009874285850122227}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.55, z: -0.55}
+  m_LocalPosition: {x: 0, y: 0.25, z: -0.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9326,8 +9327,8 @@ MonoBehaviour:
     m_Knots:
     - Position:
         x: 0
-        y: 0.75999993
-        z: 0.74
+        y: 0.98
+        z: -0.45999998
       TangentIn:
         x: 0
         y: 0
@@ -9344,22 +9345,22 @@ MonoBehaviour:
           w: 1
     - Position:
         x: 0
-        y: -0.3
+        y: -0.8
         z: 2.16
       TangentIn:
         x: 0
         y: 0
-        z: -0.58478355
+        z: -1.1371518
       TangentOut:
         x: 0
         y: 0
-        z: 0.58478355
+        z: 1.1371518
       Rotation:
         value:
-          x: 0.6447029
-          y: -0.31802896
-          z: -0.21816778
-          w: 0.660014
+          x: 0.6893973
+          y: -0.18268208
+          z: -0.076868445
+          w: 0.69674236
     m_MetaData:
     - Mode: 2
       Tension: 0.5
@@ -10167,7 +10168,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.075
+      scalar: 0.025
       minScalar: 0.05
       maxCurve:
         serializedVersion: 2
@@ -10872,8 +10873,8 @@ ParticleSystem:
             outSlope: 0
             tangentMode: 0
             weightedMode: 0
-            inWeight: 0
-            outWeight: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
           - serializedVersion: 3
             time: 1
             value: 1
@@ -10881,8 +10882,8 @@ ParticleSystem:
             outSlope: 0
             tangentMode: 0
             weightedMode: 0
-            inWeight: 0
-            outWeight: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
@@ -10896,8 +10897,8 @@ ParticleSystem:
             outSlope: 0
             tangentMode: 0
             weightedMode: 0
-            inWeight: 0
-            outWeight: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
           - serializedVersion: 3
             time: 1
             value: 1
@@ -10905,8 +10906,8 @@ ParticleSystem:
             outSlope: 0
             tangentMode: 0
             weightedMode: 0
-            inWeight: 0
-            outWeight: 0
+            inWeight: 0.33333334
+            outWeight: 0.33333334
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
@@ -14018,7 +14019,7 @@ ParticleSystem:
     widthOverTrail:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 0.1
+      scalar: 0.08
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -14026,30 +14027,48 @@ ParticleSystem:
         - serializedVersion: 3
           time: 0
           value: 0
-          inSlope: 1.0514507
-          outSlope: 1.0514507
+          inSlope: 6.463315
+          outSlope: 6.463315
+          tangentMode: 34
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 0.15471937
+          value: 1
+          inSlope: -6.6268396
+          outSlope: -6.6268396
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 1
+          outWeight: 0.14611416
+        - serializedVersion: 3
+          time: 0.36015406
+          value: 0.23404256
+          inSlope: -0.052422743
+          outSlope: -0.052422743
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.48606616
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.5411334
+          value: 0.22340426
+          inSlope: 0
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0.39913404
+          outWeight: 0
         - serializedVersion: 3
-          time: 0.12052131
-          value: 1
-          inSlope: 0.1628552
-          outSlope: 0.1628552
-          tangentMode: 0
-          weightedMode: 0
-          inWeight: 0.2922443
-          outWeight: 0.08384825
-        - serializedVersion: 3
-          time: 0.61920166
+          time: 0.6106032
           value: 0
-          inSlope: -0.12357306
-          outSlope: -0.12357306
+          inSlope: 0
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.1726339
-          outWeight: 0.7390788
+          inWeight: 0
+          outWeight: 0
         m_PreInfinity: 2
         m_PostInfinity: 2
         m_RotationOrder: 4
@@ -14079,13 +14098,13 @@ ParticleSystem:
         m_RotationOrder: 4
     colorOverTrail:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 1
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 0.7019608}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.53333336}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 1, b: 1, a: 1}
-        key1: {r: 1, g: 1, b: 1, a: 0.92941177}
+        key0: {r: 1, g: 1, b: 1, a: 0}
+        key1: {r: 1, g: 1, b: 1, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0}
         key3: {r: 0, g: 0, b: 0, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
@@ -14100,10 +14119,10 @@ ParticleSystem:
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 0
-        atime1: 33731
-        atime2: 65535
-        atime3: 0
+        atime0: 5012
+        atime1: 12529
+        atime2: 31033
+        atime3: 40670
         atime4: 0
         atime5: 0
         atime6: 0
@@ -16058,7 +16077,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6732176611947337770}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2851843, y: 0.000000037116397, z: -0.000000024667841, w: 0.9584728}
+  m_LocalRotation: {x: 0.08303954, y: 0.000000041378403, z: -0.000000016551649, w: 0.9965463}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -16394,39 +16413,39 @@ MonoBehaviour:
     - Position:
         x: 0
         y: -0.4
-        z: 2.75
+        z: 0.86
       TangentIn:
         x: 0
         y: 0
-        z: -2.1375084
+        z: -0.8464635
       TangentOut:
         x: 0
         y: 0
-        z: 2.1375084
+        z: 0.8464635
       Rotation:
         value:
-          x: 0.96242154
-          y: -9.408187e-15
-          z: 1.5619059e-14
-          w: 0.27155972
+          x: 0.9921534
+          y: -0.00001646086
+          z: -0.0000020743198
+          w: -0.12502643
     - Position:
         x: 0
-        y: 1.25
-        z: 0.12
+        y: 1.88
+        z: 0.45
       TangentIn:
         x: 0
         y: 0
-        z: -0.92649883
+        z: -0.9317189
       TangentOut:
         x: 0
         y: 0
-        z: 0.92649883
+        z: 0.9317189
       Rotation:
         value:
-          x: -0.55614984
-          y: -0.00052227714
-          z: -0.0007804737
-          w: 0.83108145
+          x: -0.29667306
+          y: -0.00027861286
+          z: -0.000896846
+          w: 0.95497864
     - Position:
         x: 0
         y: 0.51
@@ -16434,17 +16453,17 @@ MonoBehaviour:
       TangentIn:
         x: 0
         y: 0
-        z: -3.443694
+        z: -1.3911825
       TangentOut:
         x: 0
         y: 0
-        z: 3.443694
+        z: 1.3911825
       Rotation:
         value:
-          x: 0.59061646
-          y: 0.020963667
-          z: -0.028614879
-          w: 0.8061724
+          x: 0.464193
+          y: 0.01652681
+          z: -0.031511433
+          w: 0.8850191
     m_MetaData:
     - Mode: 2
       Tension: 0.5
@@ -21950,7 +21969,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7852221051156567442}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19726901, y: -0.0000004818047, z: 0.00000026068207, w: 0.9803494}
+  m_LocalRotation: {x: -0.0074917674, y: 0.00000012641955, z: -0.000000037709412,
+    w: 0.9999719}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -32650,7 +32670,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9130809501994490205}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5248343, y: -0.00004260548, z: 0.00002626962, w: 0.85120445}
+  m_LocalRotation: {x: 0.5248343, y: -0.000047367008, z: 0.000029205474, w: 0.85120445}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

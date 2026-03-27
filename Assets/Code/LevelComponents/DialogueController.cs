@@ -24,6 +24,8 @@ public class DialogueController : MonoBehaviour
     public event Action OnCompleted;
     public event Action<int> OnProgressed;
     public Transform LookAtOverride;
+
+    public float CameraY = 0.7f;
     
     private void OnEnable()
     {

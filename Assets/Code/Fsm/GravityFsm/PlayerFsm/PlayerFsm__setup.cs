@@ -71,7 +71,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
         StateMapConfig.Duration.Add(PlayerFsmState.MediumVaultHang, 0.375f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.55f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Wallsquat, 0.75f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dashsquat, 0.13f);
         StateMapConfig.Duration.Add(PlayerFsmState.Grapple, 0.1f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dash, 0.25f);
@@ -159,7 +159,7 @@ public partial class PlayerFsm
 
         // StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Dashsquat, 0.5f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallstep, 0.5f);
-        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.45f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Wallrun, 0.35f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SlideLateral, 0.35f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SlideDown, 0.35f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Skip, 0.8f);

@@ -107,13 +107,13 @@ public partial class PlayerFsm
     private const float FaceLedgeHeight = 0.2f;
     private const float FaceHighLedgeHeight = 2.15f;
     private const float FaceWallHeight = 2.4f;
-    private const float FaceWallMaximumAngle = 60f;
+    private const float FaceWallMaximumAngle = 50f;
     private const float FaceWallStrictMaximumAngle = 20f;
     private const float FaceRaycastSkew = 0;
     private const float MaximumFlankWallDistance = 7.5f;
     private const float FlankWallHeight = 2f;
     private const float FlankWallOpenYOffset = -1.5f;
-    private const float FlankMaximumAngle = 40f;
+    private const float FlankMaximumAngle = 50f;
     private const float ForceWallRotationRaycastDistance = 3f;
     private const float DashForwardRaycastDistanceOffset = 0.5f;
 
@@ -123,7 +123,7 @@ public partial class PlayerFsm
     private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 20f;
-    private const float MomentumLossRate = 35f;
+    private const float MomentumLossRate = 38f;
     private const float MomentumTurnLoss = 2.5f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 6.75f;
@@ -142,8 +142,8 @@ public partial class PlayerFsm
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
     private const float AirControlTurningMultiplier = 0.8f;
-    private const float AirControlTurningMomentumDecayModifier = 0.15f;
-    private const float AirControlMomentumDecayModifier = 0.35f;
+    private const float AirControlTurningMomentumDecayModifier = 0.25f;
+    private const float AirControlMomentumDecayModifier = 0.475f;
     
     private const float UpdateLedgePositionEpsilon = 3f;
     private const float VaultMinimumYVelocity = -2f;

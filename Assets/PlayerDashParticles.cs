@@ -15,23 +15,30 @@ public class PlayerDashParticles : MonoBehaviour
     public void InvokeDash()
     {
         if (_isInvoking) return;
-        StartCoroutine(Coroutine(_dashSpline));
+        StartCoroutine(Coroutine(_dashSpline, 0.25f));
     }
     
     public void InvokeSkip()
     {
         if (_isInvoking) return;
-        StartCoroutine(Coroutine(_skipSpline));
+        StartCoroutine(Coroutine(_skipSpline, 0.225f));
     }
     
     
     // Start is called before the first frame update
-    private IEnumerator Coroutine(SplineContainer splineContainer)
+    private IEnumerator Coroutine(SplineContainer splineContainer, float d)
     {
         _isInvoking = true;
+
+        var main = particles.GetComponent<ParticleSystem>().main;
+        var curve = main.startLifetime;
+        curve.constantMax = d;
+        curve.constantMin = d;
+        main.startLifetime = curve;
+        
+        
         particles.GetComponent<ParticleSystem>().Play();
         var t = 0f;
-        var d = 0.2f;
         while (t < d)
         {
             transform.position = PlayerFsm.Singleton.transform.position;

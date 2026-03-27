@@ -8,13 +8,14 @@ public partial class PlayerFsm
         currentPotentialInteractable = null;
 
         var newMomentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
-        if (newMomentum < 1f && _momentum > 1f) ReplaceAnimatorTrigger("Idle");
         _momentum = newMomentum;
+        if (_momentum < 2f) ReplaceAnimatorTrigger("Idle");
         HandleCollisionMove();
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (interacted) DialogueCanvas.Singleton.AdvanceDialogue();
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
+        Animator.SetLayerWeight(1, 0);
         
         
         if (DialogueCanvas.Singleton.currentDialogueController is null) return;

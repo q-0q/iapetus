@@ -6,11 +6,17 @@ public partial class PlayerFsm
     private void AirControlOnUpdate()
     {
         
+        if (_momentum < 5f)
+        {
+            isSprinting = false;
+            ResetCombo();
+        }
+        
         // ANTI-PATTERN!
         var increaseMultiplier = 0.1f;
         var decreaseMultiplier = AirControlMomentumDecayModifier;
         var turningMultiplier = AirControlTurningMultiplier;
-        var forceForwardInput = true;
+        var forceForwardInput = false;
         var animationTurnMod = 1f;
         if (Machine.IsInState(PlayerFsmState.Updraft))
         {

@@ -5,7 +5,7 @@ public partial class PlayerFsm
 
     private void WallsquatOnUpdate()
     {
-        YVelocity = Mathf.Lerp(0, -10f, Mathf.InverseLerp(WallsquatMinimumDuration + 0.1f, WallsquatMinimumDuration + 0.3f, TimeInCurrentState()));
+        YVelocity = Mathf.Lerp(0, -10f, Mathf.InverseLerp(WallsquatMinimumDuration + 0.2f, WallsquatMinimumDuration + 0.4f, TimeInCurrentState()));
     }
     
     private void WallsquatConfigure()
