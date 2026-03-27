@@ -25,6 +25,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
+                LastUpwardsY = transform.position.y;
                 isSprinting = false;
                 ResetCombo();
                 if (!UpdateLedgePosition(FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset())) UpdateLedgePosition(FaceLedgeHeight);

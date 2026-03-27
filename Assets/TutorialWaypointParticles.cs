@@ -30,8 +30,7 @@ public class TutorialWaypointParticles : MonoBehaviour
         if (SaveSystem.GetPersistentEventCompleted(PersistentEvent1)) _currentSplineIndex = 4;
         if (SaveSystem.GetPersistentEventCompleted(PersistentEvent2)) _currentSplineIndex = 6;
         if (SaveSystem.GetPersistentEventCompleted(PersistentEvent3)) _currentSplineIndex = splines.Count;
-        
-        _marker.position = splines[_currentSplineIndex].EvaluatePosition(0);
+        else _marker.position = splines[_currentSplineIndex].EvaluatePosition(0);
     }
 
     // Update is called once per frame

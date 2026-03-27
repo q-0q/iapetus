@@ -408,7 +408,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1 &7550804
 GameObject:
   m_ObjectHideFlags: 0
@@ -719,7 +718,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 0
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1 &16011815
 GameObject:
   m_ObjectHideFlags: 0
@@ -989,6 +987,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &26707197
 GameObject:
   m_ObjectHideFlags: 0
@@ -2057,7 +2056,7 @@ PrefabInstance:
     - target: {fileID: 515286665775330090, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: field of view
-      value: 60.75
+      value: 68.85
       objectReference: {fileID: 0}
     - target: {fileID: 515286665775330090, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2072,32 +2071,32 @@ PrefabInstance:
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.00000007605081
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.00000095063723
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9475792
+      value: 0.8688961
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.312054
+      value: -0.49020782
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.026613278
+      value: -0.038405508
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.063305825
+      value: 0.056929003
       objectReference: {fileID: 0}
     - target: {fileID: 1295049107365427042, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2124,6 +2123,51 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 520.78
+      objectReference: {fileID: 0}
+    - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 410
+      objectReference: {fileID: 0}
+    - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -45.158745
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2132,32 +2176,32 @@ PrefabInstance:
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 16.78386
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12.295044
+      value: 6.8999996
       objectReference: {fileID: 0}
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.93927026
+      value: 0.9900484
       objectReference: {fileID: 0}
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.34317833
+      value: 0.14072765
       objectReference: {fileID: 0}
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -1.6192425e-10
+      value: 0.000000033736228
       objectReference: {fileID: 0}
     - target: {fileID: 2210578164787876753, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -2.9058683e-10
+      value: -0.000000004795341
       objectReference: {fileID: 0}
     - target: {fileID: 2245575394745972959, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2262,12 +2306,12 @@ PrefabInstance:
     - target: {fileID: 3282179527638398618, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 16.78386
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3282179527638398618, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 12.295044
+      value: 6.8999996
       objectReference: {fileID: 0}
     - target: {fileID: 3282179527638398618, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2293,6 +2337,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Singletons 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4475906042430384731, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4475906042430384731, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4475906042430384731, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4475906042430384731, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4703058733955819435, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2327,32 +2391,32 @@ PrefabInstance:
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.00000007605081
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.00000095063723
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8998238
+      value: 0.8209648
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.4308146
+      value: -0.56683415
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.034499973
+      value: -0.04340017
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.05937715
+      value: 0.053219546
       objectReference: {fileID: 0}
     - target: {fileID: 5327962082458161164, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2457,32 +2521,32 @@ PrefabInstance:
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.00000007605081
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.00000095063723
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.8981632
+      value: 0.7813276
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.43426612
+      value: -0.62033165
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.034727685
+      value: -0.046853397
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.05924426
+      value: 0.050206196
       objectReference: {fileID: 0}
     - target: {fileID: 6009970680978410363, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2690,6 +2754,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8316759778919357649, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9004800657262591341, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9004800657262591341, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9004800657262591341, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9004800657262591341, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
@@ -8068,6 +8152,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1001 &230167268
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10003,6 +10088,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: -180}
+  Mute: 0
 --- !u!1 &314645950
 GameObject:
   m_ObjectHideFlags: 0
@@ -11545,6 +11631,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1001 &371233956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12664,7 +12751,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!4 &410653345
 Transform:
   m_ObjectHideFlags: 0
@@ -15258,6 +15344,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &482965776
 GameObject:
   m_ObjectHideFlags: 0
@@ -16124,7 +16211,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!1 &527488393
 GameObject:
   m_ObjectHideFlags: 0
@@ -16673,6 +16759,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &553880100
 GameObject:
   m_ObjectHideFlags: 0
@@ -22961,7 +23048,6 @@ MonoBehaviour:
   y: 0.6
   reflectionEnabled: 0
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!4 &726825439
 Transform:
   m_ObjectHideFlags: 0
@@ -23692,7 +23778,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!4 &739006915
 Transform:
   m_ObjectHideFlags: 0
@@ -24365,6 +24450,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1001 &753680790
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -25796,7 +25882,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!1 &797528476
 GameObject:
   m_ObjectHideFlags: 0
@@ -26555,7 +26640,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1 &820696370
 GameObject:
   m_ObjectHideFlags: 0
@@ -28581,7 +28665,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1 &876886447
 GameObject:
   m_ObjectHideFlags: 0
@@ -29478,6 +29561,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1001 &927337513
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30537,7 +30621,6 @@ MonoBehaviour:
   y: 0.6
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1001 &943358231
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31460,7 +31543,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 959650026}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a541c9fd054479c904016e4919b5c25, type: 3}
   m_Name: 
@@ -31471,6 +31554,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 180, z: 0}
+  Mute: 0
 --- !u!1 &960054103
 GameObject:
   m_ObjectHideFlags: 0
@@ -32316,7 +32400,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 397516bf3e52b4a58966e04b55bc7570, type: 2}
+  - {fileID: 2100000, guid: b9b4acbd79a5442bc80bc3ea26e06fac, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -33096,7 +33180,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!1 &1000877080
 GameObject:
   m_ObjectHideFlags: 0
@@ -33396,6 +33479,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &1011073380
 GameObject:
   m_ObjectHideFlags: 0
@@ -33447,6 +33531,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 180, z: 0}
+  Mute: 0
 --- !u!1 &1012309994
 GameObject:
   m_ObjectHideFlags: 0
@@ -33671,7 +33756,7 @@ Transform:
   m_Children:
   - {fileID: 959650027}
   m_Father: {fileID: 1095083390}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!65 &1016735327
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -35948,6 +36033,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &1103951136
 GameObject:
   m_ObjectHideFlags: 0
@@ -36003,6 +36089,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1001 &1105549386
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -39038,7 +39125,6 @@ MonoBehaviour:
   y: 0.8
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!4 &1200387995
 Transform:
   m_ObjectHideFlags: 0
@@ -41926,7 +42012,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!1 &1288438264
 GameObject:
   m_ObjectHideFlags: 0
@@ -42092,7 +42177,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 0
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!1 &1290574226
 GameObject:
   m_ObjectHideFlags: 0
@@ -42567,6 +42651,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1 &1296255473
 GameObject:
   m_ObjectHideFlags: 0
@@ -43032,6 +43117,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1001 &1315484426
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44678,6 +44764,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 60}
+  Mute: 0
 --- !u!1001 &1353126871
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -49415,6 +49502,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1001 &1463075223
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -51101,7 +51189,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1 &1508321458
 GameObject:
   m_ObjectHideFlags: 0
@@ -51380,6 +51467,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1001 &1522882281
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52053,7 +52141,6 @@ MonoBehaviour:
   y: 0.6
   reflectionEnabled: 0
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1001 &1539686965
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -52917,7 +53004,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1001 &1557703110
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54336,6 +54422,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &1594402334
 GameObject:
   m_ObjectHideFlags: 0
@@ -56430,6 +56517,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: -180, z: 0}
+  Mute: 0
 --- !u!1001 &1661992887
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57366,7 +57454,6 @@ MonoBehaviour:
   y: 0.6
   reflectionEnabled: 1
   reflectionAngle: 90
-  reflectionDeadzoneSize: 10
 --- !u!1001 &1687340031
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -57533,6 +57620,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 2, y: 0, z: 3}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1001 &1708656290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58743,6 +58831,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: -5, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &1740779143
 GameObject:
   m_ObjectHideFlags: 0
@@ -59381,7 +59470,6 @@ MonoBehaviour:
   y: 0.7
   reflectionEnabled: 0
   reflectionAngle: 45
-  reflectionDeadzoneSize: 10
 --- !u!1 &1756381439
 GameObject:
   m_ObjectHideFlags: 0
@@ -61892,6 +61980,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 3, y: 0, z: 2}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &1833702893
 GameObject:
   m_ObjectHideFlags: 0
@@ -62214,6 +62303,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 1, y: 0, z: 2}
   rotationPerCycle: {x: 0, y: 0, z: 0}
+  Mute: 0
 --- !u!1 &1843270024
 GameObject:
   m_ObjectHideFlags: 0
@@ -63448,6 +63538,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1 &1884123392
 GameObject:
   m_ObjectHideFlags: 0
@@ -67007,6 +67098,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 180, z: 0}
+  Mute: 0
 --- !u!1 &2003702828
 GameObject:
   m_ObjectHideFlags: 0
@@ -68582,6 +68674,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1 &2075552369
 GameObject:
   m_ObjectHideFlags: 0
@@ -69422,6 +69515,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!1 &2098084999
 GameObject:
   m_ObjectHideFlags: 0
@@ -69873,6 +69967,7 @@ MonoBehaviour:
   loop: 1
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 0, z: 180}
+  Mute: 0
 --- !u!4 &2124992652 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4361337945525773708, guid: fe34f0af0a25b4edfa408e99dec1c0b1,
@@ -70694,6 +70789,7 @@ MonoBehaviour:
   loop: 0
   positionPerCycle: {x: 0, y: 0, z: 0}
   rotationPerCycle: {x: 0, y: 180, z: 0}
+  Mute: 0
 --- !u!1 &2143162473
 GameObject:
   m_ObjectHideFlags: 0
