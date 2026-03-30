@@ -41,6 +41,8 @@ public abstract class Fsm : MonoBehaviour
         SetupStateMaps();
         _timeInCurrentState = 0;
         OnStartComplete();
+        
+        Machine.BakeRecursiveSuperstates();
     }
 
 
