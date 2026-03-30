@@ -140,8 +140,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Drown)
             .OnEntry(_ =>
             {
-                _currentComboLength = 0;
-                OnPlayerComboReset?.Invoke();
+                EndSurge();
             })
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Dying1);
     }

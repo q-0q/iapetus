@@ -59,7 +59,7 @@ public partial class PlayerFsm
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 3.0f;
-    private const float ComboMoveSpeedModifier = 1.3f;
+    private const float SurgeMoveSpeedModifier = 1.3f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -247,6 +247,7 @@ public partial class PlayerFsm
     
     private EventInstance slipAmbientFmodInstance;
     private float _timeSinceLastFootstep;
+    private bool _isSurging;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -343,7 +344,7 @@ public partial class PlayerFsm
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
         if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f && (Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim)))
         {
-            ResetCombo();
+            EndSurge();
             isSprinting = false;
         }
         var sprintLoss = isSprinting ? SprintTurnLossMultiplier : 1f;
@@ -383,7 +384,7 @@ public partial class PlayerFsm
         {
             if (Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim))
             {
-                ResetCombo();
+                EndSurge();
                 isSprinting = false;
             };
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
@@ -434,14 +435,14 @@ public partial class PlayerFsm
     private Vector3 ComputeDesiredMoveWithoutTimescale()
     {
         var value = Mathf.Lerp(0f, MaximumMomentumSpeedMod, ComputeMomentumWeight());
-        var comboMultiplier = GetCurrentComboSpeedMultiplier();
+        var comboMultiplier = GetCurrentSurgeSpeedMultiplier();
         return transform.forward.normalized * (MoveSpeed * value * comboMultiplier);
     }
 
 
-    private float GetCurrentComboSpeedMultiplier()
+    private float GetCurrentSurgeSpeedMultiplier()
     {
-        return _currentComboLength >= MaxComboLength ? ComboMoveSpeedModifier : 1f;
+        return _isSurging ? SurgeMoveSpeedModifier : 1f;
     }
 
     private void SetAnimatorMomentum()
@@ -746,7 +747,7 @@ public partial class PlayerFsm
         Shader.SetGlobalFloat("_PlayerGrounded", shaderGrounded);
         
         var shaderCombo = Shader.GetGlobalFloat("_PlayerCombo");
-        shaderCombo += Time.deltaTime * 5f * (_currentComboLength >= MaxComboLength ? 0.5f : -0.5f);
+        shaderCombo += Time.deltaTime * 5f * (_isSurging ? 0.5f : -0.5f);
         shaderCombo = Mathf.Clamp(shaderCombo, 0f, 1f);
         Shader.SetGlobalFloat("_PlayerCombo", shaderCombo);
     }
@@ -754,12 +755,6 @@ public partial class PlayerFsm
     private void IncrementCombo()
     {
         if (!isSprinting) return;
-        
-        if (_currentComboLength == MaxComboLength - 1)
-        {
-            InvokeComboAchieved();
-        }
-
         _comboTimer = 0;
         _currentComboLength++;
 
@@ -783,17 +778,9 @@ public partial class PlayerFsm
         
     }
 
-    private void InvokeComboAchieved()
+    private void InvokeSurge()
     {
-        // _bakedComboMesh.Clear();
-        // _skinnedMeshRenderer.BakeMesh(_bakedComboMesh);
-        // Graphics.RenderMesh(
-        //     new RenderParams(BakedComboMeshMaterial),
-        //     _bakedComboMesh,
-        //     0,
-        //     transform.localToWorldMatrix
-        // );
-
+        
         StartCoroutine(InvokeNewComboMesh());
         FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
         
@@ -811,7 +798,7 @@ public partial class PlayerFsm
             activeFmodInstance.start();
             
             
-            while (_currentComboLength >= MaxComboLength){
+            while (_isSurging){
                 if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
                 var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
                 var position = _skinnedMeshRenderer.transform.position;
@@ -827,11 +814,24 @@ public partial class PlayerFsm
             yield break;
         }
     }
+    
+    private void StartSurge()
+    {
+        _momentum = MaxMomentum;
+        isSprinting = true;
+        _isSurging = true;
+        InvokeSurge();
+    }
 
-
+    private void EndSurge()
+    {
+        _isSurging = false;
+        ResetCombo();
+    }
+    
     private void ResetCombo()
     {
-        if (_currentComboLength >= MaxComboLength && isSprinting) return;
+        
         _currentComboLength = 0;
         OnPlayerComboReset?.Invoke();
     }

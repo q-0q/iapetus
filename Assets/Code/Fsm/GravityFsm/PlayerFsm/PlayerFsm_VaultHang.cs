@@ -27,7 +27,7 @@ public partial class PlayerFsm
             {
                 LastUpwardsY = transform.position.y;
                 isSprinting = false;
-                ResetCombo();
+                EndSurge();
                 if (!UpdateLedgePosition(FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset())) UpdateLedgePosition(FaceLedgeHeight);
 
             })

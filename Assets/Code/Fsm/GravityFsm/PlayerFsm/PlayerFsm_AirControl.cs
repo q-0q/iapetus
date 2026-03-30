@@ -9,7 +9,7 @@ public partial class PlayerFsm
         if (_momentum < 5f)
         {
             isSprinting = false;
-            ResetCombo();
+            EndSurge();
         }
         
         // ANTI-PATTERN!

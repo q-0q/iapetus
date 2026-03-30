@@ -29,7 +29,7 @@ public partial class PlayerFsm
                 Animator.StartPlayback();
                 Animator.enabled = false;
                 isSprinting = false;
-                ResetCombo();
+                EndSurge();
             });
         
         Machine.Configure(PlayerFsmState.Dying2)

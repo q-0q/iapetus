@@ -526,7 +526,7 @@ public partial class PlayerFsm : GravityFsm
                 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            Time.timeScale = 0.01f;
+            StartSurge();
         }
         
         HandleRaycastKill();

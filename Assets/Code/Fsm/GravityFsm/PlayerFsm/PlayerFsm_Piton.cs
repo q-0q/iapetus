@@ -91,7 +91,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.WallInteractable)
             .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, _ =>
             {
-                ResetCombo();
+                EndSurge();
             })
             .OnEntry(_ =>
             {
