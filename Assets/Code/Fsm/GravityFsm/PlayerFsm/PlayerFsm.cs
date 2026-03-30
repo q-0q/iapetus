@@ -104,6 +104,8 @@ public partial class PlayerFsm : GravityFsm
         public static int RopeSwingJumpsquat;
         public static int RopeSwingJump;
         public static int CutsceneHardLand;
+
+        public static int SurgeStartup;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -512,6 +514,11 @@ public partial class PlayerFsm : GravityFsm
             RopeSwingJumpsquatOnUpdate();
         }
 
+        if (Machine.IsInState(PlayerFsmState.SurgeStartup))
+        {
+            SurgeStartupOnUpdate();
+        }
+
         
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
         {
@@ -526,7 +533,7 @@ public partial class PlayerFsm : GravityFsm
                 
         if (Input.GetKeyDown(KeyCode.P))
         {
-            StartSurge();
+            Machine.Jump(PlayerFsmState.SurgeStartup);
         }
         
         HandleRaycastKill();

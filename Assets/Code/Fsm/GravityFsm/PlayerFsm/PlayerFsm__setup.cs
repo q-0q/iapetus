@@ -55,6 +55,7 @@ public partial class PlayerFsm
         StepConfigure();
         SwimConfigure();
         RopeSwingConfigure();
+        SurgeConfigure();
     }
 
     public override void SetupStateMaps()
@@ -92,6 +93,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.115f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingJumpsquat, 0.15f);
+        StateMapConfig.Duration.Add(PlayerFsmState.SurgeStartup, 1.5f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -147,6 +149,8 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwing, "RopeSwing");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingJumpsquat, "RopeSwingJumpsquat", 2);
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingJump, "RopeSwingJump");
+        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeStartup, "SurgeStartup");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
