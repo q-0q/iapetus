@@ -32,6 +32,7 @@ public class CameraPathKeyframe : MonoBehaviour
 
     private void Update()
     {
+        return;
         if (!reflectionEnabled) return;
         if (PlayerFsm.Singleton.GetMomentum() < 6f && !PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dialogue)) return;
         

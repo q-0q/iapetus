@@ -30,12 +30,12 @@ public class BreakableObject : MonoBehaviour
 
     private void Update()
     {
-        var distance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
-        if (distance < 2f && !broken)
+        var distance = Vector3.SqrMagnitude(PlayerFsm.Singleton.transform.position - transform.position);
+        if (distance < 4f && !broken)
         {
             StartCoroutine(OnBreak());
         }
-        else if (distance < 3f && !jiggling && PlayerFsm.Singleton.GetMomentum() > 6f)
+        else if (distance < 9f && !jiggling && PlayerFsm.Singleton.GetMomentum() > 6f)
         {
             StartCoroutine(OnJiggle());
         }

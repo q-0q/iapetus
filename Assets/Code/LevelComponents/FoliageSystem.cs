@@ -122,16 +122,11 @@ public class FoliageSystem : MonoBehaviour
                 Vector3.one * scale
             ));
         }
-
-        instData = matrices.ToArray();
-    }
-
-    void Update()
-    {
-        if (instData == null || instData.Length == 0)
-            return;
-
-        Graphics.RenderMeshInstanced(rp, mesh, 0, instData);
+        
+        Matrix4x4[] finalMatrices = matrices.ToArray();
+        
+        FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
+        
     }
 
     Bounds GetLocalColliderBounds(Collider col)
