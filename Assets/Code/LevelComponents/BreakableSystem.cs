@@ -41,12 +41,14 @@ public class BreakableSystem : MonoBehaviour
     
     void Start()
     {
+
         activeBreakables = new List<BreakableObject>();
         BuildInstances();
     }
 
     private void Update()
     {
+        
         
         Vector3 playerPos = PlayerFsm.Singleton.transform.position;
         float playerMomentum = PlayerFsm.Singleton.GetMomentum();

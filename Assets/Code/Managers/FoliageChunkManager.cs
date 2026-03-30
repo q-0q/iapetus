@@ -78,6 +78,7 @@ public class FoliageChunkManager : MonoBehaviour
 
     void Update()
     {
+        
         Vector3 camPos = _camera.transform.position;
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
         

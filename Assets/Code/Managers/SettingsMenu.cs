@@ -61,6 +61,9 @@ public class SettingsMenu : MonoBehaviour
     public void OnBackClicked()
     {
         gameObject.SetActive(false);
+        MetaSaveSystem.WriteCameraSensitivityModifier((int)_cameraSensitivitySlider.value);
+        MetaSaveSystem.WriteEnableFpsDisplay(_fpsToggle.isOn);
+        MetaSaveSystem.WriteEnableAutocam(_autocamEnabledToggle.isOn);
         OnSettingsMenuClosed?.Invoke();
     }
 
