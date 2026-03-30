@@ -26,7 +26,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WalkToPosition)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
             .OnEntry(param =>
             {
                 if (param is not InteractableParam interactionParam) return;

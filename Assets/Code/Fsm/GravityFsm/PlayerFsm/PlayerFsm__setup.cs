@@ -110,7 +110,8 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlowVaultFinish, "SlowVaultFinish");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlowVaultHang, "SlowVaultHang");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Vault, "Vault");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToPosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToDialoguePosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToSwitchPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");

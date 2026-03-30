@@ -100,8 +100,8 @@ public class MultiSwitchDoor : MonoBehaviour
         
         IEnumerator CameraCoroutine()
         {
-            yield return new WaitForSeconds(1f);
             CutsceneManager.Singleton.SetPseudoCutsceneActive();
+            yield return new WaitForSeconds(1f);
             yield return new WaitForSeconds(0.75f);
             _cameraFollow.position = _cameraStart.position;
             float t = 0;
