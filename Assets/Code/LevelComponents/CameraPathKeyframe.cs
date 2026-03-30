@@ -29,26 +29,7 @@ public class CameraPathKeyframe : MonoBehaviour
     {
         reflectionAxisStore = GetNewForward();
     }
-
-    private void Update()
-    {
-        return;
-        if (!reflectionEnabled) return;
-        if (PlayerFsm.Singleton.GetMomentum() < 6f && !PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dialogue)) return;
-        
-        // var roundedPlayerForwardEuler = new Vector3(0,  Mathf.Round(PlayerFsm.Singleton.transform.rotation.y / 45f) * 45f, 0);
-        // var roundedPlayerForward = Quaternion.Euler(roundedPlayerForwardEuler) * Vector3.forward;
-        // Debug.DrawRay(PlayerFsm.Singleton.transform.position, roundedPlayerForward, Color.green);
-        
-        
-        var signedAngle = Vector3.SignedAngle(transform.forward, PlayerFsm.Singleton.transform.forward, Vector3.up);
-        var deadzone = 10f;
-        if (Mathf.Abs(signedAngle) < deadzone || Mathf.Abs(signedAngle) > 180f - deadzone) return;
-        
-        var newForward = GetNewForward();
-
-        reflectionAxisStore = Quaternion.Lerp(reflectionAxisStore, newForward, Time.deltaTime * 10f);
-    }
+    
 
     private Quaternion GetNewForward()
     {

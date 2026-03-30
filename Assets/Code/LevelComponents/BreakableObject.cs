@@ -27,26 +27,13 @@ public class BreakableObject : MonoBehaviour
         _bitChance = bitChance;
 
     }
-
-    private void Update()
-    {
-        var distance = Vector3.SqrMagnitude(PlayerFsm.Singleton.transform.position - transform.position);
-        if (distance < 4f && !broken)
-        {
-            StartCoroutine(OnBreak());
-        }
-        else if (distance < 9f && !jiggling && PlayerFsm.Singleton.GetMomentum() > 6f)
-        {
-            StartCoroutine(OnJiggle());
-        }
-    }
-
+    
     private void Start()
     {
         transform.Find("Particles").TryGetComponent(out _particleSystem);
     }
 
-    IEnumerator OnBreak()
+    public IEnumerator OnBreak()
     {
         if (broken) yield break;
         broken = true;
@@ -63,7 +50,7 @@ public class BreakableObject : MonoBehaviour
         yield break;
     }
     
-    IEnumerator OnJiggle()
+    public IEnumerator OnJiggle()
     {
         if (jiggling) yield break;
         jiggling = true;

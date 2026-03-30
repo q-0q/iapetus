@@ -37,18 +37,38 @@ public class BreakableSystem : MonoBehaviour
     [Header("Layers")]
     public LayerMask receiveFoliageMask;
 
-    // Matrix4x4[] instData;
-    // RenderParams rp;
-
+    private List<BreakableObject> activeBreakables;
+    
     void Start()
     {
-        // rp = new RenderParams(material)
-        // {
-            // shadowCastingMode = ShadowCastingMode.Off,
-            // receiveShadows = false
-        // };
-
+        activeBreakables = new List<BreakableObject>();
         BuildInstances();
+    }
+
+    private void Update()
+    {
+        
+        Vector3 playerPos = PlayerFsm.Singleton.transform.position;
+        float playerMomentum = PlayerFsm.Singleton.GetMomentum();
+
+        // Loop backwards so we can remove items as they break
+        for (int i = activeBreakables.Count - 1; i >= 0; i--) {
+            var b = activeBreakables[i];
+            if (b == null) {
+                activeBreakables.RemoveAt(i);
+                continue;
+            }
+
+            float sqrDist = (playerPos - b.transform.position).sqrMagnitude;
+        
+            if (sqrDist < 4f)
+            {
+                StartCoroutine(b.OnBreak());
+                activeBreakables.RemoveAt(i);
+            } else if (sqrDist < 9f && playerMomentum > 6f) {
+                StartCoroutine(b.OnJiggle());
+            }
+        }
     }
 
     void BuildInstances()
@@ -74,9 +94,7 @@ public class BreakableSystem : MonoBehaviour
         {
             
             int configIndex = Random.Range(0, Configs.Count);
-            
-            
-            // Sample in LOCAL space
+
             Vector3 localPoint = new Vector3(
                 Random.Range(localBounds.min.x, localBounds.max.x),
                 localBounds.max.y,
@@ -89,12 +107,10 @@ public class BreakableSystem : MonoBehaviour
                 Random.Range(Configs[configIndex].offsetRange.x, Configs[configIndex].offsetRange.y)
             );
             
-            // Convert to world
             Vector3 worldOrigin =
                 transform.TransformPoint(localPoint + localOffset) +
                 transform.up * raycastOriginYOffset;
 
-            // Ray direction now fully respects GameObject rotation
             Vector3 rayDirection = -transform.up;
 
             if (!Physics.Raycast(
@@ -109,23 +125,13 @@ public class BreakableSystem : MonoBehaviour
             if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
                 continue;
 
-            // Random offset in object-local space
-
-
-            // Vector3 localOffset = Vector3.zero;
             Vector3 position = hit.point;
-
-            // --------------------------------------------------
-            // ROTATION: Align mesh opposite ray direction
-            // --------------------------------------------------
-
+            
             Vector3 foliageUp = -rayDirection;
 
-            // Align mesh's +Y with foliageUp
             Quaternion alignToRay =
                 Quaternion.FromToRotation(Vector3.up, foliageUp);
 
-            // Random twist around ray axis
             float randomY = Random.Range(Configs[configIndex].rotationYRange.x, Configs[configIndex].rotationYRange.y);
             Quaternion twist =
                 Quaternion.AngleAxis(randomY, foliageUp);
@@ -139,20 +145,13 @@ public class BreakableSystem : MonoBehaviour
             breakableObject.transform.SetParent(transform);
             breakableObject.TryGetComponent(out BreakableObject component);
             component.Set(Configs[configIndex].Mesh, Configs[configIndex].Material, Configs[configIndex].EventReference, Configs[configIndex].bitChance);
-
-            // matrices.Add(Matrix4x4.TRS(
-            //     position,
-            //     rotation,
-            //     Vector3.one * scale
-            // ));
+            
+            activeBreakables.Add(component);
+            
         }
         
     }
-
-    void Update()
-    {
-
-    }
+    
 
     Bounds GetLocalColliderBounds(Collider col)
     {
