@@ -6,7 +6,7 @@ public class PlayerComboMesh : MonoBehaviour
 {
     private float _age;
     private Material _material;
-    private const float MaxAge = 1f;
+    private const float MaxAge = 2f;
     private Vector3 initialScale;
     
     // Start is called before the first frame update
@@ -27,7 +27,7 @@ public class PlayerComboMesh : MonoBehaviour
         _material.SetFloat("_Age", _age);
         _age += Time.deltaTime;
         
-        transform.localScale = Vector3.Lerp(initialScale, initialScale * 0.65f, Mathf.InverseLerp(0, 0.75f, _age));
+        // transform.localScale = Vector3.Lerp(initialScale, initialScale * 0.65f, Mathf.InverseLerp(0, 0.75f, _age));
         
         if (_age >= MaxAge)
         {

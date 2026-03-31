@@ -106,6 +106,7 @@ public partial class PlayerFsm : GravityFsm
         public static int CutsceneHardLand;
 
         public static int SurgeStartup;
+        public static int SurgeDash;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -517,6 +518,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.SurgeStartup))
         {
             SurgeStartupOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.SurgeDash))
+        {
+            SurgeDashOnUpdate();
         }
 
         

@@ -11,6 +11,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Wasp;
+using Random = UnityEngine.Random;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public partial class PlayerFsm
@@ -803,11 +804,13 @@ public partial class PlayerFsm
                 var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
                 var position = _skinnedMeshRenderer.transform.position;
                 var rotation = _skinnedMeshRenderer.transform.rotation;
-                yield return new WaitForSeconds(0.09f);
+                var mesh = new Mesh();
+                _skinnedMeshRenderer.BakeMesh(mesh);
+                yield return new WaitForSeconds(Random.Range(0.06f, 0.09f));
                 var comboMeshObject = Instantiate(comboMeshPrefab, position,
                     rotation, null);
                 comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
-                _skinnedMeshRenderer.BakeMesh(meshFilter.mesh);
+                meshFilter.mesh = mesh;
             }
             
             activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
