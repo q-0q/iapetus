@@ -80,6 +80,8 @@ public partial class PlayerFsm
     private static readonly Vector3 PitonTargetOffset = Vector3.up * -2f;
     public RopeSwing currentRopeSwing;
     private float _timeSinceRopeSwing;
+    private CinemachineVirtualCamera _surgeStartupCamera;
+    private Material _currentSurgePedestalMaterial;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;

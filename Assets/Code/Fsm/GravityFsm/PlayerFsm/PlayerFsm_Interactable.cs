@@ -22,6 +22,7 @@ public partial class PlayerFsm
     private void InteractableConfigure()
     {
         Machine.Configure(PlayerFsmState.Interactable)
+            .Permit(PlayerFsmTrigger.SurgePedestalInteracted, PlayerFsmState.SurgeStartup)
             .Permit(PlayerFsmTrigger.InteractWithSwitch, PlayerFsmState.WalkToSwitchPosition)
             .Permit(PlayerFsmTrigger.StartDialogue, PlayerFsmState.WalkToDialoguePosition);
     }

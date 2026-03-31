@@ -30,6 +30,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private bool _settingsMenuOpen;
 
+    private CinemachineBrain _brain;
+
     void Awake()
     {
         Singleton = this;
@@ -38,6 +40,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _baseXSpeed = _freeLook.m_XAxis.m_MaxSpeed;
         _baseYSpeed = _freeLook.m_YAxis.m_MaxSpeed;
         _settingsMenuOpen = false;
+        _brain = FindObjectOfType<CinemachineBrain>();
         
         OnMetaSaveDataUpdated(MetaSaveSystem.LoadCachedMetaSaveData());
     }
@@ -67,7 +70,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private void Update()
     {
         if (_scriptActive) return;
-        if (GameMenu.Singleton.IsMenuOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
+        if (_brain.ActiveVirtualCamera != _freeLook || GameMenu.Singleton.IsMenuOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
         {
             _freeLook.m_XAxis.m_InputAxisValue = 0;
             _freeLook.m_YAxis.m_InputAxisValue = 0;
@@ -230,6 +233,11 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _freeLook.m_XAxis.Value = xValue;
         _freeLook.m_YAxis.Value = yValue;
 
+    }
+
+    public CinemachineFreeLook GetFreeLook()
+    {
+        return _freeLook;
     }
 
     

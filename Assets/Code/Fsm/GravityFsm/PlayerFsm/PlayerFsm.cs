@@ -149,6 +149,7 @@ public partial class PlayerFsm : GravityFsm
         public static int IsAboveWater;
 
         public static int EnterRopeSwingTrigger;
+        public static int SurgePedestalInteracted;
     }
     
     protected override void OnAwake()
@@ -218,6 +219,7 @@ public partial class PlayerFsm : GravityFsm
         _teleportCameraLookAt = transform.parent.Find("PlayerTeleportCameraLookAt");
         _playerDashParticles = GetComponentInChildren<PlayerDashParticles>();
         _playerDashParticles.transform.SetParent(null);
+        _surgeStartupCamera = transform.parent.Find("SurgeStartupCamera").GetComponent<CinemachineVirtualCamera>();
         
         ApplyMetaSaveData(MetaSaveSystem.LoadCachedMetaSaveData());
         // transform.Find("KiIndicatorParticles").SetParent(null);
@@ -534,12 +536,6 @@ public partial class PlayerFsm : GravityFsm
         if (Input.GetKeyDown(KeyCode.X))
         {
             SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
-        }
-        
-                
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            Machine.Jump(PlayerFsmState.SurgeStartup);
         }
         
         HandleRaycastKill();
