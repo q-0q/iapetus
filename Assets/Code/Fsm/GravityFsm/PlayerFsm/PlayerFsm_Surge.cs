@@ -7,7 +7,7 @@ public partial class PlayerFsm
     private void SurgeStartupOnUpdate()
     {
         var transposer = _surgeStartupCamera.GetCinemachineComponent<CinemachineTransposer>();
-
+        
         var forwardOffset = transform.forward * Mathf.Lerp(0, 4f, Mathf.InverseLerp(0.15f, 0.25f, TimeInCurrentState()));
         transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset,
             (transposer.m_FollowOffset.normalized * 14f),  (Time.deltaTime * 0.75f));
