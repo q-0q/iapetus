@@ -43,7 +43,7 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 InteractionCanvas.Singleton.ClearPsuedoInteractable();
-                _surgeStartupCamera.Priority = -20;
+                // _surgeStartupCamera.Priority = -20;
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
             })
@@ -73,7 +73,7 @@ public partial class PlayerFsm
 
                 _surgeStartupCamera.GetCinemachineComponent<CinemachineComposer>().m_TrackedObjectOffset = Vector3.zero;
                 
-                _surgeStartupCamera.Priority = 20;
+                // _surgeStartupCamera.Priority = 20;
                 
                 Animator.SetLayerWeight(1, 0);
             });
