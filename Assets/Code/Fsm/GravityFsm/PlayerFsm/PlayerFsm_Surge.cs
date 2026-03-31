@@ -10,7 +10,7 @@ public partial class PlayerFsm
 
         var forwardOffset = transform.forward * Mathf.Lerp(0, 4f, Mathf.InverseLerp(0.15f, 0.25f, TimeInCurrentState()));
         transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset,
-            (transposer.m_FollowOffset.normalized * 14f) + forwardOffset,  (Time.deltaTime * 0.75f));
+            (transposer.m_FollowOffset.normalized * 14f),  (Time.deltaTime * 0.75f));
         
         var composer = _surgeStartupCamera.GetCinemachineComponent<CinemachineComposer>();
         composer.m_TrackedObjectOffset =
@@ -19,10 +19,10 @@ public partial class PlayerFsm
         _surgeStartupCamera.m_Lens.FieldOfView =
             Mathf.Lerp(_surgeStartupCamera.m_Lens.FieldOfView, 95f, Time.deltaTime * 1.25f);
 
-        if (TimeInCurrentState() > 0.5f)
+        if (TimeInCurrentState() > 1.25f)
         {
             InteractionCanvas.Singleton.SetPsuedoInteractable("Surge");
-            if (_inputBuffer.IsBuffered("Interact")) Machine.Jump(PlayerFsmState.SurgeDash);
+            if (_inputBuffer.IsBuffered("Interact")) Machine.Jump(PlayerFsmState.SurgeDashStartup);
         }
         // if (!_playerInput.actions["Interact"].IsPressed() && TimeInCurrentState() < 0.5f) Machine.Jump(PlayerFsmState.Idle);
         
@@ -43,9 +43,7 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 InteractionCanvas.Singleton.ClearPsuedoInteractable();
-                _currentSurgePedestal.EndChannel();
                 _surgeStartupCamera.Priority = -20;
-                StartSurge();
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
             })
@@ -78,6 +76,18 @@ public partial class PlayerFsm
                 _surgeStartupCamera.Priority = 20;
                 
                 Animator.SetLayerWeight(1, 0);
+            });
+        
+        Machine.Configure(PlayerFsmState.SurgeDashStartup)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.SurgeDash)
+            .OnExit(_ =>
+            {
+                StartSurge();
+                _currentSurgePedestal.EndChannel();
+
+            })
+            .OnEntry(_ =>
+            {
             });
         
         Machine.Configure(PlayerFsmState.SurgeDash)

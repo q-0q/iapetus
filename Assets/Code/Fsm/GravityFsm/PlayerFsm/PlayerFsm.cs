@@ -107,6 +107,7 @@ public partial class PlayerFsm : GravityFsm
 
         public static int SurgeStartup;
         public static int SurgeDash;
+        public static int SurgeDashStartup;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

@@ -25,8 +25,8 @@ public class SurgePedestal : MonoBehaviour
     {
         if (_isChanneling) return;
         
-        _material.SetFloat("_Weight", Mathf.Lerp(_material.GetFloat("_Weight"), 0, Time.deltaTime * 5f));
-        _haloMaterial.SetFloat("_Weight", Mathf.Lerp(_haloMaterial.GetFloat("_Weight"), 0, Time.deltaTime * 5f));
+        _material.SetFloat("_Weight", Mathf.Lerp(_material.GetFloat("_Weight"), 0, Time.deltaTime * 10f));
+        _haloMaterial.SetFloat("_Weight", Mathf.Lerp(_haloMaterial.GetFloat("_Weight"), 0, Time.deltaTime * 2f));
     }
 
     private void OnEnable()
@@ -50,7 +50,7 @@ public class SurgePedestal : MonoBehaviour
         var t = 0f;
         var d = 1.5f;
 
-        while (_isChanneling && t < d)
+        while (t < d)
         {
             var w = Util.SmoothLerp01(t / d);
             _material.SetFloat("_Weight", w);
@@ -58,7 +58,6 @@ public class SurgePedestal : MonoBehaviour
             t += Time.deltaTime;
             yield return null;
         }
-        _isChanneling = false;
         yield break;
     }
 
