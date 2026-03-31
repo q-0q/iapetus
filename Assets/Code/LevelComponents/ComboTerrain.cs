@@ -26,10 +26,10 @@ public class ComboTerrain : MonoBehaviour
             _disabling = false;
         }
 
-        if (_collider.enabled && PlayerFsm.Singleton.GetComboLength() < PlayerFsm.MaxComboLength)
+        if (_collider.enabled && !PlayerFsm.Singleton.GetIsSurging())
             StartCoroutine(DisableAfterDelay());
 
-        if (!_collider.enabled && PlayerFsm.Singleton.GetComboLength() >= PlayerFsm.MaxComboLength)
+        if (!_collider.enabled && PlayerFsm.Singleton.GetIsSurging())
             _collider.enabled = true;
 
     }

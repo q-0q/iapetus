@@ -7,13 +7,21 @@ public partial class PlayerFsm
     private void SurgeStartupOnUpdate()
     {
         var transposer = _surgeStartupCamera.GetCinemachineComponent<CinemachineTransposer>();
-        transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset, transposer.m_FollowOffset.normalized * 14f,  (Time.deltaTime * 2f));
+
+        var forwardOffset = transform.forward * Mathf.Lerp(0, 4f, Mathf.InverseLerp(0.15f, 0.25f, TimeInCurrentState()));
+        transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset,
+            (transposer.m_FollowOffset.normalized * 14f) + forwardOffset,  (Time.deltaTime * 0.75f));
+        
+        var composer = _surgeStartupCamera.GetCinemachineComponent<CinemachineComposer>();
+        composer.m_TrackedObjectOffset =
+            Vector3.Lerp(composer.m_TrackedObjectOffset, forwardOffset, Time.deltaTime * 0.75f);
+        
         _surgeStartupCamera.m_Lens.FieldOfView =
-            Mathf.Lerp(_surgeStartupCamera.m_Lens.FieldOfView, 110f, Time.deltaTime * 2f);
+            Mathf.Lerp(_surgeStartupCamera.m_Lens.FieldOfView, 95f, Time.deltaTime * 1.25f);
         
         if (!_playerInput.actions["Interact"].IsPressed() && TimeInCurrentState() < 0.5f) Machine.Jump(PlayerFsmState.Idle);
         
-        _currentSurgePedestalMaterial.SetFloat("_Weight", Mathf.InverseLerp(0, 1.5f, TimeInCurrentState()));
+        _currentSurgePedestalMaterial.SetFloat("_Weight", Mathf.InverseLerp(0, 1.25f, TimeInCurrentState()));
     }
     
     private void SurgeDashOnUpdate()
@@ -36,29 +44,31 @@ public partial class PlayerFsm
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
                 StartSurge();
+                _surgeStartupCamera.m_Follow = null;
+                _surgeStartupCamera.m_LookAt = null;
             })
             .OnEntry(@params =>
             {
-
+                
+                EndSurge();
                 if (@params is MaterialParam materialParam)
                 {
                     _currentSurgePedestalMaterial = materialParam.Material;
                 }
                 
+                _surgeStartupCamera.m_Follow = PlayerCinemachineFreeLook.Singleton.GetFreeLook().m_Follow;
+                _surgeStartupCamera.m_LookAt = _surgeStartupCamera.m_Follow;
+                
                 var state = PlayerCinemachineFreeLook.Singleton.GetFreeLook().State;
                 var playerPos = PlayerFsm.Singleton.transform.position;
-
-                // 2. Calculate the offset vector from player to camera
-                // This is the "stick" length and direction
+                
                 Vector3 offset = state.RawPosition - playerPos;
-
-                // 3. Apply to Transposer
                 var transposer = _surgeStartupCamera.GetCinemachineComponent<CinemachineTransposer>();
                 transposer.m_FollowOffset = offset;
-
-                // 4. Match the rotation and FOV
                 _surgeStartupCamera.transform.rotation = state.RawOrientation;
                 _surgeStartupCamera.m_Lens.FieldOfView = state.Lens.FieldOfView;
+
+                _surgeStartupCamera.GetCinemachineComponent<CinemachineComposer>().m_TrackedObjectOffset = Vector3.zero;
                 
                 _surgeStartupCamera.Priority = 20;
                 

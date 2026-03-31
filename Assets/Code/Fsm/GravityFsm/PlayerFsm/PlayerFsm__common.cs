@@ -845,6 +845,11 @@ public partial class PlayerFsm
     {
         return _currentComboLength;
     }
+    
+    public bool GetIsSurging()
+    {
+        return _isSurging;
+    }
 
     public void InvokePlayerDeath()
     {
