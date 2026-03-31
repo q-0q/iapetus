@@ -18,10 +18,14 @@ public partial class PlayerFsm
         
         _surgeStartupCamera.m_Lens.FieldOfView =
             Mathf.Lerp(_surgeStartupCamera.m_Lens.FieldOfView, 95f, Time.deltaTime * 1.25f);
+
+        if (TimeInCurrentState() > 0.5f)
+        {
+            InteractionCanvas.Singleton.SetPsuedoInteractable("Surge");
+            if (_inputBuffer.IsBuffered("Interact")) Machine.Jump(PlayerFsmState.SurgeDash);
+        }
+        // if (!_playerInput.actions["Interact"].IsPressed() && TimeInCurrentState() < 0.5f) Machine.Jump(PlayerFsmState.Idle);
         
-        if (!_playerInput.actions["Interact"].IsPressed() && TimeInCurrentState() < 0.5f) Machine.Jump(PlayerFsmState.Idle);
-        
-        _currentSurgePedestalMaterial.SetFloat("_Weight", Mathf.InverseLerp(0, 1.25f, TimeInCurrentState()));
     }
     
     private void SurgeDashOnUpdate()
@@ -35,25 +39,26 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.SurgeStartup)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.SurgeDash)
+            // .Permit(FsmTrigger.Timeout, PlayerFsmState.SurgeDash)
             .OnExit(_ =>
             {
-                _currentSurgePedestalMaterial.SetFloat("_Weight", 0);
+                InteractionCanvas.Singleton.ClearPsuedoInteractable();
+                _currentSurgePedestal.EndChannel();
                 _surgeStartupCamera.Priority = -20;
-            })
-            .OnExitFrom(FsmTrigger.Timeout, _ =>
-            {
                 StartSurge();
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
             })
+            .OnExitFrom(FsmTrigger.Timeout, _ =>
+            {
+            })
             .OnEntry(@params =>
             {
-                
                 EndSurge();
-                if (@params is MaterialParam materialParam)
+                if (@params is SurgePedestalParam surgePedestalParam)
                 {
-                    _currentSurgePedestalMaterial = materialParam.Material;
+                    _currentSurgePedestal = surgePedestalParam.SurgePedestal;
+                    _currentSurgePedestal.StartChannel();
                 }
                 
                 _surgeStartupCamera.m_Follow = PlayerCinemachineFreeLook.Singleton.GetFreeLook().m_Follow;
@@ -83,6 +88,7 @@ public partial class PlayerFsm
             })
             .OnEntry(_ =>
             {
+                _inputBuffer.ConsumeBuffer("Interact");
             });
     }
 }
