@@ -63,25 +63,16 @@ public class PlayerSurgeHalo : MonoBehaviour
     private IEnumerator BreakCoroutine()
     {
         _isChanneling = true;
-        var t = 0f;
         var d = 0.15f;
-        
         var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
         var triggerPosition = PlayerFsm.Singleton.transform.position;
-        
-        yield return new WaitForSeconds(0.05f);
         var triggerObject = Instantiate(triggerPrefab, triggerPosition,
             Quaternion.identity, null);
         triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
 
-        while (t < d)
-        {
-            var w = Util.SmoothLerp01(t / d);
-            _material.SetFloat("_Weight", w);
-            t += Time.deltaTime;
-            yield return null;
-        }
+        _material.SetFloat("_Weight", 1f);
 
+        yield return new WaitForSeconds(d);
         _isChanneling = false;
         yield break;
     }

@@ -56,6 +56,7 @@ public partial class PlayerFsm
         SwimConfigure();
         RopeSwingConfigure();
         SurgeConfigure();
+        PressConfigure();
     }
 
     public override void SetupStateMaps()
@@ -155,6 +156,8 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeStartup, "SurgeStartup");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDash, "SurgeDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDashStartup, "SurgeDashStartup");
+        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Press, "Press");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

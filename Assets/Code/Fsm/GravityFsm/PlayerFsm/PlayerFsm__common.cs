@@ -60,7 +60,7 @@ public partial class PlayerFsm
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 3.0f;
-    private const float SurgeMoveSpeedModifier = 1.85f;
+    private const float SurgeMoveSpeedModifier = 1.75f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -245,6 +245,7 @@ public partial class PlayerFsm
     public EventReference dashWhooshEventReference;
     public EventReference skipWhooshEventReference;
     public EventReference surgeStartupFmodEvent;
+    public EventReference surgeEndFmodEvent;
     
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
@@ -842,6 +843,7 @@ public partial class PlayerFsm
     {
         if (_isSurging)
         {
+            FMODUnity.RuntimeManager.PlayOneShotAttached(surgeEndFmodEvent, gameObject);
             _playerSurgeHalo.StartBreak();
         }
         _isSurging = false;

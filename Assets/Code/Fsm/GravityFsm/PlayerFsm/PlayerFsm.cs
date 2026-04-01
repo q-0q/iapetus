@@ -108,6 +108,7 @@ public partial class PlayerFsm : GravityFsm
         public static int SurgeStartup;
         public static int SurgeDash;
         public static int SurgeDashStartup;
+        public static int Press;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -151,6 +152,7 @@ public partial class PlayerFsm : GravityFsm
 
         public static int EnterRopeSwingTrigger;
         public static int SurgePedestalInteracted;
+        public static int Press;
     }
     
     protected override void OnAwake()
@@ -528,6 +530,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.SurgeDash))
         {
             SurgeDashOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.Press))
+        {
+            PressOnUpdate();
         }
 
         

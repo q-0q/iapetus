@@ -102,7 +102,23 @@ public partial class PlayerFsm
             var param = new RopeSwingHitParam() { RopeSwing = ropeSwing};
             Machine.Fire(PlayerFsmTrigger.EnterRopeSwingTrigger, param);
         }
+        
+        if (PressRaycast(out _)) Machine.Fire(PlayerFsmTrigger.Press);
+        
+    }
 
+    private bool PressRaycast(out RaycastHit hit)
+    {
+        var b = (Physics.Raycast(transform.position + (Vector3.up * FaceWallHeight) - (transform.forward),
+            transform.forward, out hit,
+            8f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore));
+
+        if (!b) return false;
+
+        var angle = Vector3.SignedAngle(-hit.normal, transform.forward, Vector3.up);
+        var angleWeight = Mathf.InverseLerp(0, 40f, Mathf.Abs(angle));
+        var distanceThreshhold = Mathf.Lerp(2f, 2.15f + (Machine.IsInState(PlayerFsmState.Press) ? 4f : 0f), angleWeight);
+        return hit.distance < distanceThreshhold;
     }
 
     private bool ProbeHighLedge()
