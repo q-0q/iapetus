@@ -32,6 +32,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private CinemachineBrain _brain;
 
+    private float _baseFov;
+
     void Awake()
     {
         Singleton = this;
@@ -41,6 +43,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _baseYSpeed = _freeLook.m_YAxis.m_MaxSpeed;
         _settingsMenuOpen = false;
         _brain = FindObjectOfType<CinemachineBrain>();
+        _baseFov = _freeLook.m_Lens.FieldOfView;
         
         OnMetaSaveDataUpdated(MetaSaveSystem.LoadCachedMetaSaveData());
     }
@@ -238,6 +241,11 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     public CinemachineFreeLook GetFreeLook()
     {
         return _freeLook;
+    }
+
+    public float GetBaseFov()
+    {
+        return _baseFov;
     }
 
     

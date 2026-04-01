@@ -2,7 +2,9 @@ using System.Collections;
 using Cinemachine;
 using Code.Misc;
 using Code.TriggerParams;
+using FMODUnity;
 using UnityEngine;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public partial class PlayerFsm
 {
@@ -48,13 +50,18 @@ public partial class PlayerFsm
     {
         var t = 0f;
         var d = 3.5f;
-        var strength = 1.5f;
+        var strength = 0.5f;
         var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
         var offset = freeLook.GetComponent<CinemachineCameraOffset>();
+
+        var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
         while (t < d)
         {
+
+            if (Machine.IsInState(PlayerFsmState.SurgeStartup)) yield break;
+            
             freeLook.m_Lens.FieldOfView =
-                Mathf.Lerp(freeLook.m_Lens.FieldOfView, _surgeStartupInitialFov, Time.deltaTime * strength);
+                Mathf.Lerp(freeLook.m_Lens.FieldOfView, baseFov, Time.deltaTime * strength);
 
 
             offset.m_Offset = Vector3.Lerp(offset.m_Offset, Vector3.zero, Time.deltaTime * strength);
@@ -62,7 +69,7 @@ public partial class PlayerFsm
             yield return null;
         }
 
-        freeLook.m_Lens.FieldOfView = _surgeStartupInitialFov;
+        freeLook.m_Lens.FieldOfView = baseFov;
         offset.m_Offset = Vector3.zero;
     }
     
@@ -78,6 +85,7 @@ public partial class PlayerFsm
                 // _surgeStartupCamera.Priority = -20;
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
+                surgeStartupFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             })
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
@@ -85,7 +93,8 @@ public partial class PlayerFsm
             .OnEntry(@params =>
             {
                 _surgeStartupInitialFov = PlayerCinemachineFreeLook.Singleton.GetFreeLook().m_Lens.FieldOfView;
-                
+                RuntimeManager.AttachInstanceToGameObject(surgeStartupFmodInstance, gameObject);
+                surgeStartupFmodInstance.start();
                 
                 EndSurge();
                 if (@params is SurgePedestalParam surgePedestalParam)

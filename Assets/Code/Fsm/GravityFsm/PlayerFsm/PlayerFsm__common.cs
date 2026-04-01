@@ -60,7 +60,7 @@ public partial class PlayerFsm
     private int _currentComboLength = 0;
     private float _comboTimer = 0;
     private const float ComboTimeoutDuration = 3.0f;
-    private const float SurgeMoveSpeedModifier = 1.3f;
+    private const float SurgeMoveSpeedModifier = 1.85f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
@@ -243,8 +243,11 @@ public partial class PlayerFsm
     public EventReference hardlandEventReference;
     public EventReference dashWhooshEventReference;
     public EventReference skipWhooshEventReference;
+    public EventReference surgeStartupFmodEvent;
+    
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
+    private EventInstance surgeStartupFmodInstance;
     
     
     

@@ -580,6 +580,8 @@ public partial class PlayerFsm : GravityFsm
         
         activeFmodInstance = FMODUnity.RuntimeManager.CreateInstance(comboActiveFmodEvent);
         slideFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slideFmodEvent);
+        surgeStartupFmodInstance = FMODUnity.RuntimeManager.CreateInstance(surgeStartupFmodEvent);
+        
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(slideFmodInstance, gameObject);
         
         slipAmbientFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slipAmbientEvent);
