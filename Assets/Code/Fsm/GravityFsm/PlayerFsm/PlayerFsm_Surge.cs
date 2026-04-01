@@ -22,7 +22,7 @@ public partial class PlayerFsm
         //
         //
 
-        var strength = 2f;
+        var strength = 2.5f;
         var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
         freeLook.m_Lens.FieldOfView =
             Mathf.Lerp(freeLook.m_Lens.FieldOfView, 115f, Time.deltaTime * strength);
@@ -34,6 +34,11 @@ public partial class PlayerFsm
         if (TimeInCurrentState() > 1.25f)
         {
             InteractionCanvas.Singleton.SetPsuedoInteractable("Surge");
+            if (_inputBuffer.IsBuffered("Jump"))
+            {
+                StartCoroutine(SurgeCameraCleanupCoroutine(0.15f));
+                Machine.Jump(PlayerFsmState.Idle);
+            };
             if (_inputBuffer.IsBuffered("Interact")) Machine.Jump(PlayerFsmState.SurgeDashStartup);
         }
         // if (!_playerInput.actions["Interact"].IsPressed() && TimeInCurrentState() < 0.5f) Machine.Jump(PlayerFsmState.Idle);
@@ -42,31 +47,34 @@ public partial class PlayerFsm
     
     private void SurgeDashOnUpdate()
     {
-        var movementMofifier = Mathf.Lerp(2.25f, 1f, Mathf.InverseLerp(0, 0.3f, TimeInCurrentState()));
+        var movementMofifier = Mathf.Lerp(1.5f, 1f, Mathf.InverseLerp(0, 0.3f, TimeInCurrentState()));
         HandleCollisionMove(movementMofifier);
     }
 
-    private IEnumerator SurgeCameraCleanupCoroutine()
+    private IEnumerator SurgeCameraCleanupCoroutine(float speedMod = 1f)
     {
         var t = 0f;
-        var d = 3.5f;
-        var strength = 0.5f;
+        var d = 4.5f * speedMod;
+        
         var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
         var offset = freeLook.GetComponent<CinemachineCameraOffset>();
+
+        var initialFov = freeLook.m_Lens.FieldOfView;
+        var initialOffset = offset.m_Offset;
 
         var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
         while (t < d)
         {
 
-            if (Machine.IsInState(PlayerFsmState.SurgeStartup)) yield break;
+            var w = Util.SmoothLerp01(t / d);
             
             freeLook.m_Lens.FieldOfView =
-                Mathf.Lerp(freeLook.m_Lens.FieldOfView, baseFov, Time.deltaTime * strength);
-
-
-            offset.m_Offset = Vector3.Lerp(offset.m_Offset, Vector3.zero, Time.deltaTime * strength);
+                Mathf.Lerp(initialFov, baseFov, w);
+            
+            offset.m_Offset = Vector3.Lerp(initialOffset, Vector3.zero, w);
             t += Time.deltaTime;
             yield return null;
+            if (Machine.IsInState(PlayerFsmState.SurgeStartup)) yield break;
         }
 
         freeLook.m_Lens.FieldOfView = baseFov;
@@ -86,6 +94,8 @@ public partial class PlayerFsm
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
                 surgeStartupFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+                _inputBuffer.ConsumeBuffer("Jump");
+                _currentSurgePedestal.EndChannel();
             })
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
@@ -127,7 +137,6 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 StartSurge();
-                _currentSurgePedestal.EndChannel();
                 StartCoroutine(SurgeCameraCleanupCoroutine());
             })
             .OnEntry(_ =>

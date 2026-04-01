@@ -18,7 +18,8 @@ public partial class PlayerFsm
 
     private void SetAnimatorSpeedMod()
     {
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()) * GetCurrentSurgeSpeedMultiplier();
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()) *
+                       (_isSurging ? 1.5f : 1f);
         Animator.SetFloat("SpeedMod", speedMod);
     }
 
