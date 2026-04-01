@@ -756,8 +756,13 @@ public partial class PlayerFsm
         Shader.SetGlobalFloat("_PlayerCombo", shaderCombo);
     }
 
+    private bool IsComboSystemEnabled()
+    {
+        return false; //TODO
+    }
     private void IncrementCombo()
     {
+        if (!IsComboSystemEnabled()) return;
         if (!isSprinting) return;
         _comboTimer = 0;
         _currentComboLength++;

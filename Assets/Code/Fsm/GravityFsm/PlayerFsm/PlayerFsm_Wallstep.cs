@@ -29,9 +29,8 @@ public partial class PlayerFsm
                 }
                 else
                 {
-                    YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain,
-                        ComputeMomentumWeight());
-                    Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
+                    YVelocity = WallstepMaximumYVelocityGain;
+                    Animator.SetFloat("VerticalMomentum", 1f);
                 }
                 _momentum = 0;
                 

@@ -86,6 +86,11 @@ public class CameraFollow : MonoBehaviour
             xzLerp *= 0.6f;
             // newYOffset = -5f;
         }
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SurgeDash))
+        {
+            xzLerp *= Mathf.Lerp(0.15f, 1f, Mathf.InverseLerp(0f, 0.3f, PlayerFsm.Singleton.TimeInCurrentState()));
+        }
 
         var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))

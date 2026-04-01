@@ -22,7 +22,6 @@ public partial class SavapheFsm
 
     private Transform _notCrossedDialogue;
     private Transform _crossedDialogue;
-    private Transform _tutorialTrigger;
 
     private void OnCrossTrigger()
     {
@@ -31,7 +30,6 @@ public partial class SavapheFsm
 
     private void OnNotCrossedDialogueComplete()
     {
-        _tutorialTrigger.gameObject.SetActive(true);
         // ReplaceAnimatorTrigger("NotCrossedDialogueComplete");
     }
 }

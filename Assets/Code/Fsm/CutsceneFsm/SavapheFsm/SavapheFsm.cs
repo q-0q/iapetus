@@ -39,7 +39,6 @@ public partial class SavapheFsm : CutsceneFsm
         
         _notCrossedDialogue = transform.Find("NotCrossedDialogue");
         _crossedDialogue = transform.Find("CrossedDialogue");
-        _tutorialTrigger = transform.Find("TutorialTrigger");
         transform.Find("SavapheVirtualCameraA").TryGetComponent(out _virtualCameraA);
         transform.Find("SavapheVirtualCameraB").TryGetComponent(out _virtualCameraB);
         Animator = GetComponentInChildren<Animator>();
@@ -53,7 +52,6 @@ public partial class SavapheFsm : CutsceneFsm
         
         
 
-        _tutorialTrigger.gameObject.SetActive(false);
         
         _virtualCameraA.LookAt = _startPosition;
         _virtualCameraB.LookAt = _endPosition;

@@ -20,7 +20,7 @@ public partial class PlayerFsm
         //
         //
 
-        var strength = 2.5f;
+        var strength = 2f;
         var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
         freeLook.m_Lens.FieldOfView =
             Mathf.Lerp(freeLook.m_Lens.FieldOfView, 115f, Time.deltaTime * strength);
@@ -40,15 +40,15 @@ public partial class PlayerFsm
     
     private void SurgeDashOnUpdate()
     {
-        var movementMofifier = Mathf.Lerp(3f, 1f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState()));
+        var movementMofifier = Mathf.Lerp(2.25f, 1f, Mathf.InverseLerp(0, 0.3f, TimeInCurrentState()));
         HandleCollisionMove(movementMofifier);
     }
 
     private IEnumerator SurgeCameraCleanupCoroutine()
     {
         var t = 0f;
-        var d = 1.5f;
-        var strength = 4f;
+        var d = 3.5f;
+        var strength = 1.5f;
         var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
         var offset = freeLook.GetComponent<CinemachineCameraOffset>();
         while (t < d)
@@ -76,7 +76,6 @@ public partial class PlayerFsm
             {
                 InteractionCanvas.Singleton.ClearPsuedoInteractable();
                 // _surgeStartupCamera.Priority = -20;
-                StartCoroutine(SurgeCameraCleanupCoroutine());
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
             })
@@ -120,7 +119,7 @@ public partial class PlayerFsm
             {
                 StartSurge();
                 _currentSurgePedestal.EndChannel();
-
+                StartCoroutine(SurgeCameraCleanupCoroutine());
             })
             .OnEntry(_ =>
             {

@@ -48,7 +48,7 @@ public class SurgePedestal : MonoBehaviour
     {
         _isChanneling = true;
         var t = 0f;
-        var d = 1.5f;
+        var d = 1.25f;
 
         while (t < d)
         {
@@ -65,6 +65,7 @@ public class SurgePedestal : MonoBehaviour
     {
         if (_isChanneling) return;
         StartCoroutine(Coroutine());
+        transform.Find("Halo").position = PlayerFsm.Singleton.transform.position;
     }
 
     public void EndChannel()
