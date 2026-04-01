@@ -9,7 +9,6 @@ public class SurgePedestal : MonoBehaviour
 {
     private Interactable _interactable;
     private Material _material;
-    private Material _haloMaterial;
 
     private bool _isChanneling;
 
@@ -18,7 +17,6 @@ public class SurgePedestal : MonoBehaviour
         _isChanneling = false;
         _interactable = GetComponentInChildren<Interactable>();
         _material = GetComponent<Renderer>().material;
-        _haloMaterial = transform.Find("Halo").GetComponent<Renderer>().material;
     }
 
     private void Update()
@@ -26,7 +24,6 @@ public class SurgePedestal : MonoBehaviour
         if (_isChanneling) return;
         
         _material.SetFloat("_Weight", Mathf.Lerp(_material.GetFloat("_Weight"), 0, Time.deltaTime * 10f));
-        _haloMaterial.SetFloat("_Weight", Mathf.Lerp(_haloMaterial.GetFloat("_Weight"), 0, Time.deltaTime * 2f));
     }
 
     private void OnEnable()
@@ -48,13 +45,12 @@ public class SurgePedestal : MonoBehaviour
     {
         _isChanneling = true;
         var t = 0f;
-        var d = 1.25f;
+        var d = 0.75f;
 
         while (t < d)
         {
             var w = Util.SmoothLerp01(t / d);
             _material.SetFloat("_Weight", w);
-            _haloMaterial.SetFloat("_Weight", w);
             t += Time.deltaTime;
             yield return null;
         }
@@ -65,7 +61,6 @@ public class SurgePedestal : MonoBehaviour
     {
         if (_isChanneling) return;
         StartCoroutine(Coroutine());
-        transform.Find("Halo").position = PlayerFsm.Singleton.transform.position;
     }
 
     public void EndChannel()

@@ -82,6 +82,7 @@ public partial class PlayerFsm
     private float _timeSinceRopeSwing;
     private CinemachineVirtualCamera _surgeStartupCamera;
     private SurgePedestal _currentSurgePedestal;
+    private PlayerSurgeHalo _playerSurgeHalo;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -839,6 +840,10 @@ public partial class PlayerFsm
 
     private void EndSurge()
     {
+        if (_isSurging)
+        {
+            _playerSurgeHalo.StartBreak();
+        }
         _isSurging = false;
         ResetCombo();
     }

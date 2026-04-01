@@ -96,6 +96,7 @@ public partial class PlayerFsm
                 surgeStartupFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
                 _inputBuffer.ConsumeBuffer("Jump");
                 _currentSurgePedestal.EndChannel();
+                _playerSurgeHalo.EndStartup();
             })
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
@@ -111,6 +112,7 @@ public partial class PlayerFsm
                 {
                     _currentSurgePedestal = surgePedestalParam.SurgePedestal;
                     _currentSurgePedestal.StartChannel();
+                    _playerSurgeHalo.StartStartup();
                 }
                 
                 _surgeStartupCamera.m_Follow = PlayerCinemachineFreeLook.Singleton.GetFreeLook().m_Follow;
