@@ -7,11 +7,11 @@ public partial class PlayerFsm
 
     private void PressOnUpdate()
     {
-        HandleTurning(2f);
+        HandleTurning(0.5f);
 
         if (PressRaycast(out var hit))
         {
-            transform.position += ComputeCollisionMove(-hit.normal * (Time.deltaTime * 5f));
+            // transform.position += ComputeCollisionMove(-hit.normal * (Time.deltaTime * 5f));
             var angle = Vector3.SignedAngle(-hit.normal, transform.forward, Vector3.up);
             var desired = Mathf.InverseLerp(-40f, 40f, angle);
             Animator.SetFloat("PressTurn", Mathf.Lerp(Animator.GetFloat("PressTurn"),desired, Time.deltaTime * 10f));
@@ -32,6 +32,8 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
             .OnEntry(_ =>
             {
+                OnPlayerFootstep();
+                Animator.SetLayerWeight(1, 0f);
                 isSprinting = false;
                 EndSurge();
             })

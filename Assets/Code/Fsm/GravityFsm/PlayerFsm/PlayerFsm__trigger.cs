@@ -117,7 +117,7 @@ public partial class PlayerFsm
 
         var angle = Vector3.SignedAngle(-hit.normal, transform.forward, Vector3.up);
         var angleWeight = Mathf.InverseLerp(0, 40f, Mathf.Abs(angle));
-        var distanceThreshhold = Mathf.Lerp(2f, 2.15f + (Machine.IsInState(PlayerFsmState.Press) ? 4f : 0f), angleWeight);
+        var distanceThreshhold = Mathf.Lerp(1.75f, 2.15f + (Machine.IsInState(PlayerFsmState.Press) ? 4f : 0f), angleWeight);
         return hit.distance < distanceThreshhold;
     }
 
