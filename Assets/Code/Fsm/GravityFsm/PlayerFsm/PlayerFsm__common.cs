@@ -251,6 +251,7 @@ public partial class PlayerFsm
     private EventInstance slipAmbientFmodInstance;
     private float _timeSinceLastFootstep;
     private bool _isSurging;
+    private float _surgeStartupInitialFov;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)

@@ -1,4 +1,6 @@
+using System.Collections;
 using Cinemachine;
+using Code.Misc;
 using Code.TriggerParams;
 using UnityEngine;
 
@@ -6,19 +8,27 @@ public partial class PlayerFsm
 {
     private void SurgeStartupOnUpdate()
     {
-        var transposer = _surgeStartupCamera.GetCinemachineComponent<CinemachineTransposer>();
-        
-        var forwardOffset = transform.forward * Mathf.Lerp(0, 4f, Mathf.InverseLerp(0.15f, 0.25f, TimeInCurrentState()));
-        transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset,
-            (transposer.m_FollowOffset.normalized * 14f),  (Time.deltaTime * 0.75f));
-        
-        var composer = _surgeStartupCamera.GetCinemachineComponent<CinemachineComposer>();
-        composer.m_TrackedObjectOffset =
-            Vector3.Lerp(composer.m_TrackedObjectOffset, forwardOffset, Time.deltaTime * 0.75f);
-        
-        _surgeStartupCamera.m_Lens.FieldOfView =
-            Mathf.Lerp(_surgeStartupCamera.m_Lens.FieldOfView, 95f, Time.deltaTime * 1.25f);
+        // var transposer = _surgeStartupCamera.GetCinemachineComponent<CinemachineTransposer>();
+        //
+        // var forwardOffset = transform.forward * Mathf.Lerp(0, 4f, Mathf.InverseLerp(0.15f, 0.25f, TimeInCurrentState()));
+        // transposer.m_FollowOffset = Vector3.Lerp(transposer.m_FollowOffset,
+        //     (transposer.m_FollowOffset.normalized * 14f),  (Time.deltaTime * 0.75f));
+        //
+        // var composer = _surgeStartupCamera.GetCinemachineComponent<CinemachineComposer>();
+        // composer.m_TrackedObjectOffset =
+        //     Vector3.Lerp(composer.m_TrackedObjectOffset, forwardOffset, Time.deltaTime * 0.75f);
+        //
+        //
 
+        var strength = 2.5f;
+        var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+        freeLook.m_Lens.FieldOfView =
+            Mathf.Lerp(freeLook.m_Lens.FieldOfView, 115f, Time.deltaTime * strength);
+
+        var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
+        offset.m_Offset = Vector3.Lerp(offset.m_Offset,
+            new Vector3(0, -1f, 8f), Time.deltaTime * strength);
+        
         if (TimeInCurrentState() > 1.25f)
         {
             InteractionCanvas.Singleton.SetPsuedoInteractable("Surge");
@@ -30,8 +40,30 @@ public partial class PlayerFsm
     
     private void SurgeDashOnUpdate()
     {
-        var movementMofifier = Mathf.Lerp(2f, 1f, Mathf.InverseLerp(0, 0.1f, TimeInCurrentState()));
+        var movementMofifier = Mathf.Lerp(3f, 1f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState()));
         HandleCollisionMove(movementMofifier);
+    }
+
+    private IEnumerator SurgeCameraCleanupCoroutine()
+    {
+        var t = 0f;
+        var d = 1.5f;
+        var strength = 4f;
+        var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+        var offset = freeLook.GetComponent<CinemachineCameraOffset>();
+        while (t < d)
+        {
+            freeLook.m_Lens.FieldOfView =
+                Mathf.Lerp(freeLook.m_Lens.FieldOfView, _surgeStartupInitialFov, Time.deltaTime * strength);
+
+
+            offset.m_Offset = Vector3.Lerp(offset.m_Offset, Vector3.zero, Time.deltaTime * strength);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        freeLook.m_Lens.FieldOfView = _surgeStartupInitialFov;
+        offset.m_Offset = Vector3.zero;
     }
     
     
@@ -44,6 +76,7 @@ public partial class PlayerFsm
             {
                 InteractionCanvas.Singleton.ClearPsuedoInteractable();
                 // _surgeStartupCamera.Priority = -20;
+                StartCoroutine(SurgeCameraCleanupCoroutine());
                 _surgeStartupCamera.m_Follow = null;
                 _surgeStartupCamera.m_LookAt = null;
             })
@@ -52,6 +85,9 @@ public partial class PlayerFsm
             })
             .OnEntry(@params =>
             {
+                _surgeStartupInitialFov = PlayerCinemachineFreeLook.Singleton.GetFreeLook().m_Lens.FieldOfView;
+                
+                
                 EndSurge();
                 if (@params is SurgePedestalParam surgePedestalParam)
                 {
