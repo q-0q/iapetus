@@ -22,7 +22,7 @@ public class PlayerSurgeHalo : MonoBehaviour
     {
         if (_isChanneling) return;
         
-        _material.SetFloat("_Weight", Mathf.Lerp(_material.GetFloat("_Weight"), 0, Time.deltaTime * 2f));
+        _material.SetFloat("_Weight", Mathf.Lerp(_material.GetFloat("_Weight"), 0, Time.deltaTime * 0.75f));
     }
     
     public void StartStartup()
@@ -65,6 +65,14 @@ public class PlayerSurgeHalo : MonoBehaviour
         _isChanneling = true;
         var t = 0f;
         var d = 0.15f;
+        
+        var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+        var triggerPosition = PlayerFsm.Singleton.transform.position;
+        
+        yield return new WaitForSeconds(0.05f);
+        var triggerObject = Instantiate(triggerPrefab, triggerPosition,
+            Quaternion.identity, null);
+        triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
 
         while (t < d)
         {

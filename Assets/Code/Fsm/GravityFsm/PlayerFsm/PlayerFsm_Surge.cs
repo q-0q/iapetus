@@ -138,11 +138,11 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SurgeDash)
             .OnExit(_ =>
             {
-                StartSurge();
                 StartCoroutine(SurgeCameraCleanupCoroutine());
             })
             .OnEntry(_ =>
             {
+                StartSurge();
             });
         
         Machine.Configure(PlayerFsmState.SurgeDash)

@@ -804,7 +804,7 @@ public partial class PlayerFsm
             yield return new WaitForSeconds(0.05f);
             var triggerObject = Instantiate(triggerPrefab, triggerPosition,
                 Quaternion.identity, null);
-            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 5f, 1.25f, 1f, 0);
+            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
 
             
             RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
