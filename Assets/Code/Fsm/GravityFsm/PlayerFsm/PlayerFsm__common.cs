@@ -721,6 +721,7 @@ public partial class PlayerFsm
                 var parentMaterialName = renderer.material.name;
                 if (parentMaterialName.Contains("Snow") || parentMaterialName.Contains("Grass")) fmodMaterialLabel = "Snow";
                 if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
+                if (parentMaterialName.Contains("Combo")) fmodMaterialLabel = "Glass";
                 FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
                 yield break;
