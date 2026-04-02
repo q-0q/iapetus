@@ -55,6 +55,7 @@ public partial class PlayerFsm
     private const float MinSlideStateTimer = 0.5f;
     private ParticleSystem _splashParticles;
     private PlayerDashParticles _playerDashParticles;
+    private ParticleSystem _speedLinesParticles;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -246,10 +247,12 @@ public partial class PlayerFsm
     public EventReference skipWhooshEventReference;
     public EventReference surgeStartupFmodEvent;
     public EventReference surgeEndFmodEvent;
+    public EventReference windRushFmodEvent;
     
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
     private EventInstance surgeStartupFmodInstance;
+    private EventInstance windRushFmodInstance;
     
     
     
@@ -798,7 +801,9 @@ public partial class PlayerFsm
         
         StartCoroutine(InvokeNewComboMesh());
         FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("WindRushAmount", 1f);
         
+        _speedLinesParticles.Play();
         IEnumerator InvokeNewComboMesh()
         {
             var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
@@ -828,6 +833,8 @@ public partial class PlayerFsm
             }
             
             activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+            
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("WindRushAmount", 0f);
             yield break;
         }
     }
@@ -847,6 +854,7 @@ public partial class PlayerFsm
             FMODUnity.RuntimeManager.PlayOneShotAttached(surgeEndFmodEvent, gameObject);
             _playerSurgeHalo.StartBreak();
         }
+        _speedLinesParticles.Stop();
         _isSurging = false;
         ResetCombo();
     }

@@ -147,6 +147,7 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.SurgeDash)
             .SubstateOf(GravityFsmState.Aerial)
+            .Permit(PlayerFsmTrigger.Press, PlayerFsmState.Press)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .OnExit(_ =>
             {

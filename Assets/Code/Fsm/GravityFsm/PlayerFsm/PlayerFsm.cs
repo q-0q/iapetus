@@ -225,6 +225,7 @@ public partial class PlayerFsm : GravityFsm
         _surgeStartupCamera = transform.parent.Find("SurgeStartupCamera").GetComponent<CinemachineVirtualCamera>();
         _playerSurgeHalo = GetComponentInChildren<PlayerSurgeHalo>();
         _playerSurgeHalo.transform.SetParent(null);
+        _speedLinesParticles = Camera.main.transform.Find("SpeedLinesParticles").GetComponent<ParticleSystem>();
         
         ApplyMetaSaveData(MetaSaveSystem.LoadCachedMetaSaveData());
         // transform.Find("KiIndicatorParticles").SetParent(null);
@@ -596,6 +597,9 @@ public partial class PlayerFsm : GravityFsm
         slipAmbientFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slipAmbientEvent);
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(slipAmbientFmodInstance, gameObject);
         slipAmbientFmodInstance.start();
+
+        windRushFmodInstance = FMODUnity.RuntimeManager.CreateInstance(windRushFmodEvent);
+        windRushFmodInstance.start();
     }
     
     private void OnDisable()
@@ -606,5 +610,6 @@ public partial class PlayerFsm : GravityFsm
         activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
         slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
         slipAmbientFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+        windRushFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 }

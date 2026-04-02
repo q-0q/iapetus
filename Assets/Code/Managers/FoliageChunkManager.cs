@@ -27,7 +27,7 @@ public class FoliageChunkManager : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
-        Invoke(nameof(BakeAll), 0.5f);
+        Invoke(nameof(BakeAll), 0.1f);
     }
 
     public void RegisterFoliage(Mesh mesh, Material mat, Matrix4x4[] instances)
