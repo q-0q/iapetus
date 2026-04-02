@@ -259,6 +259,7 @@ public partial class PlayerFsm : GravityFsm
         _comboTimer += Time.deltaTime;
         _timeSinceLastFootstep += Time.deltaTime;
         _timeSinceRopeSwing += Time.deltaTime;
+        _timeSinceSurgeStarted += Time.deltaTime;
         
         if (_comboTimer > ComboTimeoutDuration)
         {

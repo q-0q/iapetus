@@ -243,7 +243,6 @@ public partial class TestCutsceneFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
-        FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.WindAmbience);
         if (SaveSystem.GetPersistentEventCompleted(CutscenePersistentEvent))
         {
             ReplaceAnimatorTrigger("Break");
