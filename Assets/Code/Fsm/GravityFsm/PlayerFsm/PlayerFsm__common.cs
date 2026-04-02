@@ -260,6 +260,7 @@ public partial class PlayerFsm
     private float _timeSinceLastFootstep;
     private bool _isSurging;
     private float _surgeStartupInitialFov;
+    private static float _desiredWindRushFmodAmount = 0f;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -801,7 +802,6 @@ public partial class PlayerFsm
         
         StartCoroutine(InvokeNewComboMesh());
         FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
-        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("WindRushAmount", 1f);
         
         _speedLinesParticles.Play();
         IEnumerator InvokeNewComboMesh()
@@ -833,12 +833,18 @@ public partial class PlayerFsm
             }
             
             activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
-            
-            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("WindRushAmount", 0f);
+
             yield break;
         }
     }
-    
+
+    private void UpdateFmodWindRushAmount()
+    {
+        _desiredWindRushFmodAmount = _isSurging ? 1f: 0f;
+        FMODUnity.RuntimeManager.StudioSystem.getParameterByName("WindRushAmount", out var currentAmount);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("WindRushAmount", Mathf.Lerp(currentAmount, _desiredWindRushFmodAmount, Time.deltaTime * 10f));
+    }
+
     private void StartSurge()
     {
         _momentum = MaxMomentum;

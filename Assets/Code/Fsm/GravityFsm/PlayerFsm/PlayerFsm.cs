@@ -269,6 +269,7 @@ public partial class PlayerFsm : GravityFsm
         UpdateShaderGlobals();
         HandleSlideTimer();
         UpdateMusicDistanceAttenuation();
+        UpdateFmodWindRushAmount();
         
         
         aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)
