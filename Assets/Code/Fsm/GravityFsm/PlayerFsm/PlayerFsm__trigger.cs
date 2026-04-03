@@ -109,12 +109,13 @@ public partial class PlayerFsm
 
     private bool PressRaycast(out RaycastHit hit)
     {
-        var b = (Physics.Raycast(transform.position + (Vector3.up * FaceWallHeight) - (transform.forward),
+        var b = (Physics.Raycast(transform.position + (Vector3.up * FaceHighLedgeHeight) - (transform.forward),
             transform.forward, out hit,
             8f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore));
 
         if (!b) return false;
-
+        var slope = Vector3.Angle(hit.normal, Vector3.up);
+        if (slope < 70f) return false;
         var angle = Vector3.SignedAngle(-hit.normal, transform.forward, Vector3.up);
         var angleWeight = Mathf.InverseLerp(0, 40f, Mathf.Abs(angle));
         var distanceThreshhold = Mathf.Lerp(1.75f, 2.15f + (Machine.IsInState(PlayerFsmState.Press) ? 4f : 0f), angleWeight);

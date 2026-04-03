@@ -827,7 +827,7 @@ public partial class PlayerFsm
                 var rotation = _skinnedMeshRenderer.transform.rotation;
                 var mesh = new Mesh();
                 _skinnedMeshRenderer.BakeMesh(mesh);
-                yield return new WaitForSeconds(Random.Range(0.06f, 0.09f));
+                yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
                 var comboMeshObject = Instantiate(comboMeshPrefab, position,
                     rotation, null);
                 comboMeshObject.TryGetComponent(out MeshFilter meshFilter);

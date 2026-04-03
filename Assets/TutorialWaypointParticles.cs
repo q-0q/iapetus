@@ -13,6 +13,8 @@ public class TutorialWaypointParticles : MonoBehaviour
     private int _currentSplineIndex;
     private bool isCoroutineActive;
 
+    private const string eventPath = "event:/TutorialWaypointInteract";
+    
     private const string PersistentEvent1 = "c1-tutorial-waypoint-1";
     private const string PersistentEvent2 = "c1-tutorial-waypoint-2";
     private const string PersistentEvent3 = "c1-tutorial-waypoint-3";
@@ -58,6 +60,7 @@ public class TutorialWaypointParticles : MonoBehaviour
         if (_currentSplineIndex == 4) SaveSystem.WritePersistentEvent(PersistentEvent1);
         if (_currentSplineIndex == 6) SaveSystem.WritePersistentEvent(PersistentEvent2);
         
+        FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(eventPath), _marker.gameObject);
         isCoroutineActive = true;
         _marker.GetComponent<ParticleSystem>().Play();
         var t = 0f;
