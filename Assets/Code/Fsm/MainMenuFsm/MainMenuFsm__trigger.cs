@@ -25,6 +25,11 @@ public partial class MainMenuFsm
         Machine.Fire(MainMenuFsmTrigger.HomeOptionsClicked);
     }
     
+    public void OnDiscordClicked()
+    {
+        Application.OpenURL("https://discord.gg/ea8Rys6cgR");
+    }
+    
     public void OnSaveClicked(int saveId)
     {
         MetaSaveSystem.WriteSaveId(saveId);

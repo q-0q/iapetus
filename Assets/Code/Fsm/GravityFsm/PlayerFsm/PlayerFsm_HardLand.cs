@@ -30,7 +30,7 @@ public partial class PlayerFsm
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Idle, _ => true, 2)
             .OnEntry(_ =>
             {
-                // FMODUnity.RuntimeManager.PlayOneShotAttached(hardlandCinematicEventReference, gameObject);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(hardlandCinematicEventReference, gameObject);
             });
     }
 }
