@@ -1,4 +1,7 @@
+using System;
+using System.IO;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Code.Misc
 {
@@ -80,6 +83,46 @@ namespace Code.Misc
             }
 
             return null;
+        }
+        
+        public static T LoadAndValidate<T>(string path) where T : class
+        {
+            if (!File.Exists(path))
+            {
+                return null;
+            }
+
+            try
+            {
+                string json = File.ReadAllText(path);
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    throw new Exception("File is empty.");
+                }
+
+                T data = JsonUtility.FromJson<T>(json);
+                if (data == null)
+                {
+                    throw new Exception("JsonUtility returned null.");
+                }
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning($"[SaveSystem] Critical error loading {path}. Deleting file. \nError: {ex.Message}");
+            
+                try 
+                {
+                    if (File.Exists(path)) File.Delete(path);
+                }
+                catch (IOException ioEx)
+                {
+                    Debug.LogError($"[SaveSystem] Could not delete corrupt file: {ioEx.Message}");
+                }
+
+                return null;
+            }
         }
     }
 }

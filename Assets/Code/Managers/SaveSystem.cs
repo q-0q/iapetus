@@ -3,9 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
+using Util = Code.Misc.Util;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -55,7 +57,8 @@ public class SaveSystem : MonoBehaviour
         public float goldTime;
     }
 
-    
+    private const bool DeleteOutdatedSaves = true;
+
     [System.Serializable]
     public class SaveData
     {
@@ -71,6 +74,8 @@ public class SaveSystem : MonoBehaviour
         public int bitCount;
         public List<string> bitDeposits;
         public float playTime;
+        public string gameVersion;
+        
             
 
         public SaveData()
@@ -87,6 +92,7 @@ public class SaveSystem : MonoBehaviour
             bellCount = 0;
             playTime = 0;
             bitDeposits = new List<string>();
+            gameVersion = "";
         }
     }
 
@@ -299,6 +305,8 @@ public class SaveSystem : MonoBehaviour
         SaveData data = saveData;
         data.scene = SceneManager.GetActiveScene().name;
         data.playTime += Singleton._timeSinceLastSave;
+        data.gameVersion = Application.version;
+        
         Singleton._timeSinceLastSave = 0;
         Singleton._cachedSaveData = data;
         string json = JsonUtility.ToJson(data, true);
@@ -339,14 +347,15 @@ public class SaveSystem : MonoBehaviour
             }
             else
             {
-                string json = File.ReadAllText(path);
-                Singleton._cachedSaveData = JsonUtility.FromJson<SaveData>(json);
+                var loadedData = LoadAndValidate(path);
+                Singleton._cachedSaveData = loadedData;
             }
         }
         
         return Singleton._cachedSaveData;
     }
 
+    
     public static void ClearCache()
     {
         Singleton._cachedSaveData = null;
@@ -359,9 +368,55 @@ public class SaveSystem : MonoBehaviour
             return null;
         }
 
-        var json = File.ReadAllText(path);
-        Singleton._cachedSaveData = JsonUtility.FromJson<SaveData>(json);
+        var loadedData = LoadAndValidate(path);
+        Singleton._cachedSaveData = loadedData;
         return Singleton._cachedSaveData;
+    }
+    
+    public static SaveData LoadAndValidate(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return null;
+        }
+
+        try
+        {
+            string json = File.ReadAllText(path);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                throw new Exception("File is empty.");
+            }
+
+            var data = JsonUtility.FromJson<SaveData>(json);
+            if (data == null)
+            {
+                throw new Exception("JsonUtility returned null.");
+            }
+
+            if (data.gameVersion != Application.version && DeleteOutdatedSaves)
+            {
+                throw new Exception("Outdated save.");
+            }
+
+
+            return data;
+        }
+        catch (Exception ex)
+        {
+            Debug.LogWarning($"[SaveSystem] Critical error loading {path}. Deleting file. \nError: {ex.Message}");
+            
+            try 
+            {
+                if (File.Exists(path)) File.Delete(path);
+            }
+            catch (IOException ioEx)
+            {
+                Debug.LogError($"[SaveSystem] Could not delete corrupt file: {ioEx.Message}");
+            }
+
+            return null;
+        }
     }
 }
 
@@ -482,7 +537,8 @@ public class MetaSaveSystem : MonoBehaviour
             else
             {
                 string json = File.ReadAllText(path);
-                Singleton._cachedMetaSaveData = JsonUtility.FromJson<MetaSaveData>(json);
+                Singleton._cachedMetaSaveData = Util.LoadAndValidate<MetaSaveData>(path);
+                if (Singleton._cachedMetaSaveData == null) Singleton._cachedMetaSaveData = new MetaSaveData();
             }
         }
 
