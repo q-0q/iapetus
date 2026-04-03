@@ -158,6 +158,8 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDashStartup, "SurgeDashStartup");
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Press, "Press");
+        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LongFall, "LongFall");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

@@ -49,6 +49,9 @@ public partial class PlayerFsm
                     }
                     return (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum);
                 }, 4)
+            
+            // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand,
+            //     _ => Machine.IsInState(PlayerFsmState.LongFall), 9)
         // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Slide, _ => _slopeTimer > 0.2f, 5)
             .SubstateOf(PlayerFsmState.SlideInteractable)
             .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, @params =>
@@ -56,6 +59,7 @@ public partial class PlayerFsm
                 if (@params is not RaycastHitParam param) return;
                 // print("startframegrounded: " + param.Hit.collider.name );
             })
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.LongFall, _ => CurrentFallDistance() < -28f)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurfaceRise, IsSwimTrigger);
 
     }

@@ -40,6 +40,13 @@ public partial class PlayerFsm
             animationTurnMod = Mathf.Lerp(0, 1f, Mathf.InverseLerp(0.5f, 1f, TimeInCurrentState()));
         }
         
+        if (Machine.IsInState(PlayerFsmState.LongFall))
+        {
+            // increaseMultiplier = Mathf.Lerp(0.1f, 0.8f, Mathf.InverseLerp(60f, 0f, YVelocity));
+            // turningMultiplier = Mathf.Lerp(AirControlTurningMultiplier * 1.5f, AirControlTurningMultiplier, Mathf.InverseLerp(60f, 20f, YVelocity));
+            animationTurnMod = 0.1f;
+        }
+        
         if (_momentum < 8f)
         {
             increaseMultiplier = 1.5f;

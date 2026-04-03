@@ -109,6 +109,8 @@ public partial class PlayerFsm : GravityFsm
         public static int SurgeDash;
         public static int SurgeDashStartup;
         public static int Press;
+
+        public static int LongFall;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -153,6 +155,7 @@ public partial class PlayerFsm : GravityFsm
         public static int EnterRopeSwingTrigger;
         public static int SurgePedestalInteracted;
         public static int Press;
+        
     }
     
     protected override void OnAwake()
