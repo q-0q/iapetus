@@ -145,11 +145,21 @@ public partial class TestCutsceneFsm
             });
         
         Machine.Configure(TestCutsceneFsmState.Channel)
-            .SubstateOf(TestCutsceneFsmState.MoveForward)
+            // .SubstateOf(TestCutsceneFsmState.MoveForward)
             .Permit(FsmTrigger.Timeout, TestCutsceneFsmState.ChannelEnd)
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneIdle);
+
+                var gondolaDestination = new Vector3(_endPosition.position.x, gondola.transform.position.y, _endPosition.position.z);
+                var delta = gondolaDestination - gondola.transform.position;
+                PlayerFsm.Singleton.transform.position += delta;
+                gondola.transform.position = gondolaDestination;
+                PlayerFsm.Singleton.ForceParentTransformSync();
+                OnIntroCutsceneGondolaTeleported?.Invoke(delta);
+                
+                
                 FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaInteractEventReference, _interactableParticles.gameObject);
                 FMODUnity.RuntimeManager.PlayOneShotAttached(gondolaInteractChannelEventReference, _interactableParticles.gameObject);
                 OnChannelStarted?.Invoke();
@@ -194,12 +204,7 @@ public partial class TestCutsceneFsm
                 _interactableParticles.Stop();
                 fogController.Unlock();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
-                var gondolaDestination = new Vector3(_endPosition.position.x, gondola.transform.position.y, _endPosition.position.z);
-                var delta = gondolaDestination - gondola.transform.position;
-                PlayerFsm.Singleton.transform.position += delta;
-                gondola.transform.position = gondolaDestination;
-                PlayerFsm.Singleton.ForceParentTransformSync();
-                OnIntroCutsceneGondolaTeleported?.Invoke(delta);
+
                 armVibrator.DOShakePosition(2f, 0.0025f, 20);
                 _virtualCamera.Priority = 20;
                 _creakEventInstance.stop(STOP_MODE.ALLOWFADEOUT);
@@ -225,7 +230,7 @@ public partial class TestCutsceneFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
-                
+                PlayerFsm.Singleton.SetMomentum(0f);
                 TutorialCanvas.Singleton.ShowTutorialText("Jump", "Jump");
             });
         

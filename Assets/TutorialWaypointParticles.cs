@@ -38,7 +38,7 @@ public class TutorialWaypointParticles : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _haloMaterial.SetFloat("_Weight", Mathf.Lerp(_haloMaterial.GetFloat("_Weight"), isCoroutineActive ? 0f : 1f, Time.deltaTime * 4f));
+        _haloMaterial.SetFloat("_Weight", Mathf.Lerp(_haloMaterial.GetFloat("_Weight"), isCoroutineActive || !SaveSystem.GetPersistentEventCompleted("IntroCutsceneCompleted") ? 0f : 1f, Time.deltaTime * 4f));
         
         if (_currentSplineIndex == splines.Count)
         {

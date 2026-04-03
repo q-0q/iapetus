@@ -13,7 +13,7 @@ public class TriggerSceneTransition : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, destinationRotation);
+        if (DestinationId != "") SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, destinationRotation);
         SceneLoader.Singleton.LoadScene(scene);
     }
 

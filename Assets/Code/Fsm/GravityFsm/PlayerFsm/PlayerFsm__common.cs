@@ -740,6 +740,11 @@ public partial class PlayerFsm
     {
         return _momentum;
     }
+    
+    public void SetMomentum(float momentum)
+    {
+        _momentum = momentum;
+    }
 
     public void SetTeleportDestination(Vector3 destination, Vector3 direction)
     {
