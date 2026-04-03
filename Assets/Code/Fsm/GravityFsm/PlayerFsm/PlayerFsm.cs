@@ -156,6 +156,9 @@ public partial class PlayerFsm : GravityFsm
         public static int SurgePedestalInteracted;
         public static int Press;
         
+        public static int IsAboveLongFall;
+
+        
     }
     
     protected override void OnAwake()
