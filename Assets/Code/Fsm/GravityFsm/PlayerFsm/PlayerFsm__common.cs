@@ -848,7 +848,7 @@ public partial class PlayerFsm
         }
         else if (Machine.IsInState(GravityFsmState.Aerial))
         {
-            _desiredWindRushFmodAmount = Mathf.Lerp(0f, 1f, Mathf.InverseLerp(0f, -100f, CurrentFallDistance()));
+            _desiredWindRushFmodAmount = Mathf.Lerp(0f, 1f, Mathf.InverseLerp(0f, -70f, CurrentFallDistance()));
         }
         else
         {

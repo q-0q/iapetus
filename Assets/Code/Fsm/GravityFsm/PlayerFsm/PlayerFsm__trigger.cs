@@ -105,8 +105,8 @@ public partial class PlayerFsm
         
         if (PressRaycast(out _)) Machine.Fire(PlayerFsmTrigger.Press);
         
-        Debug.DrawRay(transform.position, Vector3.down * 20f, Color.red);
-        if (!Physics.Raycast(transform.position, Vector3.down, out var hit2, 30f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        Debug.DrawRay(transform.position + transform.forward * (GetRaycastTimeModifier() * Mathf.Lerp(0, 6f, ComputeMomentumWeight())), Vector3.down * 20f, Color.red);
+        if (!Physics.Raycast(transform.position + transform.forward * (GetRaycastTimeModifier() * Mathf.Lerp(0, 6f, ComputeMomentumWeight())), Vector3.down, out var hit2, 25f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.IsAboveLongFall);
         }

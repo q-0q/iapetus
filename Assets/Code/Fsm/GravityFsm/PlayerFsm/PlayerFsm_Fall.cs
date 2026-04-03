@@ -20,6 +20,10 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, @params => CanDash(@params) && TimeInCurrentState() > 0.1f); // microfall dash prevention hack.
 
         Machine.Configure(PlayerFsmState.LongFall)
+            .OnEntry(_ =>
+            {
+                
+            })
             .SubstateOf(PlayerFsmState.Fall);
 
     }
