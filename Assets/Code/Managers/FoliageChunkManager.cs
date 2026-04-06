@@ -14,10 +14,8 @@ public class FoliageChunkManager : MonoBehaviour
     public float frustumPadding = 5f;
 
     [Header("LOD Settings")]
-    public float lodFullDistance = 50f; // 100% density up to here
-    [Range(0, 1)] public float lodFarDensity = 0.5f; // 50% density at distance
-
-    // We group by Material + Mesh to handle different foliage types
+    public float lodFallOff = 40f;
+    
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, List<Matrix4x4>>> _masterRegistry = new();
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, Matrix4x4[][]>> _bakedChunks = new();
 
@@ -45,7 +43,7 @@ public class FoliageChunkManager : MonoBehaviour
         }
     }
 
-    // Call this after all FoliageSystems have registered their data (e.g., end of Start)
+
     public void BakeAll()
     {
         _bakedChunks.Clear();
@@ -54,12 +52,12 @@ public class FoliageChunkManager : MonoBehaviour
             var chunkDict = new Dictionary<Vector3Int, Matrix4x4[][]>();
             foreach (var chunk in entry.Value)
             {
-                // Graphics.RenderMeshInstanced has a limit of 1023 instances per call
+
                 chunkDict[chunk.Key] = BatchMatrices(chunk.Value);
             }
             _bakedChunks[entry.Key] = chunkDict;
         }
-        _masterRegistry.Clear(); // Free memory
+        _masterRegistry.Clear();
     }
 
     private Matrix4x4[][] BatchMatrices(List<Matrix4x4> fullList)
@@ -78,11 +76,10 @@ public class FoliageChunkManager : MonoBehaviour
 
     void Update()
     {
+        
         Vector3 camPos = _camera.transform.position;
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
         
-        // --- APPLY PADDING ---
-        // We move each plane outward by the padding amount
         for (int i = 0; i < 6; i++) 
         {
             planes[i].distance += frustumPadding;
@@ -108,16 +105,13 @@ public class FoliageChunkManager : MonoBehaviour
                 Bounds b = new Bounds(chunkCenter, new Vector3(chunkSize, 50f, chunkSize));
                 if (!GeometryUtility.TestPlanesAABB(planes, b)) continue;
 
-                // --- LOD CALCULATION ---
-                // If far away, we only loop through a percentage of the batches/matrices
-                float densityPercent = (dist > lodFullDistance) ? lodFarDensity : 1.0f;
+                float densityPercent = Mathf.InverseLerp(renderDistance, renderDistance - lodFallOff, dist);
 
                 foreach (var batch in chunk.Value)
                 {
                     int countToRender = Mathf.CeilToInt(batch.Length * densityPercent);
                     if (countToRender <= 0) continue;
 
-                    // Use the overload that allows specifying a count
                     Graphics.RenderMeshInstanced(rp, mesh, 0, batch, countToRender);
                 }
             }

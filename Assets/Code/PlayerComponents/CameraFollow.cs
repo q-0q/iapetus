@@ -13,13 +13,16 @@ public class CameraFollow : MonoBehaviour
 
     public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
     private float _currentYOffset = 0;
-    
+
+    private float _currentXZLerp;
+    private float _currentYLerp;
 
     private void Start()
     {
         transform.position = PlayerFsm.Singleton.transform.position;
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
-        
+        _currentXZLerp = 100f;
+        _currentYLerp = YLerpRate;
     }
 
     private void OnTriggerStay(Collider other)
@@ -84,7 +87,7 @@ public class CameraFollow : MonoBehaviour
         {
             yLerp *= 0.15f;
             xzLerp *= 0.15f;
-            newYOffset = -2f;
+            newYOffset = -1f;
         }
         
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SurgeDash))
@@ -103,11 +106,14 @@ public class CameraFollow : MonoBehaviour
         pos += Vector3.up * _currentYOffset;
 
 
+        _currentXZLerp = Mathf.Lerp(_currentXZLerp, xzLerp, Time.deltaTime * 15f);
+        _currentYLerp = Mathf.Lerp(_currentYLerp, yLerp, Time.deltaTime * 15f);
 
 
-        var newX = Mathf.Lerp(transform.position.x, pos.x, Time.deltaTime * xzLerp);
-        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
-        var newZ = Mathf.Lerp(transform.position.z, pos.z, Time.deltaTime * xzLerp);
+
+        var newX = Mathf.Lerp(transform.position.x, pos.x, Time.deltaTime * _currentXZLerp);
+        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * _currentYLerp);
+        var newZ = Mathf.Lerp(transform.position.z, pos.z, Time.deltaTime * _currentXZLerp);
         transform.position = new Vector3(newX, newY, newZ);
 
 

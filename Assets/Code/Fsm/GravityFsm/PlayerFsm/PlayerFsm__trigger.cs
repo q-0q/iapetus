@@ -103,6 +103,7 @@ public partial class PlayerFsm
             var relativePos = transform.InverseTransformPoint(pos);
 
             var maxZ = Mathf.Lerp(2f, 6f, Mathf.InverseLerp(0.3f, 0.7f, ComputeMomentumWeight()));
+            if (relativePos.z < -1f) continue;
             if (relativePos.z > maxZ) continue;
             if (Mathf.Abs(relativePos.x) > 3f) continue;
             if (Mathf.Abs(relativePos.y) > 3f) continue;
