@@ -13,13 +13,15 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _EMISSION
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -41,7 +43,7 @@ Material:
     - _Foam_Distance_A: 8.2
     - _Foam_Distance_B: 8.2
     - _FogEnd_A: 0
-    - _FogStart_A: -5
+    - _FogStart_A: -10
     - _Fog_End_B: 0
     - _Fog_Start_B: -40
     - _InvertLerp: 1
@@ -55,20 +57,21 @@ Material:
     - _QueueOffset: 0
     - _Refraction_A: 0.1
     - _Refraction_B: 0.0913
-    - _Smoothness_A: 0.195
+    - _Smoothness_A: 0.929
     - _Smoothness_B: 1
     - _Transparency: 0.5
     - _Wave_Speed_A: 1.8
     - _Wave_Speed_B: 4.4
     m_Colors:
-    - _Foam_Color_A: {r: 0.81960785, g: 0.5568628, b: 0, a: 0.3882353}
+    - _Foam_Color_A: {r: 0.81960785, g: 0.5568628, b: 0, a: 0.77254903}
     - _Foam_Color_B: {r: 1, g: 1, b: 1, a: 0.30980393}
-    - _FogColor_A: {r: 0.24705882, g: 0.10980392, b: 0, a: 0}
+    - _FogColor_A: {r: 0.62352943, g: 0.22352941, b: 0, a: 0}
     - _Fog_Color_B: {r: 0, g: 0.37254903, b: 0.4627451, a: 0}
     - _LerpOrigin: {r: 0, g: 0, b: 0, a: 0}
-    - _Water_Color_A: {r: 0.3215686, g: 0.1333333, b: 0, a: 0.19215687}
+    - _Water_Color_A: {r: 0.32156855, g: 0.13333327, b: 0, a: 0.5058824}
     - _Water_Color_B: {r: 0, g: 0.30588236, b: 0.32156864, a: 0.21176471}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
 --- !u!114 &6969150351881974758
 MonoBehaviour:
   m_ObjectHideFlags: 11
@@ -81,4 +84,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 10

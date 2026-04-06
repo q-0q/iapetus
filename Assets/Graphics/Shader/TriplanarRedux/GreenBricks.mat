@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 10
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -26,13 +26,15 @@ Material:
   m_Parent: {fileID: 2100000, guid: 7161981fdccad4972b8383c50f6b29ff, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _EMISSION
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -46,3 +48,4 @@ Material:
     - _SidesMultiply: {r: 0.42745098, g: 0.20784314, b: 0.316178, a: 0}
     - _TopMultiply: {r: 0.42745098, g: 0.20784314, b: 0.31764707, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1

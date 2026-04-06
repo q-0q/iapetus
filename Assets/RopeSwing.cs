@@ -135,7 +135,7 @@ public class RopeSwing : MonoBehaviour
                 else
                 {
                     segments[i].GetComponent<Rigidbody>().isKinematic = false;
-                    segments[i].GetComponent<Rigidbody>().drag = 1f;
+                    segments[i].GetComponent<Rigidbody>().linearDamping = 1f;
                     segments[i].transform.SetParent(transform);
                 }
             }
@@ -149,7 +149,7 @@ public class RopeSwing : MonoBehaviour
             for (int i = 1; i < NumSegments; i++)
             {
                 segments[i].GetComponent<Rigidbody>().isKinematic = false;
-                segments[i].GetComponent<Rigidbody>().drag = 7f;
+                segments[i].GetComponent<Rigidbody>().linearDamping = 7f;
             }
         }
 

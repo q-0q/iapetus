@@ -59,7 +59,10 @@ public partial class PlayerFsm
                 if (@params is not RaycastHitParam param) return;
                 // print("startframegrounded: " + param.Hit.collider.name );
             })
-            .PermitIf(PlayerFsmTrigger.IsAboveLongFall, PlayerFsmState.LongFall, _ => CurrentFallDistance() < -5f)
+            .PermitIf(PlayerFsmTrigger.IsAboveLongFall, PlayerFsmState.LongFall, _ =>
+            {
+                return CurrentFallDistance() < -5f && !Machine.IsInState(PlayerFsmState.DiveFall) && !Machine.IsInState(PlayerFsmState.RopeSwing);
+            })
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurfaceRise, IsSwimTrigger);
 
     }

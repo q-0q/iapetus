@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 7
+  version: 10
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -26,13 +26,15 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords: []
+  m_InvalidKeywords:
+  - _EMISSION
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
-  disabledShaderPasses: []
+  disabledShaderPasses:
+  - MOTIONVECTORS
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -69,7 +71,9 @@ Material:
     m_Floats:
     - _Dot: 0.3
     - _Emission: 0
+    - _ForceWorldUpDot: 0
     - _ObjectSpace: 0
+    - _PlayerCameraFlatDistance: 16
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SidesInvert: 0.7
@@ -83,4 +87,6 @@ Material:
     - _SidesMultiply: {r: 0.3301887, g: 0.14675054, b: 0, a: 0}
     - _TopAdd: {r: 0, g: 0, b: 0, a: 0}
     - _TopMultiply: {r: 0.37115103, g: 0.48900002, b: 0.43007553, a: 0}
+    - _TopPositionOffset: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
