@@ -70,6 +70,7 @@ public class RopeSwing : MonoBehaviour
             
             segment.transform.localPosition = offset; 
             rb.rotation = Quaternion.identity;
+            Physics.SyncTransforms();
 
             var leafCount = Random.Range(0, 3);
             var leafRotationOffset = Random.Range(0, 3) * 120f;
@@ -78,11 +79,19 @@ public class RopeSwing : MonoBehaviour
                 var leaf = GameObject.Instantiate(leafPrefab, segment.transform.Find("Leaves"));
                 leaf.transform.rotation = Quaternion.Euler(0, leafRotationOffset + (l * 120f), 0);
             }
-
-
         }
     }
-    
+
+    // private void Start()
+    // {
+    //     for (int i = 0; i < NumSegments; i++)
+    //     {
+    //         var offset = Vector3.down * SegmentDistance * i;
+    //         var segment = segments[i];
+    //         segment.transform.localPosition = offset; 
+    //     }    
+    // }
+
     public void SetWorldPlayerInput(Vector3 worldDir)
     {
         _worldInput = worldDir;

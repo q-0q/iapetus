@@ -94,12 +94,12 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.RopeSwingJumpsquat, _ => TimeInCurrentState() > 0)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
-            .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
-            .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
-                _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
+            // .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
+            //     _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
+            // .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
+            //     _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
+            // .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,
+            //     _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .OnEntry(_ =>
             {
                 currentRopeSwing.SetPlayerMomentum(_momentum);
@@ -111,6 +111,7 @@ public partial class PlayerFsm
             })
             .OnExit(_ =>
             {
+                LastUpwardsY = transform.position.y;
                 _timeSinceRopeSwing = 0;
                 currentRopeSwing.SetWorldPlayerInput(Vector3.zero);
             });
