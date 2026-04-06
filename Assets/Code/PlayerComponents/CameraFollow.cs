@@ -80,11 +80,11 @@ public class CameraFollow : MonoBehaviour
             newYOffset = -5f;
         }
         
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwing))
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwing) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwingHoming))
         {
-            yLerp *= 0.5f;
-            xzLerp *= 0.6f;
-            // newYOffset = -5f;
+            yLerp *= 0.15f;
+            xzLerp *= 0.15f;
+            newYOffset = -2f;
         }
         
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SurgeDash))

@@ -137,6 +137,7 @@ public class RopeSwing : MonoBehaviour
                 if (i <= segmentIndex)
                 {
                     segments[i].transform.SetLocalPositionAndRotation(Vector3.Lerp(segments[i].transform.localPosition, Vector3.down * (SegmentDistance * i), Time.deltaTime * 120f), Quaternion.identity);
+                    // segments[i].transform.SetLocalPositionAndRotation(Vector3.down * (SegmentDistance * i), Quaternion.identity);
                     segments[i].GetComponent<Rigidbody>().isKinematic = true;
                     segments[i].transform.SetParent(_rotator);
         
@@ -225,6 +226,13 @@ public class RopeSwing : MonoBehaviour
     private float NormalizeAngle(float angle) => angle > 180 ? angle - 360 : angle;
 
     public Vector3 GetWorldspaceAttachPoint() => _rotator.position + (_rotator.up * (-_radius - RadiusOffset));
+
+    public Vector3 GetWorldspaceAttachPoint(Vector3 playerPos)
+    {
+        var r = Vector3.Distance(_rotator.position, playerPos) - RadiusOffset;
+        r = Mathf.Max(r, 0.5f); 
+        return _rotator.position + (_rotator.up * (-r - RadiusOffset));
+    }
     
     public Vector3 GetWorldAcceleration()
     {

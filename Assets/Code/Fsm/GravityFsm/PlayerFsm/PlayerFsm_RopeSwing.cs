@@ -15,7 +15,9 @@ public partial class PlayerFsm
         HandleTurning(0f, false, 1f, false, isSprinting ? 0.5f : 1f);
         var desiredPosition = currentRopeSwing.GetWorldspaceAttachPoint();
         transform.position = Vector3.Lerp(transform.position, desiredPosition,
-            Time.deltaTime * Mathf.Lerp(1f, 0.5f, Mathf.InverseLerp(0, 0.15f, TimeInCurrentState())));
+            Time.deltaTime * Mathf.Lerp(1.5f, 1f, Mathf.InverseLerp(0, 0.2f, TimeInCurrentState())));
+        
+        if (Vector3.SqrMagnitude(transform.position - desiredPosition) < 0.1f) Machine.Jump(PlayerFsmState.RopeSwing);
     }
     
     private void RopeSwingOnUpdate()
@@ -76,7 +78,7 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                currentRopeSwing = null;
+                // currentRopeSwing = null;
                 Animator.SetFloat("RopeSwingDirection", 0);
             })
             .OnEntryFrom(PlayerFsmTrigger.EnterRopeSwingTrigger, @params =>
@@ -91,7 +93,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.DontLoseYVelocity)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.RopeSwingJumpsquat, _ => TimeInCurrentState() > 0)
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.RopeSwingJumpsquat, _ => TimeInCurrentState() > 0.1f)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
             // .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,

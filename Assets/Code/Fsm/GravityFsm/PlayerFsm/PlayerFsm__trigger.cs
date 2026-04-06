@@ -95,10 +95,18 @@ public partial class PlayerFsm
         }
         
         
-        foreach (var neighbor in Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 7f, LayerMask.GetMask("RopeSwing"), QueryTriggerInteraction.Collide))
         {
             if (YVelocity < 0 && Physics.Raycast(transform.position, Vector3.down, 2f * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) continue;
             var ropeSwing = neighbor.transform.parent.parent.GetComponent<RopeSwing>();
+            var pos = ropeSwing.GetWorldspaceAttachPoint(transform.position);
+            var relativePos = transform.InverseTransformPoint(pos);
+
+            var maxZ = Mathf.Lerp(2f, 6f, Mathf.InverseLerp(0.3f, 0.7f, ComputeMomentumWeight()));
+            if (relativePos.z > maxZ) continue;
+            if (Mathf.Abs(relativePos.x) > 3f) continue;
+            if (Mathf.Abs(relativePos.y) > 3f) continue;
+            
             var param = new RopeSwingHitParam() { RopeSwing = ropeSwing};
             Machine.Fire(PlayerFsmTrigger.EnterRopeSwingTrigger, param);
         }
