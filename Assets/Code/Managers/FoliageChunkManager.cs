@@ -9,7 +9,7 @@ public class FoliageChunkManager : MonoBehaviour
 
     [Header("Culling Settings")]
     public float chunkSize = 20f;
-    public float renderDistance = 150f;
+    private float _renderDistance;
     [Tooltip("Distance outside the screen to keep rendering (prevents pop-in)")]
     public float frustumPadding = 5f;
 
@@ -25,6 +25,7 @@ public class FoliageChunkManager : MonoBehaviour
     private void Start()
     {
         _camera = Camera.main;
+        _renderDistance = ComputeWorldspaceRenderDistance(MetaSaveSystem.LoadCachedMetaSaveData().foliageRenderDistanceLevel);
         Invoke(nameof(BakeAll), 0.1f);
     }
 
@@ -74,6 +75,16 @@ public class FoliageChunkManager : MonoBehaviour
         return batched;
     }
 
+    private void OnEnable()
+    {
+        MetaSaveSystem.OnMetaSaveDataUpdated += data => { _renderDistance = ComputeWorldspaceRenderDistance(data.foliageRenderDistanceLevel); };
+    }
+
+    private static float ComputeWorldspaceRenderDistance(int level)
+    {
+        return level * 12f + 90f;
+    }
+
     void Update()
     {
         
@@ -100,12 +111,12 @@ public class FoliageChunkManager : MonoBehaviour
                 );
 
                 float dist = Vector3.Distance(camPos, chunkCenter);
-                if (dist > renderDistance) continue;
+                if (dist > _renderDistance) continue;
 
                 Bounds b = new Bounds(chunkCenter, new Vector3(chunkSize, 50f, chunkSize));
                 if (!GeometryUtility.TestPlanesAABB(planes, b)) continue;
 
-                float densityPercent = Mathf.InverseLerp(renderDistance, renderDistance - lodFallOff, dist);
+                float densityPercent = Mathf.InverseLerp(_renderDistance, _renderDistance - lodFallOff, dist);
 
                 foreach (var batch in chunk.Value)
                 {

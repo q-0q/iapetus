@@ -462,7 +462,8 @@ public class MetaSaveSystem : MonoBehaviour
         public bool enableAmbientParticles;
         public bool enableFpsDisplay;
         public bool autoCamEnabled;
-        
+        [FormerlySerializedAs("foliageRenderDistance")] public int foliageRenderDistanceLevel;
+
         public MetaSaveData()
         {
             this.saveId = 0;
@@ -470,6 +471,7 @@ public class MetaSaveSystem : MonoBehaviour
             this.enableAmbientParticles = true;
             this.enableFpsDisplay = true;
             this.autoCamEnabled = false;
+            this.foliageRenderDistanceLevel = 2;
         }
     }
     
@@ -510,6 +512,13 @@ public class MetaSaveSystem : MonoBehaviour
         data.autoCamEnabled = enableAutocam;
         WriteMetaSaveData(data);
     }
+    
+    public static void WriteFoliageRenderDistance(int foliageRenderDistance)
+    {
+        MetaSaveData data = LoadCachedMetaSaveData();
+        data.foliageRenderDistanceLevel = foliageRenderDistance;
+        WriteMetaSaveData(data);
+    }
 
     private static void WriteMetaSaveData(MetaSaveData data)
     {
@@ -544,5 +553,11 @@ public class MetaSaveSystem : MonoBehaviour
 
         return Singleton._cachedMetaSaveData;
     }
-    
+
+    public static void WriteAmbientParticlesEnabled(bool enableAmbientParticles)
+    {
+        MetaSaveData data = LoadCachedMetaSaveData();
+        data.enableAmbientParticles = enableAmbientParticles;
+        WriteMetaSaveData(data);
+    }
 }
