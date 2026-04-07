@@ -904,6 +904,7 @@ public partial class PlayerFsm
     {
         if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
         if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
+        print("deaddd");
         Machine.Jump(PlayerFsmState.Dying1);
     }
 
@@ -956,9 +957,9 @@ public partial class PlayerFsm
     private void HandleRaycastKill()
     {
         if (CurrentFallDistance() > -50f) return;
-        var origin = transform.position + Vector3.up * 3f;
-        if (Physics.SphereCast(origin, 15f, Vector3.down, out _, 100f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
-        if (Physics.SphereCast(origin, 15f, Vector3.down, out _, 100f, LayerMask.GetMask("Water"))) return;
+        var origin = transform.position + Vector3.up * 30f;
+        if (Physics.SphereCast(origin, 15f, Vector3.down, out _, 130f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+        if (Physics.SphereCast(origin, 15f, Vector3.down, out _, 130f, LayerMask.GetMask("Water"), QueryTriggerInteraction.Collide)) return;
         if (TimeInCurrentState() < 1f) return;
         InvokePlayerDeath();
     }

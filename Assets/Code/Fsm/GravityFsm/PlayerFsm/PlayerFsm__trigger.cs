@@ -62,7 +62,7 @@ public partial class PlayerFsm
         } 
 
         FireFaceTriggers();
-        FireFlankTriggers();
+        var flank = FireFlankTriggers();
 
         if (IsInGust)
         {
@@ -86,9 +86,9 @@ public partial class PlayerFsm
 
         FireSwimTrigger();
 
-        if (YVelocity < 15f && _momentum > 12f)
+        if (YVelocity < 15f && _momentum > 12f && !flank)
         {
-            if (Physics.Raycast(transform.position + transform.forward * GetRaycastTimeModifier() * 5f, Vector3.down, out var hit, 55f, ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player", "FoliageSystems")))
+            if (Physics.Raycast(transform.position, Vector3.down + transform.forward, out var hit, 55f, ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player", "FoliageSystems")))
             {
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Water")) Machine.Fire(PlayerFsmTrigger.IsAboveWater);
             }
@@ -198,7 +198,7 @@ public partial class PlayerFsm
         Debug.DrawRay(transform.position + Vector3.up * FaceLedgeHeight, transform.forward, Color.cyan);
     }
 
-    private void FireFlankTriggers()
+    private bool FireFlankTriggers()
     {
         RaycastHit hit;
         var maximumFlankRaycastDistance = MaximumFlankWallDistance;
@@ -208,32 +208,38 @@ public partial class PlayerFsm
                  out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) 
              && IsHitValidFlank(hit, true) && _previousWallrunSide != FlankType.Right)
         {
-            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return false;
             Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Right;
             _currentWallrunTransform = hit.transform;
             Animator.SetFloat("Flip", 0);
+            return true;
 
         } else if 
             (Physics.Raycast(flankRaycastOrigin, -transform.right, 
                  out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)
              && IsHitValidFlank(hit, false) && _previousWallrunSide != FlankType.Left)
         {
-            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
+            if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return false;
             Machine.Fire(PlayerFsmTrigger.FlankWall, new RaycastHitParam() { Hit = hit});
             _currentFlankWallNormal = hit.normal;
             _currentFlankType = FlankType.Left;
             _currentWallrunTransform = hit.transform;
             Animator.SetFloat("Flip", 1);
+            return true;
         }
         else if (!Physics.Raycast(flankRaycastOrigin + (Vector3.up * FlankWallOpenYOffset), transform.right,
                      out hit, maximumFlankRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.FlankOpen);
+            return false;
         }
+        
         
         Debug.DrawRay(flankRaycastOrigin, transform.right * maximumFlankRaycastDistance, Color.blue);
         Debug.DrawRay(flankRaycastOrigin, -transform.right * maximumFlankRaycastDistance, Color.blue);
+        
+        return false;
     }
 }
