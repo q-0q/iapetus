@@ -73,7 +73,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private void Update()
     {
         if (_scriptActive) return;
-        if (_brain.ActiveVirtualCamera != _freeLook || GameMenu.Singleton.IsMenuOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
+        if (_brain.ActiveVirtualCamera != _freeLook || GameMenu.Singleton.IsMenuOpen() || InventoryCanvas.Singleton.GetIsOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
         {
             _freeLook.m_XAxis.m_InputAxisValue = 0;
             _freeLook.m_YAxis.m_InputAxisValue = 0;
