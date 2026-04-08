@@ -356,11 +356,21 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
-        if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f && (Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim)))
+        
+        if ((Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim)))
         {
-            EndSurge();
-            isSprinting = false;
+            if (_isSurging)
+            {
+                multiplier *= 0.75f;
+                momentumDesiredTurnAmount *= 0.25f;
+            }
+            else if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f)
+            {
+                EndSurge();
+                isSprinting = false;
+            }
         }
+
         var sprintLoss = isSprinting ? SprintTurnLossMultiplier : 1f;
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
                                               Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier * sprintLoss));

@@ -17,7 +17,11 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.LockMomentum)
             .Permit(PlayerFsmTrigger.NoMomentum, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
-            .SubstateOf(GravityFsmState.Grounded);
+            .SubstateOf(GravityFsmState.Grounded)
+            .OnEntry(_ =>
+            {
+                EndSurge();
+            });
     }
     
 }
