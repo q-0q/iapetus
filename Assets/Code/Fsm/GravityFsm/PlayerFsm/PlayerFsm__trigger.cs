@@ -29,6 +29,11 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.Attack);
         }
         
+        if (_inputBuffer.IsBuffered("Inventory"))
+        {
+            Machine.Fire(PlayerFsmTrigger.Inventory);
+        }
+        
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
         if (angle > HardTurnMinimumAngle)

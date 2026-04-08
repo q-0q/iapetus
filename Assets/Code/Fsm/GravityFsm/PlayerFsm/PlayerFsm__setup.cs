@@ -58,6 +58,7 @@ public partial class PlayerFsm
         SurgeConfigure();
         PressConfigure();
         KeyItemCollectConfigure();
+        InventoryConfigure();
     }
 
     public override void SetupStateMaps()
@@ -157,6 +158,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Press, "Press");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LongFall, "LongFall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.KeyItemCollect, "KeyItemCollect");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Inventory, "Inventory");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

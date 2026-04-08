@@ -112,6 +112,8 @@ public partial class PlayerFsm : GravityFsm
 
         public static int LongFall;
         public static int KeyItemCollect;
+
+        public static int Inventory;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -159,7 +161,9 @@ public partial class PlayerFsm : GravityFsm
         
         public static int IsAboveLongFall;
 
-        
+        public static int Inventory;
+
+
     }
     
     protected override void OnAwake()
@@ -214,6 +218,7 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Dash");
         _inputBuffer.InitInput("Attack");
         _inputBuffer.InitInput("Interact");
+        _inputBuffer.InitInput("Inventory");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
         _checkpointVector3 = transform.position;
