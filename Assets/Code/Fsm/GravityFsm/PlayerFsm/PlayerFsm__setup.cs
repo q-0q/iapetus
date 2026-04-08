@@ -99,7 +99,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeStartup, 1.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDash, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDashStartup, 0.125f);
-        StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 2f);
+        StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 1.25f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");

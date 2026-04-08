@@ -383,11 +383,11 @@ public partial class PlayerFsm
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
     }
 
-    private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f)
+    private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f, bool removeV2 = false)
     { 
         var sprinting = isSprinting;
         var isSprintingOver = !isSprinting && _momentum >= MaxMomentum * SprintMomentumCutoffMultiplier;
-        var v2 = GetInputMovementVector2();
+        var v2 = removeV2 ? Vector2.zero : GetInputMovementVector2();
         if (v2.magnitude > InputMagnitudeThreshhold && !isSprintingOver)
         {
             var grounded = Machine.IsInState(GravityFsmState.Grounded);

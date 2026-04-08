@@ -17,8 +17,6 @@ public partial class PlayerFsm
         {
             if (hit.distance > 3f && !_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         }
-        
-
     }
 
     private void GroundMoveConfigure()
@@ -49,7 +47,8 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 currentRopeSwing = null;
             });
-
+        
+        
         Machine.Configure(PlayerFsmState.GroundMoveAfterVault)
             .SubstateOf(PlayerFsmState.GroundMove);
     }

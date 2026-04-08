@@ -114,6 +114,7 @@ public partial class PlayerFsm : GravityFsm
         public static int KeyItemCollect;
 
         public static int Inventory;
+        public static int InventorySlowdown;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -550,6 +551,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Press))
         {
             PressOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.InventorySlowdown))
+        {
+            InventorySlowdownOnUpdate();
         }
 
         

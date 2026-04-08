@@ -23,8 +23,18 @@ public class KeyItemCanvas : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
-
-            yield return new WaitForSeconds(2f);
+            
+            d = 2f;
+            while (t < d)
+            {
+                if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.InventorySlowdown))
+                {
+                    _canvasGroup.alpha = 0;
+                    yield break;
+                }
+                t += Time.deltaTime;
+                yield return null;
+            }
             
             d = 1f;
             while (t < d)
