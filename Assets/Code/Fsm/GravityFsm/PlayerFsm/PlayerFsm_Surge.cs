@@ -49,6 +49,7 @@ public partial class PlayerFsm
     {
         var movementMofifier = Mathf.Lerp(1.5f, 1f, Mathf.InverseLerp(0, 0.3f, TimeInCurrentState()));
         HandleCollisionMove(movementMofifier);
+        HandleTurning(0.65f, false, 0f, true, 1f);
     }
 
     private IEnumerator SurgeCameraCleanupCoroutine(float speedMod = 1f)

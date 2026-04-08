@@ -1,0 +1,69 @@
+using System;
+using System.Collections;
+using Code.Misc;
+using UnityEngine;
+
+public class KeyItemCanvas : MonoBehaviour
+{
+    private CanvasGroup _canvasGroup;
+
+    private void OnItemCollected(KeyItemRegistration itemRegistration)
+    {
+
+        StartCoroutine(CanvasCoroutine());
+
+        IEnumerator CanvasCoroutine()
+        {
+            var t = 0f;
+            var d = 0.1f;
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                _canvasGroup.alpha = w;
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(2f);
+            
+            d = 1f;
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                _canvasGroup.alpha = 1f - w;
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            _canvasGroup.alpha = 0f;
+
+        }
+    }
+
+    private void Awake()
+    {
+        _canvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    private void OnEnable()
+    {
+        KeyItem.OnKeyItemCollected += OnItemCollected;
+    }
+
+    private void OnDisable()
+    {
+        KeyItem.OnKeyItemCollected -= OnItemCollected;
+    }
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}

@@ -64,4 +64,9 @@ public class TutorialCanvas : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(_tmpText.transform.parent.GetComponent<RectTransform>());
     }
     
+    public string GetCurrentAction()
+    {
+        return action;
+    }
+    
 }

@@ -57,6 +57,9 @@ public class KeyItem : MonoBehaviour
     private bool collected = false;
     private ParticleSystem _particleSystem;
 
+    public static event Action<KeyItemRegistration> OnKeyItemCollected;
+    private const string CollectionPersistentEvent = "item-collected";
+
     private void Awake()
     {
         _interactable = GetComponentInChildren<Interactable>();
@@ -126,12 +129,14 @@ public class KeyItem : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
+            
+            Collect();
         }
         
         IEnumerator ScaleCoroutine()
         {
             var t = 0f;
-            var d = 0.95f;
+            var d = 0.75f;
             yield return new WaitForSeconds(1.3f);
             while (t < d)
             {
@@ -156,7 +161,26 @@ public class KeyItem : MonoBehaviour
 
         }
     }
-    
+
+    private void Collect()
+    {
+        var data = KeyItemRegistry.KeyItemRegistrations[Id];
+        OnKeyItemCollected?.Invoke(data);
+        SaveSystem.WriteItem(data.metaName);
+
+        if (!SaveSystem.GetPersistentEventCompleted(CollectionPersistentEvent))
+        {
+            StartCoroutine(Coroutine());
+            IEnumerator Coroutine()
+            {
+                yield return new WaitForSeconds(4f);
+                TutorialCanvas.Singleton.ShowTutorialText("Open bag", "Inventory");
+            }
+            // SaveSystem.WritePersistentEvent(CollectionPersistentEvent);
+        }
+        
+    }
+
     // Update is called once per frame
     void Update()
     {

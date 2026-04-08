@@ -51,4 +51,6 @@ public class TutorialTrigger : MonoBehaviour
         TutorialCanvas.Singleton.HideTutorialText();
         active = false;
     }
+
+
 }

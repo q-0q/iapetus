@@ -67,6 +67,7 @@ public class SaveSystem : MonoBehaviour
         public string playerInGamePositionId;
         public float playerInGameYAngle;
         public List<string> persistentEvents;
+        public List<string> items;
         public List<TrialCompletionEntry> trialCompletions;
         public List<string> lemonCollections;
         public List<string> bells;
@@ -85,6 +86,7 @@ public class SaveSystem : MonoBehaviour
             playerInGameYAngle = 0f;
             playerInGamePositionId = "";
             persistentEvents = new List<string>();
+            items = new List<string>();
             trialCompletions = new List<TrialCompletionEntry>();
             lemonCollections = new List<string>();
             bells = new List<string>();
@@ -148,6 +150,32 @@ public class SaveSystem : MonoBehaviour
         SaveData data = LoadCachedSaveData();
         if (data.persistentEvents.Contains(persistentEvent)) return;
         data.persistentEvents.Add(persistentEvent);
+        WriteSaveData(data);
+    }
+    
+    public static void WriteItem(string item)
+    {
+        if (item == "")
+        {
+            Debug.LogError("Tried to write empty item");
+            return;
+        }
+        SaveData data = LoadCachedSaveData();
+        if (data.items.Contains(item)) return;
+        data.items.Add(item);
+        WriteSaveData(data);
+    }
+    
+    public static void RemoveItem(string item)
+    {
+        if (item == "")
+        {
+            Debug.LogError("Tried to remove empty item");
+            return;
+        }
+        SaveData data = LoadCachedSaveData();
+        if (!data.items.Contains(item)) return;
+        data.items.Remove(item);
         WriteSaveData(data);
     }
     
