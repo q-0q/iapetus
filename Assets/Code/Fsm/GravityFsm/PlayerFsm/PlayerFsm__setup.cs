@@ -57,6 +57,7 @@ public partial class PlayerFsm
         RopeSwingConfigure();
         SurgeConfigure();
         PressConfigure();
+        KeyItemCollectConfigure();
     }
 
     public override void SetupStateMaps()
@@ -97,6 +98,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeStartup, 1.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDash, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDashStartup, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 2f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -138,28 +140,23 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterPitonHoming, "Fall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dying2, "Dying");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlide, "Fall");
-        
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Idle, "Idle");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepStart, "StepStart");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepEnd, "StepEnd");
-        
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurfaceRise, "SwimSurfaceRise");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurface, "SwimSurface");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.DiveFall, "DiveFall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Drown, "Drown");
-        
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingHoming, "RopeSwing");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwing, "RopeSwing");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingJumpsquat, "RopeSwingJumpsquat", 2);
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RopeSwingJump, "RopeSwingJump");
-        
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeStartup, "SurgeStartup");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDash, "SurgeDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDashStartup, "SurgeDashStartup");
-        
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Press, "Press");
-        
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LongFall, "LongFall");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.KeyItemCollect, "KeyItemCollect");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

@@ -111,6 +111,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Press;
 
         public static int LongFall;
+        public static int KeyItemCollect;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
