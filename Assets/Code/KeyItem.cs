@@ -8,9 +8,9 @@ using Util = Code.Misc.Util;
 public class KeyItemRegistration
 {
     public string displayName;
-    public string metaName;
     public GameObject MeshGameObject;
     public Action onUse;
+    public Sprite Sprite;
 }
 
 public static class KeyItemRegistry
@@ -24,26 +24,27 @@ public static class KeyItemRegistry
         KeyItemRegistrations.Add("UrnFragment1", new KeyItemRegistration()
         {
             displayName = "Urn Fragment",
-            metaName = "urn-fragment-1",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
             onUse = null
         });
         
         KeyItemRegistrations.Add("UrnFragment2", new KeyItemRegistration()
         {
             displayName = "Urn Fragment",
-            metaName = "urn-fragment-2",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
             onUse = null
         });
         
         KeyItemRegistrations.Add("UrnFragment3", new KeyItemRegistration()
         {
             displayName = "Urn Fragment",
-            metaName = "urn-fragment-3",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
             onUse = null
         });
+        
     }
 }
 
@@ -58,12 +59,14 @@ public class KeyItem : MonoBehaviour
     private ParticleSystem _particleSystem;
 
     public static event Action<KeyItemRegistration> OnKeyItemCollected;
-    private const string CollectionPersistentEvent = "item-collected";
+    private const string GenericCollectionPersistentEvent = "item-collected";
 
     private void Awake()
     {
         _interactable = GetComponentInChildren<Interactable>();
         _particleSystem = GetComponentInChildren<ParticleSystem>();
+        
+        if (SaveSystem.GetPersistentEventCompleted(Id)) Destroy(gameObject);
     }
 
     private void OnEnable()
@@ -166,9 +169,10 @@ public class KeyItem : MonoBehaviour
     {
         var data = KeyItemRegistry.KeyItemRegistrations[Id];
         OnKeyItemCollected?.Invoke(data);
-        SaveSystem.WriteItem(data.metaName);
+        SaveSystem.WriteItem(Id);
+        SaveSystem.WritePersistentEvent(Id);
 
-        if (!SaveSystem.GetPersistentEventCompleted(CollectionPersistentEvent))
+        if (!SaveSystem.GetPersistentEventCompleted(GenericCollectionPersistentEvent))
         {
             StartCoroutine(Coroutine());
             IEnumerator Coroutine()
@@ -176,7 +180,7 @@ public class KeyItem : MonoBehaviour
                 yield return new WaitForSeconds(4f);
                 TutorialCanvas.Singleton.ShowTutorialText("Open bag", "Inventory");
             }
-            // SaveSystem.WritePersistentEvent(CollectionPersistentEvent);
+            SaveSystem.WritePersistentEvent(GenericCollectionPersistentEvent);
         }
         
     }

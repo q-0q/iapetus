@@ -305,6 +305,12 @@ public class SaveSystem : MonoBehaviour
         var entry = data.lemonCollections.FirstOrDefault(e => e == metaName);
         return entry != null;
     }
+    
+    public static List<string> GetAllItems()
+    {
+        SaveData data = LoadCachedSaveData();
+        return data.items;
+    }
 
     public static bool GetPersistentEventCompleted(string persistentEvent)
     {

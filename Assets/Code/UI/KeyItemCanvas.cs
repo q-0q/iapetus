@@ -23,7 +23,8 @@ public class KeyItemCanvas : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
-            
+
+            t = 0;
             d = 2f;
             while (t < d)
             {
@@ -35,7 +36,8 @@ public class KeyItemCanvas : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
-            
+
+            t = 0;
             d = 1f;
             while (t < d)
             {
