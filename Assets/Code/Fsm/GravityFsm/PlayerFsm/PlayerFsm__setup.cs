@@ -72,6 +72,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.CutsceneHardLand, 2.8f, 1);
         StateMapConfig.Duration.Add(PlayerFsmState.HardLandRoll, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.Vault, 0.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.DashVault, 0.15f, 1);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultHang, 0.975f);
         StateMapConfig.Duration.Add(PlayerFsmState.MediumVaultHang, 0.375f);
         StateMapConfig.Duration.Add(PlayerFsmState.SlowVaultFinish, 0.3f);

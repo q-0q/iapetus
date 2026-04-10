@@ -198,8 +198,8 @@ public partial class PlayerFsm
     private const float DashForwardSpeed = 24f;
     private const float DashRaycastHeightOffset = 0f;
     private const float SkipWindowDuration = 0.2f;
-    private const float SkipForwardBonusSpeed = 3.25f;
-    private const float SkipYVelocity = 25f;
+    private const float SkipForwardBonusSpeed = 3.5f;
+    private const float SkipYVelocity = 28f;
     
     
     
@@ -345,8 +345,10 @@ public partial class PlayerFsm
         if (!ignoreTurnAnimationLayer)
         {
             var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
+            animationDesiredTurnAmount *= Mathf.Lerp(1f, 2f, Mathf.InverseLerp(10f, 5f, _momentum));
             
             animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount) * animationTurnModifier;
+            
             var turnAmount = Animator.GetFloat("TurnAmount");
             var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
             Animator.SetFloat("TurnAmount",
