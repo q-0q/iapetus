@@ -11,6 +11,8 @@ public class KeyItemRegistration
     public GameObject MeshGameObject;
     public Action onUse;
     public Sprite Sprite;
+    public string description;
+    public string useDescription = ""; 
 }
 
 public static class KeyItemRegistry
@@ -23,15 +25,18 @@ public static class KeyItemRegistry
         
         KeyItemRegistrations.Add("UrnFragment1", new KeyItemRegistration()
         {
-            displayName = "Urn Fragment",
+            displayName = "Urn fragment",
+            description = "A small broken shard of pottery. It shines dully.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            useDescription = "test",
             Sprite = null,
             onUse = null
         });
         
         KeyItemRegistrations.Add("UrnFragment2", new KeyItemRegistration()
         {
-            displayName = "Urn Fragment",
+            displayName = "Urn fragment",
+            description = "A small broken shard of pottery. It bears parts of a painted design.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             onUse = null
@@ -39,7 +44,8 @@ public static class KeyItemRegistry
         
         KeyItemRegistrations.Add("UrnFragment3", new KeyItemRegistration()
         {
-            displayName = "Urn Fragment",
+            displayName = "Urn fragment",
+            description = "A small broken shard of pottery. It curves delicately along one face.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             onUse = null

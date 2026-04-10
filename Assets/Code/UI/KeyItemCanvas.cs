@@ -1,15 +1,17 @@
 using System;
 using System.Collections;
 using Code.Misc;
+using TMPro;
 using UnityEngine;
 
 public class KeyItemCanvas : MonoBehaviour
 {
     private CanvasGroup _canvasGroup;
+    private TextMeshProUGUI _itemText;
 
     private void OnItemCollected(KeyItemRegistration itemRegistration)
     {
-
+        _itemText.text = itemRegistration.displayName;
         StartCoroutine(CanvasCoroutine());
 
         IEnumerator CanvasCoroutine()
@@ -55,6 +57,7 @@ public class KeyItemCanvas : MonoBehaviour
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
+        _itemText = transform.Find("ItemText").GetComponent<TextMeshProUGUI>();
     }
 
     private void OnEnable()

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using DG.Tweening;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,6 +21,11 @@ public class InventoryCanvas : MonoBehaviour
 
     private List<InventorySlot> _inventorySlots;
 
+    private GameObject _selection;
+    private TextMeshProUGUI _selectionName;
+    private TextMeshProUGUI _selectionDescription;
+    private TextMeshProUGUI _selectionUseDescription;
+
     private const int MaximumSlotCount = 10;
     
     private void Awake()
@@ -27,6 +34,13 @@ public class InventoryCanvas : MonoBehaviour
         _playerInput = GetComponent<PlayerInput>();
         _canvasGroup = GetComponent<CanvasGroup>();
         _closeImage = transform.Find("CloseInput").Find("Image").GetComponent<Image>();
+        
+        _selection = transform.Find("Selection").gameObject;
+        _selectionName = transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
+        _selectionDescription = transform.Find("Selection").Find("Description").GetComponent<TextMeshProUGUI>();
+        _selectionUseDescription = transform.Find("Selection").Find("UseDescription").GetComponent<TextMeshProUGUI>();
+        
+        _selection.SetActive(false);
 
         _inventorySlots = new List<InventorySlot>();
         foreach (var slot in GetComponentsInChildren<InventorySlot>())
@@ -60,6 +74,10 @@ public class InventoryCanvas : MonoBehaviour
         PlayerFsm.PlayerInventoryEntered += Open;
         PlayerFsm.PlayerInventoryExited += Close;
         SaveSystem.OnSaveDataUpdated += UpdateInventorySlots;
+        InventorySlot.OnInventorySlotClicked += OnSlotClicked;
+        InventorySlot.OnInventorySlotSelected += OnSlotSelected;
+        GameMenu.OnGameMenuOpened += OnGameMenuOpened;
+        GameMenu.OnGameMenuClosed += OnGameMenuClosed;
     }
 
     private void OnDisable()
@@ -67,6 +85,10 @@ public class InventoryCanvas : MonoBehaviour
         PlayerFsm.PlayerInventoryEntered -= Open;
         PlayerFsm.PlayerInventoryExited -= Close;
         SaveSystem.OnSaveDataUpdated -= UpdateInventorySlots;
+        InventorySlot.OnInventorySlotClicked -= OnSlotClicked;
+        InventorySlot.OnInventorySlotSelected -= OnSlotSelected;
+        GameMenu.OnGameMenuOpened -= OnGameMenuOpened;
+        GameMenu.OnGameMenuClosed -= OnGameMenuClosed;
     }
 
     // Update is called once per frame
@@ -74,8 +96,15 @@ public class InventoryCanvas : MonoBehaviour
     {
         _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _open ? 1f : 0f, Time.deltaTime * 20f);
         _closeImage.sprite = InputTypeManager.Singleton.GetSpriteForAction("Inventory");
+
+        if (_playerInput.actions["Look"].ReadValue<Vector2>().magnitude > 0.01 &&
+            InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Kmb && _open)
+        {
+            Cursor.visible = true;  
+            Cursor.lockState = CursorLockMode.None;
+        }
         
-        if (NeedToSelect()) _inventorySlots[0].GetComponentInChildren<Button>().Select();
+        // if (NeedToSelect()) _inventorySlots[0].GetComponentInChildren<Button>().Select();
     }
 
     void Close()
@@ -91,12 +120,9 @@ public class InventoryCanvas : MonoBehaviour
     {
         _open = true;
         _canvasGroup.blocksRaycasts = true;
-
-        if (InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Kmb)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
+        
+        _inventorySlots[0].GetComponentInChildren<Button>().Select();
+        OnSlotSelected(_inventorySlots[0].Data);
         
         if (TutorialCanvas.Singleton.GetCurrentAction() == "Inventory") TutorialCanvas.Singleton.HideTutorialText();
     }
@@ -110,9 +136,48 @@ public class InventoryCanvas : MonoBehaviour
     {
         foreach (var selectable in GetComponentsInChildren<Selectable>())
         {
-            if (EventSystem.current.currentSelectedGameObject == selectable.gameObject) return false;
+            if (EventSystem.current.currentSelectedGameObject == selectable.gameObject && _selection.activeSelf) return false;
         }
 
         return true;
     }
+
+
+    private void OnSlotClicked(KeyItemRegistration data)
+    {
+        
+    }
+    
+    private void OnSlotSelected(KeyItemRegistration data)
+    {
+        if (data == null)
+        {
+            _selection.SetActive(false);
+            return;
+        }
+        _selection.SetActive(true);
+        _selection.transform.DOComplete();
+        _selection.transform.DOPunchRotation(Vector3.forward * 2f, 0.15f, 20, 1f);
+        
+        _selectionName.text = data.displayName;
+        _selectionDescription.text = data.description;
+        _selectionUseDescription.text =
+            data.useDescription == "" ? "It doesn't seem to have much use." : data.useDescription;
+    }
+
+    private void OnGameMenuOpened()
+    {
+        if (!_open) return;
+        _canvasGroup.alpha = 0;
+        _canvasGroup.blocksRaycasts = false;
+    }
+    
+    private void OnGameMenuClosed()
+    {
+        if (!_open) return;
+        _canvasGroup.alpha = 1;
+        _canvasGroup.blocksRaycasts = true;
+    }
+    
+    
 }

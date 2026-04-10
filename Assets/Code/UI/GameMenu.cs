@@ -17,6 +17,9 @@ public class GameMenu : MonoBehaviour
     private CinemachineFreeLook _freeLook;
     private GameObject _settings;
     private GameObject _buttons;
+
+    public static event Action OnGameMenuOpened;
+    public static event Action OnGameMenuClosed;
     
 
     private void Awake()
@@ -46,6 +49,7 @@ public class GameMenu : MonoBehaviour
             }
             else
             {
+                OnGameMenuOpened?.Invoke();
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
                 _menu.SetActive(true);
@@ -102,6 +106,7 @@ public class GameMenu : MonoBehaviour
         _freeLook.m_RecenterToTargetHeading.CancelRecentering();
         _menu.SetActive(false);
         Time.timeScale = 1f;
+        OnGameMenuClosed?.Invoke();
     }
     
     public void OnQuitToMain()
