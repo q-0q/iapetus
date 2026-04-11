@@ -26,6 +26,8 @@ public class DialogueController : MonoBehaviour
     public Transform LookAtOverride;
 
     public float CameraY = 0.7f;
+
+    public float canvasDelay = 0f;
     
     private void OnEnable()
     {
@@ -36,10 +38,16 @@ public class DialogueController : MonoBehaviour
 
     private void StartDialogue()
     {
-        DialogueCanvas.Singleton.StartDialogue(this);
         InteractableParam p = new InteractableParam() { Interactable = _interactable, WalkToPositionTarget =
             transform.position};
         PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.StartDialogue, p);
+
+        StartCoroutine(Coroutine());
+        IEnumerator Coroutine()
+        {
+            yield return new WaitForSeconds(canvasDelay);
+            DialogueCanvas.Singleton.StartDialogue(this);
+        }
     }
 
     private void OnDisable()
