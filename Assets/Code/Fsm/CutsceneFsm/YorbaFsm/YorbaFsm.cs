@@ -32,6 +32,8 @@ public partial class YorbaFsm : CutsceneFsm
         _interactable = GetComponentInChildren<Interactable>();
         _dialogueController = GetComponentInChildren<DialogueController>();
         Animator = GetComponentInChildren<Animator>();
+        _fakeEyesRenderer = transform.Find("yorba").Find("FakeEyes").GetComponent<SkinnedMeshRenderer>();
+        _light = GetComponentInChildren<Light>();
 
     }
 
@@ -39,13 +41,43 @@ public partial class YorbaFsm : CutsceneFsm
     {
         base.OnStart();
         InitState = YorbaFsmState.Idle;
+        Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);
+        Shader.SetGlobalFloat("_YorbaFakeLightFalloff", 3f);
+        Shader.SetGlobalFloat("_YorbaFakeLightDistance", 0f);
+        
+        print(Shader.GetGlobalVector("_YorbaFakeLightPosition"));
         
     }
     
     public override void OnUpdate()
     {
         base.OnUpdate();
-        
+
+        if (Machine.IsInState(YorbaFsmState.SpeakingDefault))
+        {
+            var weightLerpStrength = Time.deltaTime * Mathf.Lerp(0.5f, 1.25f, Mathf.InverseLerp(0, 0.75f, TimeInCurrentState()));
+            var newWeight = Mathf.Lerp(_fakeEyesRenderer.GetBlendShapeWeight(0), 0, weightLerpStrength);
+            
+            
+            var lightLerpStrength = Time.deltaTime * Mathf.Lerp(0.2f, 0.3f, Mathf.InverseLerp(0, 1.25f, TimeInCurrentState()));
+            var newLightDistance = Mathf.Lerp(Shader.GetGlobalFloat("_YorbaFakeLightDistance"), 12f, lightLerpStrength);
+            _fakeEyesRenderer.SetBlendShapeWeight(0, newWeight);
+            Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);
+            Shader.SetGlobalFloat("_YorbaFakeLightDistance", newLightDistance);
+            
+            _fakeEyesRenderer.material.SetFloat("_Alpha", Mathf.Lerp(_fakeEyesRenderer.material.GetFloat("_Alpha"), 1f, Time.deltaTime * 5f));
+
+        }
+        else
+        {
+            var lerpStrength = Time.deltaTime * 10f;
+            var newWeight = Mathf.Lerp(_fakeEyesRenderer.GetBlendShapeWeight(0), 100, lerpStrength);
+            var newLightDistance = Mathf.Lerp(Shader.GetGlobalFloat("_YorbaFakeLightDistance"), 0, lerpStrength);
+            _fakeEyesRenderer.SetBlendShapeWeight(0, newWeight);
+            Shader.SetGlobalFloat("_YorbaFakeLightDistance", newLightDistance);
+            
+            _fakeEyesRenderer.material.SetFloat("_Alpha", Mathf.Lerp(_fakeEyesRenderer.material.GetFloat("_Alpha"), 0f, Time.deltaTime * 5f));
+        }
     }
 
     protected override void OnStartComplete()
