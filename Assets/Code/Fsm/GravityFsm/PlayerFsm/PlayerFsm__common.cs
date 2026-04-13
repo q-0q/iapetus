@@ -345,7 +345,7 @@ public partial class PlayerFsm
         if (!ignoreTurnAnimationLayer)
         {
             var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
-            animationDesiredTurnAmount *= Mathf.Lerp(1f, 2f, Mathf.InverseLerp(10f, 5f, _momentum));
+            // animationDesiredTurnAmount *= Mathf.Lerp(1f, 2f, Mathf.InverseLerp(10f, 5f, _momentum));
             
             animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount) * animationTurnModifier;
             
