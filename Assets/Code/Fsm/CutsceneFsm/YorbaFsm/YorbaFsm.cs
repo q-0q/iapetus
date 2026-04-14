@@ -36,6 +36,8 @@ public partial class YorbaFsm : CutsceneFsm
         Animator = GetComponentInChildren<Animator>();
         _fakeEyesRenderer = transform.Find("yorba").Find("FakeEyes").GetComponent<SkinnedMeshRenderer>();
         _light = GetComponentInChildren<Light>();
+        if (SaveSystem.GetPersistentEventCompleted(ExpositionPersistentEvent))
+            _dialogueController.currentDialogueIndex = 1;
 
     }
 

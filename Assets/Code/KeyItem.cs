@@ -23,29 +23,29 @@ public static class KeyItemRegistry
     {
         KeyItemRegistrations = new Dictionary<string, KeyItemRegistration>();
         
-        KeyItemRegistrations.Add("UrnFragment1", new KeyItemRegistration()
+        KeyItemRegistrations.Add("ErhuFragment1", new KeyItemRegistration()
         {
-            displayName = "Urn fragment",
-            description = "A small broken shard of pottery. It shines dully.",
+            displayName = "Erhu neck",
+            description = "The stick-like neck of a delicate instrument. It's broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             useDescription = "test",
             Sprite = null,
             onUse = null
         });
         
-        KeyItemRegistrations.Add("UrnFragment2", new KeyItemRegistration()
+        KeyItemRegistrations.Add("ErhuFragment2", new KeyItemRegistration()
         {
-            displayName = "Urn fragment",
-            description = "A small broken shard of pottery. It bears parts of a painted design.",
+            displayName = "Erhu tuner",
+            description = "A series of intricate tuning pegs. They're broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             onUse = null
         });
         
-        KeyItemRegistrations.Add("UrnFragment3", new KeyItemRegistration()
+        KeyItemRegistrations.Add("ErhuFragment3", new KeyItemRegistration()
         {
-            displayName = "Urn fragment",
-            description = "A small broken shard of pottery. It curves delicately along one face.",
+            displayName = "Erhu body",
+            description = "The resonator body of a musical instrument. It's broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             onUse = null

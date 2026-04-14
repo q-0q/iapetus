@@ -16,6 +16,7 @@ public partial class YorbaFsm
     
     private void OnDialogueCompleted()
     {
+        if (_dialogueController.currentDialogueIndex == 1) SaveSystem.WritePersistentEvent(ExpositionPersistentEvent);
         Machine.Fire(YorbaFsmTrigger.OnDialogueCompleted);
     }
 }
