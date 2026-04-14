@@ -14,10 +14,12 @@ public partial class YorbaFsm : CutsceneFsm
 {
     public class YorbaFsmState : CutsceneFsmState
     {
-        public static int Idle;
+        public static int Hidden;
         public static int SpeakingDefault;
         public static int SpeakingQuestReady;
         public static int QuestChannel;
+        public static int Idle;
+        public static int Revealing;
     }
 
     public class YorbaFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
@@ -40,7 +42,7 @@ public partial class YorbaFsm : CutsceneFsm
     protected override void OnStart()
     {
         base.OnStart();
-        InitState = YorbaFsmState.Idle;
+        InitState = YorbaFsmState.Hidden;
         Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);
         Shader.SetGlobalFloat("_YorbaFakeLightFalloff", 3f);
         Shader.SetGlobalFloat("_YorbaFakeLightDistance", 0f);
@@ -53,26 +55,29 @@ public partial class YorbaFsm : CutsceneFsm
     {
         base.OnUpdate();
 
-        if (Machine.IsInState(YorbaFsmState.SpeakingDefault))
-        {
-            var weightLerpStrength = Time.deltaTime * Mathf.Lerp(0.5f, 1.25f, Mathf.InverseLerp(0, 0.75f, TimeInCurrentState()));
-            
-            
-            var lightLerpStrength = Time.deltaTime * Mathf.Lerp(0.2f, 0.3f, Mathf.InverseLerp(0, 1.25f, TimeInCurrentState()));
-            var newLightDistance = Mathf.Lerp(Shader.GetGlobalFloat("_YorbaFakeLightDistance"), 20f, lightLerpStrength);
-            Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);
-            Shader.SetGlobalFloat("_YorbaFakeLightDistance", newLightDistance);
-            
-            _fakeEyesRenderer.material.SetFloat("_Alpha", Mathf.Lerp(_fakeEyesRenderer.material.GetFloat("_Alpha"), 1f, Time.deltaTime * 5f));
-
-        }
-        else
+        if (Machine.IsInState(YorbaFsmState.Hidden))
         {
             var lerpStrength = Time.deltaTime * 10f;
             var newLightDistance = Mathf.Lerp(Shader.GetGlobalFloat("_YorbaFakeLightDistance"), 0, lerpStrength);
             Shader.SetGlobalFloat("_YorbaFakeLightDistance", newLightDistance);
-            
-            _fakeEyesRenderer.material.SetFloat("_Alpha", Mathf.Lerp(_fakeEyesRenderer.material.GetFloat("_Alpha"), 0f, Time.deltaTime * 5f));
+
+            _fakeEyesRenderer.material.SetFloat("_Alpha",
+                Mathf.Lerp(_fakeEyesRenderer.material.GetFloat("_Alpha"), 0f, Time.deltaTime * 5f));
+        }
+        else
+        {
+            var weightLerpStrength =
+                Time.deltaTime * Mathf.Lerp(0.5f, 1.25f, Mathf.InverseLerp(0, 0.75f, TimeInCurrentState()));
+
+
+            var lightLerpStrength =
+                Time.deltaTime * Mathf.Lerp(0.2f, 0.3f, Mathf.InverseLerp(0, 1.25f, TimeInCurrentState()));
+            var newLightDistance = Mathf.Lerp(Shader.GetGlobalFloat("_YorbaFakeLightDistance"), 20f, lightLerpStrength);
+            Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);
+            Shader.SetGlobalFloat("_YorbaFakeLightDistance", newLightDistance);
+
+            _fakeEyesRenderer.material.SetFloat("_Alpha",
+                Mathf.Lerp(_fakeEyesRenderer.material.GetFloat("_Alpha"), 1f, Time.deltaTime * 5f));
         }
     }
 
