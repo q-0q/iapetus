@@ -44,13 +44,19 @@ public partial class CrumbleFsm : Fsm
         {
             IdleOnUpdate();
         }
+        if (Machine.IsInState(CrumbleFsmState.Breaking1))
+        {
+            DoIdleJump();
+        }
         if (Machine.IsInState(CrumbleFsmState.Breaking2))
         {
             Breaking2OnUpdate();
+            DoIdleJump();
         }
         if (Machine.IsInState(CrumbleFsmState.Breaking3))
         {
             Breaking3OnUpdate();
+            DoIdleJump();
         }
     }
 

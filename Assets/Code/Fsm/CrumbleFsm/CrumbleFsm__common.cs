@@ -31,4 +31,9 @@ public partial class CrumbleFsm
             t.position = origin + v;
         }, duration, strength);
     }
+
+    private void DoIdleJump()
+    {
+        if (PlayerFsm.Singleton.parentTransform != transform) Machine.Jump(CrumbleFsmState.Idle);
+    }
 }
