@@ -30,7 +30,7 @@ public partial class CrumbleFsm : Fsm
         base.OnStart();
         InitState = CrumbleFsmState.Idle;
         TryGetComponent(out _collider);
-        TryGetComponent(out _renderer);
+        _renderer = GetComponentInChildren<Renderer>();
         transform.Find("ReformParticles").TryGetComponent(out _reformParticleSystem);
         transform.Find("CrumbleParticles").TryGetComponent(out _crumbleParticleSystem);
         transform.Find("BreakParticles").TryGetComponent(out _breakParticleSystem);

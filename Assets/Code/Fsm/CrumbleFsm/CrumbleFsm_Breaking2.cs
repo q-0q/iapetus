@@ -17,9 +17,11 @@ public partial class CrumbleFsm
             .OnEntry(_ =>
             {
                 _crumbleParticleSystem.Play();
-                _renderer.material.SetFloat("_CrackAmount", 0.45f);
-                transform.DOShakePosition(0.3f, 0.2f);
-                // transform.DOShakePosition(2f, 0.15f);
+                _renderer.material.SetFloat("_CrackAmount", 0.95f);
+                _renderer.transform.DOComplete();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(eventPath2), gameObject);
+                WorldspaceShake(_renderer.transform, 0.15f, 0.2f);
+                WorldspaceShake(_renderer.transform, 1f, 0.15f);
             });
     }
 }

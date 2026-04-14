@@ -12,11 +12,14 @@ public partial class CrumbleFsm
             {
                 _breakParticleSystem.Play();
                 // _crumbleParticleSystem.Play();
-                _renderer.material.SetFloat("_Glow", 0.1f);
+                _renderer.material.SetFloat("_Glow", 1f);
                 _renderer.material.SetFloat("_CrackAmount", 1.5f);
-                transform.DOShakePosition(1f, 0.6f);
+                _renderer.transform.DOComplete();
+                WorldspaceShake(_renderer.transform, 0.5f, 1.25f);
+                WorldspaceShake(_renderer.transform, 2f, 0.4f);
                 _collider.enabled = false;
                 _renderer.enabled = false;
+                FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(eventPath4), gameObject);
             });
     }
 }
