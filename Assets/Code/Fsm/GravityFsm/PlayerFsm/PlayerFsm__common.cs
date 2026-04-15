@@ -248,11 +248,15 @@ public partial class PlayerFsm
     public EventReference surgeStartupFmodEvent;
     public EventReference surgeEndFmodEvent;
     public EventReference windRushFmodEvent;
+    public EventReference freezeFmodEvent;
+    public EventReference swimFootstepFmodEvent;
+    public EventReference splashFmodEvent;
     
     private EventInstance activeFmodInstance;
     private EventInstance slideFmodInstance;
     private EventInstance surgeStartupFmodInstance;
     private EventInstance windRushFmodInstance;
+    private EventInstance freezeFmodInstance;
     
     
     
@@ -750,6 +754,12 @@ public partial class PlayerFsm
             t += Time.deltaTime;
             yield return null;
         }
+    }
+    
+    private void OnPlayerSwimFootstep()
+    {
+        print("test");
+        FMODUnity.RuntimeManager.PlayOneShotAttached(swimFootstepFmodEvent, gameObject);
     }
 
     public float GetMomentum()

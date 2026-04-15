@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using FMOD.Studio;
 using UnityEditor;
 using UnityEngine;
 using Wasp;
@@ -23,8 +24,11 @@ public partial class PlayerFsm
         if (waterHazardType.type != WaterHazardType.Type.Freeze)
         {
             _freezeTimer = 0;
+            freezeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             return;
         }
+
+        if (_freezeTimer < 0.01f) freezeFmodInstance.start(); // kinda a hack but w/e
         _freezeTimer += Time.deltaTime;
     }
     
@@ -123,6 +127,7 @@ public partial class PlayerFsm
                 {
                     _splashParticles.transform.position = swimRaycastParam.point;
                     _splashParticles.Play();
+                    FMODUnity.RuntimeManager.PlayOneShotAttached(splashFmodEvent, _splashParticles.gameObject);
                 }
                 OnPlayerRippleGenerated?.Invoke(transform.position, 1.0f, 0.005f);
                 OnPlayerWakeGenerated?.Invoke(transform.position, 1.0f, 0.0025f);

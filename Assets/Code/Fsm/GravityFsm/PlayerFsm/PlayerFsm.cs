@@ -507,8 +507,9 @@ public partial class PlayerFsm : GravityFsm
         {
             SwimOnUpdate();
         }
-        else
+        else if (!Machine.IsInState(PlayerFsmState.Dying1) && !Machine.IsInState(PlayerFsmState.Dead))
         {
+            freezeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             _freezeTimer = 0;
         }
         
@@ -573,6 +574,11 @@ public partial class PlayerFsm : GravityFsm
             SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
         }
         
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            freezeFmodInstance.start();
+        }
+        
         HandleRaycastKill();
 
         
@@ -624,6 +630,8 @@ public partial class PlayerFsm : GravityFsm
 
         windRushFmodInstance = FMODUnity.RuntimeManager.CreateInstance(windRushFmodEvent);
         windRushFmodInstance.start();
+        
+        freezeFmodInstance = FMODUnity.RuntimeManager.CreateInstance(freezeFmodEvent);
     }
     
     private void OnDisable()

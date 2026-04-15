@@ -11,6 +11,7 @@ public class FreezeCanvas : MonoBehaviour
     private void Awake()
     {
         _material = GetComponentInChildren<Image>().material;
+        _material.SetFloat("_Weight_1", 0);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -23,7 +24,7 @@ public class FreezeCanvas : MonoBehaviour
     void Update()
     {
         var w = PlayerFsm.Singleton.GetFreezeWeight();
-        if (w > 0.01f) w = Mathf.Lerp(0.25f, 1f, w);
+        if (w > 0.01f) w = Mathf.Lerp(0.175f, 1f, w);
         _material.SetFloat("_Weight_1", Mathf.Lerp(_material.GetFloat("_Weight_1"), w, Time.deltaTime * 10f));
     }
 }
