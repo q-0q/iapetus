@@ -18,8 +18,8 @@ public partial class PlayerFsm
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
 
-        if (!WaterRaycast(out var hit, out var _)) return;
-        if (!hit.transform.TryGetComponent(out WaterHazardType waterHazardType)) return;
+        if (!WaterRaycast(out var swimRaycastParam)) return;
+        if (!swimRaycastParam.obj.TryGetComponent(out WaterHazardType waterHazardType)) return;
         if (waterHazardType.type != WaterHazardType.Type.Freeze)
         {
             _freezeTimer = 0;
@@ -31,14 +31,14 @@ public partial class PlayerFsm
     
     private void SwimSurfaceRiseOnUpdate()
     {
-        if (WaterRaycast(out var hit, out var drown))
+        if (WaterRaycast(out var swimRaycastParam))
         {
-            var desiredYVelocity = Mathf.Lerp(0f, 25f, Mathf.InverseLerp(4f, -0.80f, hit.distance));
+            var desiredYVelocity = Mathf.Lerp(0f, 25f, Mathf.InverseLerp(4f, -0.80f, swimRaycastParam.distance));
             YVelocity = Mathf.Lerp(YVelocity, desiredYVelocity,
                 Time.deltaTime * Mathf.Lerp(1f, 20f, Mathf.InverseLerp(0, 0.45f, TimeInCurrentState())));
             
             
-            if (drown)
+            if (swimRaycastParam.drown)
             {
                 _momentum = Mathf.Lerp(_momentum, 0,
                     Time.deltaTime * Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
@@ -57,11 +57,11 @@ public partial class PlayerFsm
     
     private void SwimSurfaceOnUpdate()
     {
-        if (WaterRaycast(out var hit, out var drown))
+        if (WaterRaycast(out var swimRaycastParam))
         {
-            transform.position += ComputeCollisionMove(((hit.point + Vector3.up * -0.80f) - transform.position) * Time.deltaTime * 15f);
+            transform.position += ComputeCollisionMove(((swimRaycastParam.point + Vector3.up * -0.80f) - transform.position) * Time.deltaTime * 15f);
             
-            if (drown)
+            if (swimRaycastParam.drown)
             {
                 _momentum = Mathf.Lerp(_momentum, 0,
                     Time.deltaTime * Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
@@ -114,9 +114,9 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 if (YVelocity > -5f) return;
-                if (WaterRaycast(out var hit, out var _))
+                if (WaterRaycast(out var swimRaycastParam))
                 {
-                    _splashParticles.transform.position = hit.point;
+                    _splashParticles.transform.position = swimRaycastParam.point;
                     _splashParticles.Play();
                 }
                 OnPlayerRippleGenerated?.Invoke(transform.position, 1.0f, 0.005f);
@@ -159,14 +159,14 @@ public partial class PlayerFsm
     private bool IsSwimTrigger(TriggerParams triggerParams)
     {
         if (triggerParams is not SwimRaycastParam SwimRaycastParam) return false;
-        var distance = SwimRaycastParam.Hit.distance;
+        var distance = SwimRaycastParam.distance;
         return distance < 3f;
     }
     
     private bool IsSwimTriggerAtSurface(TriggerParams triggerParams)
     {
         if (triggerParams is not SwimRaycastParam SwimRaycastParam) return false;
-        var distance = SwimRaycastParam.Hit.distance;
+        var distance = SwimRaycastParam.distance;
         return distance > 3f;
     }
     

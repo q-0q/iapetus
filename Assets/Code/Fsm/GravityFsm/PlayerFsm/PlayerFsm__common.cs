@@ -982,15 +982,16 @@ public partial class PlayerFsm
 
     private void FireSwimTrigger()
     {
-        if (WaterRaycast(out var hit, out bool drown))
+        if (WaterRaycast(out var swimRaycastParam))
         {
-            Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, new SwimRaycastParam() { Hit = hit, drown = drown });
+            Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, swimRaycastParam);
         }
     }
 
-    private bool WaterRaycast(out RaycastHit hit, out bool drown)
+    private bool WaterRaycast(out SwimRaycastParam swimRaycastParam)
     {
 
+        swimRaycastParam = new SwimRaycastParam();
         bool IsDrown(Vector3 position, GameObject waterObject)
         {
             foreach (var dualWaterPoint in DualWaterPointRegistry.DualWaterPoints)
@@ -1006,12 +1007,15 @@ public partial class PlayerFsm
             return false;
         }
         
-        drown = false;
+        swimRaycastParam.drown = false;
         var origin = transform.position + Vector3.up * 5f;
         var maxDistance = 10f;
-        if (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")))
+        if (Physics.Raycast(origin, Vector3.down, out var hit, maxDistance, LayerMask.GetMask("Water")))
         {
-            drown = IsDrown(hit.point, hit.transform.gameObject);
+            swimRaycastParam.drown = IsDrown(hit.point, hit.transform.gameObject);
+            swimRaycastParam.point = hit.point;
+            swimRaycastParam.obj = hit.transform.gameObject;
+            swimRaycastParam.distance = hit.distance;
             return true;
         };
 
@@ -1019,12 +1023,10 @@ public partial class PlayerFsm
         var colliders = Physics.OverlapSphere(transform.position, 0.5f, LayerMask.GetMask("Water"));
         foreach (var c in colliders)
         {
-            hit = new RaycastHit()
-            {
-                point = origin
-            };
-
-            drown = IsDrown(origin, c.gameObject);
+            swimRaycastParam.point = origin;
+            swimRaycastParam.drown = IsDrown(origin, c.gameObject);
+            swimRaycastParam.obj = c.gameObject;
+            swimRaycastParam.distance = 0;
             return true;
         }
 

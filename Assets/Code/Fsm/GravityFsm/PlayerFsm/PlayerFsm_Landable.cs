@@ -10,10 +10,10 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params =>
             {
                 if (YVelocity > 0.5f) return false;
-                if (WaterRaycast(out var hit, out var _))
+                if (WaterRaycast(out var swimRaycastParam))
                 {
                     if (Machine.IsInState(PlayerFsmState.SwimSurfaceRise)) return false;
-                    if (IsSwimTrigger(new SwimRaycastParam() { Hit = hit })) return false;
+                    if (IsSwimTrigger(swimRaycastParam)) return false;
                 }
                 return !IsSlideTrigger(@params);
             })
@@ -23,9 +23,9 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLand,
                 _ =>
                 {
-                    if (WaterRaycast(out var hit, out var _))
+                    if (WaterRaycast(out var swimRaycastParam))
                     {
-                        if (IsSwimTrigger(new SwimRaycastParam() { Hit = hit })) return false;
+                        if (IsSwimTrigger(swimRaycastParam)) return false;
                     }
                     return CurrentFallDistance() < HardLandAirDiff;
                 },
@@ -33,9 +33,9 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.CutsceneHardLand,
                 _ =>
                 {
-                    if (WaterRaycast(out var hit, out var _))
+                    if (WaterRaycast(out var swimRaycastParam))
                     {
-                        if (IsSwimTrigger(new SwimRaycastParam() { Hit = hit })) return false;
+                        if (IsSwimTrigger(swimRaycastParam)) return false;
                     }
                     return CurrentFallDistance() < HardLandAirDiff && CutsceneManager.Singleton.IsCutsceneHardLand();
                 },
@@ -43,9 +43,9 @@ public partial class PlayerFsm
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.HardLandRoll,
                 _ =>
                 {
-                    if (WaterRaycast(out var hit, out var _))
+                    if (WaterRaycast(out var swimRaycastParam))
                     {
-                        if (IsSwimTrigger(new SwimRaycastParam() { Hit = hit })) return false;
+                        if (IsSwimTrigger(swimRaycastParam)) return false;
                     }
                     return (CurrentFallDistance() < HardLandAirDiff && _momentum > HardLandRollMinimumMomentum);
                 }, 4)
