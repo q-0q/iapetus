@@ -29,7 +29,7 @@ public partial class CrumbleFsm
         {
             // 3. Apply the offset to the original world origin
             t.position = origin + v;
-        }, duration, strength);
+        }, duration, strength, 20);
     }
 
     private void DoIdleJump()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using UnityEditor;
 using UnityEngine;
 using Wasp;
 
@@ -16,6 +17,15 @@ public partial class PlayerFsm
         
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
+
+        if (!WaterRaycast(out var hit, out var _)) return;
+        if (!hit.transform.TryGetComponent(out WaterHazardType waterHazardType)) return;
+        if (waterHazardType.type != WaterHazardType.Type.Freeze)
+        {
+            _freezeTimer = 0;
+            return;
+        }
+        _freezeTimer += Time.deltaTime;
     }
     
     

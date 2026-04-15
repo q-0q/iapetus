@@ -507,6 +507,10 @@ public partial class PlayerFsm : GravityFsm
         {
             SwimOnUpdate();
         }
+        else
+        {
+            _freezeTimer = 0;
+        }
         
         if (Machine.IsInState(PlayerFsmState.SwimSurfaceRise))
         {

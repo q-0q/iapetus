@@ -104,6 +104,7 @@ public abstract partial class GravityFsm
 
     protected Vector3 ComputeCollisionMove(Vector3 desiredMove)
     {
+        if (GameMenu.Singleton.IsMenuOpen()) return Vector3.zero;
         var output = desiredMove;
 
         // Radius of your character (adjust as needed)

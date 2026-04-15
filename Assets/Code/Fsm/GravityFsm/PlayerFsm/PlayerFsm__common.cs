@@ -262,6 +262,8 @@ public partial class PlayerFsm
     private float _surgeStartupInitialFov;
     private static float _desiredWindRushFmodAmount = 0f;
     private float _timeSinceSurgeStarted = 0f;
+    private float _freezeTimer;
+    private const float SwimFreezeDuration = 3f;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -479,6 +481,7 @@ public partial class PlayerFsm
 
     private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
     {
+        if (GameMenu.Singleton.IsMenuOpen()) return;
         var desiredMove = ApplyTractionNoTimescale(ComputeDesiredMoveWithoutTimescale()) * Time.deltaTime;
         
         var collisionMove = ComputeCollisionMove(desiredMove);
@@ -988,14 +991,19 @@ public partial class PlayerFsm
     private bool WaterRaycast(out RaycastHit hit, out bool drown)
     {
 
-        bool IsDrown(Vector3 position)
+        bool IsDrown(Vector3 position, GameObject waterObject)
         {
             foreach (var dualWaterPoint in DualWaterPointRegistry.DualWaterPoints)
             {
                 if (Vector3.Distance(position, dualWaterPoint.transform.position) < dualWaterPoint.Radius) return false;
             }
 
-            return true;
+            var hazard = waterObject.GetComponent<WaterHazardType>();
+            if (hazard == null) return false;
+            if (hazard.type == WaterHazardType.Type.InstantDrown) return true;
+            if (hazard.type == WaterHazardType.Type.Freeze) return _freezeTimer > SwimFreezeDuration;
+
+            return false;
         }
         
         drown = false;
@@ -1003,7 +1011,7 @@ public partial class PlayerFsm
         var maxDistance = 10f;
         if (Physics.Raycast(origin, Vector3.down, out hit, maxDistance, LayerMask.GetMask("Water")))
         {
-            drown = IsDrown(hit.point);
+            drown = IsDrown(hit.point, hit.transform.gameObject);
             return true;
         };
 
@@ -1013,14 +1021,19 @@ public partial class PlayerFsm
         {
             hit = new RaycastHit()
             {
-                point = origin,
+                point = origin
             };
 
-            drown = IsDrown(origin);
+            drown = IsDrown(origin, c.gameObject);
             return true;
         }
 
         return false;
 
+    }
+
+    public float GetFreezeWeight()
+    {
+        return _freezeTimer / SwimFreezeDuration;
     }
 }
