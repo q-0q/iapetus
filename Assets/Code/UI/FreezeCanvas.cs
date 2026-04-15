@@ -1,15 +1,16 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class FreezeCanvas : MonoBehaviour
 {
 
-    private TextMeshProUGUI tmp;
+    private Material _material;
 
     private void Awake()
     {
-        tmp = GetComponentInChildren<TextMeshProUGUI>();
+        _material = GetComponentInChildren<Image>().material;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -21,6 +22,8 @@ public class FreezeCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        tmp.text = PlayerFsm.Singleton.GetFreezeWeight().ToString();
+        var w = PlayerFsm.Singleton.GetFreezeWeight();
+        if (w > 0.01f) w = Mathf.Lerp(0.25f, 1f, w);
+        _material.SetFloat("_Weight_1", Mathf.Lerp(_material.GetFloat("_Weight_1"), w, Time.deltaTime * 10f));
     }
 }

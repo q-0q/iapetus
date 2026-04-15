@@ -5,7 +5,8 @@ public class WaterHazardType : MonoBehaviour
     public enum Type
     {
         InstantDrown,
-        Freeze
+        Freeze,
+        None,
     }
 
     public Type type;

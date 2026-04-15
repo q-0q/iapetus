@@ -992,27 +992,27 @@ public partial class PlayerFsm
     {
 
         swimRaycastParam = new SwimRaycastParam();
-        bool IsDrown(Vector3 position, GameObject waterObject)
+        WaterHazardType.Type HazardHelper(Vector3 position, GameObject waterObject)
         {
             foreach (var dualWaterPoint in DualWaterPointRegistry.DualWaterPoints)
             {
-                if (Vector3.Distance(position, dualWaterPoint.transform.position) < dualWaterPoint.Radius) return false;
+                if (Vector3.Distance(position, dualWaterPoint.transform.position) < dualWaterPoint.Radius) return WaterHazardType.Type.None;
             }
 
             var hazard = waterObject.GetComponent<WaterHazardType>();
-            if (hazard == null) return false;
-            if (hazard.type == WaterHazardType.Type.InstantDrown) return true;
-            if (hazard.type == WaterHazardType.Type.Freeze) return _freezeTimer > SwimFreezeDuration;
+            if (hazard == null) return WaterHazardType.Type.None;
+            if (hazard.type == WaterHazardType.Type.InstantDrown) return WaterHazardType.Type.InstantDrown;
+            if (hazard.type == WaterHazardType.Type.Freeze && _freezeTimer > SwimFreezeDuration) return WaterHazardType.Type.Freeze;
 
-            return false;
+            return WaterHazardType.Type.None;
         }
         
-        swimRaycastParam.drown = false;
+        swimRaycastParam.WaterHazardType = WaterHazardType.Type.None;
         var origin = transform.position + Vector3.up * 5f;
         var maxDistance = 10f;
         if (Physics.Raycast(origin, Vector3.down, out var hit, maxDistance, LayerMask.GetMask("Water")))
         {
-            swimRaycastParam.drown = IsDrown(hit.point, hit.transform.gameObject);
+            swimRaycastParam.WaterHazardType = HazardHelper(hit.point, hit.transform.gameObject);
             swimRaycastParam.point = hit.point;
             swimRaycastParam.obj = hit.transform.gameObject;
             swimRaycastParam.distance = hit.distance;
@@ -1024,7 +1024,7 @@ public partial class PlayerFsm
         foreach (var c in colliders)
         {
             swimRaycastParam.point = origin;
-            swimRaycastParam.drown = IsDrown(origin, c.gameObject);
+            swimRaycastParam.WaterHazardType = HazardHelper(origin, c.gameObject);
             swimRaycastParam.obj = c.gameObject;
             swimRaycastParam.distance = 0;
             return true;

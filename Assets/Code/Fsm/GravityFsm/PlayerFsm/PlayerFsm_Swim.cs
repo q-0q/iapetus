@@ -38,7 +38,7 @@ public partial class PlayerFsm
                 Time.deltaTime * Mathf.Lerp(1f, 20f, Mathf.InverseLerp(0, 0.45f, TimeInCurrentState())));
             
             
-            if (swimRaycastParam.drown)
+            if (swimRaycastParam.WaterHazardType == WaterHazardType.Type.InstantDrown)
             {
                 _momentum = Mathf.Lerp(_momentum, 0,
                     Time.deltaTime * Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
@@ -61,10 +61,15 @@ public partial class PlayerFsm
         {
             transform.position += ComputeCollisionMove(((swimRaycastParam.point + Vector3.up * -0.80f) - transform.position) * Time.deltaTime * 15f);
             
-            if (swimRaycastParam.drown)
+            if (swimRaycastParam.WaterHazardType == WaterHazardType.Type.InstantDrown)
             {
                 _momentum = Mathf.Lerp(_momentum, 0,
                     Time.deltaTime * Mathf.Lerp(2f, 10f, Mathf.InverseLerp(0, 0.5f, TimeInCurrentState())));
+            };
+            
+            if (swimRaycastParam.WaterHazardType == WaterHazardType.Type.Freeze)
+            {
+                InvokePlayerDeath();
             };
         }
 
@@ -128,7 +133,7 @@ public partial class PlayerFsm
             {
                 if (_momentum > 7f) return false;
                 if (@params is not SwimRaycastParam SwimRaycastParam) return false;
-                return SwimRaycastParam.drown;
+                return SwimRaycastParam.WaterHazardType == WaterHazardType.Type.InstantDrown;
             },3)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ => !Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity)
