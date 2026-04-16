@@ -63,7 +63,7 @@ public partial class PlayerFsm
     {
         if (WaterRaycast(out var swimRaycastParam))
         {
-            transform.position += ComputeCollisionMove(((swimRaycastParam.point + Vector3.up * -0.80f) - transform.position) * Time.deltaTime * 15f);
+            transform.position += ComputeCollisionMove(((swimRaycastParam.point + Vector3.up * -0.80f) - transform.position) * (Time.deltaTime * 15f));
             
             if (swimRaycastParam.WaterHazardType == WaterHazardType.Type.InstantDrown)
             {
