@@ -574,11 +574,6 @@ public partial class PlayerFsm : GravityFsm
             SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
         }
         
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            freezeFmodInstance.start();
-        }
-        
         HandleRaycastKill();
 
         
