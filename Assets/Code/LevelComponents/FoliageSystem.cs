@@ -88,6 +88,7 @@ public class FoliageSystem : MonoBehaviour
                 QueryTriggerInteraction.Ignore))
                 continue;
             
+            
             if (Vector3.Angle(hit.normal, -rayDirection) > 60f) continue;
 
             if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
@@ -153,5 +154,22 @@ public class FoliageSystem : MonoBehaviour
         );
 
         return new Bounds(center, size);
+    }
+
+    private float edgeThreshold = 0.1f;
+    
+    bool IsNearEdge(RaycastHit hit)
+    {
+        // barycentricCoordinate returns a Vector3 (u, v, w)
+        // where x=u, y=v, and z=w
+        Vector3 bary = hit.barycentricCoordinate;
+
+        // Check if any coordinate is close to zero
+        if (bary.x < edgeThreshold || bary.y < edgeThreshold || bary.z < edgeThreshold)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

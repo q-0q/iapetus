@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
-public partial class CrabGuardFsm
+public partial class CrabPassageCutsceneFsm
 {
     private Interactable _interactable;
     private DialogueController _dialogueController;

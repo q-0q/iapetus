@@ -10,9 +10,9 @@ using UnityEngine.SceneManagement;
 using Wasp;
 using Util = Code.Misc.Util;
 
-public partial class CrabGuardFsm : CutsceneFsm
+public partial class CrabPassageCutsceneFsm : CutsceneFsm
 {
-    public class CrabGuardFsmState : CutsceneFsmState
+    public class CrabPassageCutsceneFsmState : CutsceneFsmState
     {
         public static int IdleDefault;
         public static int SpeakingDefault;
@@ -21,7 +21,7 @@ public partial class CrabGuardFsm : CutsceneFsm
         public static int SpeakingForced;
     }
 
-    public class CrabGuardFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
+    public class CrabPassageCutsceneFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
     {
         public static int OnInteracted;
         public static int OnDialogueCompleted;
@@ -39,7 +39,7 @@ public partial class CrabGuardFsm : CutsceneFsm
     protected override void OnStart()
     {
         base.OnStart();
-        InitState = CrabGuardFsmState.IdleDefault;
+        InitState = CrabPassageCutsceneFsmState.IdleDefault;
         
     }
     
@@ -47,7 +47,7 @@ public partial class CrabGuardFsm : CutsceneFsm
     {
         base.OnUpdate();
 
-        if (Machine.IsInState(CrabGuardFsmState.IdleDefault))
+        if (Machine.IsInState(CrabPassageCutsceneFsmState.IdleDefault))
         {
             var newTurnAmount = _triggerActive ? _turnAmount : 0.5f;
             Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), newTurnAmount, Time.deltaTime * 5f));
