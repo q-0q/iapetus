@@ -10,19 +10,35 @@ public partial class CrabPassageCutsceneFsm
     {
         base.SetupMachine();
 
-        Machine.Configure(CrabPassageCutsceneFsmState.IdleDefault)
-            .Permit(CrabPassageCutsceneFsmTrigger.OnInteracted, CrabPassageCutsceneFsmState.SpeakingDefault);
-        
-        Machine.Configure(CrabPassageCutsceneFsmState.SpeakingDefault)
-            .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CrabPassageCutsceneFsmState.IdleDefault);
-        
-        Machine.Configure(CrabPassageCutsceneFsmState.SpeakingQuestComplete)
-            .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CrabPassageCutsceneFsmState.IdleDefault)
+        Machine.Configure(CutsceneFsmState.Inactive)
+            .PermitIf(CrabPassageCutsceneFsmTrigger.Trigger1, CrabPassageCutsceneFsmState.Warning1, _=> PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
+            .PermitIf(CrabPassageCutsceneFsmTrigger.Trigger2, CrabPassageCutsceneFsmState.Warning2, _=> PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
+            .PermitIf(CrabPassageCutsceneFsmTrigger.Trigger3, CrabPassageCutsceneFsmState.Channel, _=> PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable));
+
+        Machine.Configure(CrabPassageCutsceneFsmState.Warning1)
+            .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             {
-                // _dialogueController.currentDialogueIndex = ???;
+                DialogueCanvas.Singleton.StartDialogue(warning1);
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+                CutsceneTrigger1.gameObject.SetActive(false);
             });
         
+        Machine.Configure(CrabPassageCutsceneFsmState.Warning2)
+            .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CutsceneFsmState.Inactive)
+            .OnEntry(_ =>
+            {
+                DialogueCanvas.Singleton.StartDialogue(warning2);
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+                CutsceneTrigger1.gameObject.SetActive(false);
+                CutsceneTrigger2.gameObject.SetActive(false);
+            });
+
+        Machine.Configure(CrabPassageCutsceneFsmState.Channel)
+            .OnEntry(_ =>
+            {
+                PlayerFsm.Singleton.InvokePlayerDeath();
+            });
 
     }
 
@@ -36,3 +52,4 @@ public partial class CrabPassageCutsceneFsm
         // StateMapConfig.AnimationTrigger.Add(CrabPassageCutsceneFsmState.QuestChannel, "Channel");
     }
 }
+

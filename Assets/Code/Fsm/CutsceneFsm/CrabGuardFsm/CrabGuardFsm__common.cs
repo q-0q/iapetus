@@ -16,11 +16,6 @@ public partial class CrabGuardFsm
     private const string PersistentEvent = "c1-snail-quest";
     private bool _triggerActive;
     private float _turnAmount;
-
-    public Collider CutsceneTrigger1;
-    public Collider CutsceneTrigger2;
-    public Collider CutsceneTrigger3;
-
     
     private void OnDialogueProgressed(int textIndex)
     {

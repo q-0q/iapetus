@@ -33,6 +33,7 @@ public class DialogueController : MonoBehaviour
     {
         TryGetComponent(out Interactable interactable);
         _interactable = interactable;
+        if (_interactable == null) return;
         _interactable.OnInteracted += StartDialogue;
     }
 
@@ -52,6 +53,7 @@ public class DialogueController : MonoBehaviour
 
     private void OnDisable()
     {
+        if (_interactable == null) return;
         _interactable.OnInteracted -= StartDialogue;
     }
 

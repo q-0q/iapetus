@@ -14,32 +14,30 @@ public partial class CrabPassageCutsceneFsm : CutsceneFsm
 {
     public class CrabPassageCutsceneFsmState : CutsceneFsmState
     {
-        public static int IdleDefault;
-        public static int SpeakingDefault;
-        public static int IdleQuestComplete;
-        public static int SpeakingQuestComplete;
-        public static int SpeakingForced;
+        public static int Warning1;
+        public static int Warning2;
+        public static int Channel;
     }
 
     public class CrabPassageCutsceneFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
     {
         public static int OnInteracted;
         public static int OnDialogueCompleted;
+        public static int Trigger1;
+        public static int Trigger2;
+        public static int Trigger3;
+        
     }
 
     protected override void OnAwake()
     {
         base.OnAwake();
-        _interactable = GetComponentInChildren<Interactable>();
-        _dialogueController = GetComponentInChildren<DialogueController>();
-        Animator = GetComponentInChildren<Animator>();
-
     }
 
     protected override void OnStart()
     {
         base.OnStart();
-        InitState = CrabPassageCutsceneFsmState.IdleDefault;
+        InitState = CutsceneFsmState.Inactive;
         
     }
     
@@ -47,11 +45,7 @@ public partial class CrabPassageCutsceneFsm : CutsceneFsm
     {
         base.OnUpdate();
 
-        if (Machine.IsInState(CrabPassageCutsceneFsmState.IdleDefault))
-        {
-            var newTurnAmount = _triggerActive ? _turnAmount : 0.5f;
-            Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), newTurnAmount, Time.deltaTime * 5f));
-        }
+       
         
     }
 
@@ -68,19 +62,20 @@ public partial class CrabPassageCutsceneFsm : CutsceneFsm
 
     private void OnEnable()
     {
-        _interactable.OnInteracted += OnInteracted;
-        _dialogueController.OnCompleted += OnDialogueCompleted;
-        _dialogueController.OnProgressed += OnDialogueProgressed;
-        GetComponentInChildren<TriggerProxy>().OnTriggerProxyStay += OnTriggerProxyStay;
-        GetComponentInChildren<TriggerProxy>().OnTriggerProxyExit += OnTriggerProxyExit;
+        warning1.OnCompleted += OnDialogueCompleted;
+        warning1.OnProgressed += OnDialogueProgressed;
+        warning2.OnCompleted += OnDialogueCompleted;
+        warning2.OnProgressed += OnDialogueProgressed;
+        CutsceneTrigger1.OnTriggerProxyStay += OnTrigger1;
+        CutsceneTrigger2.OnTriggerProxyStay += OnTrigger2;
+        CutsceneTrigger3.OnTriggerProxyStay += OnTrigger3;
     }
 
     private void OnDisable()
     {
-        _interactable.OnInteracted -= OnInteracted;
-        _dialogueController.OnCompleted -= OnDialogueCompleted;
-        _dialogueController.OnProgressed -= OnDialogueProgressed;
-        GetComponentInChildren<TriggerProxy>().OnTriggerProxyStay -= OnTriggerProxyStay;
-        GetComponentInChildren<TriggerProxy>().OnTriggerProxyExit -= OnTriggerProxyExit;
+        warning1.OnCompleted -= OnDialogueCompleted;
+        warning1.OnProgressed -= OnDialogueProgressed;
+        warning2.OnCompleted -= OnDialogueCompleted;
+        warning2.OnProgressed -= OnDialogueProgressed;
     }
 }
