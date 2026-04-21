@@ -47,9 +47,13 @@ public partial class CrabGuardFsm : CutsceneFsm
     {
         base.OnUpdate();
 
+        var pos = transform.InverseTransformPoint(PlayerFsm.Singleton.transform.position);
+        if (pos.z < 0) _turnAmount = Mathf.InverseLerp(-8f, 8f, pos.x);
+        else _turnAmount = pos.x > 0 ? 1f : 0f;
+        
         if (Machine.IsInState(CrabGuardFsmState.IdleDefault))
         {
-            var newTurnAmount = _triggerActive ? _turnAmount : 0.5f;
+            var newTurnAmount = _turnAmount;
             Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), newTurnAmount, Time.deltaTime * 5f));
         }
         

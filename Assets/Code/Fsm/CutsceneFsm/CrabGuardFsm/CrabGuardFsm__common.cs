@@ -25,9 +25,7 @@ public partial class CrabGuardFsm
     private void OnTriggerProxyStay(Collider obj)
     {
         _triggerActive = true;
-        var pos = transform.InverseTransformPoint(obj.transform.position);
-        if (pos.z < 0) _turnAmount = Mathf.InverseLerp(-8f, 8f, pos.x);
-        else _turnAmount = pos.x > 0 ? 1f : 0f;
+
     }
 
     private void OnTriggerProxyExit(Collider obj)

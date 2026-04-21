@@ -11,6 +11,10 @@ public partial class CrabPassageCutsceneFsm
         base.SetupMachine();
 
         Machine.Configure(CutsceneFsmState.Inactive)
+            .OnEntry(_ =>
+            {
+                _warningCamera.Priority = -30;
+            })
             .PermitIf(CrabPassageCutsceneFsmTrigger.Trigger1, CrabPassageCutsceneFsmState.Warning1, _=> PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
             .PermitIf(CrabPassageCutsceneFsmTrigger.Trigger2, CrabPassageCutsceneFsmState.Warning2, _=> PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
             .PermitIf(CrabPassageCutsceneFsmTrigger.Trigger3, CrabPassageCutsceneFsmState.Channel, _=> PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable));
@@ -19,6 +23,7 @@ public partial class CrabPassageCutsceneFsm
             .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             {
+                _warningCamera.Priority = 30;
                 DialogueCanvas.Singleton.StartDialogue(warning1);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
                 CutsceneTrigger1.gameObject.SetActive(false);
@@ -28,6 +33,7 @@ public partial class CrabPassageCutsceneFsm
             .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             {
+                _warningCamera.Priority = 30;
                 DialogueCanvas.Singleton.StartDialogue(warning2);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
                 CutsceneTrigger1.gameObject.SetActive(false);
@@ -50,6 +56,9 @@ public partial class CrabPassageCutsceneFsm
         // StateMapConfig.AnimationTrigger.Add(CrabPassageCutsceneFsmState.SpeakingDefault, "Stand");
         // StateMapConfig.AnimationTrigger.Add(CrabPassageCutsceneFsmState.SpeakingQuestReady, "Stand");
         // StateMapConfig.AnimationTrigger.Add(CrabPassageCutsceneFsmState.QuestChannel, "Channel");
+        
+        StateMapConfig.CutsceneCameraDisabled.Add(CrabPassageCutsceneFsmState.Warning1, false);
+        StateMapConfig.CutsceneCameraDisabled.Add(CrabPassageCutsceneFsmState.Warning2, false);
     }
 }
 

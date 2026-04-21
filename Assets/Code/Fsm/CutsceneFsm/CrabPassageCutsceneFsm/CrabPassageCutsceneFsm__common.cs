@@ -18,6 +18,8 @@ public partial class CrabPassageCutsceneFsm
     public TriggerProxy CutsceneTrigger2;
     public TriggerProxy CutsceneTrigger3;
 
+    private CinemachineVirtualCamera _warningCamera;
+
     
     
     private void OnDialogueProgressed(int textIndex)

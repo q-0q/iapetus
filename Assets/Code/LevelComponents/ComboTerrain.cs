@@ -8,10 +8,11 @@ public class ComboTerrain : MonoBehaviour
     private bool _disabling;
     
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         _disabling = false;
         TryGetComponent(out _collider);
+        _collider.enabled = false;
     }
 
     // Update is called once per frame
