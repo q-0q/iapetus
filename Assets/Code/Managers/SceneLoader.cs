@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.UI;
+using Util = Code.Misc.Util;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -19,9 +21,12 @@ public class SceneLoader : MonoBehaviour
     private const float HoldDuration = 0.2f;
     private const float OutDuration = 0.3f;
 
+    private bool _mutex;
+
     private void Awake()
     {
         Singleton = this;
+        _mutex = false;
     }
 
     private void Start()
@@ -33,6 +38,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadScene(string scene)
     {
+        // FMODUnity.RuntimeManager.GetBus("Bus:/").stopAllEvents(STOP_MODE.IMMEDIATE);
         StartCoroutine(LoadYourAsyncScene(scene));
     }
 
@@ -57,7 +63,7 @@ public class SceneLoader : MonoBehaviour
         while (elapsed < OutDuration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = SmoothLerp01(elapsed / OutDuration);
+            float t = Util.SmoothLerp01(elapsed / OutDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;
         }
@@ -67,6 +73,8 @@ public class SceneLoader : MonoBehaviour
     
     IEnumerator LoadYourAsyncScene(string scene)
     {
+        if (_mutex) yield break;
+        _mutex = true;
         float width = _rawImageRectTransform.rect.width;
         Vector2 startPos = new Vector2(width, 0);
         Vector2 endPos = startPos - new Vector2(width, 0);
@@ -74,7 +82,7 @@ public class SceneLoader : MonoBehaviour
         while (elapsed < InDuration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = SmoothLerp01(elapsed / InDuration);
+            float t = Util.SmoothLerp01(elapsed / InDuration);
             _rawImageRectTransform.anchoredPosition = Vector2.Lerp(startPos, endPos, t);
             yield return null;
         }
@@ -88,12 +96,7 @@ public class SceneLoader : MonoBehaviour
             yield return null;
         }
         _canvasGroup.alpha = 0f;
-    }
-    
-    public static float SmoothLerp01(float t)
-    {
-        t = Mathf.Clamp01(t);
-        return t * t * (3f - 2f * t);
+        _mutex = false;
     }
 
 }

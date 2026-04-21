@@ -8,8 +8,9 @@ public partial class PlayerFsm
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (currentPotentialInteractable != null && interacted) currentPotentialInteractable.TriggerInteraction();
         
-        currentPotentialInteractable = _interactables
+        currentPotentialInteractable = InteractableRegistry.Interactables
             .Where(i => i != null)
+            .Where(i => i.isEnabled)
             .Where(i => Vector3.Distance(transform.position, i.transform.position) <= i.triggerRange)
             .OrderBy(i => Vector3.Distance(transform.position, i.transform.position))
             .FirstOrDefault();
@@ -21,7 +22,9 @@ public partial class PlayerFsm
     private void InteractableConfigure()
     {
         Machine.Configure(PlayerFsmState.Interactable)
+            .Permit(PlayerFsmTrigger.SurgePedestalInteracted, PlayerFsmState.SurgeStartup)
             .Permit(PlayerFsmTrigger.InteractWithSwitch, PlayerFsmState.WalkToSwitchPosition)
-            .Permit(PlayerFsmTrigger.StartDialogue, PlayerFsmState.WalkToDialoguePosition);
+            .Permit(PlayerFsmTrigger.StartDialogue, PlayerFsmState.WalkToDialoguePosition)
+            .Permit(PlayerFsmTrigger.Inventory, PlayerFsmState.InventorySlowdown);
     }
 }

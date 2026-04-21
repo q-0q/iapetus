@@ -10,6 +10,7 @@ using UnityEngine.Serialization;
 public class Dialogue
 {
     public List<string> texts = new List<string>();
+    public bool advanceDialogueIndex = false;
 }
 
 public class DialogueController : MonoBehaviour
@@ -21,28 +22,45 @@ public class DialogueController : MonoBehaviour
     public string DialogueName = "Unnamed dialogue";
     private Interactable _interactable;
     public event Action OnCompleted;
+    public event Action<int> OnProgressed;
+    public Transform LookAtOverride;
+
+    public float CameraY = 0.7f;
+
+    public float canvasDelay = 0f;
+    public float cameraFollowOffsetLerp = 0f;
+    
     private void OnEnable()
     {
         TryGetComponent(out Interactable interactable);
         _interactable = interactable;
+        if (_interactable == null) return;
         _interactable.OnInteracted += StartDialogue;
     }
 
     private void StartDialogue()
     {
-        DialogueCanvas.Singleton.StartDialogue(this);
         InteractableParam p = new InteractableParam() { Interactable = _interactable, WalkToPositionTarget =
             transform.position};
         PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.StartDialogue, p);
+
+        StartCoroutine(Coroutine());
+        IEnumerator Coroutine()
+        {
+            yield return new WaitForSeconds(canvasDelay);
+            DialogueCanvas.Singleton.StartDialogue(this);
+        }
     }
 
     private void OnDisable()
     {
+        if (_interactable == null) return;
         _interactable.OnInteracted -= StartDialogue;
     }
 
     public void Completed()
     {
+        if (dialogues[currentDialogueIndex].advanceDialogueIndex) currentDialogueIndex++;
         OnCompleted?.Invoke();
     }
 
@@ -60,5 +78,10 @@ public class DialogueController : MonoBehaviour
         {
             DialogueCanvas.Singleton.EndDialogue();
         }
+    }
+
+    public void ProgressionSignal(int textIndex)
+    {
+        OnProgressed?.Invoke(textIndex);
     }
 }

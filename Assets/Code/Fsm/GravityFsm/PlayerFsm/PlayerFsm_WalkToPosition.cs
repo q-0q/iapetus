@@ -13,7 +13,13 @@ public partial class PlayerFsm
         HandleTurningCore(1f, 0f, toTarget);
         HandleCollisionMove();
         SetAnimatorMomentum();
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
+        SetAnimatorSpeedMod();
+    }
+
+    private void SetAnimatorSpeedMod()
+    {
+        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()) *
+                       (_isSurging ? 1.5f : 1f);
         Animator.SetFloat("SpeedMod", speedMod);
     }
 
@@ -21,7 +27,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.WalkToPosition)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
             .OnEntry(param =>
             {
                 if (param is not InteractableParam interactionParam) return;

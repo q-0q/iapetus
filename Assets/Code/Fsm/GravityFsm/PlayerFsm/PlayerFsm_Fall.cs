@@ -7,8 +7,24 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(PlayerFsmState.AirControl)
             .SubstateOf(PlayerFsmState.WallInteractable)
+            .SubstateOf(PlayerFsmState.PitonInteractable)
+            .SubstateOf(PlayerFsmState.RopeSwingInteractable)
+            .Permit(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
-            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash);
+            .PermitIf(PlayerFsmTrigger.IsAboveWater, PlayerFsmState.DiveFall, _ =>
+            {
+                if (Machine.IsInState(PlayerFsmState.FallAfterDash)) return false;
+                return true;
+            })
+            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, @params => CanDash(@params) && TimeInCurrentState() > 0.1f); // microfall dash prevention hack.
+
+        Machine.Configure(PlayerFsmState.LongFall)
+            .OnEntry(_ =>
+            {
+                
+            })
+            .SubstateOf(PlayerFsmState.Fall);
+
     }
 }

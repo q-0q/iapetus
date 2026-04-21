@@ -37,8 +37,7 @@ public partial class PlayerFsm
         springCollider.transform.parent.position += collisionAlignmentMove;
         
 
-        var speedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight());
-        Animator.SetFloat("SpeedMod", speedMod);
+        SetAnimatorSpeedMod();
     }
 
     private void TightropeMoveConfigure()

@@ -20,6 +20,7 @@ public partial class SwitchFsm : Fsm
     {
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
+        TryGetComponent(out Animator);
     }
 
     protected override void OnStart()

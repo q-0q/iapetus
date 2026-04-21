@@ -21,6 +21,6 @@ public partial class TestCutsceneFsm
 
     private void OnInteracted()
     {
-        Machine.Fire(CutsceneFsmTrigger.StartCutscene);
+        Machine.Fire(TestCutsceneFsmTrigger.OnInteracted);
     }
 }

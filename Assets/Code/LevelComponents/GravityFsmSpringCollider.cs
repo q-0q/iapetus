@@ -48,7 +48,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
         Vector3 springForce = springConstant * displacement;
 
         // Calculate the damping force
-        Vector3 dampingForce = damping * _rigidBody.velocity;
+        Vector3 dampingForce = damping * _rigidBody.linearVelocity;
 
         // Calculate the total force
         Vector3 totalForce = springForce - dampingForce;
@@ -105,7 +105,7 @@ public class GravityFsmSpringCollider : MonoBehaviour
         
         var forward = PlayerFsm.Singleton.transform.forward * (momentum * 0.1f);
         var down = PlayerFsm.Singleton.transform.up * (yVelocity * 0.5f);;
-        _rigidBody.velocity = Vector3.zero;
+        _rigidBody.linearVelocity = Vector3.zero;
         _rigidBody.AddForce(down, ForceMode.Impulse);
     }
 

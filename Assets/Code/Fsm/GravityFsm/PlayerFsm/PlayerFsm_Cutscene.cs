@@ -5,5 +5,8 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.CutsceneWary)
             .SubstateOf(GravityFsmState.RespectParentTransform);
+        
+        Machine.Configure(PlayerFsmState.CutsceneIdle)
+            .SubstateOf(GravityFsmState.RespectParentTransform);
     }
 }

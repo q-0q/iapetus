@@ -48,6 +48,7 @@ public class DialogueCanvas : MonoBehaviour
     public void AdvanceDialogue()
     {
         _currentTextIndex++;
+        if (currentDialogueController != null) currentDialogueController.ProgressionSignal(_currentTextIndex);
         if (currentDialogueController != null && _currentTextIndex + currentDialogueController.textStartOffset >= currentDialogueController.dialogues[currentDialogueController.currentDialogueIndex].texts.Count)
         {
             EndDialogue();

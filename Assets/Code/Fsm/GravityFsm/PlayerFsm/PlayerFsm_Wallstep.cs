@@ -7,7 +7,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Wallstep)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params => !IsSlideTrigger(@params))
             .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.SlowVaultHang,
                 _ => YVelocity < MediumVaultHangMinimumYVelocity)
@@ -16,14 +16,26 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang,
                 _ => YVelocity > MediumVaultHangMinimumYVelocity, 1)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(PlayerFsmState.PitonInteractable)
+            .SubstateOf(PlayerFsmState.RopeSwingInteractable)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Jump");
-                YVelocity = Mathf.Lerp(WallstepMinimumYVelocityGain, WallstepMaximumYVelocityGain,
-                    ComputeMomentumWeight());
-                Animator.SetFloat("VerticalMomentum", ComputeMomentumWeight());
+                if (IsInGust)
+                {
+                    YVelocity = WallstepMaximumYVelocityGain;
+                    Animator.SetFloat("VerticalMomentum", 1f);
+                }
+                else
+                {
+                    YVelocity = WallstepMaximumYVelocityGain;
+                    Animator.SetFloat("VerticalMomentum", 1f);
+                }
                 _momentum = 0;
+                
+                OnPlayerFootstep();
+                FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
             });
     }
 }

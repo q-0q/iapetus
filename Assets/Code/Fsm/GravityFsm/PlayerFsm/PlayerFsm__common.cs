@@ -1,12 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
+using FMOD.Studio;
+using FMODUnity;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using Wasp;
+using Random = UnityEngine.Random;
+using STOP_MODE = FMOD.Studio.STOP_MODE;
 
 public partial class PlayerFsm
 {
@@ -24,6 +30,8 @@ public partial class PlayerFsm
     private float _stateEntryMomentum = 0f;
     private Vector3 _currentLedgePosition;
     private Vector3 _currentFlankWallNormal;
+    private Vector3 _currentSlideNormal;
+    private Transform _currentSlideTransform;
     private Transform _currentWallrunTransform;
     private FlankType _currentFlankType;
     private FlankType _previousWallrunSide;
@@ -31,19 +39,51 @@ public partial class PlayerFsm
     private Quaternion _checkpointQuaternion;
     private Vector3 _walkToPositionTarget;
     private List<ParticleSystem> _kiIndicatorParticles;
+    private List<Renderer> _renderers;
+    private SkinnedMeshRenderer _skinnedMeshRenderer;
     private Material _material;
     private float _timeSinceDashFinished = 0f;
-    private float _slopeTimer = 0f;
+    private float _slideTimer = 0f;
+    private float _slideNormalExitTimer = 0f;
+    private ParticleSystem _teleportParticles;
+    private ParticleSystem _deathParticles;
+    private bool isSprinting;
+    private bool _isParentSlippery = false;
+    private Vector3 _previousPositionDeltaNoTimescale;
+    private float _currentSlipWeight;
+    private const float MaxSlideTimer = 0.15f;
+    private const float MinSlideStateTimer = 0.5f;
+    private ParticleSystem _splashParticles;
+    private PlayerDashParticles _playerDashParticles;
+    private ParticleSystem _speedLinesParticles;
+
+    public const int MaxComboLength = 5;
+    private int _currentComboLength = 0;
+    private float _comboTimer = 0;
+    private const float ComboTimeoutDuration = 3.0f;
+    private const float SurgeMoveSpeedModifier = 1.75f;
 
     private bool _movementAnimationMirror;
     private bool _wallsquattedSinceLeavingGround;
     private bool _dashSinceLeavingGround;
     public static PlayerFsm Singleton;
-    private HashSet<Interactable> _interactables;
+    
     public Interactable currentPotentialInteractable;
     public Interactable currentInteractable;
     private TightropeController _currentTightropeController;
     private Vector3 _defaultScenePosition;
+    private Vector3 _teleportDestination;
+    private Vector3 _teleportOrigin;
+    private Vector3 _teleportDirection;
+    private CinemachineVirtualCamera _teleportCamera;
+    private Transform _teleportCameraLookAt;
+    private Transform _currentPitonTransform;
+    private static readonly Vector3 PitonTargetOffset = Vector3.up * -2f;
+    public RopeSwing currentRopeSwing;
+    private float _timeSinceRopeSwing;
+    private CinemachineVirtualCamera _surgeStartupCamera;
+    private SurgePedestal _currentSurgePedestal;
+    private PlayerSurgeHalo _playerSurgeHalo;
 
     public static event Action<float> OnPlayerMomentumUpdated;
     public static event Action<Vector3, bool> OnPlayerPositionUpdated;
@@ -51,6 +91,13 @@ public partial class PlayerFsm
     public static event Action OnPlayerGrappleStateEntered;
     public static event Action OnPlayerRacePressed;
     public static event Action<Transform, float, float> OnPlayerParentTransformChanged;
+    public static event Action<int> OnPlayerComboIncremented;
+    public static event Action OnPlayerComboReset;
+    public static event Action<Vector3, float, float> OnPlayerRippleGenerated;
+    public static event Action<Vector3, float, float> OnPlayerWakeGenerated;
+
+    private const float SwimSurfaceRippleTimer = 0.08f;
+    private bool _swimSurfaceRippleQueued = false;
     
     public const float InputMagnitudeThreshhold = 0.1f;
     private const float InteractionDistance = 2.5f;
@@ -65,44 +112,48 @@ public partial class PlayerFsm
     private const float FaceLedgeHeight = 0.2f;
     private const float FaceHighLedgeHeight = 2.15f;
     private const float FaceWallHeight = 2.4f;
-    private const float FaceWallMaximumAngle = 60f;
+    private const float FaceWallMaximumAngle = 50f;
     private const float FaceWallStrictMaximumAngle = 20f;
-    private const float FaceRaycastSkew = 0.1f;
+    private const float FaceRaycastSkew = 0;
     private const float MaximumFlankWallDistance = 7.5f;
     private const float FlankWallHeight = 2f;
     private const float FlankWallOpenYOffset = -1.5f;
-    private const float FlankMaximumAngle = 40f;
+    private const float FlankMaximumAngle = 50f;
     private const float ForceWallRotationRaycastDistance = 3f;
     private const float DashForwardRaycastDistanceOffset = 0.5f;
 
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5f;
     private const float MaximumMomentumSpeedMod = 3.5f;
-    private const float RotationSpeed = 3f;
+    private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
-    private const float MomentumGainRate = 13f;
-    private const float MomentumLossRate = 25f;
-    private const float MomentumTurnLoss = 3f;
+    private const float MomentumGainRate = 20f;
+    private const float MomentumLossRate = 38f;
+    private const float MomentumTurnLoss = 2.5f;
     private const float NoMomentumThreshold = 0.25f;
     private const float LowMomentumThreshhold = 6.75f;
-    private const float LowMomentumRotationMod = 4.25f;
+    private const float LowMomentumRotationMod = 5.25f;
     private const float LowMomentumMomentumGainMod = 1.15f;
-    private const float LowMomentumMomentumLossMod = 1.05f;
-    private const float GroundMoveMinimumAnimatorSpeedMod = 0.25f;
-    private const float GroundMoveMaximumAnimatorSpeedMod = 3.4f;
+    private const float LowMomentumMomentumLossMod = 1.25f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 0.6f;
+    private const float GroundMoveMaximumAnimatorSpeedMod = 3f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.85f;
+    private const float SprintMomentumCutoffMultiplier = 0.65f;
+    private const float SprintMomentumGainMultiplier = 2.65f;
+    private const float SprintTurnLossMultiplier = 1.5f;
+    private const float IdleMomentumThreshold = 3f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
     private const float AirControlTurningMultiplier = 0.8f;
-    private const float AirControlTurningMomentumDecayModifier = 0.15f;
-    private const float AirControlMomentumDecayModifier = 0.35f;
+    private const float AirControlTurningMomentumDecayModifier = 0.25f;
+    private const float AirControlMomentumDecayModifier = 0.475f;
     
     private const float UpdateLedgePositionEpsilon = 3f;
     private const float VaultMinimumYVelocity = -2f;
     private const float VaultMinimumMomentum = 6f;
-    private const float VaultMinimumMomentumOnUpdate = 6f;
+    private const float VaultMinimumMomentumOnUpdate = 8f;
     private const float VaultHangLedgeYOffset = -2.5f;
     private const float VaultHangLedgeLerpStrength = 60f;
     private const float VaultTurningMultiplier = 0.75f;
@@ -115,7 +166,7 @@ public partial class PlayerFsm
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
     public const float WallsquatMinimumDuration = 0.2f;
-    private const float WallstepMinimumYVelocityGain = 12f;
+    private const float WallstepMinimumYVelocityGain = 18f;
     private const float WallstepMaximumYVelocityGain = 23.5f;
     private const float WallstepMinimumDuration = 0.35f;
     private const float ForceWallRotationSpeed = 3f;
@@ -128,7 +179,7 @@ public partial class PlayerFsm
     private const float FlankWallVacuumStrength = 20f;
     private const float WallrunJumpAngle = 75f;
     
-    private const float HardLandAirDiff = -9;
+    private const float HardLandAirDiff = -11;
     private const float HardLandExitMomentum = 4f;
     private const float HardLandForwardSpeed = 10f;
     private const float HardLandForwardDuration = 0.105f;
@@ -144,11 +195,11 @@ public partial class PlayerFsm
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
-    private const float DashForwardSpeed = 18f;
+    private const float DashForwardSpeed = 24f;
     private const float DashRaycastHeightOffset = 0f;
     private const float SkipWindowDuration = 0.2f;
-    private const float SkipForwardBonusSpeed = 2.25f;
-    private const float SkipYVelocity = 25f;
+    private const float SkipForwardBonusSpeed = 3.5f;
+    private const float SkipYVelocity = 28f;
     
     
     
@@ -165,11 +216,58 @@ public partial class PlayerFsm
     private const float WalkToPositionTurnPhaseAngle = 30f;
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
-    private const float ArriveAtWalkPositionTargetDistance = 1.5f;
-    private const float ArriveAtWalkPositionTargetRangedDistance = 4f;
+    private const float ArriveAtWalkPositionTargetDistance = 1.75f;
+    private const float ArriveAtWalkPositionTargetRangedDistance = 100f;
+
+    private const float TrialTeleportStartupDuration = 0.5f;
+    private const float TrialTeleportDuration = 1.5f;
+
+    private const float PitonMaximumWallInteractYVelocity = 5f;
+
+
 
     private const float KiMomentumThreshhold = 11.5f;
     
+    public EventReference jumpFmodEvent;
+    public EventReference landFmodEvent;
+    public EventReference impactFmodEvent;
+    public EventReference skipFmodEvent;
+    public EventReference dashFmodEvent;
+    public EventReference climbFmodEvent;
+    public EventReference footstepFmodEvent;
+    public EventReference comboIncrementFmodEvent;
+    public EventReference comboTriggerFmodEvent;
+    public EventReference comboActiveFmodEvent;
+    public EventReference deathFmodEvent;
+    public EventReference slideFmodEvent;
+    public EventReference slipAmbientEvent;
+    public EventReference hardlandCinematicEventReference;
+    public EventReference hardlandEventReference;
+    public EventReference dashWhooshEventReference;
+    public EventReference skipWhooshEventReference;
+    public EventReference surgeStartupFmodEvent;
+    public EventReference surgeEndFmodEvent;
+    public EventReference windRushFmodEvent;
+    public EventReference freezeFmodEvent;
+    public EventReference swimFootstepFmodEvent;
+    public EventReference splashFmodEvent;
+    
+    private EventInstance activeFmodInstance;
+    private EventInstance slideFmodInstance;
+    private EventInstance surgeStartupFmodInstance;
+    private EventInstance windRushFmodInstance;
+    private EventInstance freezeFmodInstance;
+    
+    
+    
+    private EventInstance slipAmbientFmodInstance;
+    private float _timeSinceLastFootstep;
+    private bool _isSurging;
+    private float _surgeStartupInitialFov;
+    private static float _desiredWindRushFmodAmount = 0f;
+    private float _timeSinceSurgeStarted = 0f;
+    private float _freezeTimer;
+    private const float SwimFreezeDuration = 3f;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -202,14 +300,17 @@ public partial class PlayerFsm
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
-    private bool UpdateLedgePosition(float ledgeHeight)
+    private bool UpdateLedgePosition(float ledgeHeight, float forwardOffset = 0.25f)
     {
         var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
-            (ComputeDynamicForwardRaycastDistance() + 1f);
+            (ComputeDynamicForwardRaycastDistance() + forwardOffset);
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
                 (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
+
+        var slope = Vector3.Angle(hit.normal, Vector3.up);
+        if (slope > 60f) return false;
         _currentLedgePosition = hit.point;
         return true;
     }
@@ -227,7 +328,7 @@ public partial class PlayerFsm
     }
 
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false,
-        float momentumDecayMultiplier = 1f, bool ignoreTurnAnimationLayer = false)
+        float momentumDecayMultiplier = 1f, bool ignoreTurnAnimationLayer = false, float animationTurnModifier = 1f)
     {
         
         var v3 = GetInputMovementVector3();
@@ -239,10 +340,10 @@ public partial class PlayerFsm
             inputVector3 = transform.forward;
         }
         
-        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3, ignoreTurnAnimationLayer);
+        HandleTurningCore(multiplier, momentumDecayMultiplier, inputVector3, ignoreTurnAnimationLayer, animationTurnModifier);
     }
 
-    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction, bool ignoreTurnAnimationLayer = false)
+    private void HandleTurningCore(float multiplier, float momentumDecayMultiplier, Vector3 direction, bool ignoreTurnAnimationLayer = false, float animationTurnModifier = 1f)
     {
         float momentumWeight = ComputeMomentumWeight();
         var angle = Vector3.SignedAngle(direction.normalized, transform.forward.normalized, Vector3.up);
@@ -250,7 +351,10 @@ public partial class PlayerFsm
         if (!ignoreTurnAnimationLayer)
         {
             var animationDesiredTurnAmount = Mathf.InverseLerp(40f, -40f, angle);
-            animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount);
+            // animationDesiredTurnAmount *= Mathf.Lerp(1f, 2f, Mathf.InverseLerp(10f, 5f, _momentum));
+            
+            animationDesiredTurnAmount = Mathf.Lerp(-1, 1, animationDesiredTurnAmount) * animationTurnModifier;
+            
             var turnAmount = Animator.GetFloat("TurnAmount");
             var turnLerpSpeed = Mathf.Abs(animationDesiredTurnAmount) > Mathf.Abs(turnAmount) ? 10f : 4.5f;
             Animator.SetFloat("TurnAmount",
@@ -260,8 +364,24 @@ public partial class PlayerFsm
             
         var momentumDesiredTurnAmount = Mathf.InverseLerp(170f, -170f, angle);
         momentumDesiredTurnAmount = Mathf.Lerp(-1, 1, momentumDesiredTurnAmount);
+        
+        if ((Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim)))
+        {
+            if (_isSurging)
+            {
+                multiplier *= 0.75f;
+                momentumDesiredTurnAmount *= 0.25f;
+            }
+            else if (Mathf.Abs(momentumDesiredTurnAmount) > 0.5f)
+            {
+                EndSurge();
+                isSprinting = false;
+            }
+        }
+
+        var sprintLoss = isSprinting ? SprintTurnLossMultiplier : 1f;
         _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime *
-                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier));
+                                              Mathf.Abs(momentumDesiredTurnAmount) * momentumWeight * MomentumTurnLoss * momentumDecayMultiplier * sprintLoss));
         
         var quaternion = Quaternion.LookRotation(direction.normalized, Vector3.up);
         
@@ -271,23 +391,40 @@ public partial class PlayerFsm
         transform.rotation = Quaternion.Slerp(transform.rotation, quaternion, RotationSpeed * Time.deltaTime * lowMomentumRotationMod * multiplier);
     }
 
-    private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f)
-    {
-        var v2 = GetInputMovementVector2();
-        if (v2.magnitude > InputMagnitudeThreshhold)
+    private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f, bool removeV2 = false)
+    { 
+        var sprinting = isSprinting;
+        var isSprintingOver = !isSprinting && _momentum >= MaxMomentum * SprintMomentumCutoffMultiplier;
+        var v2 = removeV2 ? Vector2.zero : GetInputMovementVector2();
+        if (v2.magnitude > InputMagnitudeThreshhold && !isSprintingOver)
         {
+            var grounded = Machine.IsInState(GravityFsmState.Grounded);
+            
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
             
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
-            _momentum = Mathf.Min(MaxMomentum * slopeMaxMomentumMod, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * Time.deltaTime);
+            var localMaximum = MaxMomentum * slopeMaxMomentumMod * (!sprinting && grounded ? SprintMomentumCutoffMultiplier : 1f);
+            var sprintMomentumGainMod = (sprinting && grounded ? SprintMomentumGainMultiplier : 1f);
+            
+            _momentum = Mathf.Min(localMaximum, _momentum + MomentumGainRate  * lowMomentumMomentumGainMod * increaseMultiplier * sprintMomentumGainMod * Time.deltaTime);
+            
+            Machine.Fire(PlayerFsm.PlayerFsmTrigger.Accelerating);
         }
         else
         {
+            if (Machine.IsInState(PlayerFsmState.GroundMove) || Machine.IsInState(PlayerFsmState.Swim))
+            {
+                EndSurge();
+                isSprinting = false;
+            };
             var lowMomentumMomentumLossMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumLossMod : 1f;
             _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * lowMomentumMomentumLossMod * decreaseMultiplier * Time.deltaTime));
+            
+            if (_momentum < IdleMomentumThreshold) Machine.Fire(PlayerFsm.PlayerFsmTrigger.IdleMomentumThresholdPassedDecelerating);
         }
+        
     }
     
     
@@ -324,8 +461,20 @@ public partial class PlayerFsm
 
     private Vector3 ComputeDesiredMove()
     {
+        return ComputeDesiredMoveWithoutTimescale() * Time.deltaTime;
+    }
+    
+    private Vector3 ComputeDesiredMoveWithoutTimescale()
+    {
         var value = Mathf.Lerp(0f, MaximumMomentumSpeedMod, ComputeMomentumWeight());
-        return transform.forward.normalized * (MoveSpeed * value * Time.deltaTime);
+        var comboMultiplier = GetCurrentSurgeSpeedMultiplier();
+        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier);
+    }
+
+
+    private float GetCurrentSurgeSpeedMultiplier()
+    {
+        return _isSurging ? SurgeMoveSpeedModifier : 1f;
     }
 
     private void SetAnimatorMomentum()
@@ -336,29 +485,114 @@ public partial class PlayerFsm
 
     private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
     {
-        var desiredMove = ComputeDesiredMove();
+        if (GameMenu.Singleton.IsMenuOpen()) return;
+        var desiredMove = ApplyTractionNoTimescale(ComputeDesiredMoveWithoutTimescale()) * Time.deltaTime;
+        
         var collisionMove = ComputeCollisionMove(desiredMove);
         transform.position += collisionMove * modifier;
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;
         if (Machine.IsInState(PlayerFsmState.Wallrun)) return;
+        if (Machine.IsInState(PlayerFsmState.SlideLateral)) return;
         if (Machine.IsInState(GravityFsmState.Aerial) && YVelocity > WallsquatMinimumYVelocity - 1f) return;
         
         var collisionRatio = (desiredMove.magnitude + 1f) / (collisionMove.magnitude + 1f);
         if (updateMomentum) _momentum = Mathf.Max(0, _momentum - (MomentumLossRate * Time.deltaTime * (collisionRatio - 1f) * CollisionMomentumLossRate));
+        // if (collisionRatio > 1f && isSprinting && _momentum < 8f)
+        // {
+        //     isSprinting = false;
+        //     ResetCombo();
+        // }
     }
+
+    private Vector3 ApplyTractionNoTimescale(Vector3 desiredMoveNoTimescale)
+    {
+
+        // if (Input.GetKey(KeyCode.P)) desiredMove = Vector3.zero;
+        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery))
+        {
+            _currentSlipWeight = 0f;
+            HandleSlipAudio();
+            return desiredMoveNoTimescale;
+        };
+        
+        
+        var lerpStrength = 1.5f;
+        var afterTraction = Vector3.Lerp(new Vector3(_previousPositionDeltaNoTimescale.x, desiredMoveNoTimescale.y, _previousPositionDeltaNoTimescale.z), desiredMoveNoTimescale, lerpStrength * Time.deltaTime);
+        if (afterTraction.magnitude < 0.75f) afterTraction = desiredMoveNoTimescale;
+        UpdateSlipWeight(desiredMoveNoTimescale, afterTraction);
+        
+        HandleSlipAudio();
+        
+        return afterTraction;
+    }
+
+    private void HandleSlipAudio()
+    {
+        
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerSlipWeight", _currentSlipWeight);
+    }
+
+    private void UpdateSlipWeight(Vector3 desiredMove, Vector3 afterTraction)
+    {
+        var footstepMod = 1f;
+        
+        //hack
+        if (Machine.IsInState(PlayerFsm.PlayerFsmState.Jumpsquat))
+        {
+            _currentSlipWeight = 0;
+            return;
+        }
+        
+        if (Machine.IsInState(PlayerFsm.PlayerFsmState.GroundMove))
+        {
+            var tailLength = Mathf.Lerp(0.5f, 0.15f, Mathf.InverseLerp(0.3f, 0.5f, ComputeMomentumWeight()));
+            footstepMod = Mathf.Lerp(1f, 0f, Mathf.InverseLerp(0.05f, 0.05f + tailLength, _timeSinceLastFootstep));
+        }
+        _currentSlipWeight = GetSlipWeight(desiredMove, afterTraction) * footstepMod;
+    }
+    
+    private float GetSlipWeight(Vector3 desiredMove, Vector3 afterTraction)
+    {
+        Vector3 desiredFlat = new Vector3(desiredMove.x, 0f, desiredMove.z);
+        Vector3 tractionFlat = new Vector3(afterTraction.x, 0f, afterTraction.z);
+
+        float desiredMag = desiredFlat.magnitude;
+        float tractionMag = tractionFlat.magnitude;
+
+        if (desiredMag < 0.75f && tractionMag < 0.75f)
+            return Mathf.Lerp(0f, 1f, Mathf.InverseLerp(0.4f, 0.75f, tractionMag));
+
+        float speedDifference = Mathf.Abs(desiredMag * (desiredMag < tractionMag ? 2f : 1f) - tractionMag) / desiredMag;
+        float speedFactor = Mathf.Clamp01(speedDifference);
+
+        float directionFactor = 0f;
+
+        if (tractionMag > 0.001f)
+        {
+            float dot = Vector3.Dot(desiredFlat.normalized, tractionFlat.normalized);
+            directionFactor = Mathf.Clamp01(1f - dot);
+        }
+
+
+        float slipWeight = Mathf.Pow(speedFactor * directionFactor, 0.5f);
+        return slipWeight;
+    }
+    
 
     public void InvokeBoost(bool jump, float momentumWeight)
     {
         if (jump) Machine.Fire(PlayerFsmTrigger.Jump);
         _momentum = MaxMomentum * momentumWeight;
     }
-    
-    public void InvokeCheckpoint(Vector3 position, Quaternion rotation)
+
+    public Vector3 GetPreviousPositionDelta()
     {
-        SaveSystem.WriteSaveData(new float[] { transform.position.x, transform.position.y, transform.position.z }, 0);
+        return _previousPositionDeltaNoTimescale;
     }
+    
+
     
     public static Vector3 MirrorInputForward(Vector3 input, Vector3 forward, float clampRatio = 0f)
     {
@@ -425,7 +659,7 @@ public partial class PlayerFsm
     
     private bool CanDash(TriggerParams? triggerParams)
     {
-        return YVelocity < 6f && !_dashSinceLeavingGround;
+        return (YVelocity < 6f || IsInGust) && !_dashSinceLeavingGround;
     }
 
     private void OnContactHitboxCollide()
@@ -439,17 +673,18 @@ public partial class PlayerFsm
     private void HandleKiEffects()
     {
 
-        var on = Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Dashsquat);
+        var on = _currentComboLength >= MaxComboLength;
         
         foreach (var p in _kiIndicatorParticles)
         {
-            if (on && !p.isEmitting) p.Play();
-            else if (!on) p.Stop();
+            p.Stop();
+            // if (on && !p.isEmitting) p.Play();
+            // else if (!on) p.Stop();
         }
 
         var desiredGlowWeight = on ? 3.5f : 0f;
         var currentGlowWeight =  _material.GetFloat("_GlowWeight");
-        var f = on ? 5f : 2f;
+        var f = on ? 5f : 10f;
         _material.SetFloat("_GlowWeight", Mathf.Lerp(currentGlowWeight, desiredGlowWeight, Time.deltaTime * f));
     }
 
@@ -457,29 +692,14 @@ public partial class PlayerFsm
     {
         return Machine.IsInState(PlayerFsmState.Dash) || Machine.IsInState(PlayerFsmState.Skip) ? DashRaycastHeightOffset : 0;
     }
-
-    private void HandleSlopeTimer()
-    {
-        GetGroundedRaycastHit(out var groundedRaycastHit);
-        if (groundedRaycastHit.collider == null)
-        {
-            _slopeTimer = 0f;
-        }
-        else if (!groundedRaycastHit.collider.Raycast(new Ray(groundedRaycastHit.point + Vector3.up, -Vector3.up),
-                out var hit, 2f))
-        {
-            _slopeTimer = 0f;
-        }
-        else if (Vector3.Angle(hit.normal, Vector3.up) < 50f)
-        {
-            _slopeTimer = 0f;
-        }
-
-        _slopeTimer += Time.deltaTime;
-    }
+    
 
     protected override void OnParentTransformChanged(Transform t)
     {
+
+        t.TryGetComponent(out PlayerSlipperyIndicator tractionIndicator);
+        _isParentSlippery = tractionIndicator != null;
+
         OnPlayerParentTransformChanged?.Invoke(t, _momentum, YVelocity);
         base.OnParentTransformChanged(t);
     }
@@ -492,9 +712,340 @@ public partial class PlayerFsm
 
     private void ApplyMetaSaveData(MetaSaveSystem.MetaSaveData metaSaveData)
     {
-        CameraLookSensitivityProcessor.SetSensitivityModifier(metaSaveData.cameraSensitivityModifier);
+        // CameraLookSensitivityProcessor.SetSensitivityModifier(metaSaveData.cameraSensitivityModifier);
         transform.Find("AmbientParticles").gameObject.SetActive(metaSaveData.enableAmbientParticles);
     }
-    
 
+
+    private void OnPlayerFootstep()
+    {
+        StartCoroutine(QueueFootstep());
+        _timeSinceLastFootstep = 0f;
+
+    }
+
+    private void OnPlayerFootstepDelay(float delay)
+    {
+        StartCoroutine(QueueFootstep(delay));
+    }
+    
+    private IEnumerator QueueFootstep(float minimumDelay = 0)
+    {
+        
+        yield return new WaitForFixedUpdate(); // basically just delay a frame to handle race conditions between the updating of the parent transform and the entry of some substate
+        var maximumWaitTime = 0.5f;
+        var t = 0f;
+        while (t < maximumWaitTime)
+        {
+            if (parentTransform != null && t > minimumDelay)
+            {
+                var fmodMaterialLabel = "Stone";
+                var renderer = parentTransform.GetComponentInChildren<MeshRenderer>();
+                if (renderer == null) yield break;
+                var parentMaterialName = renderer.material.name;
+                if (parentMaterialName.Contains("Snow") || parentMaterialName.Contains("Grass")) fmodMaterialLabel = "Snow";
+                if (parentMaterialName.Contains("Metal")) fmodMaterialLabel = "Metal";
+                if (parentMaterialName.Contains("Combo")) fmodMaterialLabel = "Glass";
+                if (parentMaterialName.Contains("Ice")) fmodMaterialLabel = "Glass";
+                FMODUnity.RuntimeManager.StudioSystem.setParameterByNameWithLabel("PlayerFootstepMaterial", fmodMaterialLabel);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(footstepFmodEvent, gameObject);
+                yield break;
+            }
+            t += Time.deltaTime;
+            yield return null;
+        }
+    }
+    
+    private void OnPlayerSwimFootstep()
+    {
+        print("test");
+        FMODUnity.RuntimeManager.PlayOneShotAttached(swimFootstepFmodEvent, gameObject);
+    }
+
+    public float GetMomentum()
+    {
+        return _momentum;
+    }
+    
+    public void SetMomentum(float momentum)
+    {
+        _momentum = momentum;
+    }
+
+    public void SetTeleportDestination(Vector3 destination, Vector3 direction)
+    {
+        _teleportDestination = destination;
+        _teleportDirection = direction;
+    }
+
+    public Vector3 GetTeleportDestination()
+    {
+        return _teleportDestination;
+    }
+
+    private void UpdateShaderGlobals()
+    {
+        Shader.SetGlobalVector("_PlayerWorldPosition", transform.position);
+
+        var shaderGrounded = Shader.GetGlobalFloat("_PlayerGrounded");
+        shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(GravityFsmState.Grounded) || Machine.IsInState(PlayerFsmState.Dying1) ? 2f : -0.5f);
+        shaderGrounded = Mathf.Clamp(shaderGrounded, 0f, 1f);
+        Shader.SetGlobalFloat("_PlayerGrounded", shaderGrounded);
+        
+        var shaderCombo = Shader.GetGlobalFloat("_PlayerCombo");
+        shaderCombo += Time.deltaTime * 5f * (_isSurging ? 0.5f : -0.5f);
+        shaderCombo = Mathf.Clamp(shaderCombo, 0f, 1f);
+        Shader.SetGlobalFloat("_PlayerCombo", shaderCombo);
+    }
+
+    private bool IsComboSystemEnabled()
+    {
+        return false; //TODO
+    }
+    private void IncrementCombo()
+    {
+        if (!IsComboSystemEnabled()) return;
+        if (!isSprinting) return;
+        _comboTimer = 0;
+        _currentComboLength++;
+
+        if (_currentComboLength > 1)
+        {
+            FMODUnity.RuntimeManager.StudioSystem.setParameterByName("PlayerComboDuration",
+                Mathf.InverseLerp(0, MaxComboLength, _currentComboLength));
+            FMODUnity.RuntimeManager.PlayOneShotAttached(comboIncrementFmodEvent, gameObject);
+        }
+
+        if (_currentComboLength >= MaxComboLength)
+        {
+            var spherePrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+            var spherePosition = transform.position + Vector3.up;
+            var sphereObject = Instantiate(spherePrefab, spherePosition,
+                Quaternion.identity, null);
+            sphereObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 2f, 1.25f, 0.8f, -1f);
+        }
+        
+        OnPlayerComboIncremented?.Invoke(_currentComboLength);
+        
+    }
+
+    private void InvokeSurge()
+    {
+        
+        StartCoroutine(InvokeNewComboMesh());
+        FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
+        _timeSinceSurgeStarted = 0f;
+        
+        _speedLinesParticles.Play();
+        IEnumerator InvokeNewComboMesh()
+        {
+            var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+            var triggerPosition = _skinnedMeshRenderer.transform.position;
+            yield return new WaitForSeconds(0.05f);
+            var triggerObject = Instantiate(triggerPrefab, triggerPosition,
+                Quaternion.identity, null);
+            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
+
+            
+            RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
+            activeFmodInstance.start();
+            
+            
+            while (_isSurging){
+                if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
+                var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
+                var position = _skinnedMeshRenderer.transform.position;
+                var rotation = _skinnedMeshRenderer.transform.rotation;
+                var mesh = new Mesh();
+                _skinnedMeshRenderer.BakeMesh(mesh);
+                yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
+                var comboMeshObject = Instantiate(comboMeshPrefab, position,
+                    rotation, null);
+                comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
+                meshFilter.mesh = mesh;
+            }
+            
+            activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+
+            yield break;
+        }
+    }
+
+    private void UpdateFmodWindRushAmount()
+    {
+        if (_isSurging && _timeSinceSurgeStarted > 0.175f)
+        { 
+            _desiredWindRushFmodAmount = Mathf.Lerp(1f, 0.5f, Mathf.InverseLerp(2f, 4.5f, _timeSinceSurgeStarted));
+        }
+        else if (Machine.IsInState(GravityFsmState.Aerial))
+        {
+            _desiredWindRushFmodAmount = Mathf.Lerp(0f, 1f, Mathf.InverseLerp(0f, -70f, CurrentFallDistance()));
+        }
+        else
+        {
+            _desiredWindRushFmodAmount = 0;
+        }
+        FMODUnity.RuntimeManager.StudioSystem.getParameterByName("WindRushAmount", out var currentAmount);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("WindRushAmount", Mathf.Lerp(currentAmount, _desiredWindRushFmodAmount, Time.deltaTime * 10f));
+    }
+
+    private void StartSurge()
+    {
+        _momentum = MaxMomentum;
+        isSprinting = true;
+        _isSurging = true;
+        InvokeSurge();
+    }
+
+    private void EndSurge()
+    {
+        if (_isSurging)
+        {
+            FMODUnity.RuntimeManager.PlayOneShotAttached(surgeEndFmodEvent, gameObject);
+            _playerSurgeHalo.StartBreak();
+        }
+        _speedLinesParticles.Stop();
+        _isSurging = false;
+        ResetCombo();
+    }
+    
+    private void ResetCombo()
+    {
+        
+        _currentComboLength = 0;
+        OnPlayerComboReset?.Invoke();
+    }
+
+    public int GetComboLength()
+    {
+        return _currentComboLength;
+    }
+    
+    public bool GetIsSurging()
+    {
+        return _isSurging;
+    }
+
+    public void InvokePlayerDeath()
+    {
+        if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
+        if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
+        print("deaddd");
+        Machine.Jump(PlayerFsmState.Dying1);
+    }
+
+    private void SnapToGround()
+    {
+        ReplaceAnimatorTrigger("GroundMove");
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit,20f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        {
+            transform.position = hit.point;
+        }
+    }
+
+    private void UpdateMusicDistanceAttenuation()
+    {
+
+        var newDistance = 0f;
+        foreach (var attenuator in MusicDistanceAttenuatorRegistry.Attenuators)
+        {
+            var attenuation = Mathf.InverseLerp(attenuator.maxDistance, attenuator.minDistance,
+                Vector3.Distance(transform.position, attenuator.transform.position));
+            
+            if (attenuation <= 0.01f) continue;
+            newDistance = attenuation;
+            break;
+        }
+
+        RuntimeManager.StudioSystem.getParameterByName("MusicDistance", out float currentDistance);
+        FMODUnity.RuntimeManager.StudioSystem.setParameterByName("MusicDistance", Mathf.Lerp(currentDistance, newDistance, Time.deltaTime * 2f));
+    }
+
+    private void HandleSlideTimer()
+    {
+        GetGroundedRaycastHit(out var groundedRaycastHit);
+        if (groundedRaycastHit.collider == null)
+        {
+            _slideTimer = 0;
+            return;
+        };
+        if (IsSlideTriggerCore(groundedRaycastHit))
+        {
+            _slideTimer += Time.deltaTime;
+        }
+        else
+        {
+            _slideTimer = 0;
+        }
+    }
+
+
+    private void HandleRaycastKill()
+    {
+        if (CurrentFallDistance() > -50f) return;
+        var origin = transform.position + Vector3.up * 30f;
+        if (Physics.SphereCast(origin, 15f, Vector3.down, out _, 130f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+        if (Physics.SphereCast(origin, 15f, Vector3.down, out _, 130f, LayerMask.GetMask("Water"), QueryTriggerInteraction.Collide)) return;
+        if (TimeInCurrentState() < 1f) return;
+        InvokePlayerDeath();
+    }
+
+    private void FireSwimTrigger()
+    {
+        if (WaterRaycast(out var swimRaycastParam))
+        {
+            Machine.Fire(PlayerFsmTrigger.SwimTriggerRaycastHit, swimRaycastParam);
+        }
+    }
+
+    private bool WaterRaycast(out SwimRaycastParam swimRaycastParam)
+    {
+
+        swimRaycastParam = new SwimRaycastParam();
+        WaterHazardType.Type HazardHelper(Vector3 position, GameObject waterObject)
+        {
+            foreach (var dualWaterPoint in DualWaterPointRegistry.DualWaterPoints)
+            {
+                if (Vector3.Distance(position, dualWaterPoint.transform.position) < dualWaterPoint.Radius) return WaterHazardType.Type.None;
+            }
+
+            var hazard = waterObject.GetComponent<WaterHazardType>();
+            if (hazard == null) return WaterHazardType.Type.None;
+            if (hazard.type == WaterHazardType.Type.InstantDrown) return WaterHazardType.Type.InstantDrown;
+            if (hazard.type == WaterHazardType.Type.Freeze && _freezeTimer > SwimFreezeDuration) return WaterHazardType.Type.Freeze;
+
+            return WaterHazardType.Type.None;
+        }
+        
+        swimRaycastParam.WaterHazardType = WaterHazardType.Type.None;
+        var origin = transform.position + Vector3.up * 5f;
+        var maxDistance = 10f;
+        if (Physics.Raycast(origin, Vector3.down, out var hit, maxDistance, LayerMask.GetMask("Water")))
+        {
+            swimRaycastParam.WaterHazardType = HazardHelper(hit.point, hit.transform.gameObject);
+            swimRaycastParam.point = hit.point;
+            swimRaycastParam.obj = hit.transform.gameObject;
+            swimRaycastParam.distance = hit.distance;
+            return true;
+        };
+
+
+        var colliders = Physics.OverlapSphere(transform.position, 0.5f, LayerMask.GetMask("Water"));
+        foreach (var c in colliders)
+        {
+            swimRaycastParam.point = origin;
+            swimRaycastParam.WaterHazardType = HazardHelper(origin, c.gameObject);
+            swimRaycastParam.obj = c.gameObject;
+            swimRaycastParam.distance = 0;
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public float GetFreezeWeight()
+    {
+        return _freezeTimer / SwimFreezeDuration;
+    }
 }

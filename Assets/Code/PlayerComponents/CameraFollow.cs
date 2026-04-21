@@ -3,85 +3,165 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
 
     private float YLerpRate = 2.75f;
-    private Vector3 _playerPos;
-    private Vector3 _playerWeaponPos;
-    private float _biasTowardsWeapon = 0.0f;
-    private static CinemachineFreeLook _freeLook;
-    private static float _baseWaitTime;
-    private static float _baseCenteringTime;
+
+    public static event Action<CameraBehaviorZone> OnCameraFollowTriggerStay;
+    private float _currentYOffset = 0;
+
+    private float _currentXZLerp;
+    private float _currentYLerp;
+
+    private Vector3 _currentDialogueOffset;
 
     private void Start()
     {
         transform.position = PlayerFsm.Singleton.transform.position;
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
-        _freeLook = FindObjectOfType<CinemachineFreeLook>();
-        _baseCenteringTime = _freeLook.m_RecenterToTargetHeading.m_RecenteringTime;
-        _baseWaitTime = _freeLook.m_RecenterToTargetHeading.m_WaitTime;
+        _currentXZLerp = 100f;
+        _currentYLerp = YLerpRate;
     }
 
     private void OnTriggerStay(Collider other)
     {
-        _freeLook.m_RecenterToTargetHeading.m_enabled = true;
-        other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
-        if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookAtPoint) transform.rotation =
-            Quaternion.LookRotation((cameraBehaviorZone.InputVector3 + other.transform.position - transform.position) * (cameraBehaviorZone.invertDirection ? -1f : 1f),
-                Vector3.up);
-        if (cameraBehaviorZone.cameraBehavior == CameraBehaviorZone.CameraBehavior.LookInDirection) transform.rotation =
-            Quaternion.LookRotation((cameraBehaviorZone.InputVector3 * (cameraBehaviorZone.invertDirection ? -1f : 1f)),
-                Vector3.up);
-
-        _freeLook.m_RecenterToTargetHeading.m_RecenteringTime =
-            _baseCenteringTime * cameraBehaviorZone.centeringTimeModifier;
+        // other.transform.TryGetComponent(out CameraBehaviorZone cameraBehaviorZone);
+        // OnCameraFollowTriggerStay?.Invoke(cameraBehaviorZone);
         
-        _freeLook.m_RecenterToTargetHeading.m_WaitTime =
-            _baseWaitTime * cameraBehaviorZone.waitTimeModifier;
     }
     
     private void OnTriggerExit(Collider other)
     {
-        _freeLook.m_RecenterToTargetHeading.m_enabled = false;
-        _freeLook.m_RecenterToTargetHeading.m_RecenteringTime = _baseCenteringTime;
-        _freeLook.m_RecenterToTargetHeading.m_WaitTime = _baseWaitTime;
+        OnCameraFollowTriggerStay?.Invoke(null);
     }
 
     private void OnEnable()
     {
-        PlayerFsm.OnPlayerPositionUpdated += UpdatePlayerPosition;
-        PlayerWeaponFsm.OnPlayerWeaponPositionUpdated += UpdatePlayerWeaponPosition;
+        TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
     }
 
     private void OnDisable()
     {
-        PlayerFsm.OnPlayerPositionUpdated -= UpdatePlayerPosition;
-        PlayerWeaponFsm.OnPlayerWeaponPositionUpdated -= UpdatePlayerWeaponPosition;
+        TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
     }
-    
-    void UpdatePlayerPosition(Vector3 pos, bool grounded)
+
+    private void OnWarp(Vector3 delta)
     {
-        pos = CameraFollowTarget.Singleton.transform.position;
-        var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)
-            ? YLerpRate * 4f
-            : YLerpRate;
-        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * yLerp);
-        _playerPos = new Vector3(pos.x, newY, pos.z);
+        transform.position += delta;
     }
-    
-    void UpdatePlayerWeaponPosition(Vector3 pos, bool active)
-    {
-        _biasTowardsWeapon = Mathf.Lerp(_biasTowardsWeapon, active ? 1.0f: 0.0f, Time.deltaTime * 10f);
-        pos = new Vector3(pos.x, PlayerFsm.Singleton.transform.position.y, pos.z);
-        _playerWeaponPos = Vector3.Lerp(_playerWeaponPos, pos, Time.deltaTime * 5f);
-    }
-    
     
     private void Update()
     {
-        transform.position = Vector3.Lerp(_playerPos, _playerWeaponPos, Mathf.Lerp(0.0f, 0.65f, _biasTowardsWeapon));
+        // if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
+        // {
+        //     if (PlayerFsm.Singleton.TimeInCurrentState() > 0.5f)
+        //     {
+        //         transform.position = Vector3.Lerp(transform.position, PlayerFsm.Singleton.GetTeleportDestination(),
+        //             Time.deltaTime * 3f);
+        //         return;
+        //     }
+        // }
+        
+
+        
+
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
+        
+        var pos = CameraFollowTarget.Singleton.transform.position;
+        var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)
+            ? YLerpRate * 4f
+            : YLerpRate;
+
+        var xzLerp = 100f;
+        var newYOffset = 0f;
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Slide) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.FallAfterSlideLateral))
+        {
+            newYOffset = -5f;
+        }
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwing) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RopeSwingHoming))
+        {
+            yLerp *= 0.15f;
+            xzLerp *= 0.15f;
+            newYOffset = -1f;
+        }
+        
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SurgeDash))
+        {
+            xzLerp *= Mathf.Lerp(0.15f, 1f, Mathf.InverseLerp(0f, 0.3f, PlayerFsm.Singleton.TimeInCurrentState()));
+        }
+
+        var playerYVelocity = PlayerFsm.Singleton.GetYVelocity();
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Updraft))
+        {
+            newYOffset = Mathf.Lerp(-3f, 5f, Mathf.InverseLerp(0, 60f, playerYVelocity));
+        }
+        
+        yLerp = Mathf.Lerp(yLerp, yLerp * 2.75f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));
+        _currentYOffset = Mathf.Lerp(_currentYOffset, newYOffset, Time.deltaTime * 2f);
+        pos += Vector3.up * _currentYOffset;
+
+
+        _currentXZLerp = Mathf.Lerp(_currentXZLerp, xzLerp, Time.deltaTime * 15f);
+        _currentYLerp = Mathf.Lerp(_currentYLerp, yLerp, Time.deltaTime * 15f);
+
+
+
+        var newX = Mathf.Lerp(transform.position.x, pos.x, Time.deltaTime * _currentXZLerp);
+        var newY = Mathf.Lerp(transform.position.y, pos.y, Time.deltaTime * _currentYLerp);
+        var newZ = Mathf.Lerp(transform.position.z, pos.z, Time.deltaTime * _currentXZLerp);
+        transform.position = new Vector3(newX, newY, newZ);
+
+        var desiredDialogueOffset = Vector3.zero;
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dialogue))
+        {
+            var controller = DialogueCanvas.Singleton.currentDialogueController;
+            if (controller != null)
+            {
+                var lookAt = controller.LookAtOverride == null
+                    ? controller.transform
+                    : controller.LookAtOverride;
+
+                desiredDialogueOffset = (lookAt.position - transform.position) * controller.cameraFollowOffsetLerp;
+            }
+        }
+        
+        print(desiredDialogueOffset);
+
+        _currentDialogueOffset = Vector3.Lerp(_currentDialogueOffset, desiredDialogueOffset, Time.deltaTime * 5f);
+        transform.position += desiredDialogueOffset;
+        
+        var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
+        OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);
+        
+    }
+
+    public static CameraBehaviorZone HighestPriorityZoneAtPosition(Vector3 position)
+    {
+        var neighbors = Physics.OverlapSphere(position, 0.5f, LayerMask.GetMask("CameraBehaviorZone"),
+            QueryTriggerInteraction.Collide);
+
+        CameraBehaviorZone highestPriorityZone = null;
+        
+        foreach (var neighbor in neighbors)
+        {
+            var cameraBehaviorZone = neighbor.GetComponent<CameraBehaviorZone>();
+            if (highestPriorityZone == null)
+            {
+                highestPriorityZone = cameraBehaviorZone;
+            } else if (highestPriorityZone.priority < cameraBehaviorZone.priority)
+            {
+                highestPriorityZone = cameraBehaviorZone;
+            }
+            
+        }
+
+        return highestPriorityZone;
     }
 }

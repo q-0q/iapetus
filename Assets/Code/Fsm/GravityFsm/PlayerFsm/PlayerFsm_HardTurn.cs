@@ -7,6 +7,8 @@ public partial class PlayerFsm
         _momentum = Mathf.Max(0, _momentum - MomentumLossRate * Time.deltaTime * HardTurnMomentumLossModifier);
         Animator.SetLayerWeight(2, 0);
         Animator.SetLayerWeight(1, 0);
+        _currentSlipWeight = 1f;
+        HandleSlipAudio();
     }
 
     private void HardTurnConfigure()
@@ -15,7 +17,11 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.LockMomentum)
             .Permit(PlayerFsmTrigger.NoMomentum, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
-            .SubstateOf(GravityFsmState.Grounded);
+            .SubstateOf(GravityFsmState.Grounded)
+            .OnEntry(_ =>
+            {
+                EndSurge();
+            });
     }
     
 }

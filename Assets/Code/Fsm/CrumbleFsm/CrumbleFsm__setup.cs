@@ -16,9 +16,9 @@ public partial class CrumbleFsm
     {
         base.SetupStateMaps();
         
-        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking1, 0.65f);
-        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking2, 0.4f);
-        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking3, 0.65f);
+        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking1, 0.8f);
+        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking2, 0.45f);
+        StateMapConfig.Duration.Add(CrumbleFsmState.Breaking3, 0.55f);
         
     }
 }

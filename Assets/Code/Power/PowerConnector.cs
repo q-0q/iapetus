@@ -68,7 +68,8 @@ public class PowerConnector : MonoBehaviour
             }
         }
         HashSet<PowerConnector> visited = new HashSet<PowerConnector>();
-        return IsPoweredRecursive(this, visited);
+        var isPoweredRecursive = IsPoweredRecursive(this, visited);
+        return isPoweredRecursive;
     }
 
     private bool IsPoweredRecursive(PowerConnector current, HashSet<PowerConnector> visited)

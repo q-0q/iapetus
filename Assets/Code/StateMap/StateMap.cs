@@ -17,24 +17,43 @@ public class StateMap<T>
     
     public T Get(Fsm fsm)
     {
-        var eligibleBindings = _dictionary
-            .Where(kv => fsm.Machine.IsInState(kv.Key))
-            .SelectMany(kv => kv.Value)
-            .ToList();
+        Binding<T> bestBinding = null;
+        int maxWeight = int.MinValue;
+        bool tieDetected = false;
 
-        if (eligibleBindings.Count == 0)
+        // Use a direct foreach to avoid LINQ overhead
+        foreach (var kvp in _dictionary)
+        {
+            // Check if the FSM is in this state
+            if (fsm.Machine.IsInState(kvp.Key))
+            {
+                List<Binding<T>> bindings = kvp.Value;
+                for (int i = 0; i < bindings.Count; i++)
+                {
+                    Binding<T> current = bindings[i];
+                    int currentWeight = current.Weight();
+
+                    if (bestBinding == null || currentWeight > maxWeight)
+                    {
+                        maxWeight = currentWeight;
+                        bestBinding = current;
+                        tieDetected = false;
+                    }
+                    else if (currentWeight == maxWeight)
+                    {
+                        tieDetected = true;
+                    }
+                }
+            }
+        }
+
+        if (bestBinding == null)
             return _default;
 
-        var maxWeight = eligibleBindings.Max(b => b.Weight());
+        if (tieDetected)
+            Debug.LogError($"Tie detected for weight {maxWeight}");
 
-        var topBindings = eligibleBindings
-            .Where(b => b.Weight() == maxWeight)
-            .ToList();
-
-        if (topBindings.Count > 1)
-            Debug.LogError($"Tie detected: {topBindings.Count} bindings with weight {maxWeight}");
-
-        return topBindings[0].Value();
+        return bestBinding.Value();
     }
 
     public void Add(int state, T value, int weight = 0)
@@ -48,7 +67,7 @@ public class StateMap<T>
         var eligibleBindings = _dictionary
             .Where(kv => fsm.Machine.State() == kv.Key)
             .SelectMany(kv => kv.Value)
-            .ToList();
+            .ToHashSet();
 
         if (eligibleBindings.Count == 0)
             return _default;
@@ -57,12 +76,12 @@ public class StateMap<T>
 
         var topBindings = eligibleBindings
             .Where(b => b.Weight() == maxWeight)
-            .ToList();
+            .ToHashSet();
 
         if (topBindings.Count > 1)
             Debug.LogError($"Tie detected: {topBindings.Count} bindings with weight {maxWeight}");
 
-        return topBindings[0].Value();
+        return topBindings.First().Value();
     }
     
 }

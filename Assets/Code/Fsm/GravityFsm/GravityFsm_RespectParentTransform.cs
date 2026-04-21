@@ -5,7 +5,7 @@ public abstract partial class GravityFsm
 {
 
 
-    private void RespectParentTransformOnUpdate()
+    public void RespectParentTransformOnUpdate()
     {
         if (parentTransform == null) return;
 
@@ -32,6 +32,12 @@ public abstract partial class GravityFsm
         }
 
         // Update previous transform state
+        _previousParentTransformPosition = parentTransform.position;
+        _previousParentRotation = parentTransform.rotation;
+    }
+
+    public void ForceParentTransformSync()
+    {
         _previousParentTransformPosition = parentTransform.position;
         _previousParentRotation = parentTransform.rotation;
     }

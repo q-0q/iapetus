@@ -4,6 +4,11 @@ public partial class SwitchFsm
     private void OnConfigure()
     {
         Machine.Configure(SwitchFsmState.On)
-            .Permit(SwitchFsmTrigger.Toggle, SwitchFsmState.Off);
+            .Permit(SwitchFsmTrigger.Toggle, SwitchFsmState.Off)
+            .OnEntry(_ =>
+            {
+                InvokeVirtualCamera();
+                OnSwitchFsmTurnedOn?.Invoke(this);
+            });
     }
 }

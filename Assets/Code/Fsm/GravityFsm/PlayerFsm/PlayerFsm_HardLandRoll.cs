@@ -6,7 +6,7 @@ public partial class PlayerFsm
     private void HardLandRollOnUpdate()
     {
         Animator.SetLayerWeight(1, 0);
-        transform.position += ComputeCollisionMove(transform.forward * (HardLandRollForwardSpeed * Time.deltaTime));
+        transform.position += ComputeCollisionMove(transform.forward * (HardLandRollForwardSpeed * GetCurrentSurgeSpeedMultiplier() * Time.deltaTime));
         HandleTurning(AirControlTurningMultiplier, true, 0, true);
     }
 
@@ -18,6 +18,8 @@ public partial class PlayerFsm
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
             .OnEntry(_ =>
             {
+                FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
+                OnPlayerFootstep();
                 LastUpwardsY = transform.position.y;
                 _momentum = HardLandRollExitMomentum;
             });

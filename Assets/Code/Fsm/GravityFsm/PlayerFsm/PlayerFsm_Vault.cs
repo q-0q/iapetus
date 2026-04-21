@@ -14,7 +14,7 @@ public partial class PlayerFsm
             MoveYOntoLedge(0f, VaultLedgeLerpStrength);
         }
         SetAnimatorMomentum();
-        var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.2f : 0.9f;
+        var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.3f : 0.9f;
         transform.position += ComputeCollisionMove(ComputeDesiredMove()) * movementModifier;
         HandleTurning(VaultTurningMultiplier, true);
     }
@@ -26,6 +26,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Jumpsquat, _ => _inputBuffer.IsBuffered("Jump"), 1)
             .OnEntry(_ =>
             {
                 _movementAnimationMirror = !_movementAnimationMirror;
@@ -38,8 +39,12 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
-                _wallsquattedSinceLeavingGround = false;
-                _dashSinceLeavingGround = false;
+                currentRopeSwing = null;
+                
+                FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
+                OnPlayerFootstep();
+                
+                IncrementCombo();
             })
             .OnExit(_ =>
             {
@@ -47,7 +52,7 @@ public partial class PlayerFsm
             });
         
         Machine.Configure(PlayerFsmState.DashVault)
-            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump"), 1)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump", 0.25f), 2)
             .SubstateOf(PlayerFsmState.Vault);
     }
     

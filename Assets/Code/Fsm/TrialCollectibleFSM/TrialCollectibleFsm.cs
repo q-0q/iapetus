@@ -1,0 +1,101 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using FMOD.Studio;
+using UnityEngine;
+
+public partial class TrialCollectibleFsm : Fsm
+{
+    public class TrialCollectibleFsmState : FsmState
+    {
+        public static int Disabled;
+        public static int Ready;
+        public static int ReadyUntaken;
+        public static int ReadyTaken;
+        public static int Start;
+        public static int Active;
+        public static int Complete;
+    }
+
+    public class TrialCollectibleFsmTrigger : FsmTrigger
+    {
+        public static int PlayerEnteredStartingZone;
+        public static int PlayerExitedStartingZone;
+        public static int PlayerEnteredEndingZone;
+        public static int KeyframeTimeout;
+    }
+
+    protected override void OnAwake()
+    {
+        base.OnAwake();
+        DisableAllKeyframeCameraZones();
+    }
+
+    protected override void OnStart()
+    {
+        base.OnStart();
+        InitState = TrialCollectibleFsmState.ReadyUntaken;
+        _currentKeyframeIndex = 0;
+        _timeOnCurrentKeyframe = 0f;
+        _marker = transform.Find("Marker");
+        _playerReturnTransform = transform.Find("PlayerReturnTransform");
+        
+        transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
+        _marker.Find("ActiveParticles").TryGetComponent(out _activeParticles);
+        _marker.Find("ActiveFinalParticles").TryGetComponent(out _activeFinalParticles);
+        _marker.Find("KeyframeTriggerParticles").TryGetComponent(out _keyframeTriggerParticles);
+        _marker.Find("ReadyParticles").TryGetComponent(out _readyParticles);
+        _marker.Find("ReadyParticlesGold").TryGetComponent(out _readyParticlesGold);
+        _beaconMaterial = _marker.Find("Beacon").Find("Plane").GetComponent<Renderer>().material;
+        _beaconMaterial.SetFloat("_Opacity", 0);
+        PlayReadyParticles();
+        _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
+        _initialCameraBehaviorZone.gameObject.SetActive(true);
+        
+        
+        if (Physics.Raycast(_playerReturnTransform.position, Vector3.down, out RaycastHit hit,10f, GetEnvironmentalLayermask()))
+        {
+            _playerReturnTransform.position = hit.point;
+        }
+
+
+        
+        NormalizeKeyframeHeights();
+        _marker.position = _keyframes[0].transform.position;
+        
+        SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime);
+        _seeking = false;
+    }
+
+
+
+    public override void OnUpdate()
+    {
+        base.OnUpdate();
+
+        if (Machine.IsInState(TrialCollectibleFsmState.Active))
+        {
+            ActiveOnUpdate();
+        }
+
+        if (Machine.IsInState(TrialCollectibleFsmState.Complete))
+        {
+            CompleteOnUpdate();
+        }
+    }
+
+    public void SetRecordTime(float time)
+    {
+        _cachedPlayerRecordTime = time;
+    }
+
+    private void OnEnable()
+    {
+        _tickingFmodEvent = FMODUnity.RuntimeManager.CreateInstance(tickingEvent);
+    }
+
+    private void OnDisable()
+    {
+        _tickingFmodEvent.stop(STOP_MODE.ALLOWFADEOUT);
+    }
+}

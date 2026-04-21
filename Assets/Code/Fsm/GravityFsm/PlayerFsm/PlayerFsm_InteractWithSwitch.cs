@@ -19,6 +19,11 @@ public partial class PlayerFsm
             {
                 if (currentInteractable != null) currentInteractable.TriggerHardInteraction();
                 _momentum = 0f;
+            })
+            .OnExit(_ =>
+            {
+                Animator.SetFloat("Momentum", 0f);
+                Animator.SetFloat("SpeedMod", 0f);
             });
     }
 }

@@ -1,0 +1,142 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+using Random = UnityEngine.Random;
+
+public class FoliageChunkManager : MonoBehaviour
+{
+    public static FoliageChunkManager Instance;
+
+    [Header("Culling Settings")]
+    public float chunkSize = 20f;
+    private float _renderDistance;
+    [Tooltip("Distance outside the screen to keep rendering (prevents pop-in)")]
+    public float frustumPadding = 5f;
+
+    [Header("LOD Settings")]
+    public float lodFallOff = 40f;
+    
+    private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, List<Matrix4x4>>> _masterRegistry = new();
+    private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, Matrix4x4[][]>> _bakedChunks = new();
+
+    private Camera _camera;
+    private void Awake() => Instance = this;
+
+    private void Start()
+    {
+        _camera = Camera.main;
+        _renderDistance = ComputeWorldspaceRenderDistance(MetaSaveSystem.LoadCachedMetaSaveData().foliageRenderDistanceLevel);
+        Invoke(nameof(BakeAll), 0.1f);
+    }
+
+    public void RegisterFoliage(Mesh mesh, Material mat, Matrix4x4[] instances)
+    {
+        var key = (mesh, mat);
+        if (!_masterRegistry.ContainsKey(key)) _masterRegistry[key] = new Dictionary<Vector3Int, List<Matrix4x4>>();
+
+        foreach (var matrix in instances)
+        {
+            Vector3 pos = matrix.GetColumn(3);
+            Vector3Int chunkPos = Vector3Int.FloorToInt(pos / chunkSize);
+
+            if (!_masterRegistry[key].ContainsKey(chunkPos)) _masterRegistry[key][chunkPos] = new List<Matrix4x4>();
+            _masterRegistry[key][chunkPos].Add(matrix);
+        }
+    }
+
+
+    public void BakeAll()
+    {
+        _bakedChunks.Clear();
+        foreach (var entry in _masterRegistry)
+        {
+            var chunkDict = new Dictionary<Vector3Int, Matrix4x4[][]>();
+            foreach (var chunk in entry.Value)
+            {
+
+                chunkDict[chunk.Key] = BatchMatrices(chunk.Value);
+            }
+            _bakedChunks[entry.Key] = chunkDict;
+        }
+        _masterRegistry.Clear();
+    }
+
+    private Matrix4x4[][] BatchMatrices(List<Matrix4x4> fullList)
+    {
+        int count = fullList.Count;
+        int batches = Mathf.CeilToInt(count / 1023f);
+        Matrix4x4[][] batched = new Matrix4x4[batches][];
+        for (int i = 0; i < batches; i++)
+        {
+            int size = Mathf.Min(1023, count - (i * 1023));
+            batched[i] = new Matrix4x4[size];
+            fullList.CopyTo(i * 1023, batched[i], 0, size);
+        }
+        return batched;
+    }
+
+    private void OnEnable()
+    {
+        MetaSaveSystem.OnMetaSaveDataUpdated += data => { _renderDistance = ComputeWorldspaceRenderDistance(data.foliageRenderDistanceLevel); };
+    }
+
+    private static float ComputeWorldspaceRenderDistance(int level)
+    {
+        return level * 12f + 130f;
+    }
+
+    void Update()
+    {
+        
+        Vector3 camPos = _camera.transform.position;
+        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(_camera);
+        
+        for (int i = 0; i < 6; i++) 
+        {
+            planes[i].distance += frustumPadding;
+        }
+
+        foreach (var entry in _bakedChunks)
+        {
+            Mesh mesh = entry.Key.Item1;
+            Material mat = entry.Key.Item2;
+            RenderParams rp = new RenderParams(mat);
+
+            foreach (var chunk in entry.Value)
+            {
+                Vector3 chunkCenter = new Vector3(
+                    chunk.Key.x * chunkSize + chunkSize / 2, 
+                    camPos.y, 
+                    chunk.Key.z * chunkSize + chunkSize / 2
+                );
+
+                float dist = Vector3.Distance(camPos, chunkCenter);
+                if (dist > _renderDistance) continue;
+
+                Bounds b = new Bounds(chunkCenter, new Vector3(chunkSize, 50f, chunkSize));
+                if (!GeometryUtility.TestPlanesAABB(planes, b)) continue;
+
+                float densityPercent = Mathf.InverseLerp(_renderDistance, _renderDistance - lodFallOff, dist);
+
+                foreach (var batch in chunk.Value)
+                {
+                    int countToRender = Mathf.CeilToInt(batch.Length * densityPercent);
+                    if (countToRender <= 0) continue;
+
+                    Graphics.RenderMeshInstanced(rp, mesh, 0, batch, countToRender);
+                }
+            }
+        }
+    }
+    
+    private void Shuffle(List<Matrix4x4> list)
+    {
+        for (int i = 0; i < list.Count; i++)
+        {
+            Matrix4x4 temp = list[i];
+            int randomIndex = Random.Range(i, list.Count);
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
+        }
+    }
+}

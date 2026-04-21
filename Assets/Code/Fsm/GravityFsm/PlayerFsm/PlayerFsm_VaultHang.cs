@@ -6,6 +6,10 @@ public partial class PlayerFsm
         {
             MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
         }
+        else
+        {
+            Machine.Fire(PlayerFsmTrigger.VaultHangFarFromLedge);
+        }
         HandleCollisionMove();
         Animator.SetLayerWeight(1, 0);
     }
@@ -15,11 +19,17 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.VaultHang)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            // .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            // .Permit(PlayerFsmTrigger.VaultHangFarFromLedge, PlayerFsmState.Fall)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
+                LastUpwardsY = transform.position.y;
+                isSprinting = false;
+                EndSurge();
                 if (!UpdateLedgePosition(FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset())) UpdateLedgePosition(FaceLedgeHeight);
+
             })
             .OnExit(_ =>
             {

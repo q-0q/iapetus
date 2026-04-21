@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public partial class PlayerFsm
 {
     private void LandsquatConfigure()
@@ -8,9 +10,19 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            // .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Slide,
+                // _ => parentTransform.gameObject.layer == LayerMask.NameToLayer("ForceSlide"), 2)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
+                FMODUnity.RuntimeManager.PlayOneShotAttached(landFmodEvent, gameObject);
+                OnPlayerFootstep();
+            })
+            .OnEntryFrom(GravityFsmTrigger.StartFrameGrounded, @params =>
+            {
+                if (@params is not RaycastHitParam raycastHitParam) return;
+                print("it happened");
+                Debug.DrawLine(transform.position + Vector3.up * 5f, raycastHitParam.Hit.point, Color.yellow, 1f);
             })
             .OnExit(_ =>
             {
@@ -18,10 +30,12 @@ public partial class PlayerFsm
                 _dashSinceLeavingGround = false;
                 _previousWallrunSide = FlankType.None;
                 _currentFlankType = FlankType.None;
+                currentRopeSwing = null;
+                
                 _movementAnimationMirror = !_movementAnimationMirror;
                 var flip = _movementAnimationMirror ? 0 : 1f;
-                
                 Animator.SetFloat("Flip", flip);
+                
             });
 
         Machine.Configure(PlayerFsmState.LandsquatAfterDash)

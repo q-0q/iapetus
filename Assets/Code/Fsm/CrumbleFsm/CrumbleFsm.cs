@@ -30,7 +30,7 @@ public partial class CrumbleFsm : Fsm
         base.OnStart();
         InitState = CrumbleFsmState.Idle;
         TryGetComponent(out _collider);
-        TryGetComponent(out _renderer);
+        _renderer = GetComponentInChildren<Renderer>();
         transform.Find("ReformParticles").TryGetComponent(out _reformParticleSystem);
         transform.Find("CrumbleParticles").TryGetComponent(out _crumbleParticleSystem);
         transform.Find("BreakParticles").TryGetComponent(out _breakParticleSystem);
@@ -43,15 +43,31 @@ public partial class CrumbleFsm : Fsm
         if (Machine.IsInState(CrumbleFsmState.Idle))
         {
             IdleOnUpdate();
+            
+        }
+        if (Machine.IsInState(CrumbleFsmState.Breaking1))
+        {
+            DoIdleJump();
+            HandleLandingJump();
         }
         if (Machine.IsInState(CrumbleFsmState.Breaking2))
         {
             Breaking2OnUpdate();
+            DoIdleJump();
         }
         if (Machine.IsInState(CrumbleFsmState.Breaking3))
         {
             Breaking3OnUpdate();
+            DoIdleJump();
         }
+    }
+
+    private void HandleLandingJump()
+    {
+        if (PlayerFsm.Singleton.parentTransform == transform && 
+            PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.HardLand) ||
+            PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.HardLandRoll)
+            ) Machine.Jump(CrumbleFsmState.Breaking3);
     }
 
     private void OnEnable()

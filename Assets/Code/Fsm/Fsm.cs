@@ -22,6 +22,7 @@ public abstract class Fsm : MonoBehaviour
     public StateMapConfig StateMapConfig;
     
     private float _timeInCurrentState;
+    private float _previousTimeInCurrentState;
     protected int InitState;
     protected Animator Animator;
 
@@ -39,8 +40,9 @@ public abstract class Fsm : MonoBehaviour
         SetupMachine();
         SetupStateMaps();
         _timeInCurrentState = 0;
-        TryGetComponent(out Animator);
         OnStartComplete();
+        
+        Machine.BakeRecursiveSuperstates();
     }
 
 
@@ -77,6 +79,9 @@ public abstract class Fsm : MonoBehaviour
         StateMapConfig.TightropeLineOffset = new StateMap<Vector3>(Vector3.zero);
         StateMapConfig.TightropeLineYLerpStrength = new StateMap<float>(50f);
         StateMapConfig.CutscenePlayerDisabled = new StateMap<bool>(true);
+        StateMapConfig.CutsceneCameraDisabled = new StateMap<bool>(true);
+        StateMapConfig.CutsceneJumpDisabled = new StateMap<bool>(true);
+        StateMapConfig.CutsceneHardLand = new StateMap<bool>(false);
     }
 
     public virtual void SetupMachine()
@@ -105,6 +110,11 @@ public abstract class Fsm : MonoBehaviour
     {
         return _timeInCurrentState;
     }
+
+    public float PreviousTimeInCurrentState()
+    {
+        return _previousTimeInCurrentState;
+    }
     
     protected virtual void OnStateChanged(TriggerParams? triggerParams)
     {
@@ -114,6 +124,7 @@ public abstract class Fsm : MonoBehaviour
 
     private void IncrementClockByAmount(float amount)
     {
+        _previousTimeInCurrentState = _timeInCurrentState;
         _timeInCurrentState += amount;
     }
 
@@ -123,7 +134,10 @@ public abstract class Fsm : MonoBehaviour
         foreach (var t in Animator.parameters)
         {
             if (t.type != AnimatorControllerParameterType.Trigger) continue;
-            if (t.name == trigger) Animator.SetTrigger(t.name);
+            if (t.name == trigger)
+            {
+                Animator.SetTrigger(t.name);
+            }
             else Animator.ResetTrigger(t.name);
         }
     }
@@ -138,6 +152,6 @@ public abstract class Fsm : MonoBehaviour
 
     public static int GetEnvironmentalLayermask()
     {
-        return ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player");
+        return ~LayerMask.GetMask("PlayerClothCollider", "PlayerCloth", "Player", "Water");
     }
 }

@@ -9,11 +9,12 @@ public abstract partial class GravityFsm
 
         if (GetGroundedRaycastHit(out var hit, true))
         {
-            if (YVelocity < 0.5f)
-            {
+
+            // if (YVelocity < 0.5f || hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide"))
+            // {
                 var param = new RaycastHitParam() { Hit = hit, kind = hit.transform.gameObject.layer == LayerMask.NameToLayer("Tightrope") ? GroundKind.Tightrope : GroundKind.Standard};
                 Machine.Fire(GravityFsmTrigger.StartFrameGrounded, param);
-            }
+            // }
         }
         else
         {
@@ -23,6 +24,11 @@ public abstract partial class GravityFsm
         if (YVelocity < 0)
         {
             Machine.Fire(GravityFsmTrigger.StartFrameWithNegativeYVelocity);
+        }
+
+        if (_depenetrationTimer >= DepenetrationTimerDuration)
+        {
+            Machine.Fire(GravityFsmTrigger.DepenetrationTimeout);
         }
     }
 }

@@ -11,8 +11,16 @@ public partial class PlayerFsm
             {
                 Animator.SetLayerWeight(1, 0);
                 _inputBuffer.ConsumeBuffer("Jump");
+                FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
+                OnPlayerFootstep();
+
             })
-            .OnExitFrom(FsmTrigger.Timeout, _ => { YVelocity = JumpYVelocity; });
+            .OnExitFrom(FsmTrigger.Timeout, _ =>
+            {
+                OnPlayerFootstep();
+                YVelocity = JumpYVelocity; 
+
+            });
         
     }
 }

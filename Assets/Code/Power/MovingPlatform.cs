@@ -1,4 +1,7 @@
+using System;
+using FMOD.Studio;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MovingPlatform : MonoBehaviour
 {
@@ -9,57 +12,133 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField] private float cycleSnapping = 0f;
     [SerializeField] private bool loop = true;
 
-    [Header("Movement")]
-    [SerializeField] private Vector3 positionDestination = Vector3.zero;
-    [SerializeField] private Vector3 rotationDestination = Vector3.zero;
+    [Header("Movement (Per Cycle Delta)")]
+    [SerializeField] private Vector3 positionPerCycle = Vector3.zero;
+    [SerializeField] private Vector3 rotationPerCycle = Vector3.zero;
 
-    private float transitionTime = 0f; // Tracks time for non-cycling mode
+    private float transitionTime = 0f;
     private Vector3 startPosition;
     private Quaternion startRotation;
     private PowerConnector _powerConnector;
 
+    private static string eventPath = "event:/StoneGrind";
+    private EventInstance _eventInstance;
+
+    public bool Mute = false;
+
+    // --- Added ---
+    private float _previousCycleValue;
+    private float _previousFrameTime;
+    // -------------
+
+    public void JumpToEnd()
+    {
+        transitionTime = cycleDuration;
+    }
+
     private void Start()
     {
+        _eventInstance =
+            FMODUnity.RuntimeManager.CreateInstance(FMODUnity.RuntimeManager.PathToEventReference(eventPath));
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(_eventInstance, gameObject);
+        _eventInstance.setTimelinePosition(Random.Range(0, 5000));
+        _eventInstance.start();
+
         startPosition = transform.localPosition;
         startRotation = transform.localRotation;
         _powerConnector = GetComponentInChildren<PowerConnector>();
+
+        _previousFrameTime = Time.time;
+    }
+
+    private void OnDisable()
+    {
+        _eventInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 
     private void Update()
     {
-        
         if (HitstopManager.Singleton.IsHitstopActive()) return;
-        
-        float t;
-        
+        if (cycleDuration <= 0f) return;
+
         if (_powerConnector is null)
         {
-            if (cycleDuration <= 0f) return;
+            if (loop)
+            {
+                float time = Time.time + cycleOffset * cycleDuration;
+                float cycles = time / cycleDuration;
 
-            float time = Time.time + cycleOffset * cycleDuration;
-            float normalizedTime = (time % cycleDuration) / cycleDuration;
+                ApplyContinuousMotion(cycles);
+                UpdateStoneGrindParameter(cycles);
+            }
+            else
+            {
+                float time = Time.time + cycleOffset * cycleDuration;
+                float normalizedTime = (time % cycleDuration) / cycleDuration;
+                float sine = Mathf.Sin(normalizedTime * Mathf.PI * 2f);
+                float t = (sine * 0.5f) + 0.5f;
 
-            // Sine wave between -1 and 1 → normalized to [0,1]
-            float sine = Mathf.Sin(normalizedTime * Mathf.PI * 2f);
-            t = (sine * 0.5f) + 0.5f;
+                ApplyLerpedMotion(t);
+                UpdateStoneGrindParameter(t);
+            }
         }
         else
         {
             var isForward = _powerConnector.IsPowered();
-            // Increment or decrement transitionTime
+
             transitionTime += (isForward ? 1f : -1f) * Time.deltaTime;
             transitionTime = Mathf.Clamp(transitionTime, 0f, cycleDuration);
 
-            // Normalize transition time
-            t = (cycleDuration > 0f) ? transitionTime / cycleDuration : (isForward ? 1f : 0f);
+            float t = transitionTime / cycleDuration;
+            ApplyLerpedMotion(t);
+            UpdateStoneGrindParameter(t);
         }
+    }
 
-        // Apply sigmoid shaping
+    // --- Added ---
+    private void UpdateStoneGrindParameter(float currentValue)
+    {
+        if (Mute)
+        {
+            _eventInstance.setParameterByName("StoneGrindAmount", 0);
+            return;
+        }
+        
+        currentValue = SharpSymmetric(currentValue, cycleSnapping);
+        float deltaTime = Time.time - _previousFrameTime;
+        if (deltaTime <= 0f) return;
+
+        float rate = Mathf.Abs(currentValue - _previousCycleValue) / deltaTime;
+
+        // Normalize rate so 1 full cycle per second = 1.0
+        float normalizedRate = Mathf.Clamp01(rate * cycleDuration);
+
+        _eventInstance.setParameterByName("StoneGrindAmount", normalizedRate);
+
+        _previousCycleValue = currentValue;
+        _previousFrameTime = Time.time;
+    }
+    // -------------
+
+    private void ApplyContinuousMotion(float cycles)
+    {
+        Vector3 targetPos = positionPerCycle * cycles;
+        Quaternion targetRot = Quaternion.Euler(rotationPerCycle * cycles);
+
+        transform.localPosition = startPosition + targetPos;
+        transform.localRotation = startRotation * targetRot;
+    }
+
+    private void ApplyLerpedMotion(float t)
+    {
         float shapedT = SharpSymmetric(t, cycleSnapping);
 
-        // Lerp position and rotation
-        Vector3 targetPos = Vector3.Lerp(Vector3.zero, positionDestination, shapedT);
-        Quaternion targetRot = Quaternion.Lerp(Quaternion.identity, Quaternion.Euler(rotationDestination), shapedT);
+        Vector3 targetPos = Vector3.Lerp(Vector3.zero, positionPerCycle, shapedT);
+        Quaternion targetRot = Quaternion.Lerp(
+            Quaternion.identity,
+            Quaternion.Euler(rotationPerCycle),
+            shapedT
+        );
 
         transform.localPosition = startPosition + targetPos;
         transform.localRotation = startRotation * targetRot;
@@ -67,6 +146,8 @@ public class MovingPlatform : MonoBehaviour
 
     private float SharpSymmetric(float t, float snapping)
     {
+        if (snapping <= 0f) return t;
+
         float k = Mathf.Lerp(0.1f, 60f, snapping);
         float x = (t - 0.5f) * 2f;
         float y = 1f / (1f + Mathf.Exp(-k * x));
@@ -76,5 +157,4 @@ public class MovingPlatform : MonoBehaviour
 
         return Mathf.InverseLerp(min, max, y);
     }
-
 }

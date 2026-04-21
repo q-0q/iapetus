@@ -28,7 +28,10 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Wallrun)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(GravityFsmState.RespectParentTransform)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            .SubstateOf(PlayerFsmState.PitonInteractable)
+            .SubstateOf(PlayerFsmState.RopeSwingInteractable)
+
+            .SubstateOf(PlayerFsmState.Landable)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)
             .Permit(PlayerFsmTrigger.HardTurn, PlayerFsmState.Fall)
@@ -42,10 +45,15 @@ public partial class PlayerFsm
             {
                 _dashSinceLeavingGround = false;
                 _momentum = Mathf.Max(_momentum, WallRunMinimumEntryMomentum);
+                IncrementCombo();
                 ReplaceAnimatorTrigger("Wallrun");
+                OnPlayerFootstep();
             })
             .OnExitFrom(PlayerFsmTrigger.Jump, _ =>
             {
+                _currentSlipWeight = 0f;
+                HandleSlipAudio();
+                
                 var rotationMod = _currentFlankType == FlankType.Left ? -1f : 1f;
                 var forward = Quaternion.Euler(0f, WallrunJumpAngle * rotationMod, 0f) * _currentFlankWallNormal;
                 transform.rotation = Quaternion.LookRotation(forward, Vector3.up);
