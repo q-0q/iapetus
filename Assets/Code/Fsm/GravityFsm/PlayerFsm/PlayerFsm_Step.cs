@@ -21,6 +21,7 @@ public partial class PlayerFsm
     
     private void StepEndOnUpdate()
     {
+        if (GameMenu.Singleton.IsMenuOpen()) return;
         HandleInputMomentumChange();
         transform.position += ApplyTractionNoTimescale(Vector3.zero) * Time.deltaTime;
     }

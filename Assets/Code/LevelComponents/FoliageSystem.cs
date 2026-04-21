@@ -94,6 +94,8 @@ public class FoliageSystem : MonoBehaviour
             if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
                 continue;
 
+            if (RaycastCheckSphere(hit, rayDirection)) continue;
+            
             // Random offset in object-local space
 
             Vector3 position = hit.point;
@@ -128,6 +130,14 @@ public class FoliageSystem : MonoBehaviour
         
         FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
         
+    }
+
+    private bool RaycastCheckSphere(RaycastHit hitInfo, Vector3 rayDirection)
+    {
+        var height = 300f;
+        var origin = hitInfo.point + Vector3.up * height;
+        return Physics.Raycast(origin, Vector3.down, height - 1f, Fsm.GetEnvironmentalLayermask(),
+            QueryTriggerInteraction.Ignore);
     }
 
     Bounds GetLocalColliderBounds(Collider col)

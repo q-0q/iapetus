@@ -1,14 +1,23 @@
+using System;
 using UnityEngine;
 
-[ExecuteAlways]
 public class CustomFogController : MonoBehaviour
 {
+
+    public int Priority = 1;
+    public float LerpStrengthMultiplier = 1f;
     
     public Color Color = Color.white;
     
     public float YMin = -100f;
     public float YMax = 100f;
     public float YPower = 2f;
+    public float MinimumYFactor = 0f;
+    
+    public float YAddMin = -100f;
+    public float YAddMax = -40f;
+    public float YAddPower = 2f;
+    public float YAddDepthInversion = 0.5f;
     
     public float DepthMin = 20f;
     public float DepthMax = 100f;
@@ -20,25 +29,16 @@ public class CustomFogController : MonoBehaviour
     public float NoiseBScale = 0.01f;
     public Vector3 NoiseBVelocity = new Vector3(-1, -1, -1);
 
-    // Update is called once per frame
-    public void Update()
+    private Collider _collider;
+
+    private void Awake()
     {
-        Shader.SetGlobalColor("_CustomFogColor", Color);
-            
-        Shader.SetGlobalFloat("_CustomFogYMin", YMin);
-        Shader.SetGlobalFloat("_CustomFogYMax", YMax);
-        Shader.SetGlobalFloat("_CustomFogYPower", YPower);
-            
-        Shader.SetGlobalFloat("_CustomFogDepthMin", DepthMin);
-        Shader.SetGlobalFloat("_CustomFogDepthMax", DepthMax);
-        Shader.SetGlobalFloat("_CustomFogDepthPower", DepthPower);
-            
-        Shader.SetGlobalFloat("_CustomFogNoiseSubtractionAmount", NoiseSubtractionAmount);
-        Shader.SetGlobalFloat("_CustomFogNoiseAScale", NoiseAScale);
-        Shader.SetGlobalFloat("_CustomFogNoiseBScale", NoiseBScale);
-            
-        Shader.SetGlobalVector("_CustomFogNoiseAVelocity", NoiseAVelocity);
-        Shader.SetGlobalVector("_CustomFogNoiseBVelocity", NoiseBVelocity);
+        TryGetComponent(out _collider);
     }
+    
+    void OnEnable() => CustomFogManager.CustomFogControllerRegistry.Add(this);
+    void OnDisable() => CustomFogManager.CustomFogControllerRegistry.Remove(this);
+
+
 
 }
