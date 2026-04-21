@@ -136,8 +136,11 @@ public class FoliageSystem : MonoBehaviour
     {
         var height = 300f;
         var origin = hitInfo.point + Vector3.up * height;
-        return Physics.Raycast(origin, Vector3.down, height - 1f, Fsm.GetEnvironmentalLayermask(),
-            QueryTriggerInteraction.Ignore);
+        if (!Physics.Raycast(origin, Vector3.down, height - 1f, Fsm.GetEnvironmentalLayermask(),
+                QueryTriggerInteraction.Ignore)) return false;
+        
+        return !Physics.Raycast(hitInfo.point + Vector3.up, Vector3.up, height - 1f, Fsm.GetEnvironmentalLayermask(),
+                QueryTriggerInteraction.Ignore);
     }
 
     Bounds GetLocalColliderBounds(Collider col)
