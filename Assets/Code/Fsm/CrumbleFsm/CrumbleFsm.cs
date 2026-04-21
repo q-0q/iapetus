@@ -43,10 +43,12 @@ public partial class CrumbleFsm : Fsm
         if (Machine.IsInState(CrumbleFsmState.Idle))
         {
             IdleOnUpdate();
+            
         }
         if (Machine.IsInState(CrumbleFsmState.Breaking1))
         {
             DoIdleJump();
+            HandleLandingJump();
         }
         if (Machine.IsInState(CrumbleFsmState.Breaking2))
         {
@@ -58,6 +60,14 @@ public partial class CrumbleFsm : Fsm
             Breaking3OnUpdate();
             DoIdleJump();
         }
+    }
+
+    private void HandleLandingJump()
+    {
+        if (PlayerFsm.Singleton.parentTransform == transform && 
+            PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.HardLand) ||
+            PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.HardLandRoll)
+            ) Machine.Jump(CrumbleFsmState.Breaking3);
     }
 
     private void OnEnable()

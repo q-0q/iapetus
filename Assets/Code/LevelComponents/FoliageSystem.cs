@@ -136,6 +136,8 @@ public class FoliageSystem : MonoBehaviour
     {
         var height = 300f;
         var origin = hitInfo.point + Vector3.up * height;
+        
+        // raycast both up and down to check for overhangs
         if (!Physics.Raycast(origin, Vector3.down, height - 1f, Fsm.GetEnvironmentalLayermask(),
                 QueryTriggerInteraction.Ignore)) return false;
         
