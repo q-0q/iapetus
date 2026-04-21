@@ -23,7 +23,7 @@ public partial class CrabPassageCutsceneFsm
             .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             {
-                _warningCamera.Priority = 30;
+                // _warningCamera.Priority = 30;
                 DialogueCanvas.Singleton.StartDialogue(warning1);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
                 CutsceneTrigger1.gameObject.SetActive(false);
@@ -33,7 +33,7 @@ public partial class CrabPassageCutsceneFsm
             .Permit(CrabPassageCutsceneFsmTrigger.OnDialogueCompleted, CutsceneFsmState.Inactive)
             .OnEntry(_ =>
             {
-                _warningCamera.Priority = 30;
+                // _warningCamera.Priority = 30;
                 DialogueCanvas.Singleton.StartDialogue(warning2);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
                 CutsceneTrigger1.gameObject.SetActive(false);

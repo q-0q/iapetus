@@ -17,6 +17,8 @@ public class CameraFollow : MonoBehaviour
     private float _currentXZLerp;
     private float _currentYLerp;
 
+    private Vector3 _currentDialogueOffset;
+
     private void Start()
     {
         transform.position = PlayerFsm.Singleton.transform.position;
@@ -116,7 +118,24 @@ public class CameraFollow : MonoBehaviour
         var newZ = Mathf.Lerp(transform.position.z, pos.z, Time.deltaTime * _currentXZLerp);
         transform.position = new Vector3(newX, newY, newZ);
 
+        var desiredDialogueOffset = Vector3.zero;
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dialogue))
+        {
+            var controller = DialogueCanvas.Singleton.currentDialogueController;
+            if (controller != null)
+            {
+                var lookAt = controller.LookAtOverride == null
+                    ? controller.transform
+                    : controller.LookAtOverride;
 
+                desiredDialogueOffset = (lookAt.position - transform.position) * controller.cameraFollowOffsetLerp;
+            }
+        }
+        
+        print(desiredDialogueOffset);
+
+        _currentDialogueOffset = Vector3.Lerp(_currentDialogueOffset, desiredDialogueOffset, Time.deltaTime * 5f);
+        transform.position += desiredDialogueOffset;
         
         var highestPriorityZone = HighestPriorityZoneAtPosition(PlayerFsm.Singleton.transform.position);
         OnCameraFollowTriggerStay?.Invoke(highestPriorityZone);

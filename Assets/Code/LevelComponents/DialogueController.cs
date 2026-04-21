@@ -28,6 +28,7 @@ public class DialogueController : MonoBehaviour
     public float CameraY = 0.7f;
 
     public float canvasDelay = 0f;
+    public float cameraFollowOffsetLerp = 0f;
     
     private void OnEnable()
     {
