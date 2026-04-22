@@ -22,6 +22,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Inventory)
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(PlayerFsmTrigger.Inventory, PlayerFsmState.Idle)
+            .Permit(PlayerFsmTrigger.UseIncenseBurner, PlayerFsmState.UseIncenseBurner)
             .OnEntry(_ =>
             {
                 EndSurge();
@@ -50,6 +51,15 @@ public partial class PlayerFsm
             {
                 PlayerInventoryEntered?.Invoke();
             });
-
+        
+        Machine.Configure(PlayerFsmState.UseIncenseBurner)
+            .SubstateOf(GravityFsmState.Grounded)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
+            .OnExit(_ =>
+            {
+                GetNearbyCultTrial(out var fsm);
+                print("activated cult trial: " + fsm.name);
+            });
+        
     }
 }

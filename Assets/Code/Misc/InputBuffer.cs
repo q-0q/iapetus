@@ -36,6 +36,7 @@ public class InputBuffer
 
     public void OnUpdate()
     {
+        if (GameMenu.Singleton.IsMenuOpen()) return;
         List<string> keys = new List<string>(_buffer.Keys);
         foreach (var input in keys)
         {

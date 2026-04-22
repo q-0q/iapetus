@@ -101,6 +101,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDash, 0.35f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDashStartup, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 1.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.UseIncenseBurner, 1.25f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -160,6 +161,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LongFall, "LongFall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.KeyItemCollect, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Inventory, "Inventory");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

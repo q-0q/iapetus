@@ -115,6 +115,8 @@ public partial class PlayerFsm : GravityFsm
 
         public static int Inventory;
         public static int InventorySlowdown;
+
+        public static int UseIncenseBurner;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -163,6 +165,7 @@ public partial class PlayerFsm : GravityFsm
         public static int IsAboveLongFall;
 
         public static int Inventory;
+        public static int UseIncenseBurner;
 
 
     }
