@@ -161,8 +161,7 @@ public class InventoryCanvas : MonoBehaviour
         
         _selectionName.text = data.displayName;
         _selectionDescription.text = data.description;
-        _selectionUseDescription.text =
-            data.useDescription == "" ? "It doesn't seem to have much use." : data.useDescription;
+        _selectionUseDescription.text = data.GetUseDescription();
     }
 
     private void OnGameMenuOpened()

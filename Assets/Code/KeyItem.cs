@@ -12,7 +12,7 @@ public class KeyItemRegistration
     public Action onUse;
     public Sprite Sprite;
     public string description;
-    public string useDescription = ""; 
+    public Func<string> GetUseDescription = () => "It doesn't seem to have much use.";
 }
 
 public static class KeyItemRegistry
@@ -28,7 +28,6 @@ public static class KeyItemRegistry
             displayName = "Erhu neck",
             description = "The stick-like neck of a delicate instrument. It's broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
-            useDescription = "test",
             Sprite = null,
             onUse = null
         });
@@ -49,6 +48,20 @@ public static class KeyItemRegistry
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             onUse = null
+        });
+        
+        KeyItemRegistrations.Add("IncenseBurner", new KeyItemRegistration()
+        {
+            displayName = "Incense burner",
+            description = "An ornately constructed censer etched with fine runes. A voice seems to whisper within...",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            onUse = null,
+            GetUseDescription = () =>
+            {
+                var count = SaveSystem.GetIncenseAmount();
+                return count.ToString() + " cones of incense left.";
+            }
         });
         
     }

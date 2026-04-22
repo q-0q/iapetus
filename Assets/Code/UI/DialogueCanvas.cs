@@ -11,9 +11,12 @@ public class DialogueCanvas : MonoBehaviour
     private CanvasGroup _canvasGroup;
     private TextMeshProUGUI _tmpText;
     private TextMeshProUGUI _tmpName;
+    private GameObject _nameBackground;
     public static DialogueCanvas Singleton;
     public DialogueController currentDialogueController;
     private int _currentTextIndex = 0;
+
+    public float TimeSinceDialogueClosed = 100f;
 
     private void Awake()
     {
@@ -26,18 +29,21 @@ public class DialogueCanvas : MonoBehaviour
         _canvasGroup = GetComponent<CanvasGroup>();
         _tmpText = transform.Find("Text").GetComponent<TextMeshProUGUI>();
         _tmpName = transform.Find("Name").GetComponent<TextMeshProUGUI>();
+        _nameBackground = transform.Find("NameBackground").gameObject;
         _canvasGroup.alpha = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
+        TimeSinceDialogueClosed += Time.deltaTime;
         
         if (currentDialogueController != null && !GameMenu.Singleton.IsMenuOpen())
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 15f);
             _tmpText.text = currentDialogueController.dialogues[currentDialogueController.currentDialogueIndex].texts[_currentTextIndex + currentDialogueController.textStartOffset];
             _tmpName.text = currentDialogueController.DialogueName;
+            _nameBackground.SetActive(currentDialogueController.DialogueName != "");
         }
         else
         {
@@ -60,6 +66,7 @@ public class DialogueCanvas : MonoBehaviour
         if (currentDialogueController is null) return;
         currentDialogueController.Completed();
         currentDialogueController = null;
+        TimeSinceDialogueClosed = 0;
         PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.EndDialogue);
     }
 

@@ -40,8 +40,6 @@ public class FoliageSystem : MonoBehaviour
 
     void BuildInstances()
     {
-        print("building instances");
-        
         Collider col = GetComponent<Collider>();
         Bounds localBounds = GetLocalColliderBounds(col);
 

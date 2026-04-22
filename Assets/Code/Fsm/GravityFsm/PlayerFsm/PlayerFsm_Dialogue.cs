@@ -11,8 +11,12 @@ public partial class PlayerFsm
         _momentum = newMomentum;
         if (_momentum < 2f) ReplaceAnimatorTrigger("Idle");
         HandleCollisionMove();
-        var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
-        if (interacted) DialogueCanvas.Singleton.AdvanceDialogue();
+        var interacted = _inputBuffer.IsBuffered("Interact");
+        if (interacted)
+        {
+            DialogueCanvas.Singleton.AdvanceDialogue();
+            _inputBuffer.ConsumeBuffer("Interact");
+        };
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
         Animator.SetLayerWeight(1, 0);
@@ -33,6 +37,10 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Dialogue)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.Idle);
+            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.Idle)
+            .OnEntry(_ =>
+            {
+                _inputBuffer.ConsumeBuffer("Interact");
+            });
     }
 }

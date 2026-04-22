@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.IO;
 using System.Linq;
 using FMOD.Studio;
@@ -73,6 +74,7 @@ public class SaveSystem : MonoBehaviour
         public List<string> bells;
         public int bellCount;
         public int bitCount;
+        public int incenseAmount;
         public List<string> bitDeposits;
         public float playTime;
         public string gameVersion;
@@ -93,6 +95,7 @@ public class SaveSystem : MonoBehaviour
             bitCount = 0;
             bellCount = 0;
             playTime = 0;
+            incenseAmount = 0;
             bitDeposits = new List<string>();
             gameVersion = "";
         }
@@ -275,6 +278,19 @@ public class SaveSystem : MonoBehaviour
         SaveData data = LoadCachedSaveData();
         data.bitCount -= amount;
         Singleton._cachedSaveData = data;
+    }
+    
+    public static void AddIncenseAmount(int amount)
+    {
+        SaveData data = LoadCachedSaveData();
+        data.incenseAmount += amount;
+        WriteSaveData(data);
+    }
+    
+    public static int GetIncenseAmount()
+    {
+        SaveData data = LoadCachedSaveData();
+        return data.incenseAmount;
     }
     
     public static void CollectBitDeposit(string metaName)
