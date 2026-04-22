@@ -145,7 +145,7 @@ public class InventoryCanvas : MonoBehaviour
 
     private void OnSlotClicked(KeyItemRegistration data)
     {
-        
+        print("clicked " + data.displayName);
     }
     
     private void OnSlotSelected(KeyItemRegistration data)

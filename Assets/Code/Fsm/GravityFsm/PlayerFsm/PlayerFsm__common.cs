@@ -1048,4 +1048,19 @@ public partial class PlayerFsm
     {
         return _freezeTimer / SwimFreezeDuration;
     }
+
+    public bool GetNearbyCultTrial(out CultTrialFsm cultTrialFsm)
+    {
+        cultTrialFsm = null;
+        var colliders = Physics.OverlapSphere(transform.position, 3f, LayerMask.GetMask("CultTrialStartingLine"),
+            QueryTriggerInteraction.Ignore);
+        foreach (var c in colliders)
+        {
+            var fsm = c.transform.parent.parent.GetComponent<CultTrialFsm>();
+            cultTrialFsm = fsm;
+            return true;
+        }
+
+        return false;
+    }
 }

@@ -9,10 +9,13 @@ public class KeyItemRegistration
 {
     public string displayName;
     public GameObject MeshGameObject;
-    public Action onUse;
     public Sprite Sprite;
     public string description;
+    
     public Func<string> GetUseDescription = () => "It doesn't seem to have much use.";
+    public Func<bool> GetCanUse = () => false;
+    public Action onUse = null;
+    public Func<string> GetUseConfirmation = () => "Use this item?";
 }
 
 public static class KeyItemRegistry
@@ -29,7 +32,6 @@ public static class KeyItemRegistry
             description = "The stick-like neck of a delicate instrument. It's broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            onUse = null
         });
         
         KeyItemRegistrations.Add("ErhuFragment2", new KeyItemRegistration()
@@ -38,7 +40,6 @@ public static class KeyItemRegistry
             description = "A series of intricate tuning pegs. They're broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            onUse = null
         });
         
         KeyItemRegistrations.Add("ErhuFragment3", new KeyItemRegistration()
@@ -47,7 +48,6 @@ public static class KeyItemRegistry
             description = "The resonator body of a musical instrument. It's broken, but may be repaired.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            onUse = null
         });
         
         KeyItemRegistrations.Add("IncenseBurner", new KeyItemRegistration()
@@ -56,12 +56,14 @@ public static class KeyItemRegistry
             description = "An ornately constructed censer etched with fine runes. A voice seems to whisper within...",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            onUse = null,
             GetUseDescription = () =>
             {
                 var count = SaveSystem.GetIncenseAmount();
-                return count.ToString() + " cones of incense left.";
-            }
+                var nearby = PlayerFsm.Singleton.GetNearbyCultTrial(out var fsm);
+                if (count == 0 || nearby) return count.ToString() + " cones of incense left.";
+                return count.ToString() + " cones of incense left, but it wouldn't do anything right now.";
+            },
+            GetUseConfirmation = () => "Burn a cone of incense?"
         });
         
     }
