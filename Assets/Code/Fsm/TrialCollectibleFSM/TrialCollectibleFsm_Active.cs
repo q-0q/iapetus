@@ -50,8 +50,6 @@ public partial class TrialCollectibleFsm
                 UiTimer.Singleton._timer = 0;
                 UiTimer.Singleton._display = true;
                 UiTimer.Singleton._active = true;
-                _keyframes[0].EnableCameraZone();
-                _initialCameraBehaviorZone.gameObject.SetActive(false);
                 _activeParticles.Play();
                 _activeFinalParticles.Play();
                 _activeFinalParticles.transform.localScale = Vector3.zero;
@@ -68,7 +66,6 @@ public partial class TrialCollectibleFsm
 
     private void IncrementKeyframeIndex()
     {
-        _keyframes[_currentKeyframeIndex].DisableCameraZone();
         _keyframeTriggerParticles.Play();
         _currentKeyframeIndex++;
         FMODUnity.RuntimeManager.PlayOneShot(_currentKeyframeIndex == 1 ? startEvent : keyframeTriggerEvent);
@@ -77,7 +74,6 @@ public partial class TrialCollectibleFsm
             FMODUnity.RuntimeManager.PlayOneShot(TimeInCurrentState() < goldTime ? completeGoldEvent : completeEvent);
             return;
         }
-        _keyframes[_currentKeyframeIndex].EnableCameraZone();
         // _marker.gameObject.SetActive(false);
         
         StartCoroutine(InvokeSeekParticles());

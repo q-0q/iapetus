@@ -28,7 +28,8 @@ public partial class TrialCollectibleFsm : Fsm
     protected override void OnAwake()
     {
         base.OnAwake();
-        DisableAllKeyframeCameraZones();
+        NormalizeKeyframeHeights();
+
     }
 
     protected override void OnStart()
@@ -49,8 +50,7 @@ public partial class TrialCollectibleFsm : Fsm
         _beaconMaterial = _marker.Find("Beacon").Find("Plane").GetComponent<Renderer>().material;
         _beaconMaterial.SetFloat("_Opacity", 0);
         PlayReadyParticles();
-        _initialCameraBehaviorZone = transform.Find("InitialCameraZone").GetComponentInChildren<CameraBehaviorZone>();
-        _initialCameraBehaviorZone.gameObject.SetActive(true);
+
         
         
         if (Physics.Raycast(_playerReturnTransform.position, Vector3.down, out RaycastHit hit,10f, GetEnvironmentalLayermask()))
@@ -60,10 +60,8 @@ public partial class TrialCollectibleFsm : Fsm
 
 
         
-        NormalizeKeyframeHeights();
         _marker.position = _keyframes[0].transform.position;
         
-        SaveSystem.GetTrialCompletion(metaName, out _cachedPlayerRecordTime);
         _seeking = false;
     }
 
@@ -86,7 +84,7 @@ public partial class TrialCollectibleFsm : Fsm
 
     public void SetRecordTime(float time)
     {
-        _cachedPlayerRecordTime = time;
+        
     }
 
     private void OnEnable()

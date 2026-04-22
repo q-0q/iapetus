@@ -116,7 +116,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
-        TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated += ForceRecenter;
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
     }
 
@@ -124,7 +123,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     {
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
-        TrialCollectibleKeyframe.OnTrialCollectibleCameraZoneUpdated -= ForceRecenter;
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
     }
     

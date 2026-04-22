@@ -14,16 +14,18 @@ public partial class TrialCollectibleFsm
     [SerializeField] public string metaName;
     [SerializeField] public float goldTime = 10f;
     public string displayName;
+    
     private int _currentKeyframeIndex;
     private float _timeOnCurrentKeyframe;
     private bool _seeking;
     private float _completionTime;
     public static event Action<TrialCollectibleFsm, float> OnPlayerCompletedTrial;
     public static event Action OnPlayerBeganTrial;
+    
     private Light _light;
     private float _baseLightIntensity;
     private Transform _finishLine;
-    private float _cachedPlayerRecordTime;
+    private Transform _startingLine;
 
     private Transform _marker;
     private Transform _playerReturnTransform;
@@ -36,7 +38,6 @@ public partial class TrialCollectibleFsm
     private ParticleSystem _readyParticlesGold;
     private Material _beaconMaterial;
     
-    private CameraBehaviorZone _initialCameraBehaviorZone;
 
 
     public EventReference keyframeTriggerEvent;
@@ -117,15 +118,6 @@ public partial class TrialCollectibleFsm
 
         return position;
     }
-
-    private void DisableAllKeyframeCameraZones()
-    {
-        foreach (var keyframe in _keyframes)
-        {
-            
-            keyframe.DisableCameraZone();
-        }
-    }
     
     private void NormalizeKeyframeHeights()
     {
@@ -133,16 +125,26 @@ public partial class TrialCollectibleFsm
         {
             var keyframe = _keyframes[i];
             
-            if (Physics.Raycast(keyframe.transform.position, Vector3.down, out var hit, 5f, GetEnvironmentalLayermask()))
+            if (Physics.Raycast(keyframe.transform.position, Vector3.down, out var hit, 5f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
             {
                 keyframe.transform.position = hit.point + Vector3.up * 1f;
 
+                if (i == 0)
+                {
+                    transform.Find("StartingLine").transform.position = hit.point;
+                    transform.Find("StartingLine").transform.rotation = keyframe.transform.rotation;
+                }
+                
                 if (i == _keyframes.Count - 1)
                 {
                     transform.Find("FinishLine").transform.position = hit.point;
                 }
             }
         }
+        
+        // makes sure that foliage raycasting, which happens on start,
+        // sees the finishline/startingline colliders move
+        Physics.SyncTransforms();
     }
 
     private void PlayReadyParticles()

@@ -58,7 +58,6 @@ public class TrialCanvas : MonoBehaviour
             _newRecordTmp.gameObject.SetActive(true);
             _previousRecordTmp.gameObject.SetActive(false);
             _bestTmp.gameObject.SetActive(false);
-            trial.SetRecordTime(playerTime);
         }
         else
         {

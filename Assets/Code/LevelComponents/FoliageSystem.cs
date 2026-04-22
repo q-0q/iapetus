@@ -40,6 +40,8 @@ public class FoliageSystem : MonoBehaviour
 
     void BuildInstances()
     {
+        print("building instances");
+        
         Collider col = GetComponent<Collider>();
         Bounds localBounds = GetLocalColliderBounds(col);
 
@@ -135,13 +137,14 @@ public class FoliageSystem : MonoBehaviour
     private bool RaycastCheckSphere(RaycastHit hitInfo, Vector3 rayDirection)
     {
         var height = 300f;
+        var gap = 1f;
         var origin = hitInfo.point + Vector3.up * height;
         
         // raycast both up and down to check for overhangs
-        if (!Physics.Raycast(origin, Vector3.down, height - 1f, Fsm.GetEnvironmentalLayermask(),
+        if (!Physics.Raycast(origin, Vector3.down, height - gap, Fsm.GetEnvironmentalLayermask(),
                 QueryTriggerInteraction.Ignore)) return false;
         
-        return !Physics.Raycast(hitInfo.point + Vector3.up, Vector3.up, height - 1f, Fsm.GetEnvironmentalLayermask(),
+        return !Physics.Raycast(hitInfo.point + Vector3.up, Vector3.up, height - gap, Fsm.GetEnvironmentalLayermask(),
                 QueryTriggerInteraction.Ignore);
     }
 

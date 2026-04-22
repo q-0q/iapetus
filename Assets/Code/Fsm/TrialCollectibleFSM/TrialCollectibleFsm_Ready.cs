@@ -14,8 +14,6 @@ public partial class TrialCollectibleFsm
                 _currentKeyframeIndex = 0;
                 PlayReadyParticles();
                 _beaconMaterial.SetFloat("_Opacity", 0);
-                DisableAllKeyframeCameraZones();
-                _initialCameraBehaviorZone.gameObject.SetActive(true);
             })
             .OnExit(_ =>
             {
