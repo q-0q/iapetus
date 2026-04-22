@@ -162,6 +162,7 @@ public class InventoryCanvas : MonoBehaviour
         _canvasGroup.blocksRaycasts = true;
         _mainCanvasGroup.blocksRaycasts = true;
         _useConfirmationCanvasGroup.blocksRaycasts = false;
+        _useConfirmationCanvasGroup.alpha = 0;
         
         _inventorySlots[0].GetComponentInChildren<Button>().Select();
         OnSlotSelected(_inventorySlots[0].Data);

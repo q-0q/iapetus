@@ -76,6 +76,21 @@ public static class KeyItemRegistry
             GetUseConfirmation = () => "Burn a cone of incense?"
         });
         
+        KeyItemRegistrations.Add("Idol", new KeyItemRegistration()
+        {
+            displayName = "Amadean idol",
+            description = "A crude, palm-sized depiction of Amadea, carved from stone of the Mountain.",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            GetUseDescription = () => "Returns you to the last safe location.",
+            GetCanUse = () => true,
+            onUse = () =>
+            {
+                PlayerFsm.Singleton.InvokePlayerDeath();
+            },
+            GetUseConfirmation = () => "Return to a previous location?"
+        });
+        
     }
 }
 
