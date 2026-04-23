@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using Code.Fsm.TrialCollectibleFSM;
+using Code.Misc;
 using Code.TriggerParams;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Random = Unity.Mathematics.Random;
 
 public partial class CultTrialFsm
 {
@@ -17,6 +19,10 @@ public partial class CultTrialFsm
 
     private DialogueController _dialogueNoItem;
     private DialogueController _dialogueItem;
+
+    private Material _startingLineBaseMaterial;
+    
+    
     
     
 
@@ -44,5 +50,51 @@ public partial class CultTrialFsm
     {
         DialogueCanvas.Singleton.StartDialogue(SaveSystem.GetAllItems().Contains("IncenseBurner") ? _dialogueItem : _dialogueNoItem);
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+    }
+
+    public void DoActivation()
+    {
+        StartCoroutine(RingLightMultiplierCoroutine());
+        EnableFlames();
+        IEnumerator RingLightMultiplierCoroutine()
+        {
+            float t = 0f;
+            float d = 0.25f;
+            while (t < d)
+            {
+                _startingLineBaseMaterial.SetFloat("_RingMultiplier", Util.SmoothLerp01( t / d));
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
+        
+    }
+
+    private void AssumeActivation()
+    {
+        _startingLineBaseMaterial.SetFloat("_RingMultiplier", 1f);
+        EnableFlames();
+    }
+
+    private void EnableFlames()
+    {
+        var flamesParent = transform.Find("StartingLine").Find("Flames");
+        for (int i = 0; i < flamesParent.childCount; i++)
+        {
+            var flame = flamesParent.GetChild(i);
+            var light = flame.GetComponentInChildren<Light>();
+            StartCoroutine(EnableAfterDelay(light,
+                i * 0.2f));
+        }
+
+        return;
+
+        IEnumerator EnableAfterDelay(Light light, float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            light.GetComponent<ParticleSystem>().Play();
+            light.enabled = true;
+            yield return null;
+        }
     }
 }

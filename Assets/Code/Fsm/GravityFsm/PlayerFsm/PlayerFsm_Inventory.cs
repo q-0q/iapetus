@@ -59,6 +59,7 @@ public partial class PlayerFsm
             {
                 GetNearbyCultTrial(out var fsm);
                 SaveSystem.WritePersistentEvent(fsm.metaName + "-unlocked");
+                fsm.DoActivation();
                 SaveSystem.AddIncenseAmount(-1);
             });
         

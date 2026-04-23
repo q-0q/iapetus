@@ -60,14 +60,14 @@ public static class KeyItemRegistry
             {
                 var count = SaveSystem.GetIncenseAmount();
                 var nearby = PlayerFsm.Singleton.GetNearbyCultTrial(out var fsm);
-                if (count == 0 || nearby) return count.ToString() + " cones of incense left.";
+                if (count == 0 || nearby && !SaveSystem.GetPersistentEventCompleted(fsm.metaName + "-unlocked")) return count.ToString() + " cones of incense left.";
                 return count.ToString() + " cones of incense left, but it wouldn't do anything right now.";
             },
             GetCanUse = () =>
             {
                 var count = SaveSystem.GetIncenseAmount();
                 var nearby = PlayerFsm.Singleton.GetNearbyCultTrial(out var fsm);
-                return nearby && count > 0;
+                return nearby && count > 0  && !SaveSystem.GetPersistentEventCompleted(fsm.metaName + "-unlocked");
             },
             onUse = () =>
             {

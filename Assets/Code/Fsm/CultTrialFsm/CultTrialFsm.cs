@@ -31,6 +31,13 @@ public partial class CultTrialFsm : Fsm
 
         transform.Find("DialogueNoItem").TryGetComponent(out _dialogueNoItem);
         transform.Find("DialogueItem").TryGetComponent(out _dialogueItem);
+
+        _startingLineBaseMaterial = transform.Find("StartingLine").Find("Base").GetComponent<Renderer>().material;
+
+        if (SaveSystem.GetPersistentEventCompleted(metaName + "-unlocked"))
+        {
+            AssumeActivation();
+        }
     }
     
     public override void OnUpdate()
