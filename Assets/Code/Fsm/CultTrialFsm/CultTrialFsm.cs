@@ -31,6 +31,7 @@ public partial class CultTrialFsm : Fsm
 
         transform.Find("DialogueNoItem").TryGetComponent(out _dialogueNoItem);
         transform.Find("DialogueItem").TryGetComponent(out _dialogueItem);
+        transform.Find("DialogueFirstTimeUse").TryGetComponent(out _dialogueFirstTimeUse);
 
         _startingLineBaseMaterial = transform.Find("StartingLine").Find("Base").GetComponent<Renderer>().material;
 

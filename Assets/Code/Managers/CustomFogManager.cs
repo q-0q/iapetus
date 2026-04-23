@@ -14,7 +14,7 @@ public class CustomFogManager : MonoBehaviour
 
     private CustomFogController _currentController;
     public static readonly List<CustomFogController> CustomFogControllerRegistry = new();
-    public const float LerpStrength = 0.5f;
+    public const float LerpStrength = 1f;
 
     public void SetCurrentController(CustomFogController controller, bool snap = false)
     {

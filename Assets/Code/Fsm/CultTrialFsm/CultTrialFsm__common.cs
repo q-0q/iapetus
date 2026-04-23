@@ -19,6 +19,9 @@ public partial class CultTrialFsm
 
     private DialogueController _dialogueNoItem;
     private DialogueController _dialogueItem;
+    private DialogueController _dialogueFirstTimeUse;
+
+    private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
 
     private Material _startingLineBaseMaterial;
     
@@ -48,7 +51,16 @@ public partial class CultTrialFsm
 
     private void OnInteracted()
     {
-        DialogueCanvas.Singleton.StartDialogue(SaveSystem.GetAllItems().Contains("IncenseBurner") ? _dialogueItem : _dialogueNoItem);
+        var controller = _dialogueNoItem;
+        if (!SaveSystem.GetPersistentEventCompleted(metaName + "-unlocked"))
+        {
+            controller = SaveSystem.GetAllItems().Contains("IncenseBurner") ? _dialogueItem : _dialogueNoItem;
+        }
+        else
+        {
+            controller = SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) ? null : _dialogueFirstTimeUse;
+        }
+        DialogueCanvas.Singleton.StartDialogue(controller);
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
     }
 

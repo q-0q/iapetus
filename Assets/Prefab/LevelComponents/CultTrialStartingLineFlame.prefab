@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4788872281844965663}
   - component: {fileID: 579787939137164612}
   - component: {fileID: 7214990751171892190}
-  m_Layer: 0
+  m_Layer: 27
   m_Name: InnerFlameParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 2480664452761359185}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.55, z: 0}
+  m_LocalPosition: {x: -0, y: 0.68, z: 0.6}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -4782,7 +4782,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 17bc2da68311e4931ac5680eb3c1f712, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4879,7 +4879,7 @@ GameObject:
   - component: {fileID: 8796270629696251890}
   - component: {fileID: 4062598675165946256}
   - component: {fileID: 2111291842271274066}
-  m_Layer: 0
+  m_Layer: 27
   m_Name: OuterFlameParticles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9659,7 +9659,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 17bc2da68311e4931ac5680eb3c1f712, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -9726,6 +9726,7 @@ GameObject:
   - component: {fileID: 3359297614450798849}
   - component: {fileID: 4641924597711033842}
   - component: {fileID: 4579933690264631277}
+  - component: {fileID: 2399447011704444861}
   m_Layer: 0
   m_Name: ParticlesParent
   m_TagString: Untagged
@@ -14656,3 +14657,16 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!114 &2399447011704444861
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4616428860226129611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e5d83c980fa64c1fb958a48eb7ebf7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LookAtCamera
+  _keepWorldUp: 1
