@@ -79,7 +79,7 @@ public static class KeyItemRegistry
         KeyItemRegistrations.Add("Idol", new KeyItemRegistration()
         {
             displayName = "Amadean idol",
-            description = "A crude, palm-sized depiction of Amadea, carved from stone of the Mountain.",
+            description = "A palm-sized depiction of Amadea, lovingly carved from stone of the Mountain.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             GetUseDescription = () => "Returns you to the last safe location.",

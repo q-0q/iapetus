@@ -58,7 +58,8 @@ public partial class PlayerFsm
             .OnExit(_ =>
             {
                 GetNearbyCultTrial(out var fsm);
-                print("activated cult trial: " + fsm.name);
+                SaveSystem.WritePersistentEvent(fsm.metaName + "-unlocked");
+                SaveSystem.AddIncenseAmount(-1);
             });
         
     }

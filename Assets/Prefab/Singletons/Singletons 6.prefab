@@ -11476,7 +11476,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1237718675737592044}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.079180114, y: 0.000011365478, z: 0.00000090275415, w: 0.9968603}
+  m_LocalRotation: {x: -0.079180114, y: 0.000011502786, z: 0.00000091366053, w: 0.9968603}
   m_LocalPosition: {x: 4.1, y: 0, z: 16.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13294,9 +13294,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2627795629744639428}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.21331263, y: 0.000000055456024, z: -0.0000000045806567,
-    w: 0.976984}
-  m_LocalPosition: {x: -0.00000011436036, y: -11.324209, z: 2.1285253}
+  m_LocalRotation: {x: 0.15236518, y: 0.000000040122778, z: -0.000000019398243, w: 0.9883243}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -14640,7 +14639,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3600708144320890767}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.37417305, y: -0.000000015692224, z: 0.0000000056794285, w: 0.9273589}
+  m_LocalRotation: {x: 0.37417305, y: 0.000000017209128, z: -0.0000000069435813, w: 0.9273589}
   m_LocalPosition: {x: 4.1, y: 16.450857, z: 13.183044}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -15338,6 +15337,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4450577145927019656}
   - component: {fileID: 3048541289168546558}
+  - component: {fileID: 651513225102865992}
   m_Layer: 5
   m_Name: Selection
   m_TagString: Untagged
@@ -15394,6 +15394,35 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &651513225102865992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3931886744555404312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventTrigger
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1428634451620096222}
+          m_TargetAssemblyTypeName: InventoryCanvas, Assembly-CSharp
+          m_MethodName: SelectionClicked
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &4009874285850122227
 GameObject:
   m_ObjectHideFlags: 0
@@ -23061,7 +23090,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6732176611947337770}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.28518432, y: 0.000000037116397, z: -0.000000024667841, w: 0.9584728}
+  m_LocalRotation: {x: 0.2851843, y: 0.000000037116397, z: -0.000000024667841, w: 0.9584728}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -29179,7 +29208,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7852221051156567442}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19726881, y: 0.00000001475784, z: -0.000000007984776, w: 0.9803495}
+  m_LocalRotation: {x: 0.19726966, y: 0.0000022069619, z: -0.0000011940862, w: 0.9803493}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -34417,7 +34446,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8039408779227290618}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
@@ -40571,7 +40600,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9130809501994490205}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5248343, y: -0.000055422413, z: 0.000034172266, w: 0.85120445}
+  m_LocalRotation: {x: 0.5248343, y: -0.000055573757, z: 0.000034265577, w: 0.85120445}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -42812,6 +42841,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 3299368541814649151}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 1867591155365567976}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 1867591155365567976}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 3299368541814649151}
     - target: {fileID: 6787475100825559243, guid: 5a447476b49f84e4bb276089b2d61ad5,
         type: 3}
       propertyPath: m_Pivot.x
@@ -43273,6 +43322,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1511814916995885344}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 4443694566050900202}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 4443694566050900202}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 1511814916995885344}
     - target: {fileID: 6787475100825559243, guid: 5a447476b49f84e4bb276089b2d61ad5,
         type: 3}
       propertyPath: m_Pivot.x
@@ -43384,6 +43453,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 5462647663394284860}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1867591155365567976 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+    type: 3}
+  m_PrefabInstance: {fileID: 5462647663394284860}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &5787954236585191465
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43773,6 +43854,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 4443694566050900202}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 4278055759179168400}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 4443694566050900202}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 4278055759179168400}
     - target: {fileID: 6787475100825559243, guid: 5a447476b49f84e4bb276089b2d61ad5,
         type: 3}
       propertyPath: m_Pivot.x
@@ -43884,6 +43985,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 6521436721258653137}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &622888163753155845 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+    type: 3}
+  m_PrefabInstance: {fileID: 6521436721258653137}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &6643525281734161237
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44314,6 +44427,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 622888163753155845}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 622888163753155845}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 2337091971980103014}
     - target: {fileID: 6787475100825559243, guid: 5a447476b49f84e4bb276089b2d61ad5,
         type: 3}
       propertyPath: m_Pivot.x
@@ -44425,6 +44553,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 7600537209924616772}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4278055759179168400 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+    type: 3}
+  m_PrefabInstance: {fileID: 7600537209924616772}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &8038663596584865854
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44438,6 +44578,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 1867591155365567976}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 622888163753155845}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 622888163753155845}
     - target: {fileID: 6787475100825559243, guid: 5a447476b49f84e4bb276089b2d61ad5,
         type: 3}
       propertyPath: m_Pivot.x
@@ -44549,6 +44704,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 8038663596584865854}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4443694566050900202 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+    type: 3}
+  m_PrefabInstance: {fileID: 8038663596584865854}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Button
 --- !u!1001 &8235739691421840818
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44562,6 +44729,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: InventorySlot (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnUp
+      value: 
+      objectReference: {fileID: 47135805959846542}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnDown
+      value: 
+      objectReference: {fileID: 4278055759179168400}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnLeft
+      value: 
+      objectReference: {fileID: 4278055759179168400}
+    - target: {fileID: 5918923264016660692, guid: 5a447476b49f84e4bb276089b2d61ad5,
+        type: 3}
+      propertyPath: m_Navigation.m_SelectOnRight
+      value: 
+      objectReference: {fileID: 47135805959846542}
     - target: {fileID: 6787475100825559243, guid: 5a447476b49f84e4bb276089b2d61ad5,
         type: 3}
       propertyPath: m_Pivot.x

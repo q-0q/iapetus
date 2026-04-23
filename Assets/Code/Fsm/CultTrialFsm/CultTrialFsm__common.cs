@@ -10,6 +10,8 @@ using UnityEngine.Serialization;
 
 public partial class CultTrialFsm
 {
+    public string metaName = "";
+    
     private Interactable _interactable;
     private List<CultTrialKeyframe> _keyframes;
 
@@ -40,7 +42,6 @@ public partial class CultTrialFsm
 
     private void OnInteracted()
     {
-        print("hi");
         DialogueCanvas.Singleton.StartDialogue(SaveSystem.GetAllItems().Contains("IncenseBurner") ? _dialogueItem : _dialogueNoItem);
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
     }

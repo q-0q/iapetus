@@ -208,6 +208,11 @@ public class InventoryCanvas : MonoBehaviour
         return true;
     }
 
+    public void SelectionClicked()
+    {
+        OnSlotClicked(_confirmationData);
+    }
+
 
     private void OnSlotClicked(KeyItemRegistration data)
     {
