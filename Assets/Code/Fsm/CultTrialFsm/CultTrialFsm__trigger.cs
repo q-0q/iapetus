@@ -8,9 +8,5 @@ public partial class CultTrialFsm
     {
         base.OnFireTriggers();
     }
-
-    private void OnToggle()
-    {
-        Machine.Fire(CultTrialFsmTrigger.Toggle);
-    }
+    
 }

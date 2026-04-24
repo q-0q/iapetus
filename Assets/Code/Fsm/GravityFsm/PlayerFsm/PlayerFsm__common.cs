@@ -930,7 +930,6 @@ public partial class PlayerFsm
     {
         if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
         if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
-        print("deaddd");
         Machine.Jump(PlayerFsmState.Dying1);
     }
 

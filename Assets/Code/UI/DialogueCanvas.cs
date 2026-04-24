@@ -72,8 +72,14 @@ public class DialogueCanvas : MonoBehaviour
 
     public void StartDialogue(DialogueController controller)
     {
-        currentDialogueController = controller;
-        _currentTextIndex = 0;
+        StartCoroutine(Coroutine());
+        IEnumerator Coroutine()
+        {
+            yield return new WaitForSeconds(controller.canvasDelay + controller.dialogues[controller.currentDialogueIndex].canvasDelayOffset);
+            currentDialogueController = controller;
+            _currentTextIndex = 0;
+        }
+        
     }
 
     public Vector3 ControllerPosition()

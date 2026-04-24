@@ -11,6 +11,7 @@ public class Dialogue
 {
     public List<string> texts = new List<string>();
     public bool advanceDialogueIndex = false;
+    public float canvasDelayOffset = 0;
 }
 
 public class DialogueController : MonoBehaviour
@@ -44,12 +45,9 @@ public class DialogueController : MonoBehaviour
             transform.position};
         PlayerFsm.Singleton.Machine.Fire(PlayerFsm.PlayerFsmTrigger.StartDialogue, p);
 
-        StartCoroutine(Coroutine());
-        IEnumerator Coroutine()
-        {
-            yield return new WaitForSeconds(canvasDelay);
-            DialogueCanvas.Singleton.StartDialogue(this);
-        }
+        DialogueCanvas.Singleton.StartDialogue(this);
+        
+
     }
 
     private void OnDisable()

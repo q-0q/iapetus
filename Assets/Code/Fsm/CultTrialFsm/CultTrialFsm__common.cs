@@ -8,6 +8,7 @@ using Code.Misc;
 using Code.TriggerParams;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using Random = Unity.Mathematics.Random;
 
 public partial class CultTrialFsm
@@ -19,15 +20,16 @@ public partial class CultTrialFsm
 
     private DialogueController _dialogueNoItem;
     private DialogueController _dialogueItem;
-    private DialogueController _dialogueFirstTimeUse;
+    private DialogueController _dialogueFirstTimeUse1;
+    private DialogueController _dialogueFirstTimeUse2;
 
     private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
 
     private Material _startingLineBaseMaterial;
-    
-    
-    
-    
+
+
+    private CustomFogController _activeFogController;
+
 
     private void UpdateKeyframes()
     {
@@ -51,39 +53,18 @@ public partial class CultTrialFsm
 
     private void OnInteracted()
     {
-        var controller = _dialogueNoItem;
-        if (!SaveSystem.GetPersistentEventCompleted(metaName + "-unlocked"))
-        {
-            controller = SaveSystem.GetAllItems().Contains("IncenseBurner") ? _dialogueItem : _dialogueNoItem;
-        }
-        else
-        {
-            controller = SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) ? null : _dialogueFirstTimeUse;
-        }
-        DialogueCanvas.Singleton.StartDialogue(controller);
-        PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+        Machine.Fire(CultTrialFsmTrigger.OnInteracted);
+        
     }
 
-    public void DoActivation()
+    public void Unlock()
     {
-        StartCoroutine(RingLightMultiplierCoroutine());
-        EnableFlames();
-        IEnumerator RingLightMultiplierCoroutine()
-        {
-            float t = 0f;
-            float d = 0.25f;
-            while (t < d)
-            {
-                _startingLineBaseMaterial.SetFloat("_RingMultiplier", Util.SmoothLerp01( t / d));
-                t += Time.deltaTime;
-                yield return null;
-            }
-        }
-        
+        Machine.Fire(CultTrialFsmTrigger.OnUnlock);
     }
 
     private void AssumeActivation()
     {
+        Machine.Jump(CultTrialFsmState.UnlockedIdle);
         _startingLineBaseMaterial.SetFloat("_RingMultiplier", 1f);
         EnableFlames();
     }
@@ -108,5 +89,10 @@ public partial class CultTrialFsm
             light.enabled = true;
             yield return null;
         }
+    }
+
+    private void OnDialogueCompleted()
+    {
+        Machine.Fire(CultTrialFsmTrigger.OnDialogueCompleted);
     }
 }
