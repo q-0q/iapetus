@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,13 +14,18 @@ public class CultTrialManager : MonoBehaviour
     public DialogueController dialogueFirstTimeUse2;
 
     private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
-    
+
     private Material _curseHaloMaterial;
     private Transform _curseHalo;
     private Image _curseCanvasImage;
+    private Material _curseHudTextMaterial;
 
     private CanvasGroup _markHudCanvasGroup;
     public bool isCurseEnabled;
+
+    public bool isCurseTicking;
+    private float _curseDuration;
+    private const float CurseMaximumDuration = 6f;
 
     private void Awake()
     {
@@ -28,9 +34,20 @@ public class CultTrialManager : MonoBehaviour
         _curseHaloMaterial = _curseHalo.GetComponent<Renderer>().material;
         _curseCanvasImage = transform.Find("CurseCanvas").GetComponentInChildren<Image>();
         _markHudCanvasGroup = transform.Find("Canvas").Find("MarkHud").GetComponent<CanvasGroup>();
+        _curseHudTextMaterial = _markHudCanvasGroup.GetComponentInChildren<TextMeshProUGUI>().fontMaterial;
+        
         DisableCurse();
     }
-    
+
+    private void Update()
+    {
+        _curseHudTextMaterial.SetFloat("_BarGlowMultiply",Mathf.Lerp(_curseHudTextMaterial.GetFloat("_BarGlowMultiply"), isCurseTicking ? 2.5f : 0f, Time.deltaTime * 4f));
+        if (!isCurseTicking) return;
+        _curseDuration -= Time.deltaTime;
+        var w = _curseDuration / CurseMaximumDuration;
+        _curseHudTextMaterial.SetFloat("_BarAmount", w);
+    }
+
     public void SetCurseEffects(float timeInCurrentState)
     {
         _curseHalo.position = PlayerFsm.Singleton.transform.position + Vector3.up * 2f;
@@ -59,7 +76,9 @@ public class CultTrialManager : MonoBehaviour
 
     public void EnableCurse()
     {
+        _curseHudTextMaterial.SetFloat("_BarGlowMultiply", 0f);
         _markHudCanvasGroup.alpha = 1f;
+        _curseDuration = CurseMaximumDuration;
         isCurseEnabled = true;
     }
     
@@ -67,5 +86,10 @@ public class CultTrialManager : MonoBehaviour
     {
         _markHudCanvasGroup.alpha = 0f;
         isCurseEnabled = false;
+    }
+
+    public void StartCurseTicking()
+    {
+        isCurseTicking = true;
     }
 }
