@@ -64,6 +64,7 @@ public partial class CultTrialFsm
             });
 
         Machine.Configure(CultTrialFsmState.UnlockedIdle)
+            .PermitIf(CultTrialFsmTrigger.PlayerLeftStartingLine, CultTrialFsmState.TrialActive, _ => CultTrialManager.Singleton.isCurseEnabled)
             .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.FirstTimeUseDialogue1, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
             .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.FirstTimeUseDialogue2, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) && CultTrialManager.Singleton.isCurseEnabled, 2)
             .OnEntryFrom(CultTrialFsmTrigger.OnUnlock, _ =>
@@ -88,8 +89,7 @@ public partial class CultTrialFsm
             .Permit(FsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue2)
             .OnEntry(_ =>
             {
-                _activeFogController.Priority = 10;
-
+                CultTrialManager.Singleton.EnableActiveFog();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
             })
             .OnExit(_ =>
@@ -106,6 +106,16 @@ public partial class CultTrialFsm
                 var controller = _dialogueFirstTimeUse2;
                 DialogueCanvas.Singleton.StartDialogue(controller);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+            });
+        
+        Machine.Configure(CultTrialFsmState.TrialActive)
+            .OnEntry(_ =>
+            {
+                CultTrialManager.Singleton.StartCurseTicking(this);
+                Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+            })
+            .OnExit(_ =>
+            {
             });
     }
 

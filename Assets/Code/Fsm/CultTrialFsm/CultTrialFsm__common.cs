@@ -25,6 +25,8 @@ public partial class CultTrialFsm
 
     private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
 
+    private Transform _startingLinePlacer;
+    private Transform _startingLine;
     private Material _startingLineBaseMaterial;
 
 
@@ -39,15 +41,15 @@ public partial class CultTrialFsm
 
     private void AlignStartingPosition()
     {
-        var keyframe0 = GetComponentsInChildren<CultTrialKeyframe>().ToList()[0].transform;
+        var placer = transform.Find("StartingLinePlacer");
         var t = transform.Find("StartingLine");
         
-        if (Physics.Raycast(keyframe0.position, Vector3.down, out var hit, 5f, ~LayerMask.GetMask("CultTrialStartingLine"),
+        if (Physics.Raycast(placer.position, Vector3.down, out var hit, 5f, ~LayerMask.GetMask("CultTrialStartingLine"),
                 QueryTriggerInteraction.Ignore))
         {
             t.position = hit.point;
             GetComponentInChildren<Interactable>().transform.position = hit.point + Vector3.up;
-            t.rotation = keyframe0.rotation;
+            t.rotation = placer.rotation;
         }
     }
 

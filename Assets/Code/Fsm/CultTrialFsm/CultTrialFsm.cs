@@ -13,10 +13,11 @@ public partial class CultTrialFsm : Fsm
         public static int UnlockedIdle;
         public static int FirstTimeUseDialogue1;
         public static int FirstTimeUseDialogue2;
-        public static int FirstTimeUseDialogue3;
 
         
         public static int ApplyingCurse;
+        
+        public static int TrialActive;
     }
 
     public class CultTrialFsmTrigger : FsmTrigger
@@ -24,6 +25,8 @@ public partial class CultTrialFsm : Fsm
         public static int OnInteracted;
         public static int OnUnlock;
         public static int OnDialogueCompleted;
+
+        public static int PlayerLeftStartingLine;
     }
 
     protected override void OnAwake()
@@ -44,10 +47,10 @@ public partial class CultTrialFsm : Fsm
         InitState = CultTrialFsmState.LockedIdle;
         _interactable.SetEnabled(true);
 
-        _activeFogController = transform.Find("StartingLine").Find("ActiveFogController")
-            .GetComponent<CustomFogController>();
 
-        _startingLineBaseMaterial = transform.Find("StartingLine").Find("Base").GetComponent<Renderer>().material;
+
+        _startingLine = transform.Find("StartingLine");
+        _startingLineBaseMaterial = _startingLine.Find("Base").GetComponent<Renderer>().material;
     }
 
     protected override void OnStartComplete()

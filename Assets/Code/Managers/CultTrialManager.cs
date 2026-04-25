@@ -1,4 +1,7 @@
 using System;
+using System.Collections;
+using Code.Misc;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,7 +28,11 @@ public class CultTrialManager : MonoBehaviour
 
     public bool isCurseTicking;
     private float _curseDuration;
+    private CustomFogController _activeFogController;
+    private TextMeshProUGUI _markHudTmp;
     private const float CurseMaximumDuration = 6f;
+
+    public static event Action<CultTrialFsm> OnTrialActive;
 
     private void Awake()
     {
@@ -34,18 +41,28 @@ public class CultTrialManager : MonoBehaviour
         _curseHaloMaterial = _curseHalo.GetComponent<Renderer>().material;
         _curseCanvasImage = transform.Find("CurseCanvas").GetComponentInChildren<Image>();
         _markHudCanvasGroup = transform.Find("Canvas").Find("MarkHud").GetComponent<CanvasGroup>();
-        _curseHudTextMaterial = _markHudCanvasGroup.GetComponentInChildren<TextMeshProUGUI>().fontMaterial;
+        _markHudTmp = _markHudCanvasGroup.GetComponentInChildren<TextMeshProUGUI>();
+        _curseHudTextMaterial = _markHudTmp.fontMaterial;
+        _activeFogController = transform.Find("ActiveFogController")
+            .GetComponent<CustomFogController>();
         
         DisableCurse();
     }
 
     private void Update()
     {
+        _activeFogController.transform.position = PlayerFsm.Singleton.transform.position;
         _curseHudTextMaterial.SetFloat("_BarGlowMultiply",Mathf.Lerp(_curseHudTextMaterial.GetFloat("_BarGlowMultiply"), isCurseTicking ? 2.5f : 0f, Time.deltaTime * 4f));
         if (!isCurseTicking) return;
         _curseDuration -= Time.deltaTime;
         var w = _curseDuration / CurseMaximumDuration;
         _curseHudTextMaterial.SetFloat("_BarAmount", w);
+        if (w < 0) OnCurseExpire();
+    }
+
+    private void OnCurseExpire()
+    {
+        PlayerFsm.Singleton.InvokePlayerDeath();
     }
 
     public void SetCurseEffects(float timeInCurrentState)
@@ -74,12 +91,49 @@ public class CultTrialManager : MonoBehaviour
         _curseCanvasImage.color = c;
     }
 
+    public void ReplenishCurseDuration()
+    {
+        _curseDuration = CurseMaximumDuration;
+        Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+        HudTmpPunchPosition();
+    }
+
+    private void HudTmpPunchPosition()
+    {
+        _markHudTmp.transform.DOComplete();
+        _markHudTmp.transform.DOPunchPosition(Vector3.right * 10f, 0.5f, 10, 1f);
+
+        IEnumerator PanelGlowCoroutine()
+        {
+            var t = 0f;
+            var d = 0.15f;
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                t += Time.deltaTime;
+                
+                yield return null;
+            }
+        }
+    }
+
+    public void EnableActiveFog()
+    {
+        _activeFogController.Priority = 10;
+    }
+    
+    public void DisableActiveFog()
+    {
+        _activeFogController.Priority = -10;
+    }
+
     public void EnableCurse()
     {
         _curseHudTextMaterial.SetFloat("_BarGlowMultiply", 0f);
         _markHudCanvasGroup.alpha = 1f;
         _curseDuration = CurseMaximumDuration;
         isCurseEnabled = true;
+        HudTmpPunchPosition();
     }
     
     public void DisableCurse()
@@ -88,8 +142,10 @@ public class CultTrialManager : MonoBehaviour
         isCurseEnabled = false;
     }
 
-    public void StartCurseTicking()
+    public void StartCurseTicking(CultTrialFsm fsm)
     {
         isCurseTicking = true;
+        OnTrialActive?.Invoke(fsm);
+        HudTmpPunchPosition();
     }
 }
