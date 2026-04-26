@@ -267,6 +267,8 @@ public partial class PlayerFsm
     private static float _desiredWindRushFmodAmount = 0f;
     private float _timeSinceSurgeStarted = 0f;
     private float _freezeTimer;
+    public static event Action OnPlayerCultTrialDeath;
+    public static event Action<Vector3> OnPlayerTeleported;
     private const float SwimFreezeDuration = 3f;
 
 
@@ -930,6 +932,15 @@ public partial class PlayerFsm
     {
         if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
         if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
+        if (CultTrialManager.Singleton.isCurseEnabled)
+        {
+            CultTrialManager.Singleton.ReplenishCurseDuration(false);
+            CultTrialManager.Singleton.isCurseTicking = false;
+            SetPositionFromSaveData();
+            Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
+            OnPlayerCultTrialDeath?.Invoke();
+            return;
+        }
         Machine.Jump(PlayerFsmState.Dying1);
     }
 

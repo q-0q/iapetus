@@ -11720,6 +11720,7 @@ Transform:
   - {fileID: 4312480582281095793}
   - {fileID: 7369516213523700975}
   - {fileID: 7080467005692511028}
+  - {fileID: 913415185526373089}
   - {fileID: 5004471172585422516}
   - {fileID: 1970325188893653200}
   m_Father: {fileID: 5395825063543935060}
@@ -11742,6 +11743,7 @@ MonoBehaviour:
   dialogueFirstTimeUse2: {fileID: 4314837093134369866}
   isCurseEnabled: 0
   isCurseTicking: 0
+  dialogueFirstTimeUse3: {fileID: 6349363405889412909}
 --- !u!1 &1279916274918459991
 GameObject:
   m_ObjectHideFlags: 0
@@ -13654,7 +13656,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2627795629744639428}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15236518, y: 0.000000040122778, z: -0.000000019398243, w: 0.9883243}
+  m_LocalRotation: {x: 0.15236521, y: 0.000000040122778, z: -0.000000019398243, w: 0.9883243}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -23559,6 +23561,64 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6278756872598384460}
   m_CullTransparentMesh: 1
+--- !u!1 &6301612356722746245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 913415185526373089}
+  - component: {fileID: 6349363405889412909}
+  m_Layer: 0
+  m_Name: DialogueFirstTimeUse3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &913415185526373089
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6301612356722746245}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -641.9, y: -340.8, z: 272.69998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 689153785027060128}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6349363405889412909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6301612356722746245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d20f73aabcb4cfbaac49363662be3e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueController
+  currentDialogueIndex: 0
+  textStartOffset: 0
+  dialogues:
+  - texts:
+    - <i>Oh, poor thing... too much for you to handle?!</i>
+    - <i>Too bad! Death does not absolve you of my mark!</i>
+    - <i>Try again... or be doomed for eternity! Heehee!</i>
+    advanceDialogueIndex: 0
+    canvasDelayOffset: 0
+  DialogueName: Far presence
+  LookAtOverride: {fileID: 0}
+  CameraY: 0.7
+  canvasDelay: 0
+  cameraFollowOffsetLerp: 0
 --- !u!1 &6397419613866159797
 GameObject:
   m_ObjectHideFlags: 0
@@ -24117,7 +24177,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6732176611947337770}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2851843, y: 0.000000037116397, z: -0.000000024667841, w: 0.9584728}
+  m_LocalRotation: {x: 0.2851843, y: 0.00000005257154, z: -0.000000034939447, w: 0.9584728}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -30235,7 +30295,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7852221051156567442}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.19726913, y: 0.0000017967767, z: -0.0000009721524, w: 0.9803494}
+  m_LocalRotation: {x: 0.19726884, y: 0.00000005551793, z: -0.000000030038155, w: 0.9803495}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

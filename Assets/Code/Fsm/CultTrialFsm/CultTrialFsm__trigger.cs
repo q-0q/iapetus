@@ -1,3 +1,5 @@
+using System.Collections;
+using Code.Misc;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -14,5 +16,27 @@ public partial class CultTrialFsm
             if (sqrMagnitude >= 156f) Machine.Fire(CultTrialFsm.CultTrialFsmTrigger.PlayerLeftStartingLine);
         }
     }
-    
+
+    private void OnPlayerCultTrialDeath()
+    {
+        if (!SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
+            StartCoroutine(DeathExplanationListener());
+        Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+        Machine.Fire(CultTrialFsmTrigger.PlayerTrialDeath);
+    }
+
+    private IEnumerator DeathExplanationListener()
+    {
+        print( "started listener");
+        while (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
+        {
+            yield return null;
+        }
+        
+        print( "listener ending");
+        
+        DialogueCanvas.Singleton.StartDialogue(_dialogueFirstTimeUse3);
+        PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+        
+    }
 }

@@ -89,6 +89,7 @@ public partial class CultTrialFsm
             .Permit(FsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue2)
             .OnEntry(_ =>
             {
+                SaveSystem.WritePlayerInGamePosition(_interactable.transform.position, "", _startingLine.rotation.eulerAngles.y);
                 CultTrialManager.Singleton.EnableActiveFog();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
             })
@@ -109,13 +110,16 @@ public partial class CultTrialFsm
             });
         
         Machine.Configure(CultTrialFsmState.TrialActive)
+            .Permit(CultTrialFsmTrigger.PlayerTrialDeath, CultTrialFsmState.UnlockedIdle)
             .OnEntry(_ =>
             {
+                _interactable.SetEnabled(false);
                 CultTrialManager.Singleton.StartCurseTicking(this);
                 Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
             })
             .OnExit(_ =>
             {
+                _interactable.SetEnabled(true);
             });
     }
 

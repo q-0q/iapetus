@@ -175,6 +175,19 @@ public partial class PlayerFsm : GravityFsm
         Singleton = this;
         
         
+        SetPositionFromSaveData();
+
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
+        Application.targetFrameRate = 240;
+        
+        
+    }
+
+    private void SetPositionFromSaveData()
+    {
+        var initialPosition = transform.position;
         var saveData = SaveSystem.LoadCachedSaveData();
         if (saveData != null )
         {
@@ -198,14 +211,9 @@ public partial class PlayerFsm : GravityFsm
             }
         }
 
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
-        QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 240;
-        
-        
+        OnPlayerTeleported?.Invoke(transform.position - initialPosition);
     }
-    
+
     protected override void OnStart()
     {
         

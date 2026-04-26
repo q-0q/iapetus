@@ -42,11 +42,13 @@ public class CameraFollow : MonoBehaviour
     private void OnEnable()
     {
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
+        PlayerFsm.OnPlayerTeleported += OnWarp;
     }
 
     private void OnDisable()
     {
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
+        PlayerFsm.OnPlayerTeleported -= OnWarp;
     }
 
     private void OnWarp(Vector3 delta)

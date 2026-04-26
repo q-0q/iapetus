@@ -117,6 +117,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
+        PlayerFsm.OnPlayerTeleported += OnWarp;
     }
 
     private void OnDisable()
@@ -124,6 +125,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
         CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
+        PlayerFsm.OnPlayerTeleported -= OnWarp;
     }
     
     private void OnMetaSaveDataUpdated(MetaSaveSystem.MetaSaveData metaSaveData)

@@ -27,6 +27,7 @@ public partial class CultTrialFsm : Fsm
         public static int OnDialogueCompleted;
 
         public static int PlayerLeftStartingLine;
+        public static int PlayerTrialDeath;
     }
 
     protected override void OnAwake()
@@ -39,6 +40,7 @@ public partial class CultTrialFsm : Fsm
         _dialogueItem = CultTrialManager.Singleton.dialogueItem;
         _dialogueFirstTimeUse1 = CultTrialManager.Singleton.dialogueFirstTimeUse1;
         _dialogueFirstTimeUse2 = CultTrialManager.Singleton.dialogueFirstTimeUse2;
+        _dialogueFirstTimeUse3 = CultTrialManager.Singleton.dialogueFirstTimeUse3;
     }
 
     protected override void OnStart()
@@ -81,6 +83,7 @@ public partial class CultTrialFsm : Fsm
         _dialogueNoItem.OnCompleted += OnDialogueCompleted;
         _dialogueFirstTimeUse1.OnCompleted += OnDialogueCompleted;
         _dialogueFirstTimeUse2.OnCompleted += OnDialogueCompleted;
+        PlayerFsm.OnPlayerCultTrialDeath += OnPlayerCultTrialDeath;
 
     }
 
@@ -91,6 +94,7 @@ public partial class CultTrialFsm : Fsm
         _dialogueNoItem.OnCompleted -= OnDialogueCompleted;
         _dialogueFirstTimeUse1.OnCompleted -= OnDialogueCompleted;
         _dialogueFirstTimeUse2.OnCompleted -= OnDialogueCompleted;
+        PlayerFsm.OnPlayerCultTrialDeath -= OnPlayerCultTrialDeath;
     }
 
     private void OnDrawGizmos()

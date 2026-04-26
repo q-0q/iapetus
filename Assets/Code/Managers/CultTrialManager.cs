@@ -30,6 +30,7 @@ public class CultTrialManager : MonoBehaviour
     private float _curseDuration;
     private CustomFogController _activeFogController;
     private TextMeshProUGUI _markHudTmp;
+    public DialogueController dialogueFirstTimeUse3;
     private const float CurseMaximumDuration = 6f;
 
     public static event Action<CultTrialFsm> OnTrialActive;
@@ -82,7 +83,7 @@ public class CultTrialManager : MonoBehaviour
         _curseHalo.localScale = Vector3.one * Mathf.Lerp(10f, 2f, Mathf.InverseLerp(0, 2.5f, timeInCurrentState));
         var w = Mathf.InverseLerp(0, 2f, timeInCurrentState);
         _curseHaloMaterial.SetFloat("_Multiply", w * Mathf.InverseLerp(2.5f, 2f, timeInCurrentState));
-        _curseHaloMaterial.SetFloat("_Radius", Mathf.Lerp(0.1f, 0.6f, w));
+        _curseHaloMaterial.SetFloat("_Radius", Mathf.Lerp(0.1f, 1f, w));
 
         _curseCanvasImage.transform.localScale = Vector3.one * Mathf.Lerp(1.5f, 0.5f, Mathf.InverseLerp(1.5f, 3.5f, timeInCurrentState));
         _curseCanvasImage.transform.Rotate(new Vector3(0, 0, Time.deltaTime * 100f));
@@ -91,10 +92,11 @@ public class CultTrialManager : MonoBehaviour
         _curseCanvasImage.color = c;
     }
 
-    public void ReplenishCurseDuration()
+    public void ReplenishCurseDuration(bool sphereEffect = true)
     {
         _curseDuration = CurseMaximumDuration;
-        Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+        _curseHudTextMaterial.SetFloat("_BarAmount", 1f);
+        if (sphereEffect) Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
         HudTmpPunchPosition();
     }
 

@@ -22,6 +22,7 @@ public partial class CultTrialFsm
     private DialogueController _dialogueItem;
     private DialogueController _dialogueFirstTimeUse1;
     private DialogueController _dialogueFirstTimeUse2;
+    private DialogueController _dialogueFirstTimeUse3;
 
     private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
 
