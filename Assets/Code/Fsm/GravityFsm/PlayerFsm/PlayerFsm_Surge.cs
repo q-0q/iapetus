@@ -36,7 +36,7 @@ public partial class PlayerFsm
             InteractionCanvas.Singleton.SetPsuedoInteractable("Surge");
             if (_inputBuffer.IsBuffered("Jump"))
             {
-                StartCoroutine(SurgeCameraCleanupCoroutine(0.15f));
+                StartCoroutine(SpeedBoostCameraCleanupCoroutine(0.15f));
                 Machine.Jump(PlayerFsmState.Idle);
             };
             if (_inputBuffer.IsBuffered("Interact")) Machine.Jump(PlayerFsmState.SurgeDashStartup);
@@ -52,7 +52,7 @@ public partial class PlayerFsm
         HandleTurning(0.65f, false, 0f, true, 1f);
     }
 
-    private IEnumerator SurgeCameraCleanupCoroutine(float speedMod = 1f)
+    private IEnumerator SpeedBoostCameraCleanupCoroutine(float speedMod = 1f)
     {
         var t = 0f;
         var d = 4.5f * speedMod;
@@ -139,7 +139,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SurgeDash)
             .OnExit(_ =>
             {
-                StartCoroutine(SurgeCameraCleanupCoroutine());
+                StartCoroutine(SpeedBoostCameraCleanupCoroutine());
             })
             .OnEntry(_ =>
             {

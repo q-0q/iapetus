@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security;
 using Cinemachine;
+using Code.Fsm.TrialCollectibleFSM;
 using Code.PlayerComponents;
 using DG.Tweening;
 using FMOD.Studio;
@@ -223,6 +224,7 @@ public partial class PlayerFsm : GravityFsm
         InitState = PlayerFsmState.GroundMove;
         isSprinting = false;
         Time.timeScale = 1f;
+        _timeSinceBoostStarted = 100f;
         _movementAnimationMirror = false;
         TryGetComponent(out _playerInput);
         _inputBuffer = new InputBuffer(_playerInput, 0.275f);
@@ -284,6 +286,7 @@ public partial class PlayerFsm : GravityFsm
         _timeSinceLastFootstep += Time.deltaTime;
         _timeSinceRopeSwing += Time.deltaTime;
         _timeSinceSurgeStarted += Time.deltaTime;
+        _timeSinceBoostStarted += Time.deltaTime;
         
         if (_comboTimer > ComboTimeoutDuration)
         {
@@ -623,6 +626,7 @@ public partial class PlayerFsm : GravityFsm
         PlayerContactCollider.OnPlayerContactHitboxCollision += OnContactHitboxCollide;
         MetaSaveSystem.OnMetaSaveDataUpdated += ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep += OnPlayerFootstep;
+        CultTrialBoost.OnCultTrialBoostTrigger += OnCultTrialBoostTrigger;
         
         activeFmodInstance = FMODUnity.RuntimeManager.CreateInstance(comboActiveFmodEvent);
         slideFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slideFmodEvent);
@@ -645,6 +649,8 @@ public partial class PlayerFsm : GravityFsm
         PlayerContactCollider.OnPlayerContactHitboxCollision -= OnContactHitboxCollide;
         MetaSaveSystem.OnMetaSaveDataUpdated -= ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep -= OnPlayerFootstep;
+        CultTrialBoost.OnCultTrialBoostTrigger -= OnCultTrialBoostTrigger;
+        
         activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
         slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
         slipAmbientFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);

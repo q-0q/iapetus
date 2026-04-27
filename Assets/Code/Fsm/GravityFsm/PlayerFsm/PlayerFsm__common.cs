@@ -13,6 +13,7 @@ using UnityEngine.Serialization;
 using Wasp;
 using Random = UnityEngine.Random;
 using STOP_MODE = FMOD.Studio.STOP_MODE;
+using Util = Code.Misc.Util;
 
 public partial class PlayerFsm
 {
@@ -267,6 +268,9 @@ public partial class PlayerFsm
     private static float _desiredWindRushFmodAmount = 0f;
     private float _timeSinceSurgeStarted = 0f;
     private float _freezeTimer;
+    private float _timeSinceBoostStarted;
+    private const float BoostSpeedMultiplier = 1.5f;
+    private const float BoostSpeedDuration = 3.5f;
     public static event Action OnPlayerCultTrialDeath;
     public static event Action<Vector3> OnPlayerTeleported;
     private const float SwimFreezeDuration = 3f;
@@ -470,7 +474,13 @@ public partial class PlayerFsm
     {
         var value = Mathf.Lerp(0f, MaximumMomentumSpeedMod, ComputeMomentumWeight());
         var comboMultiplier = GetCurrentSurgeSpeedMultiplier();
-        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier);
+        var boostMultiplier = GetCurrentBoostSpeedMultiplier();
+        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier * boostMultiplier);
+    }
+
+    private float GetCurrentBoostSpeedMultiplier()
+    {
+        return Mathf.Lerp(1f, BoostSpeedMultiplier, Mathf.InverseLerp(BoostSpeedDuration, 0, _timeSinceBoostStarted));
     }
 
 
@@ -834,43 +844,45 @@ public partial class PlayerFsm
     private void InvokeSurge()
     {
         
-        StartCoroutine(InvokeNewComboMesh());
+        StartCoroutine(InvokeSurgeTrail());
         FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
         _timeSinceSurgeStarted = 0f;
         
         _speedLinesParticles.Play();
-        IEnumerator InvokeNewComboMesh()
-        {
-            var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
-            var triggerPosition = _skinnedMeshRenderer.transform.position;
-            yield return new WaitForSeconds(0.05f);
-            var triggerObject = Instantiate(triggerPrefab, triggerPosition,
-                Quaternion.identity, null);
-            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
+
+    }
+    
+    IEnumerator InvokeSurgeTrail()
+    {
+        var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+        var triggerPosition = _skinnedMeshRenderer.transform.position;
+        yield return new WaitForSeconds(0.05f);
+        var triggerObject = Instantiate(triggerPrefab, triggerPosition,
+            Quaternion.identity, null);
+        triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
 
             
-            RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
-            activeFmodInstance.start();
+        RuntimeManager.AttachInstanceToGameObject(activeFmodInstance, gameObject);
+        activeFmodInstance.start();
             
             
-            while (_isSurging){
-                if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
-                var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
-                var position = _skinnedMeshRenderer.transform.position;
-                var rotation = _skinnedMeshRenderer.transform.rotation;
-                var mesh = new Mesh();
-                _skinnedMeshRenderer.BakeMesh(mesh);
-                yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
-                var comboMeshObject = Instantiate(comboMeshPrefab, position,
-                    rotation, null);
-                comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
-                meshFilter.mesh = mesh;
-            }
-            
-            activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
-
-            yield break;
+        while (_isSurging){
+            if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
+            var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
+            var position = _skinnedMeshRenderer.transform.position;
+            var rotation = _skinnedMeshRenderer.transform.rotation;
+            var mesh = new Mesh();
+            _skinnedMeshRenderer.BakeMesh(mesh);
+            yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
+            var comboMeshObject = Instantiate(comboMeshPrefab, position,
+                rotation, null);
+            comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
+            meshFilter.mesh = mesh;
         }
+            
+        activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
+
+        yield break;
     }
 
     private void UpdateFmodWindRushAmount()
@@ -1072,5 +1084,78 @@ public partial class PlayerFsm
         }
 
         return false;
+    }
+
+    public void OnCultTrialBoostTrigger()
+    {
+
+        _momentum = MaxMomentum;
+        isSprinting = true;
+        _timeSinceBoostStarted = 0f;
+        
+        StartCoroutine(SpeedLinesCoroutine());
+        StartCoroutine(TrailCoroutine());
+        StartCoroutine(CameraCoroutine());
+        
+
+        IEnumerator CameraCoroutine()
+        {
+            var t = 0f;
+            var d = 0.225f;
+            var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+            var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                
+                freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, 100f, w);
+
+                var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
+                offset.m_Offset = Vector3.Lerp(Vector3.zero, new Vector3(0, -1f, 3f), w);
+                
+                t += Time.deltaTime;
+                yield return null;
+            }
+            
+            StartCoroutine(SpeedBoostCameraCleanupCoroutine(0.5f));
+        }
+        
+        IEnumerator TrailCoroutine()
+        {
+            
+            var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+            var triggerPosition = _skinnedMeshRenderer.transform.position;
+            yield return new WaitForSeconds(0.05f);
+            var triggerObject = Instantiate(triggerPrefab, triggerPosition,
+                Quaternion.identity, null);
+            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
+
+            var t = 0f; 
+            var d = BoostSpeedDuration * 0.4f;
+            
+            while (t < d){
+                if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
+                var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
+                var position = _skinnedMeshRenderer.transform.position;
+                var rotation = _skinnedMeshRenderer.transform.rotation;
+                var mesh = new Mesh();
+                _skinnedMeshRenderer.BakeMesh(mesh);
+                var seconds = Random.Range(0.06f, 0.05f);
+                yield return new WaitForSeconds(seconds);
+                var comboMeshObject = Instantiate(comboMeshPrefab, position,
+                    rotation, null);
+                comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
+                meshFilter.mesh = mesh;
+
+                t += seconds;
+            }
+        }
+        
+        IEnumerator SpeedLinesCoroutine()
+        {
+            _speedLinesParticles.Play();
+            yield return new WaitForSeconds(2f);
+            _speedLinesParticles.Stop();
+        }
     }
 }
