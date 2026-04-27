@@ -13,6 +13,7 @@ namespace Code.Fsm.TrialCollectibleFSM
         private CultTrialFsm _ownerFsm;
         private Renderer _renderer;
         private TriggerProxy _triggerProxy;
+        public bool isFinalKeyframe;
 
         private void Awake()
         {
@@ -27,6 +28,7 @@ namespace Code.Fsm.TrialCollectibleFSM
         {
             CultTrialManager.OnTrialActive += OnTrialActive;
             _triggerProxy.OnTriggerProxyStay += OnTrigger;
+            CultTrialFsm.OnTrialInactive += OnTrialInactive;
         }
 
         private void OnTrigger(Collider obj)
@@ -38,15 +40,20 @@ namespace Code.Fsm.TrialCollectibleFSM
         private void OnDisable()
         {
             CultTrialManager.OnTrialActive -= OnTrialActive;
+            CultTrialFsm.OnTrialInactive -= OnTrialInactive;
             _triggerProxy.OnTriggerProxyStay -= OnTrigger;
         }
 
         private void OnTrialActive(CultTrialFsm fsm)
         {
             if (fsm != _ownerFsm) return;
-
             Activate();
-            
+        }
+        
+        private void OnTrialInactive(CultTrialFsm fsm)
+        {
+            if (fsm != _ownerFsm) return;
+            Deactivate();
         }
 
         private void Deactivate()
@@ -72,8 +79,21 @@ namespace Code.Fsm.TrialCollectibleFSM
         private void Activate()
         {
             _renderer.enabled = true;
-            _renderer.material.SetFloat("_Clip", 0.2f);
             _triggerProxy.GetComponent<Collider>().enabled = true;
+            StartCoroutine(RendererClipCoroutine());
+            
+            _renderer.material.SetFloat("_IsFinal", isFinalKeyframe ? 1f : 0f);
+            IEnumerator RendererClipCoroutine()
+            {
+                var t = 0f;
+                var d = 0.5f;
+                while (t < d)
+                {
+                    _renderer.material.SetFloat("_Clip", Mathf.Lerp(1f, 0.2f, Util.SmoothLerp01(t / d)));
+                    t += Time.deltaTime;
+                    yield return null;
+                }
+            }
         }
 
 

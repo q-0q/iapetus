@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Code.Misc;
@@ -7,6 +8,7 @@ public partial class CultTrialFsm
 {
 
 
+    public static event Action<CultTrialFsm> OnTrialInactive;
     
     private IEnumerator CurseCameraCleanupCoroutine()
     {
@@ -67,6 +69,10 @@ public partial class CultTrialFsm
             .PermitIf(CultTrialFsmTrigger.PlayerLeftStartingLine, CultTrialFsmState.TrialActive, _ => CultTrialManager.Singleton.isCurseEnabled)
             .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.FirstTimeUseDialogue1, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
             .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.FirstTimeUseDialogue2, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) && CultTrialManager.Singleton.isCurseEnabled, 2)
+            .OnEntry(_ =>
+            {
+                OnTrialInactive?.Invoke(this);
+            })
             .OnEntryFrom(CultTrialFsmTrigger.OnUnlock, _ =>
             {
                 StartCoroutine(RingLightMultiplierCoroutine());

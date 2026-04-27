@@ -37,6 +37,10 @@ public partial class CultTrialFsm
     private void UpdateKeyframes()
     {
         _keyframes = transform.Find("Keyframes").GetComponentsInChildren<CultTrialKeyframe>().ToList();
+        for (int i = 0; i < _keyframes.Count; i++)
+        {
+            _keyframes[i].isFinalKeyframe = i == _keyframes.Count - 1;
+        }
         AlignStartingPosition();
     }
 

@@ -33,7 +33,24 @@ public class CultTrialManager : MonoBehaviour
     public DialogueController dialogueFirstTimeUse3;
     private const float CurseMaximumDuration = 6f;
 
+    private Color _activeFogControllerBaseColor;
+    private float _activeFogControllerDepthMin;
+    private float _activeFogControllerDepthMax;
+
     public static event Action<CultTrialFsm> OnTrialActive;
+
+    private Transform _activeHalo;
+    private Material _activeHaloMaterial;
+
+    private void OnEnable()
+    {
+        PlayerFsm.OnPlayerCultTrialDeath += OnPlayerCultTrialDeath;
+    }
+    
+    private void OnDisable()
+    {
+        PlayerFsm.OnPlayerCultTrialDeath -= OnPlayerCultTrialDeath;
+    }
 
     private void Awake()
     {
@@ -46,18 +63,44 @@ public class CultTrialManager : MonoBehaviour
         _curseHudTextMaterial = _markHudTmp.fontMaterial;
         _activeFogController = transform.Find("ActiveFogController")
             .GetComponent<CustomFogController>();
+        _activeFogControllerBaseColor = _activeFogController.Color;
+        _activeFogControllerDepthMin = _activeFogController.DepthMin;
+        _activeFogControllerDepthMax = _activeFogController.DepthMax;
+
+        _activeHalo = transform.Find("ActiveHalo");
+        _activeHaloMaterial = _activeHalo.GetComponent<Renderer>().material;
         
         DisableCurse();
     }
 
     private void Update()
     {
+        _activeHalo.position = Camera.main.transform.position;
         _activeFogController.transform.position = PlayerFsm.Singleton.transform.position;
         _curseHudTextMaterial.SetFloat("_BarGlowMultiply",Mathf.Lerp(_curseHudTextMaterial.GetFloat("_BarGlowMultiply"), isCurseTicking ? 2.5f : 0f, Time.deltaTime * 4f));
-        if (!isCurseTicking) return;
+        _activeFogController.LerpStrengthMultiplier = isCurseTicking ? 1f : 100f;
+        if (!isCurseTicking)
+        {
+            _activeFogController.LerpStrengthMultiplier = 1f;
+            _activeFogController.Color = _activeFogControllerBaseColor;
+            _activeFogController.DepthMin = _activeFogControllerDepthMin;
+            _activeFogController.DepthMax = _activeFogControllerDepthMax;
+            return;
+        };
+        
         _curseDuration -= Time.deltaTime;
         var w = _curseDuration / CurseMaximumDuration;
         _curseHudTextMaterial.SetFloat("_BarAmount", w);
+        _activeFogController.LerpStrengthMultiplier = 20f;
+        _activeFogController.Color = Color.Lerp(_activeFogControllerBaseColor, Color.black, (1f - w) * 1.3f);
+
+        var depthOffset = Mathf.Lerp(0, -50f, 1f - w);
+        // _activeFogController.DepthMin = _activeFogControllerDepthMin;
+        _activeFogController.DepthMax = _activeFogControllerDepthMax + depthOffset;
+        _activeHaloMaterial.SetFloat("_Alpha", Mathf.Lerp(0f,1f,1f-w));
+
+        
+        
         if (w < 0) OnCurseExpire();
     }
 
@@ -102,8 +145,8 @@ public class CultTrialManager : MonoBehaviour
 
     private void HudTmpPunchPosition()
     {
-        _markHudTmp.transform.DOComplete();
-        _markHudTmp.transform.DOPunchPosition(Vector3.right * 10f, 0.5f, 10, 1f);
+        _markHudTmp.transform.parent.DOComplete();
+        _markHudTmp.transform.parent.DOPunchPosition(Vector3.right * 10f, 0.5f, 10, 1f);
 
         IEnumerator PanelGlowCoroutine()
         {
@@ -149,5 +192,25 @@ public class CultTrialManager : MonoBehaviour
         isCurseTicking = true;
         OnTrialActive?.Invoke(fsm);
         HudTmpPunchPosition();
+        // StartCoroutine(ActiveHaloMaterialCoroutine());
+        //
+        // IEnumerator ActiveHaloMaterialCoroutine()
+        // {
+        //     var t = 0f;
+        //     var d = 0.15f;
+        //     while (t < d)
+        //     {
+        //         var w = Util.SmoothLerp01(t / d);
+        //         t += Time.deltaTime;
+        //         _activeHaloMaterial.SetFloat("_Alpha", w);
+        //         yield return null;
+        //     }
+        // }
+    }
+
+    private void OnPlayerCultTrialDeath()
+    {
+        _activeHaloMaterial.SetFloat("_Alpha", 0);
+
     }
 }
