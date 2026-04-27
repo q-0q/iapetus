@@ -103,4 +103,10 @@ public partial class CultTrialFsm
     {
         Machine.Fire(CultTrialFsmTrigger.OnDialogueCompleted);
     }
+
+    private void UpdateInteractable()
+    {
+        if (!SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent)) return;
+        _interactable.text = CultTrialManager.Singleton.isCurseEnabled ? "Dispel mark" : "Accept mark";
+    }
 }

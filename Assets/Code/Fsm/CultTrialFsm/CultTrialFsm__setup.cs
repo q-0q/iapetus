@@ -69,8 +69,11 @@ public partial class CultTrialFsm
             .PermitIf(CultTrialFsmTrigger.PlayerLeftStartingLine, CultTrialFsmState.TrialActive, _ => CultTrialManager.Singleton.isCurseEnabled)
             .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.FirstTimeUseDialogue1, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
             .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.FirstTimeUseDialogue2, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) && CultTrialManager.Singleton.isCurseEnabled, 2)
+            .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.ApplyingCurse, _ => SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) && !CultTrialManager.Singleton.isCurseEnabled, 4)
+            .PermitIf(CultTrialFsmTrigger.OnInteracted, CultTrialFsmState.RemovingCurse, _ => SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent) && CultTrialManager.Singleton.isCurseEnabled, 5)
             .OnEntry(_ =>
             {
+                UpdateInteractable();
                 OnTrialInactive?.Invoke(this);
             })
             .OnEntryFrom(CultTrialFsmTrigger.OnUnlock, _ =>
@@ -92,7 +95,8 @@ public partial class CultTrialFsm
             });
 
         Machine.Configure(CultTrialFsmState.ApplyingCurse)
-            .Permit(FsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue2)
+            .PermitIf(FsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue2, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
+            .PermitIf(FsmTrigger.Timeout, CultTrialFsmState.UnlockedIdle, _ => SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent), 2)
             .OnEntry(_ =>
             {
                 SaveSystem.WritePlayerInGamePosition(_interactable.transform.position, "", _startingLine.rotation.eulerAngles.y);
@@ -101,6 +105,7 @@ public partial class CultTrialFsm
             })
             .OnExit(_ =>
             {
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
                 Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
                 CultTrialManager.Singleton.EnableCurse();
                 StartCoroutine(CurseCameraCleanupCoroutine());
@@ -111,6 +116,7 @@ public partial class CultTrialFsm
             .Permit(FsmTrigger.Timeout, CultTrialFsmState.UnlockedIdle)
             .OnEntry(_ =>
             {
+                Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
                 SaveSystem.WritePersistentEvent(FirstTimeUsePersistentEvent);
                 SaveSystem.WritePlayerInGamePosition(_interactable.transform.position, "", _startingLine.rotation.eulerAngles.y);
                 CultTrialManager.Singleton.DisableActiveFog();
@@ -119,7 +125,6 @@ public partial class CultTrialFsm
             .OnExit(_ =>
             {
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
-                Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
                 CultTrialManager.Singleton.DisableCurse();
                 StartCoroutine(CurseCameraCleanupCoroutine());
             });
@@ -138,6 +143,7 @@ public partial class CultTrialFsm
             .Permit(CultTrialFsmTrigger.FinalKeyframeTriggered, CultTrialFsmState.Complete)
             .OnEntry(_ =>
             {
+                UpdateInteractable();
                 PlayerFsm.Singleton.OnCultTrialBoostTrigger();
                 _interactable.SetEnabled(false);
                 CultTrialManager.Singleton.StartCurseTicking(this);
@@ -149,7 +155,8 @@ public partial class CultTrialFsm
             });
 
         Machine.Configure(CultTrialFsmState.Complete)
-            .PermitIf(CultTrialFsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue4, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
+            .PermitIf(FsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue4, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
+            .PermitIf(FsmTrigger.Timeout, CultTrialFsmState.UnlockedIdle, _ => SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent), 2)
             .OnEntry(_ =>
             {
                 OnTrialInactive?.Invoke(this);
@@ -164,6 +171,7 @@ public partial class CultTrialFsm
                 PlayerFsm.Singleton.SetPositionFromSaveData();
                 PlayerFsm.Singleton._timeSinceBoostStarted = 100f;
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
+                Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
             });
         
         Machine.Configure(CultTrialFsmState.FirstTimeUseDialogue4)

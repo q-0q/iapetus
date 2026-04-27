@@ -47,6 +47,8 @@ public partial class CultTrialFsm : Fsm
         _dialogueFirstTimeUse2 = CultTrialManager.Singleton.dialogueFirstTimeUse2;
         _dialogueFirstTimeUse3 = CultTrialManager.Singleton.dialogueFirstTimeUse3;
         _dialogueFirstTimeUse4 = CultTrialManager.Singleton.dialogueFirstTimeUse4;
+        
+        UpdateInteractable();
     }
 
     protected override void OnStart()
@@ -77,6 +79,11 @@ public partial class CultTrialFsm : Fsm
         if (Machine.IsInState(CultTrialFsmState.ApplyingCurse))
         {
             CultTrialManager.Singleton.SetCurseEffects(TimeInCurrentState());
+        }
+        
+        if (Machine.IsInState(CultTrialFsmState.RemovingCurse))
+        {
+            CultTrialManager.Singleton.SetCurseEffects(1.5f - TimeInCurrentState() * 2f);
         }
         
         if (Machine.IsInState(CultTrialFsmState.Complete))
