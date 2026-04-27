@@ -75,7 +75,7 @@ public partial class PlayerFsm
             offset.m_Offset = Vector3.Lerp(initialOffset, Vector3.zero, w);
             t += Time.deltaTime;
             yield return null;
-            if (Machine.IsInState(PlayerFsmState.SurgeStartup)) yield break;
+            if (Machine.IsInState(PlayerFsmState.SurgeStartup) || _timeSinceBoostStarted < 0.01f) yield break;
         }
 
         freeLook.m_Lens.FieldOfView = baseFov;

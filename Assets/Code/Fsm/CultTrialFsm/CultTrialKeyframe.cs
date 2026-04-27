@@ -35,9 +35,13 @@ namespace Code.Fsm.TrialCollectibleFSM
 
         private void OnTrigger(Collider obj)
         {
+            if (isFinalKeyframe)
+            {
+                _ownerFsm.Machine.Fire(CultTrialFsm.CultTrialFsmTrigger.FinalKeyframeTriggered);
+                return;
+            };
             PlayerFsm.Singleton.OnCultTrialBoostTrigger();
             CultTrialManager.Singleton.ReplenishCurseDuration();
-            if (isFinalKeyframe) _ownerFsm.Machine.Fire(CultTrialFsm.CultTrialFsmTrigger.FinalKeyframeTriggered);
             Deactivate();
         }
 
@@ -66,6 +70,7 @@ namespace Code.Fsm.TrialCollectibleFSM
             _triggerProxy.GetComponent<Collider>().enabled = false;
             StartCoroutine(RendererClipCoroutine());
             _particleSystem.Stop();
+            _particleSystem.Clear();
             
             IEnumerator RendererClipCoroutine()
             {

@@ -1117,6 +1117,7 @@ public partial class PlayerFsm
                 yield return null;
             }
             
+            
             StartCoroutine(SpeedBoostCameraCleanupCoroutine(0.2f));
         }
         
@@ -1151,8 +1152,13 @@ public partial class PlayerFsm
         IEnumerator SpeedLinesCoroutine()
         {
             _speedLinesParticles.Play();
-            yield return new WaitForSeconds(BoostSpeedDuration * 0.75f);
+            yield return new WaitForSeconds(BoostSpeedDuration * 0.75f); 
             _speedLinesParticles.Stop();
         }
+    }
+    
+    private void PlaySpeedLineParticlesForDuration(float duration)
+    {
+        
     }
 }

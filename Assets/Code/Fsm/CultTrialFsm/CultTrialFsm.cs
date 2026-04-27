@@ -83,7 +83,7 @@ public partial class CultTrialFsm : Fsm
         
         if (Machine.IsInState(CultTrialFsmState.RemovingCurse))
         {
-            CultTrialManager.Singleton.SetCurseEffects(1.5f - TimeInCurrentState() * 2f);
+            CultTrialManager.Singleton.SetCurseEffects(1.5f - TimeInCurrentState() * 2.5f);
         }
         
         if (Machine.IsInState(CultTrialFsmState.Complete))

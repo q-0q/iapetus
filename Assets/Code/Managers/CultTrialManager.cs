@@ -31,7 +31,10 @@ public class CultTrialManager : MonoBehaviour
     public bool isCurseTicking;
     private float _curseDuration;
     private CustomFogController _activeFogController;
+    private CustomFogController _curseFogController;
     private TextMeshProUGUI _markHudTmp;
+    private TextMeshProUGUI _timerTmp;
+    
     private const float CurseMaximumDuration = 6f;
 
     private Color _activeFogControllerBaseColor;
@@ -42,6 +45,9 @@ public class CultTrialManager : MonoBehaviour
 
     private Transform _activeHalo;
     private Material _activeHaloMaterial;
+    
+    private bool _timerTicking;
+    private float _timer;
 
     private void OnEnable()
     {
@@ -60,13 +66,18 @@ public class CultTrialManager : MonoBehaviour
         _curseHaloMaterial = _curseHalo.GetComponent<Renderer>().material;
         _curseCanvasImage = transform.Find("CurseCanvas").GetComponentInChildren<Image>();
         _markHudCanvasGroup = transform.Find("Canvas").Find("MarkHud").GetComponent<CanvasGroup>();
-        _markHudTmp = _markHudCanvasGroup.GetComponentInChildren<TextMeshProUGUI>();
+        _markHudTmp = _markHudCanvasGroup.transform.Find("Text").GetComponent<TextMeshProUGUI>();
+        _timerTmp = _markHudCanvasGroup.transform.Find("Timer").GetComponent<TextMeshProUGUI>();
+        
         _curseHudTextMaterial = _markHudTmp.fontMaterial;
         _activeFogController = transform.Find("ActiveFogController")
             .GetComponent<CustomFogController>();
         _activeFogControllerBaseColor = _activeFogController.Color;
         _activeFogControllerDepthMin = _activeFogController.DepthMin;
         _activeFogControllerDepthMax = _activeFogController.DepthMax;
+        
+        _curseFogController = transform.Find("CurseFogController")
+            .GetComponent<CustomFogController>();
 
         _activeHalo = transform.Find("ActiveHalo");
         _activeHaloMaterial = _activeHalo.GetComponent<Renderer>().material;
@@ -76,6 +87,12 @@ public class CultTrialManager : MonoBehaviour
 
     private void Update()
     {
+        if (_timerTicking)
+        {
+            _timer += Time.deltaTime;
+            _timerTmp.text = _timer.ToString("F2");
+        }
+        
         _activeHalo.position = Camera.main.transform.position;
         _activeFogController.transform.position = PlayerFsm.Singleton.transform.position;
         _curseHudTextMaterial.SetFloat("_BarGlowMultiply",Mathf.Lerp(_curseHudTextMaterial.GetFloat("_BarGlowMultiply"), isCurseTicking ? 2.5f : 0f, Time.deltaTime * 4f));
@@ -140,6 +157,7 @@ public class CultTrialManager : MonoBehaviour
     {
         _curseDuration = CurseMaximumDuration;
         _curseHudTextMaterial.SetFloat("_BarAmount", 1f);
+        _activeHaloMaterial.SetFloat("_Alpha", 0f);
         if (sphereEffect) Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
         HudTmpPunchPosition();
     }
@@ -217,5 +235,32 @@ public class CultTrialManager : MonoBehaviour
     {
         _activeHaloMaterial.SetFloat("_Alpha", 0);
 
+    }
+
+    public void ClearTimer()
+    {
+        _timerTmp.text = "";
+        _timer = 0;
+    }
+
+    public void StartTimer()
+    {
+        _timerTicking = true;
+        _timer = 0;
+    }
+
+    public void StopTimer()
+    {
+        _timerTicking = false;
+    }
+
+    public void EnableCurseFog()
+    {
+        _curseFogController.Priority = 20;
+    }
+
+    public void DisableCurseFog()
+    {
+        _curseFogController.Priority = -10;
     }
 }

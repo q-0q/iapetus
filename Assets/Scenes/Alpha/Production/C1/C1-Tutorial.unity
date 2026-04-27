@@ -1023,17 +1023,21 @@ MonoBehaviour:
       lifetimes. '
     - One of your ilk may be able to open it. If so... there is yet hope for my land...
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - Do you feel the blizzard changing? It weighs heavier with each passing moment.
     - A turning of the age is upon us.
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - The area ahead is dangerous. Keep your wits about you.
     advanceDialogueIndex: 0
+    canvasDelayOffset: 0
   DialogueName: Savaphe
   LookAtOverride: {fileID: 370110605}
   CameraY: 0.35
   canvasDelay: 0
+  cameraFollowOffsetLerp: 0
 --- !u!1 &25979585
 GameObject:
   m_ObjectHideFlags: 0
@@ -14016,18 +14020,22 @@ MonoBehaviour:
     - Do you see her light surround us? You tread on hallowed ground.
     - Your kind has no business going any further.
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - What purpose have you in this place, I wonder?
     - The spirit of this land has long since withered away. There is nothing for
       you here.
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - Her will prevents the unworthy from continuing. You should turn back.
     advanceDialogueIndex: 0
+    canvasDelayOffset: 0
   DialogueName: Savaphe
   LookAtOverride: {fileID: 370110605}
   CameraY: 0.5
   canvasDelay: 0
+  cameraFollowOffsetLerp: 0
 --- !u!1 &250005485
 GameObject:
   m_ObjectHideFlags: 0
@@ -16816,6 +16824,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: 2
+  LerpStrengthMultiplier: 1
   Color: {r: 1, g: 1, b: 1, a: 1}
   YMin: -5
   YMax: 100
@@ -22621,6 +22630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: 1
+  LerpStrengthMultiplier: 1
   Color: {r: 1, g: 1, b: 1, a: 1}
   YMin: -5
   YMax: 100
@@ -22631,8 +22641,8 @@ MonoBehaviour:
   YAddPower: 2
   YAddDepthInversion: 0.8
   DepthMin: 20
-  DepthMax: 90
-  DepthPower: 1
+  DepthMax: 130
+  DepthPower: 2
   NoiseSubtractionAmount: 0
   NoiseAScale: 0.02
   NoiseAVelocity: {x: 2, y: 2, z: 2}
@@ -25443,7 +25453,6 @@ Transform:
   - {fileID: 504370422}
   - {fileID: 294557320}
   - {fileID: 1047502995}
-  - {fileID: 1433810739}
   - {fileID: 325590134}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -47905,6 +47914,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1433810739}
   - {fileID: 500803802}
   - {fileID: 477716779}
   - {fileID: 1864345929}
@@ -60422,6 +60432,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 264568961021574504, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -60460,17 +60490,17 @@ PrefabInstance:
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.7000583e-13
+      value: 1.6940659e-21
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0000005588788
+      value: -0.0000018236319
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0000018236319
+      value: 0.0000005588788
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -60755,17 +60785,17 @@ PrefabInstance:
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.7000583e-13
+      value: 1.6940659e-21
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0000005588788
+      value: -0.0000018236319
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0000018236319
+      value: 0.0000005588788
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -60905,12 +60935,12 @@ PrefabInstance:
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000040279375
+      value: 0.0000000014887743
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000048601475
+      value: -0.0000000017963695
       objectReference: {fileID: 0}
     - target: {fileID: 6009970680978410363, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -61068,6 +61098,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7235375945613739714, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
@@ -62530,13 +62580,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433810738}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0.38268343, z: -0, w: 0.92387956}
-  m_LocalPosition: {x: -287, y: -41.7, z: -136}
-  m_LocalScale: {x: 1, y: 1.2378, z: 1.7173002}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.00000017881, z: 0}
+  m_LocalScale: {x: 1.775, y: 1.7639887, z: 1.7173004}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 567341800}
-  m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
+  m_Father: {fileID: 1031908554}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &1433810740
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -62571,6 +62621,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: 1
+  LerpStrengthMultiplier: 1
   Color: {r: 1, g: 1, b: 1, a: 1}
   YMin: -5
   YMax: 100

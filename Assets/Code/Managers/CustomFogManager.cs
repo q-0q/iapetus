@@ -41,6 +41,7 @@ public class CustomFogManager : MonoBehaviour
         {
             collider.TryGetComponent(out CustomFogController controller);
             if (collider == null) continue;
+            if (controller.Priority < 0) continue;
             if (_currentHighestPriorityController != null && _currentHighestPriorityController.Priority >= controller.Priority) continue;
             _currentHighestPriorityController = controller;
             SetCurrentController(controller, snap);
