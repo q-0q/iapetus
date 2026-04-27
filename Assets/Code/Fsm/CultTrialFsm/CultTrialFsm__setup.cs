@@ -106,6 +106,24 @@ public partial class CultTrialFsm
                 StartCoroutine(CurseCameraCleanupCoroutine());
             });
         
+        
+        Machine.Configure(CultTrialFsmState.RemovingCurse)
+            .Permit(FsmTrigger.Timeout, CultTrialFsmState.UnlockedIdle)
+            .OnEntry(_ =>
+            {
+                SaveSystem.WritePersistentEvent(FirstTimeUsePersistentEvent);
+                SaveSystem.WritePlayerInGamePosition(_interactable.transform.position, "", _startingLine.rotation.eulerAngles.y);
+                CultTrialManager.Singleton.DisableActiveFog();
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
+            })
+            .OnExit(_ =>
+            {
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
+                Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+                CultTrialManager.Singleton.DisableCurse();
+                StartCoroutine(CurseCameraCleanupCoroutine());
+            });
+        
         Machine.Configure(CultTrialFsmState.FirstTimeUseDialogue2)
             .Permit(CultTrialFsmTrigger.OnDialogueCompleted, CultTrialFsmState.UnlockedIdle)
             .OnEntry(_ =>
@@ -117,8 +135,10 @@ public partial class CultTrialFsm
         
         Machine.Configure(CultTrialFsmState.TrialActive)
             .Permit(CultTrialFsmTrigger.PlayerTrialDeath, CultTrialFsmState.UnlockedIdle)
+            .Permit(CultTrialFsmTrigger.FinalKeyframeTriggered, CultTrialFsmState.Complete)
             .OnEntry(_ =>
             {
+                PlayerFsm.Singleton.OnCultTrialBoostTrigger();
                 _interactable.SetEnabled(false);
                 CultTrialManager.Singleton.StartCurseTicking(this);
                 Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
@@ -127,12 +147,39 @@ public partial class CultTrialFsm
             {
                 _interactable.SetEnabled(true);
             });
+
+        Machine.Configure(CultTrialFsmState.Complete)
+            .PermitIf(CultTrialFsmTrigger.Timeout, CultTrialFsmState.FirstTimeUseDialogue4, _ => !SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent))
+            .OnEntry(_ =>
+            {
+                OnTrialInactive?.Invoke(this);
+            })
+            .OnExit(_ =>
+            {
+                Time.timeScale = 1f;
+            })
+            .OnExitFrom(FsmTrigger.Timeout, _ =>
+            {
+                CultTrialManager.Singleton.isCurseTicking = false;
+                PlayerFsm.Singleton.SetPositionFromSaveData();
+                PlayerFsm.Singleton._timeSinceBoostStarted = 100f;
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
+            });
+        
+        Machine.Configure(CultTrialFsmState.FirstTimeUseDialogue4)
+            .Permit(CultTrialFsmTrigger.OnDialogueCompleted, CultTrialFsmState.RemovingCurse)
+            .OnEntry(_ =>
+            {
+                StartCoroutine(CompletionExplanationListener());
+            });
     }
 
     public override void SetupStateMaps()
     {
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(CultTrialFsmState.ApplyingCurse, 3f);
+        StateMapConfig.Duration.Add(CultTrialFsmState.RemovingCurse, 1.5f);
+        StateMapConfig.Duration.Add(CultTrialFsmState.Complete, 0.5f);
         
     }
 }

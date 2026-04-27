@@ -18,6 +18,9 @@ public partial class CultTrialFsm : Fsm
         public static int ApplyingCurse;
         
         public static int TrialActive;
+        public static int Complete;
+        public static int FirstTimeUseDialogue4;
+        public static int RemovingCurse;
     }
 
     public class CultTrialFsmTrigger : FsmTrigger
@@ -28,6 +31,8 @@ public partial class CultTrialFsm : Fsm
 
         public static int PlayerLeftStartingLine;
         public static int PlayerTrialDeath;
+
+        public static int FinalKeyframeTriggered;
     }
 
     protected override void OnAwake()
@@ -41,6 +46,7 @@ public partial class CultTrialFsm : Fsm
         _dialogueFirstTimeUse1 = CultTrialManager.Singleton.dialogueFirstTimeUse1;
         _dialogueFirstTimeUse2 = CultTrialManager.Singleton.dialogueFirstTimeUse2;
         _dialogueFirstTimeUse3 = CultTrialManager.Singleton.dialogueFirstTimeUse3;
+        _dialogueFirstTimeUse4 = CultTrialManager.Singleton.dialogueFirstTimeUse4;
     }
 
     protected override void OnStart()
@@ -72,6 +78,11 @@ public partial class CultTrialFsm : Fsm
         {
             CultTrialManager.Singleton.SetCurseEffects(TimeInCurrentState());
         }
+        
+        if (Machine.IsInState(CultTrialFsmState.Complete))
+        {
+            Time.timeScale = Mathf.Lerp(1f, 0.15f, Mathf.InverseLerp(0, 0.2f, TimeInCurrentState()));
+        }
 
         
     }
@@ -83,6 +94,7 @@ public partial class CultTrialFsm : Fsm
         _dialogueNoItem.OnCompleted += OnDialogueCompleted;
         _dialogueFirstTimeUse1.OnCompleted += OnDialogueCompleted;
         _dialogueFirstTimeUse2.OnCompleted += OnDialogueCompleted;
+        _dialogueFirstTimeUse4.OnCompleted += OnDialogueCompleted;
         PlayerFsm.OnPlayerCultTrialDeath += OnPlayerCultTrialDeath;
 
     }
@@ -94,6 +106,7 @@ public partial class CultTrialFsm : Fsm
         _dialogueNoItem.OnCompleted -= OnDialogueCompleted;
         _dialogueFirstTimeUse1.OnCompleted -= OnDialogueCompleted;
         _dialogueFirstTimeUse2.OnCompleted -= OnDialogueCompleted;
+        _dialogueFirstTimeUse4.OnCompleted -= OnDialogueCompleted;
         PlayerFsm.OnPlayerCultTrialDeath -= OnPlayerCultTrialDeath;
     }
 

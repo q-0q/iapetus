@@ -186,7 +186,7 @@ public partial class PlayerFsm : GravityFsm
         
     }
 
-    private void SetPositionFromSaveData()
+    public void SetPositionFromSaveData()
     {
         var initialPosition = transform.position;
         var saveData = SaveSystem.LoadCachedSaveData();

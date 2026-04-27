@@ -27,15 +27,26 @@ public partial class CultTrialFsm
 
     private IEnumerator DeathExplanationListener()
     {
-        print( "started listener");
         while (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
         {
             yield return null;
         }
         
-        print( "listener ending");
         
         DialogueCanvas.Singleton.StartDialogue(_dialogueFirstTimeUse3);
+        PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+        
+    }
+    
+    private IEnumerator CompletionExplanationListener()
+    {
+        while (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Interactable))
+        {
+            yield return null;
+        }
+        
+        
+        DialogueCanvas.Singleton.StartDialogue(_dialogueFirstTimeUse4);
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
         
     }

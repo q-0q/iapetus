@@ -268,7 +268,7 @@ public partial class PlayerFsm
     private static float _desiredWindRushFmodAmount = 0f;
     private float _timeSinceSurgeStarted = 0f;
     private float _freezeTimer;
-    private float _timeSinceBoostStarted;
+    public float _timeSinceBoostStarted;
     private const float BoostSpeedMultiplier = 1.5f;
     private const float BoostSpeedDuration = 3.5f;
     public static event Action OnPlayerCultTrialDeath;
@@ -1101,23 +1101,23 @@ public partial class PlayerFsm
         IEnumerator CameraCoroutine()
         {
             var t = 0f;
-            var d = 0.225f;
+            var d = 0.125f;
             var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
             var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
                 
-                freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, 100f, w);
+                freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, baseFov + 5f, w);
 
                 var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
-                offset.m_Offset = Vector3.Lerp(Vector3.zero, new Vector3(0, -1f, 3f), w);
+                offset.m_Offset = Vector3.Lerp(Vector3.zero, new Vector3(0, 0, 2f), w);
                 
                 t += Time.deltaTime;
                 yield return null;
             }
             
-            StartCoroutine(SpeedBoostCameraCleanupCoroutine(0.5f));
+            StartCoroutine(SpeedBoostCameraCleanupCoroutine(0.2f));
         }
         
         IEnumerator TrailCoroutine()
@@ -1129,11 +1129,10 @@ public partial class PlayerFsm
             var triggerObject = Instantiate(triggerPrefab, triggerPosition,
                 Quaternion.identity, null);
             triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
-
-            var t = 0f; 
-            var d = BoostSpeedDuration * 0.4f;
             
-            while (t < d){
+            var d = BoostSpeedDuration * 0.25f;
+            
+            while (_timeSinceBoostStarted < d){
                 if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
                 var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
                 var position = _skinnedMeshRenderer.transform.position;
@@ -1146,15 +1145,13 @@ public partial class PlayerFsm
                     rotation, null);
                 comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
                 meshFilter.mesh = mesh;
-
-                t += seconds;
             }
         }
         
         IEnumerator SpeedLinesCoroutine()
         {
             _speedLinesParticles.Play();
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(BoostSpeedDuration * 0.75f);
             _speedLinesParticles.Stop();
         }
     }

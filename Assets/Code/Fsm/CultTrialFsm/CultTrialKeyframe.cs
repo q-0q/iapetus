@@ -14,6 +14,7 @@ namespace Code.Fsm.TrialCollectibleFSM
         private Renderer _renderer;
         private TriggerProxy _triggerProxy;
         public bool isFinalKeyframe;
+        private ParticleSystem _particleSystem;
 
         private void Awake()
         {
@@ -22,6 +23,7 @@ namespace Code.Fsm.TrialCollectibleFSM
             _triggerProxy = GetComponentInChildren<TriggerProxy>();
             _renderer.enabled = false;
             _triggerProxy.GetComponent<Collider>().enabled = false;
+            _particleSystem = GetComponentInChildren<ParticleSystem>();
         }
 
         private void OnEnable()
@@ -33,7 +35,9 @@ namespace Code.Fsm.TrialCollectibleFSM
 
         private void OnTrigger(Collider obj)
         {
+            PlayerFsm.Singleton.OnCultTrialBoostTrigger();
             CultTrialManager.Singleton.ReplenishCurseDuration();
+            if (isFinalKeyframe) _ownerFsm.Machine.Fire(CultTrialFsm.CultTrialFsmTrigger.FinalKeyframeTriggered);
             Deactivate();
         }
 
@@ -61,6 +65,7 @@ namespace Code.Fsm.TrialCollectibleFSM
             
             _triggerProxy.GetComponent<Collider>().enabled = false;
             StartCoroutine(RendererClipCoroutine());
+            _particleSystem.Stop();
             
             IEnumerator RendererClipCoroutine()
             {
@@ -81,6 +86,7 @@ namespace Code.Fsm.TrialCollectibleFSM
             _renderer.enabled = true;
             _triggerProxy.GetComponent<Collider>().enabled = true;
             StartCoroutine(RendererClipCoroutine());
+            _particleSystem.Play();
             
             _renderer.material.SetFloat("_IsFinal", isFinalKeyframe ? 1f : 0f);
             IEnumerator RendererClipCoroutine()

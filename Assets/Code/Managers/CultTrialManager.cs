@@ -15,6 +15,8 @@ public class CultTrialManager : MonoBehaviour
     public DialogueController dialogueItem;
     public DialogueController dialogueFirstTimeUse1;
     public DialogueController dialogueFirstTimeUse2;
+    public DialogueController dialogueFirstTimeUse3;
+    public DialogueController dialogueFirstTimeUse4;
 
     private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
 
@@ -30,7 +32,6 @@ public class CultTrialManager : MonoBehaviour
     private float _curseDuration;
     private CustomFogController _activeFogController;
     private TextMeshProUGUI _markHudTmp;
-    public DialogueController dialogueFirstTimeUse3;
     private const float CurseMaximumDuration = 6f;
 
     private Color _activeFogControllerBaseColor;
@@ -185,6 +186,10 @@ public class CultTrialManager : MonoBehaviour
     {
         _markHudCanvasGroup.alpha = 0f;
         isCurseEnabled = false;
+        isCurseTicking = false;
+        _activeHaloMaterial.SetFloat("_Alpha", 0);
+        _activeFogController.Color = _activeFogControllerBaseColor;
+        _activeFogController.DepthMax = _activeFogControllerDepthMax;
     }
 
     public void StartCurseTicking(CultTrialFsm fsm)

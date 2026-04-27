@@ -11721,6 +11721,7 @@ Transform:
   - {fileID: 7369516213523700975}
   - {fileID: 7080467005692511028}
   - {fileID: 913415185526373089}
+  - {fileID: 2448177445204492299}
   - {fileID: 5004471172585422516}
   - {fileID: 1970325188893653200}
   - {fileID: 2142731194374215241}
@@ -11742,9 +11743,10 @@ MonoBehaviour:
   dialogueItem: {fileID: 4338562221775118854}
   dialogueFirstTimeUse1: {fileID: 5540154977686203205}
   dialogueFirstTimeUse2: {fileID: 4314837093134369866}
+  dialogueFirstTimeUse3: {fileID: 6349363405889412909}
+  dialogueFirstTimeUse4: {fileID: 8739925648183078799}
   isCurseEnabled: 0
   isCurseTicking: 0
-  dialogueFirstTimeUse3: {fileID: 6349363405889412909}
 --- !u!1 &1279916274918459991
 GameObject:
   m_ObjectHideFlags: 0
@@ -23001,6 +23003,66 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5718055141988778420}
   m_CullTransparentMesh: 1
+--- !u!1 &5822650284629462819
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2448177445204492299}
+  - component: {fileID: 8739925648183078799}
+  m_Layer: 0
+  m_Name: DialogueFirstTimeUse4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2448177445204492299
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5822650284629462819}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -641.9, y: -340.8, z: 272.69998}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 689153785027060128}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8739925648183078799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5822650284629462819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d20f73aabcb4cfbaac49363662be3e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueController
+  currentDialogueIndex: 0
+  textStartOffset: 0
+  dialogues:
+  - texts:
+    - <i>Hoho... hohoho...</i>
+    - <i>Better than I could have ever imagined!</i>
+    - <i>Little one... yes... you may finally be what I have been looking for...</i>
+    - <i>Seek my altars across the Mountain. Sate the mark's thirst for speed.</i>
+    - <i>Together, we will usher in a new age of darkness! Mwahaha! Heehee!</i>
+    advanceDialogueIndex: 0
+    canvasDelayOffset: 0
+  DialogueName: Far presence
+  LookAtOverride: {fileID: 0}
+  CameraY: 0.7
+  canvasDelay: 0.25
+  cameraFollowOffsetLerp: 0
 --- !u!1 &5827111792743555712
 GameObject:
   m_ObjectHideFlags: 0
