@@ -38,11 +38,19 @@ public partial class YorbaFsm
             });
         
         Machine.Configure(YorbaFsmState.SpeakingQuestReady)
-            // .Permit(YorbaFsmTrigger.OnDialogueCompleted, YorbaFsmState.QuestChannel)
             .Permit(YorbaFsmTrigger.OnDialogueCompleted, YorbaFsmState.Idle)
             .OnEntry(_ =>
             {
                 _dialogueController.currentDialogueIndex = 5;
+            })
+            .OnExit(_ =>
+            {
+                SaveSystem.WritePersistentEvent(PersistentEvent);
+                SaveSystem.RemoveItem("ErhuFragment1");
+                SaveSystem.RemoveItem("ErhuFragment2");
+                SaveSystem.RemoveItem("ErhuFragment3");
+                SaveSystem.WritePlayerInGamePosition(PlayerFsm.Singleton.transform.position, "", PlayerFsm.Singleton.transform.rotation.eulerAngles.y);
+                SceneLoader.Singleton.LoadScene(SceneManager.GetActiveScene().name);
             });
         
 
@@ -56,6 +64,12 @@ public partial class YorbaFsm
             {
                 CutsceneManager.Singleton.SetPseudoCutsceneActive();
             });
+        
+        Machine.Configure(YorbaFsmState.InstrumentIdle)
+            .Permit(YorbaFsmTrigger.OnInteracted, YorbaFsmState.InstrumentSpeak);
+
+        Machine.Configure(YorbaFsmState.InstrumentSpeak)
+            .Permit(YorbaFsmTrigger.OnDialogueCompleted, YorbaFsmState.InstrumentIdle);
 
     }
 
@@ -78,6 +92,9 @@ public partial class YorbaFsm
         StateMapConfig.AnimationTrigger.Add(YorbaFsmState.SpeakingDefault, "SpeakLoop");
         StateMapConfig.AnimationTrigger.Add(YorbaFsmState.SpeakingQuestReady, "SpeakLoop");
         StateMapConfig.AnimationTrigger.Add(YorbaFsmState.Idle, "Idle");
+        StateMapConfig.AnimationTrigger.Add(YorbaFsmState.InstrumentIdle, "InstrumentIdle");
+        StateMapConfig.AnimationTrigger.Add(YorbaFsmState.InstrumentSpeak, "InstrumentSpeak");
+        
         // StateMapConfig.AnimationTrigger.Add(YorbaFsmState.QuestChannel, "Channel");
     }
 }

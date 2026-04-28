@@ -17,12 +17,21 @@ public partial class YorbaFsm
     private const string PersistentEvent = "c1-yorba-quest";
     private SkinnedMeshRenderer _fakeEyesRenderer;
     private Light _light;
+    public GameObject erhuObject;
 
     private const string ExpositionPersistentEvent = "YorbaExpositionHeard";
     
     private void OnDialogueProgressed(int textIndex)
     {
         
+    }
+
+    private void SetErhuVisibility(bool val)
+    {
+        foreach (var renderer in erhuObject.GetComponentsInChildren<Renderer>())
+        {
+            renderer.enabled = val;
+        }
     }
     
 }

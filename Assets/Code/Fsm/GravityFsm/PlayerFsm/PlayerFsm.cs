@@ -231,7 +231,7 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Jump");
         _inputBuffer.InitInput("Dash");
         _inputBuffer.InitInput("Attack");
-        _inputBuffer.InitInput("Interact");
+        _inputBuffer.InitInput("Interact", false, true);
         _inputBuffer.InitInput("Inventory");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
@@ -272,10 +272,7 @@ public partial class PlayerFsm : GravityFsm
 
 
         var isCutscenePlayerDisabled = CutsceneManager.Singleton.IsCutscenePlayerDisabled();
-        if (!isCutscenePlayerDisabled)
-        {
-            _inputBuffer.OnUpdate();
-        }
+        _inputBuffer.OnUpdate(isCutscenePlayerDisabled);
         
         OnPlayerMomentumUpdated?.Invoke(_momentum);
         OnPlayerPositionUpdated?.Invoke(transform.position, Machine.IsInState(GravityFsmState.Grounded) ||

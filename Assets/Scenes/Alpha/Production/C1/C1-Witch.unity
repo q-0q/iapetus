@@ -1317,6 +1317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97f5fb698fbf4138a4ef77e8f1cce417, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::YorbaFsm
+  erhuObject: {fileID: 954301163}
 --- !u!1 &673905343
 GameObject:
   m_ObjectHideFlags: 0
@@ -1975,6 +1976,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 952217176}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &954301163 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -1647326867897089371, guid: 85c1f5f1b639c425fb0b71d15a698346,
+    type: 3}
+  m_PrefabInstance: {fileID: 952217176}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &991877521
 GameObject:
   m_ObjectHideFlags: 0
@@ -2063,6 +2070,7 @@ MonoBehaviour:
       a big ball of fire...
     - Or something like that.
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - Yorba used to feast on all sorts creatures...
     - Scrumptious meals, right in Yorba's web, lured by Yorba's beautiful music.
@@ -2073,11 +2081,13 @@ MonoBehaviour:
     - Yorba's wonderful instrument... smashed to pieces against the rocks...
     - No meat since then...
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - If only Yorba had Yorba's <color=yellow>erhu</color> to lure in creatures to
       eat...
     - So hungry... keke...
     advanceDialogueIndex: 0
+    canvasDelayOffset: 0
   - texts:
     - Oh?
     - It has found a part of Yorba's <color=yellow>erhu</color>?
@@ -2086,22 +2096,38 @@ MonoBehaviour:
     - They're probably out there, hidden in the crags.
     - If it is rebuilt, the scrumptious creatures may come back to Yorba's web...
     advanceDialogueIndex: 1
+    canvasDelayOffset: 0
   - texts:
     - Yorba can almost taste the meat of those yummy creatures...
     - Yorba just needs the three components of Yorba's <color=yellow>erhu</color>...
     - The pieces are likely scattered on the rocks around here...
     - Too cold for Yorba to go look... ke...
     advanceDialogueIndex: 0
+    canvasDelayOffset: 0
   - texts:
     - Keke... keKEKEKE?
     - Please forgive Yorba's outburst...
     - But it has collected the entirety of Yorba's <color=yellow>erhu</color>...
     - Please... little thing... it must give them to Yorba...
     advanceDialogueIndex: 0
+    canvasDelayOffset: 0
+  - texts:
+    - It must forgive Yorba's rusty technique. Long has it been since Yorba has played.
+    - Yorba feels... an unusual feeling. Gratitude...?
+    - ...No, surely not. Yorba is not an emotional weakling.
+    advanceDialogueIndex: 1
+    canvasDelayOffset: -3.5
+  - texts:
+    - It is still here?
+    - It must not disturb Yorba's playing. Or the scrumptious creatures will not
+      come near.
+    advanceDialogueIndex: 0
+    canvasDelayOffset: -3.5
   DialogueName: Yorba
   LookAtOverride: {fileID: 1723991107}
   CameraY: 0.5
   canvasDelay: 3.5
+  cameraFollowOffsetLerp: 0
 --- !u!114 &1024778517
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2216,6 +2242,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 205526365124999413, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 264568961021574504, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -2274,22 +2320,22 @@ PrefabInstance:
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.000000043146972
+      value: 0.0000000395872
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0000000070017903
+      value: 0.00000001853481
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.9870875
+      value: -0.90564954
       objectReference: {fileID: 0}
     - target: {fileID: 883313320219543476, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.16018228
+      value: 0.424027
       objectReference: {fileID: 0}
     - target: {fileID: 1295049107365427042, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2329,7 +2375,7 @@ PrefabInstance:
     - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 520.78
       objectReference: {fileID: 0}
     - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2494,12 +2540,12 @@ PrefabInstance:
     - target: {fileID: 3282179527638398618, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5
+      value: 16.450857
       objectReference: {fileID: 0}
     - target: {fileID: 3282179527638398618, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 11.9
+      value: 13.183044
       objectReference: {fileID: 0}
     - target: {fileID: 3282179527638398618, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2589,22 +2635,22 @@ PrefabInstance:
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.00000004360359
+      value: 0.0000000411022
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.0000000030681058
+      value: 0.000000014875967
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.9975337
+      value: -0.9403088
       objectReference: {fileID: 0}
     - target: {fileID: 5124961103079810557, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.07019008
+      value: 0.34032243
       objectReference: {fileID: 0}
     - target: {fileID: 5327962082458161164, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2714,22 +2760,22 @@ PrefabInstance:
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.000000043615422
+      value: 0.000000041737728
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.0000000028948857
+      value: 0.000000012986467
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.9978046
+      value: -0.95484775
       objectReference: {fileID: 0}
     - target: {fileID: 5809338202276262544, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.06622726
+      value: 0.29709572
       objectReference: {fileID: 0}
     - target: {fileID: 6009970680978410363, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2882,6 +2928,26 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7235375945613739714, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7466502190336010026, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0

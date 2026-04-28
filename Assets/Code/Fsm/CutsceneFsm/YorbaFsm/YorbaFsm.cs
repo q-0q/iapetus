@@ -20,6 +20,9 @@ public partial class YorbaFsm : CutsceneFsm
         public static int QuestChannel;
         public static int Idle;
         public static int Revealing;
+        
+        public static int InstrumentIdle;
+        public static int InstrumentSpeak;
     }
 
     public class YorbaFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
@@ -36,7 +39,13 @@ public partial class YorbaFsm : CutsceneFsm
         Animator = GetComponentInChildren<Animator>();
         _fakeEyesRenderer = transform.Find("yorba").Find("FakeEyes").GetComponent<SkinnedMeshRenderer>();
         _light = GetComponentInChildren<Light>();
-        if (SaveSystem.GetPersistentEventCompleted(ExpositionPersistentEvent))
+        
+        SetErhuVisibility(SaveSystem.GetPersistentEventCompleted(PersistentEvent));
+        
+        if (SaveSystem.GetPersistentEventCompleted(PersistentEvent))
+            _dialogueController.currentDialogueIndex = 6;
+        
+        else if (SaveSystem.GetPersistentEventCompleted(ExpositionPersistentEvent))
             _dialogueController.currentDialogueIndex = 1;
 
     }
@@ -49,7 +58,6 @@ public partial class YorbaFsm : CutsceneFsm
         Shader.SetGlobalFloat("_YorbaFakeLightFalloff", 3f);
         Shader.SetGlobalFloat("_YorbaFakeLightDistance", 0f);
         
-        print(Shader.GetGlobalVector("_YorbaFakeLightPosition"));
         
     }
     
@@ -87,6 +95,14 @@ public partial class YorbaFsm : CutsceneFsm
     {
         base.OnStartComplete();
         
+        if (SaveSystem.GetPersistentEventCompleted(PersistentEvent))
+        {
+            Machine.Jump(YorbaFsmState.InstrumentIdle);
+            Animator.playbackTime = 10f; // skip ahead?
+            _fakeEyesRenderer.material.SetFloat("_Alpha", 1f);
+            Shader.SetGlobalFloat("_YorbaFakeLightDistance", 20f);
+            Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);
+        };
     }
 
     protected override void OnStateChanged(TriggerParams triggerParams)
