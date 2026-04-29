@@ -79,7 +79,9 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         if (_brain.ActiveVirtualCamera != _freeLook || GameMenu.Singleton.IsMenuOpen() || InventoryCanvas.Singleton.GetIsOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
         {
             _freeLook.m_XAxis.m_InputAxisValue = 0;
+            _freeLook.m_XAxis.Reset();
             _freeLook.m_YAxis.m_InputAxisValue = 0;
+            _freeLook.m_YAxis.Reset();
             return;
         }
 
