@@ -18,6 +18,7 @@ public class FoliageChunkManager : MonoBehaviour
     
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, List<Matrix4x4>>> _masterRegistry = new();
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, Matrix4x4[][]>> _bakedChunks = new();
+    public static readonly List<FoliageMaskSpline> MaskSplines = new();
 
     private Camera _camera;
     private void Awake() => Instance = this;

@@ -95,8 +95,11 @@ public class FoliageSystem : MonoBehaviour
                 continue;
 
             if (RaycastCheckSphere(hit, rayDirection)) continue;
-            
-            // Random offset in object-local space
+            if (CheckAllMasks(hit.point))
+            {
+                print("hi");
+                continue;
+            }
 
             Vector3 position = hit.point;
 
@@ -184,6 +187,16 @@ public class FoliageSystem : MonoBehaviour
         if (bary.x < edgeThreshold || bary.y < edgeThreshold || bary.z < edgeThreshold)
         {
             return true;
+        }
+
+        return false;
+    }
+
+    private static bool CheckAllMasks(Vector3 position)
+    {
+        foreach (var mask in FoliageChunkManager.MaskSplines)
+        {
+            if (mask.MaskFoliageInstance(position)) return true;
         }
 
         return false;

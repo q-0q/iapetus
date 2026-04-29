@@ -44,6 +44,9 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _settingsMenuOpen = false;
         _brain = FindObjectOfType<CinemachineBrain>();
         _baseFov = _freeLook.m_Lens.FieldOfView;
+        _freeLook.m_YAxis.Value = 0.7f;
+        _freeLook.m_YAxis.m_InputAxisValue = 0f;
+        _freeLook.m_XAxis.m_InputAxisValue = 0f;
         
         OnMetaSaveDataUpdated(MetaSaveSystem.LoadCachedMetaSaveData());
     }
