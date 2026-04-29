@@ -7,9 +7,9 @@ public partial class PlayerFsm
     {
         currentPotentialInteractable = null;
 
-        var newMomentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 7f);
+        var newMomentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 10f);
         _momentum = newMomentum;
-        if (_momentum < 2f) ReplaceAnimatorTrigger("Idle");
+        if (_momentum < 1.25f) ReplaceAnimatorTrigger("Idle");
         HandleCollisionMove();
         var interacted = _inputBuffer.IsBuffered("Interact");
         if (interacted)
@@ -29,7 +29,7 @@ public partial class PlayerFsm
             : DialogueCanvas.Singleton.currentDialogueController.LookAtOverride;
         
         var rotationTarget = lookAt.position - transform.position;
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(rotationTarget + transform.forward * 0.01f, transform.up), Time.deltaTime * 5f);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(rotationTarget + transform.forward * 0.01f, transform.up), Time.deltaTime * 10f);
 
     }
 
@@ -40,6 +40,7 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.Idle)
             .OnEntry(_ =>
             {
+                _dialogueEntryMomentum = _momentum;
                 _inputBuffer.ConsumeBuffer("Interact");
             });
     }

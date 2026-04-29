@@ -24,7 +24,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Interactable)
             .Permit(PlayerFsmTrigger.SurgePedestalInteracted, PlayerFsmState.SurgeStartup)
             .Permit(PlayerFsmTrigger.InteractWithSwitch, PlayerFsmState.WalkToSwitchPosition)
-            .Permit(PlayerFsmTrigger.StartDialogue, PlayerFsmState.WalkToDialoguePosition)
+            .Permit(PlayerFsmTrigger.StartDialogue, PlayerFsmState.Dialogue)
             .Permit(PlayerFsmTrigger.Inventory, PlayerFsmState.InventorySlowdown);
     }
 }

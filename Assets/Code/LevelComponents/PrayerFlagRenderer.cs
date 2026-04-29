@@ -13,6 +13,7 @@ public class PrayerFlagRenderer : MonoBehaviour
     public Material Material;
     public float FlagSize;
     public float FlagSpacing;
+    public float EndSpacing = 4f;
 
     private Matrix4x4[] matrices;
     private int _flagCount;
@@ -21,7 +22,7 @@ public class PrayerFlagRenderer : MonoBehaviour
     private SplineContainer _splineContainer;
     private MaterialPropertyBlock _propBlock;
     private float[] _splineProgressArray;
-    public Color[] palette = { Color.red, Color.blue, Color.yellow, Color.white };
+    public List<Color> palette = new List<Color>();
     private Vector4[] _flagColors; // Use Vector4 for shader-friendly color data
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -36,7 +37,7 @@ public class PrayerFlagRenderer : MonoBehaviour
         TryGetComponent(out _splineContainer);
         var curveLength = _splineContainer.Spline.GetLength();
         GetComponent<MeshRenderer>().material.SetFloat("_SplineLength", curveLength);
-        _flagCount = Mathf.FloorToInt(curveLength / FlagSpacing);
+        _flagCount = Mathf.FloorToInt((curveLength - EndSpacing * 2f) / FlagSpacing);
         _splineProgressArray = new float[_flagCount];
         matrices = new Matrix4x4[_flagCount];
         _propBlock = new MaterialPropertyBlock();
@@ -46,7 +47,7 @@ public class PrayerFlagRenderer : MonoBehaviour
         // Pick a random color for each flag once at the start
         for (int i = 0; i < _flagCount; i++)
         {
-            Color randomColor = palette[UnityEngine.Random.Range(0, palette.Length)];
+            Color randomColor = palette[UnityEngine.Random.Range(0, palette.Count)];
             _flagColors[i] = (Vector4)randomColor; 
         }
     }
@@ -58,7 +59,7 @@ public class PrayerFlagRenderer : MonoBehaviour
 
         for (int i = 0; i < _flagCount; i++)
         {
-            float t = (i * FlagSpacing) / len;
+            float t = ((i * FlagSpacing + EndSpacing) / len);
             _splineProgressArray[i] = t;
 
             // 1. Evaluate the full transform (Position and Rotation) at progress 't'

@@ -98,7 +98,7 @@ public partial class YorbaFsm : CutsceneFsm
         if (SaveSystem.GetPersistentEventCompleted(PersistentEvent))
         {
             Machine.Jump(YorbaFsmState.InstrumentIdle);
-            Animator.playbackTime = 10f; // skip ahead?
+            ReplaceAnimatorTrigger("InstrumentIdleInstant");
             _fakeEyesRenderer.material.SetFloat("_Alpha", 1f);
             Shader.SetGlobalFloat("_YorbaFakeLightDistance", 20f);
             Shader.SetGlobalVector("_YorbaFakeLightPosition", _light.transform.position);

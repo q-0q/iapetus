@@ -275,6 +275,8 @@ public partial class PlayerFsm
     public static event Action<Vector3> OnPlayerTeleported;
     private const float SwimFreezeDuration = 3f;
 
+    private float _dialogueEntryMomentum;
+
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
     {
