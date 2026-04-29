@@ -57,6 +57,9 @@ public partial class PlayerFsm
     private ParticleSystem _splashParticles;
     private PlayerDashParticles _playerDashParticles;
     private ParticleSystem _speedLinesParticles;
+    
+    private float _timeSinceSpeedLinesParticlesPlayed;
+    private float _speedLinesParticlesDuration;
 
     public const int MaxComboLength = 5;
     private int _currentComboLength = 0;
@@ -849,7 +852,8 @@ public partial class PlayerFsm
         StartCoroutine(InvokeSurgeTrail());
         FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
         _timeSinceSurgeStarted = 0f;
-        
+
+        _speedLinesParticlesDuration = -1f;
         _speedLinesParticles.Play();
 
     }
@@ -1095,7 +1099,7 @@ public partial class PlayerFsm
         isSprinting = true;
         _timeSinceBoostStarted = 0f;
         
-        StartCoroutine(SpeedLinesCoroutine());
+        PlaySpeedLineParticlesForDuration(BoostSpeedDuration * 0.75f);
         StartCoroutine(TrailCoroutine());
         StartCoroutine(CameraCoroutine());
         
@@ -1151,16 +1155,18 @@ public partial class PlayerFsm
             }
         }
         
-        IEnumerator SpeedLinesCoroutine()
-        {
-            _speedLinesParticles.Play();
-            yield return new WaitForSeconds(BoostSpeedDuration * 0.75f); 
-            _speedLinesParticles.Stop();
-        }
     }
     
     private void PlaySpeedLineParticlesForDuration(float duration)
     {
-        
+        _speedLinesParticles.Play();
+        _timeSinceSpeedLinesParticlesPlayed = 0;
+        _speedLinesParticlesDuration = duration;
+    }
+
+    private void HandleSpeedLines()
+    {
+        _timeSinceSpeedLinesParticlesPlayed += Time.deltaTime;
+        if (_timeSinceSpeedLinesParticlesPlayed > _speedLinesParticlesDuration && _speedLinesParticlesDuration > 0) _speedLinesParticles.Stop();
     }
 }

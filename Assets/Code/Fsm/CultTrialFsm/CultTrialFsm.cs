@@ -61,6 +61,9 @@ public partial class CultTrialFsm : Fsm
 
         _startingLine = transform.Find("StartingLine");
         _startingLineBaseMaterial = _startingLine.Find("Base").GetComponent<Renderer>().material;
+        _gemMaterial = _startingLine.Find("Gem").GetComponent<Renderer>().material;
+        
+        if (SaveSystem.GetPersistentEventCompleted(metaName+"-complete")) _gemMaterial.SetFloat("_Weight_1", 1);
     }
 
     protected override void OnStartComplete()

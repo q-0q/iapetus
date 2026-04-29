@@ -30,6 +30,7 @@ public partial class CultTrialFsm
     private Transform _startingLinePlacer;
     private Transform _startingLine;
     private Material _startingLineBaseMaterial;
+    private Material _gemMaterial;
 
 
     private CustomFogController _activeFogController;

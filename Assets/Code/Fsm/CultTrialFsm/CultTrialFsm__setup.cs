@@ -165,6 +165,7 @@ public partial class CultTrialFsm
             .PermitIf(FsmTrigger.Timeout, CultTrialFsmState.UnlockedIdle, _ => SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent), 2)
             .OnEntry(_ =>
             {
+                _gemMaterial.SetFloat("_Weight_1", 1);
                 SaveSystem.WritePersistentEvent(metaName+"-complete");
                 CultTrialManager.Singleton.StopTimer();
                 CultTrialManager.Singleton.isCurseTicking = false;
