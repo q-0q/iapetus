@@ -16,6 +16,8 @@ public partial class CrabGuardFsm
     private const string PersistentEvent = "c1-snail-quest";
     private bool _triggerActive;
     private float _turnAmount;
+    private Transform _questDestination;
+    public int questCompleteDialogueIndex = 0;
     
     private void OnDialogueProgressed(int textIndex)
     {

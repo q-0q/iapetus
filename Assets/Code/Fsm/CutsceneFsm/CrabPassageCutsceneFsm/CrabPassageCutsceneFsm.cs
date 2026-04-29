@@ -39,6 +39,12 @@ public partial class CrabPassageCutsceneFsm : CutsceneFsm
     {
         base.OnStart();
         InitState = CutsceneFsmState.Inactive;
+        if (SaveSystem.GetPersistentEventCompleted(YorbaFsm.PersistentEvent))
+        {
+            CutsceneTrigger1.gameObject.SetActive(false);
+            CutsceneTrigger2.gameObject.SetActive(false);
+            CutsceneTrigger3.gameObject.SetActive(false);
+        }
         
     }
     

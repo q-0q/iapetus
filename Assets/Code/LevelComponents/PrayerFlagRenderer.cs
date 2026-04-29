@@ -37,7 +37,7 @@ public class PrayerFlagRenderer : MonoBehaviour
         TryGetComponent(out _splineContainer);
         var curveLength = _splineContainer.Spline.GetLength();
         GetComponent<MeshRenderer>().material.SetFloat("_SplineLength", curveLength);
-        _flagCount = Mathf.FloorToInt((curveLength - EndSpacing * 2f) / FlagSpacing);
+        _flagCount = Mathf.CeilToInt((curveLength - EndSpacing * 2f) / FlagSpacing);
         _splineProgressArray = new float[_flagCount];
         matrices = new Matrix4x4[_flagCount];
         _propBlock = new MaterialPropertyBlock();

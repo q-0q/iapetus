@@ -33,6 +33,7 @@ public partial class CrabGuardFsm : CutsceneFsm
         _interactable = GetComponentInChildren<Interactable>();
         _dialogueController = GetComponentInChildren<DialogueController>();
         Animator = GetComponentInChildren<Animator>();
+        _questDestination = transform.Find("QuestDestination");
 
     }
 
@@ -51,10 +52,14 @@ public partial class CrabGuardFsm : CutsceneFsm
         if (pos.z < 0) _turnAmount = Mathf.InverseLerp(-8f, 8f, pos.x);
         else _turnAmount = pos.x > 0 ? 1f : 0f;
         
-        if (Machine.IsInState(CrabGuardFsmState.IdleDefault))
+        if (Machine.IsInState(CrabGuardFsmState.IdleDefault) || Machine.IsInState(CrabGuardFsmState.SpeakingQuestComplete))
         {
             var newTurnAmount = _turnAmount;
             Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), newTurnAmount, Time.deltaTime * 5f));
+        }
+        else
+        {
+            Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), 0, Time.deltaTime * 5f));
         }
         
     }
@@ -62,7 +67,14 @@ public partial class CrabGuardFsm : CutsceneFsm
     protected override void OnStartComplete()
     {
         base.OnStartComplete();
-        
+
+        if (SaveSystem.GetPersistentEventCompleted(YorbaFsm.PersistentEvent))
+        {
+            transform.position = _questDestination.position;
+            transform.rotation = _questDestination.rotation;
+            Machine.Jump(CrabGuardFsmState.IdleQuestComplete);
+        }
+
     }
 
     protected override void OnStateChanged(TriggerParams triggerParams)

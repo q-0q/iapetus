@@ -124,7 +124,7 @@ public partial class PlayerFsm
     private const float DashForwardRaycastDistanceOffset = 0.5f;
 
     public const float MaxMomentum = 15f;
-    private const float MoveSpeed = 5f;
+    private const float MoveSpeed = 5.65f;
     private const float MaximumMomentumSpeedMod = 3.5f;
     private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;

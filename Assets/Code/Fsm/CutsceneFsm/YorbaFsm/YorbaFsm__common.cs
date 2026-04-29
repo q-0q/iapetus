@@ -14,7 +14,7 @@ public partial class YorbaFsm
 {
     private Interactable _interactable;
     private DialogueController _dialogueController;
-    private const string PersistentEvent = "c1-yorba-quest";
+    public const string PersistentEvent = "c1-yorba-quest";
     private SkinnedMeshRenderer _fakeEyesRenderer;
     private Light _light;
     public GameObject erhuObject;

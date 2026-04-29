@@ -16,11 +16,14 @@ public partial class CrabGuardFsm
         Machine.Configure(CrabGuardFsmState.SpeakingDefault)
             .Permit(CrabGuardFsmTrigger.OnDialogueCompleted, CrabGuardFsmState.IdleDefault);
         
+        Machine.Configure(CrabGuardFsmState.IdleQuestComplete)
+            .Permit(CrabGuardFsmTrigger.OnInteracted, CrabGuardFsmState.SpeakingQuestComplete);
+        
         Machine.Configure(CrabGuardFsmState.SpeakingQuestComplete)
-            .Permit(CrabGuardFsmTrigger.OnDialogueCompleted, CrabGuardFsmState.IdleDefault)
+            .Permit(CrabGuardFsmTrigger.OnDialogueCompleted, CrabGuardFsmState.IdleQuestComplete)
             .OnEntry(_ =>
             {
-                // _dialogueController.currentDialogueIndex = ???;
+                if (_dialogueController.currentDialogueIndex < questCompleteDialogueIndex) _dialogueController.currentDialogueIndex = questCompleteDialogueIndex;
             });
         
 
@@ -30,7 +33,10 @@ public partial class CrabGuardFsm
     {
         base.SetupStateMaps();
         
-        // StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.Idle, "Eating");
+        StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.IdleDefault, "Idle");
+        StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.IdleQuestComplete, "Dancing");
+        StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.SpeakingQuestComplete, "Idle");
+        
         // StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.SpeakingDefault, "Stand");
         // StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.SpeakingQuestReady, "Stand");
         // StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.QuestChannel, "Channel");

@@ -77,6 +77,7 @@ public class DialogueController : MonoBehaviour
             DialogueCanvas.Singleton.EndDialogue();
         }
     }
+    
 
     public void ProgressionSignal(int textIndex)
     {
