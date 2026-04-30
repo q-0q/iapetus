@@ -36,6 +36,7 @@ public partial class CrabGuardFsm
         StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.IdleDefault, "Idle");
         StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.IdleQuestComplete, "Dancing");
         StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.SpeakingQuestComplete, "Idle");
+
         
         // StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.SpeakingDefault, "Stand");
         // StateMapConfig.AnimationTrigger.Add(CrabGuardFsmState.SpeakingQuestReady, "Stand");

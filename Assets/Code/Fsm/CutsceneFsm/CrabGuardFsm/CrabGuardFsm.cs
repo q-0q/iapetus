@@ -18,7 +18,7 @@ public partial class CrabGuardFsm : CutsceneFsm
         public static int SpeakingDefault;
         public static int IdleQuestComplete;
         public static int SpeakingQuestComplete;
-        public static int SpeakingForced;
+        public static int Channel;
     }
 
     public class CrabGuardFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
@@ -59,7 +59,7 @@ public partial class CrabGuardFsm : CutsceneFsm
         }
         else
         {
-            Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), 0, Time.deltaTime * 5f));
+            Animator.SetFloat("Turn", Mathf.Lerp(Animator.GetFloat("Turn"), 0.5f, Time.deltaTime * 5f));
         }
         
     }
@@ -89,6 +89,7 @@ public partial class CrabGuardFsm : CutsceneFsm
         _dialogueController.OnProgressed += OnDialogueProgressed;
         GetComponentInChildren<TriggerProxy>().OnTriggerProxyStay += OnTriggerProxyStay;
         GetComponentInChildren<TriggerProxy>().OnTriggerProxyExit += OnTriggerProxyExit;
+        CrabPassageCutsceneFsm.OnChannel += OnChannel;
     }
 
     private void OnDisable()
@@ -98,5 +99,6 @@ public partial class CrabGuardFsm : CutsceneFsm
         _dialogueController.OnProgressed -= OnDialogueProgressed;
         GetComponentInChildren<TriggerProxy>().OnTriggerProxyStay -= OnTriggerProxyStay;
         GetComponentInChildren<TriggerProxy>().OnTriggerProxyExit -= OnTriggerProxyExit;
+        CrabPassageCutsceneFsm.OnChannel -= OnChannel;
     }
 }

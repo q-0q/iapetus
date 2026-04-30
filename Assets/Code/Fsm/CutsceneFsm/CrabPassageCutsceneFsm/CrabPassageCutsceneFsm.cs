@@ -33,6 +33,7 @@ public partial class CrabPassageCutsceneFsm : CutsceneFsm
     {
         base.OnAwake();
         _warningCamera = transform.Find("CrabPassageWarningCamera").GetComponent<CinemachineVirtualCamera>();
+        _channelCamera = transform.Find("CrabPassageChannelCamera").GetComponent<CinemachineVirtualCamera>();
     }
 
     protected override void OnStart()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Code.TriggerParams;
@@ -19,6 +20,9 @@ public partial class CrabPassageCutsceneFsm
     public TriggerProxy CutsceneTrigger3;
 
     private CinemachineVirtualCamera _warningCamera;
+    private CinemachineVirtualCamera _channelCamera;
+
+    public static event Action OnChannel;
 
     
     
@@ -26,6 +30,6 @@ public partial class CrabPassageCutsceneFsm
     {
 
     }
-
+    
 
 }

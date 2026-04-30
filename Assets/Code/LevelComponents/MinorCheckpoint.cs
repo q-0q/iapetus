@@ -32,7 +32,7 @@ public class MinorCheckpoint : MonoBehaviour
         
         if (minorCheckpoint == this)
         {
-            _haloRenderer.enabled = false;
+            // _haloRenderer.enabled = false;
             if (_currentMinorCheckpoint == this) return;
             _currentMinorCheckpoint = this;
             StartCoroutine(InvokeSeekParticles());
@@ -73,6 +73,8 @@ public class MinorCheckpoint : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        _haloRenderer.enabled = !CultTrialManager.Singleton.isCurseEnabled;
+        if (CultTrialManager.Singleton.isCurseEnabled) return;
         var playerDistance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
         var playerYDelta = PlayerFsm.Singleton.transform.position.y - transform.position.y;
         if (playerDistance < 25f && playerYDelta > -5f)

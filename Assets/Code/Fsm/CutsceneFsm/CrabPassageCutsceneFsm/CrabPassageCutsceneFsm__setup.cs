@@ -41,7 +41,14 @@ public partial class CrabPassageCutsceneFsm
             });
 
         Machine.Configure(CrabPassageCutsceneFsmState.Channel)
+            .Permit(FsmTrigger.Timeout, CutsceneFsmState.Inactive)
             .OnEntry(_ =>
+            {
+                OnChannel?.Invoke();
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
+               _channelCamera.Priority = 30;
+            })
+            .OnExit(_ =>
             {
                 PlayerFsm.Singleton.InvokePlayerDeath();
             });
@@ -59,6 +66,7 @@ public partial class CrabPassageCutsceneFsm
         
         StateMapConfig.CutsceneCameraDisabled.Add(CrabPassageCutsceneFsmState.Warning1, false);
         StateMapConfig.CutsceneCameraDisabled.Add(CrabPassageCutsceneFsmState.Warning2, false);
+        StateMapConfig.Duration.Add(CrabPassageCutsceneFsmState.Channel, 0.75f);
     }
 }
 

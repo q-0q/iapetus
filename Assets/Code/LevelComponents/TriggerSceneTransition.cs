@@ -13,6 +13,11 @@ public class TriggerSceneTransition : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        if (CultTrialManager.Singleton.isCurseEnabled)
+        {
+            PlayerFsm.Singleton.InvokePlayerDeath();
+            return;
+        }
         if (DestinationId != "") SaveSystem.WritePlayerInGamePosition(Vector3.zero, DestinationId, destinationRotation);
         SceneLoader.Singleton.LoadScene(scene);
     }

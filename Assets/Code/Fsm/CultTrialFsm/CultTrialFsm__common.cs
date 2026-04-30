@@ -107,6 +107,7 @@ public partial class CultTrialFsm
 
     private void UpdateInteractable()
     {
+        if (!SaveSystem.GetPersistentEventCompleted(metaName+"-unlocked")) return;
         if (!SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent)) return;
         _interactable.text = CultTrialManager.Singleton.isCurseEnabled ? "Dispel mark" : "Accept mark";
     }

@@ -127,6 +127,7 @@ public class SaveSystem : MonoBehaviour
     
     public static void WritePlayerInGamePosition(Vector3 gamePosition, string gamePositionId, float yAngle)
     {
+        if (CultTrialManager.Singleton.isCurseEnabled) return;
         SaveData data = LoadCachedSaveData();
         data.playerInGamePosition = new []{ gamePosition.x, gamePosition.y, gamePosition.z};
         data.playerInGamePositionId = gamePositionId;

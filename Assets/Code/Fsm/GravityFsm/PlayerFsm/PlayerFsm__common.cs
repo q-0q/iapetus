@@ -272,8 +272,8 @@ public partial class PlayerFsm
     private float _timeSinceSurgeStarted = 0f;
     private float _freezeTimer;
     public float _timeSinceBoostStarted;
-    private const float BoostSpeedMultiplier = 1.5f;
-    private const float BoostSpeedDuration = 3.5f;
+    private const float BoostSpeedMultiplier = 1.75f;
+    private const float BoostSpeedDuration = 3.75f;
     public static event Action OnPlayerCultTrialDeath;
     public static event Action<Vector3> OnPlayerTeleported;
     private const float SwimFreezeDuration = 3f;
