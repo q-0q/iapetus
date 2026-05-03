@@ -25,6 +25,7 @@ public class CameraFollow : MonoBehaviour
         transform.rotation = PlayerFsm.Singleton.transform.rotation;
         _currentXZLerp = 100f;
         _currentYLerp = YLerpRate;
+        Shader.SetGlobalVector("_CameraFollowWorldPosition", transform.position);
     }
 
     private void OnTriggerStay(Collider other)
@@ -67,10 +68,11 @@ public class CameraFollow : MonoBehaviour
         //         return;
         //     }
         // }
-        
 
-        
 
+        var shaderPositionLerpSpeed =
+            Mathf.Lerp(1.75f, 10f, Mathf.InverseLerp(-15f, -30f, PlayerFsm.Singleton.GetYVelocity()));
+        Shader.SetGlobalVector("_CameraFollowWorldPosition", Vector3.Lerp(Shader.GetGlobalVector("_CameraFollowWorldPosition"), transform.position, Time.deltaTime * shaderPositionLerpSpeed));
         
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
         

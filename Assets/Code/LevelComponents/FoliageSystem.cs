@@ -95,11 +95,6 @@ public class FoliageSystem : MonoBehaviour
                 continue;
 
             if (RaycastCheckSphere(hit, rayDirection)) continue;
-            if (CheckAllMasks(hit.point))
-            {
-                print("hi");
-                continue;
-            }
 
             Vector3 position = hit.point;
 
@@ -140,6 +135,9 @@ public class FoliageSystem : MonoBehaviour
         var height = 300f;
         var gap = 1f;
         var origin = hitInfo.point + Vector3.up * height;
+        
+        if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
+                QueryTriggerInteraction.Collide)) return true;
         
         // raycast both up and down to check for overhangs
         if (!Physics.Raycast(origin, Vector3.down, height - gap, Fsm.GetEnvironmentalLayermask(),

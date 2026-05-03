@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CustomFogController : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class CustomFogController : MonoBehaviour
     public float YAddMax = -40f;
     public float YAddPower = 2f;
     public float YAddDepthInversion = 0.5f;
+    public float YAddClamp = 0.5f;
     
     public float DepthMin = 20f;
     public float DepthMax = 100f;
@@ -28,6 +30,8 @@ public class CustomFogController : MonoBehaviour
     public Vector3 NoiseAVelocity = new Vector3(2, 2, 2);
     public float NoiseBScale = 0.01f;
     public Vector3 NoiseBVelocity = new Vector3(-1, -1, -1);
+    
+    public float SkyboxLift = 1500f;
 
     private Collider _collider;
 

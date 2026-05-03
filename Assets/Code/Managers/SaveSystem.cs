@@ -75,6 +75,7 @@ public class SaveSystem : MonoBehaviour
         public int bellCount;
         public int bitCount;
         public int incenseAmount;
+        public int cultLocationCampId;
         public List<string> bitDeposits;
         public float playTime;
         public string gameVersion;
@@ -96,6 +97,7 @@ public class SaveSystem : MonoBehaviour
             bellCount = 0;
             playTime = 0;
             incenseAmount = 0;
+            cultLocationCampId = 0;
             bitDeposits = new List<string>();
             gameVersion = "";
         }
@@ -292,6 +294,19 @@ public class SaveSystem : MonoBehaviour
     {
         SaveData data = LoadCachedSaveData();
         return data.incenseAmount;
+    }
+    
+    public static void AdvanceCultLocationCampId()
+    {
+        SaveData data = LoadCachedSaveData();
+        data.cultLocationCampId ++;
+        WriteSaveData(data);
+    }
+    
+    public static int GetCultLocationCampId()
+    {
+        SaveData data = LoadCachedSaveData();
+        return data.cultLocationCampId;
     }
     
     public static void CollectBitDeposit(string metaName)

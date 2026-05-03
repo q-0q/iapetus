@@ -76,6 +76,7 @@ public class CustomFogManager : MonoBehaviour
         LerpFloat("_CustomFogYAddMax", _currentController.YAddMax, strength);
         LerpFloat("_CustomFogYAddPower", _currentController.YAddPower, strength);
         LerpFloat("_CustomFogYAddDepthInversion", _currentController.YAddDepthInversion, strength);
+        LerpFloat("_CustomFogYAddClamp", _currentController.YAddClamp, strength);
             
         LerpFloat("_CustomFogDepthMin", _currentController.DepthMin, strength);
         LerpFloat("_CustomFogDepthMax", _currentController.DepthMax, strength);
@@ -87,6 +88,8 @@ public class CustomFogManager : MonoBehaviour
             
         LerpVector("_CustomFogNoiseAVelocity", _currentController.NoiseAVelocity, strength);
         LerpVector("_CustomFogNoiseBVelocity", _currentController.NoiseBVelocity, strength);
+        
+        LerpFloat("_CustomFogSkyboxLift", _currentController.SkyboxLift, strength);
     }
 
     private static void ApplyEditorSettings()
