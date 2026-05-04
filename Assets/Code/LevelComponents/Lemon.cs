@@ -72,6 +72,7 @@ public class Lemon : MonoBehaviour
         SaveSystem.WriteLemonCollection(MetaName);
         FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference("event:/LemonCollect"), gameObject);
         _passiveInstance.stop(STOP_MODE.ALLOWFADEOUT);
+        Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up * 5.5f, Vector3.one * 6f, 1.25f, 0.8f, -1f);
         StartCoroutine(DoCollectionTintWeight());
     }
 

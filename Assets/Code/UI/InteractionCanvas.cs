@@ -41,7 +41,7 @@ public class InteractionCanvas : MonoBehaviour
         }
         
         var interactable = PlayerFsm.Singleton.currentPotentialInteractable;
-        if (interactable is not null && !GameMenu.Singleton.IsMenuOpen() && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 0.75f)
+        if (interactable is not null && !GameMenu.Singleton.IsMenuOpen() && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 0.5f)
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 10f);
             _tmp.text = interactable.text;

@@ -61,6 +61,10 @@ public partial class PlayerFsm
                 SaveSystem.WritePersistentEvent(fsm.metaName + "-unlocked");
                 fsm.Unlock();
                 SaveSystem.AddIncenseAmount(-1);
+                if (SaveSystem.GetIncenseAmount() == 0)
+                {
+                    SaveSystem.AdvanceCultLocationCampId();
+                }
             });
         
     }

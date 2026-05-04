@@ -55,6 +55,7 @@ public class CameraFollow : MonoBehaviour
     private void OnWarp(Vector3 delta)
     {
         transform.position += delta;
+        Shader.SetGlobalVector("_CameraFollowWorldPosition", transform.position);
     }
     
     private void Update()

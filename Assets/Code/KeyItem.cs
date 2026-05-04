@@ -54,14 +54,15 @@ public static class KeyItemRegistry
         {
             displayName = "Incense burner",
             description = "An ornately constructed censer etched with fine runes. A voice seems to whisper within...",
-            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            MeshGameObject = null as GameObject,
             Sprite = null,
             GetUseDescription = () =>
             {
                 var count = SaveSystem.GetIncenseAmount();
                 var nearby = PlayerFsm.Singleton.GetNearbyCultTrial(out var fsm);
-                if (count == 0 || nearby && !SaveSystem.GetPersistentEventCompleted(fsm.metaName + "-unlocked")) return count.ToString() + " cones of incense left.";
-                return count.ToString() + " cones of incense left, but it wouldn't do anything right now.";
+                var cones = count == 1 ? "cone" : "cones";
+                if (count == 0 || nearby && !SaveSystem.GetPersistentEventCompleted(fsm.metaName + "-unlocked")) return count.ToString() + " " + cones + " of incense left.";
+                return count.ToString() + " " + cones + " of incense left, but it wouldn't do anything right now.";
             },
             GetCanUse = () =>
             {
@@ -100,11 +101,11 @@ public class KeyItem : MonoBehaviour
 
     public string Id;
     private Interactable _interactable;
-    private Transform _meshTransform;
+    // private Transform _meshTransform;
     private bool collected = false;
     private ParticleSystem _particleSystem;
 
-    public static event Action<KeyItemRegistration> OnKeyItemCollected;
+    public static event Action<string> OnKeyItemCollected;
     private const string GenericCollectionPersistentEvent = "item-collected";
 
     private void Awake()
@@ -112,33 +113,35 @@ public class KeyItem : MonoBehaviour
         _interactable = GetComponentInChildren<Interactable>();
         _particleSystem = GetComponentInChildren<ParticleSystem>();
         
-        if (SaveSystem.GetPersistentEventCompleted(Id)) Destroy(gameObject);
+        if (SaveSystem.GetPersistentEventCompleted(Id) && _interactable != null) Destroy(gameObject);
     }
 
     private void OnEnable()
     {
-        _interactable.OnInteracted += OnInteracted;
+        if (_interactable != null) _interactable.OnInteracted += OnInteracted;
     }
 
     private void OnDisable()
     {
-        _interactable.OnInteracted -= OnInteracted;
+        if (_interactable != null) _interactable.OnInteracted -= OnInteracted;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         var data = KeyItemRegistry.KeyItemRegistrations[Id];
-        _meshTransform = Instantiate(data.MeshGameObject, transform).transform;
+        // _meshTransform = Instantiate(new GameObject(), transform).transform;
     }
 
-    private void OnInteracted()
+    public void OnInteracted()
     {
         
         if (collected) return;
         collected = true;
-        _interactable.SetEnabled(false);
-        
+        if (_interactable != null) _interactable.SetEnabled(false);
+        Collect();
+
+         
         StartCoroutine(PositionCoroutine());
         StartCoroutine(RotationCoroutine());
         StartCoroutine(ScaleCoroutine());
@@ -156,8 +159,8 @@ public class KeyItem : MonoBehaviour
             {
                 var w = Util.SmoothLerp01(t / d);
                 transform.position = Util.LerpWithArc(start, end, w, 1f);
-                _meshTransform.localPosition = Vector3.Lerp(_meshTransform.localPosition, Vector3.zero, w);
-                _particleSystem.transform.position = _meshTransform.position;
+                // _meshTransform.localPosition = Vector3.Lerp(_meshTransform.localPosition, Vector3.zero, w);
+                _particleSystem.transform.position = transform.position;
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -178,8 +181,9 @@ public class KeyItem : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
+         
+            OnKeyItemCollected?.Invoke(KeyItemRegistry.KeyItemRegistrations[Id].displayName);
             
-            Collect();
         }
         
         IEnumerator ScaleCoroutine()
@@ -190,7 +194,7 @@ public class KeyItem : MonoBehaviour
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
-                _meshTransform.localScale = Vector3.Lerp(_meshTransform.localScale, Vector3.zero, w);
+                // _meshTransform.localScale = Vector3.Lerp(_meshTransform.localScale, Vector3.zero, w);
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -203,7 +207,7 @@ public class KeyItem : MonoBehaviour
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
-                _meshTransform.Rotate(Vector3.up, Time.deltaTime * Mathf.Lerp(1000f, 0f, Mathf.Pow(w, 2f)));
+                // _meshTransform.Rotate(Vector3.up, Time.deltaTime * Mathf.Lerp(1000f, 0f, Mathf.Pow(w, 2f)));
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -213,17 +217,15 @@ public class KeyItem : MonoBehaviour
 
     private void Collect()
     {
-        var data = KeyItemRegistry.KeyItemRegistrations[Id];
-        OnKeyItemCollected?.Invoke(data);
         SaveSystem.WriteItem(Id);
         SaveSystem.WritePersistentEvent(Id);
-
+        
         if (!SaveSystem.GetPersistentEventCompleted(GenericCollectionPersistentEvent))
         {
             StartCoroutine(Coroutine());
             IEnumerator Coroutine()
             {
-                yield return new WaitForSeconds(4f);
+                yield return new WaitForSeconds(5.75f);
                 TutorialCanvas.Singleton.ShowTutorialText("Open bag", "Inventory");
             }
             SaveSystem.WritePersistentEvent(GenericCollectionPersistentEvent);
@@ -235,8 +237,8 @@ public class KeyItem : MonoBehaviour
     void Update()
     {
         if (collected) return;
-        _meshTransform.Rotate(Vector3.up, Time.deltaTime * 130f);
-        _meshTransform.localPosition = new Vector3(0, (Mathf.Sin(Time.time * 2f) + 1f) * 0.5f,0);
-        _particleSystem.transform.position = _meshTransform.position;
+        // _meshTransform.Rotate(Vector3.up, Time.deltaTime * 130f);
+        // _meshTransform.localPosition = new Vector3(0, (Mathf.Sin(Time.time * 2f) + 1f) * 0.5f,0);
+        // _particleSystem.transform.position = _meshTransform.position;
     }
 }

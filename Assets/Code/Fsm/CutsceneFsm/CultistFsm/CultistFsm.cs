@@ -73,14 +73,14 @@ public abstract partial class CultistFsm : CutsceneFsm
         base.OnStateChanged(triggerParams);
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         Interactable.OnInteracted += OnInteracted;
         DialogueController.OnCompleted += OnDialogueCompleted;
         DialogueController.OnProgressed += OnDialogueProgressed;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         Interactable.OnInteracted -= OnInteracted;
         DialogueController.OnCompleted -= OnDialogueCompleted;

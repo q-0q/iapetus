@@ -9,9 +9,9 @@ public class KeyItemCanvas : MonoBehaviour
     private CanvasGroup _canvasGroup;
     private TextMeshProUGUI _itemText;
 
-    private void OnItemCollected(KeyItemRegistration itemRegistration)
+    private void OnItemCollected(string displayName)
     {
-        _itemText.text = itemRegistration.displayName;
+        _itemText.text = displayName;
         StartCoroutine(CanvasCoroutine());
 
         IEnumerator CanvasCoroutine()
@@ -63,11 +63,13 @@ public class KeyItemCanvas : MonoBehaviour
     private void OnEnable()
     {
         KeyItem.OnKeyItemCollected += OnItemCollected;
+        CultistIncenseFsm.OnIncenseGiven += OnItemCollected;
     }
 
     private void OnDisable()
     {
         KeyItem.OnKeyItemCollected -= OnItemCollected;
+        CultistIncenseFsm.OnIncenseGiven -= OnItemCollected;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

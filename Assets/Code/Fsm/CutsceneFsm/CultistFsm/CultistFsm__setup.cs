@@ -22,7 +22,7 @@ public abstract partial class CultistFsm
     {
         base.SetupStateMaps();
         
-        StateMapConfig.Duration.Add(CultistFsmState.Give, 4f);
+        StateMapConfig.Duration.Add(CultistFsmState.Give, 2f);
         
         StateMapConfig.AnimationTrigger.Add(CultistFsmState.Idle, "Idle");
         StateMapConfig.AnimationTrigger.Add(CultistFsmState.Dancing, "Dance");

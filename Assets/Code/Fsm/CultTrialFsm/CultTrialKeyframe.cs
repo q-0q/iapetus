@@ -4,7 +4,7 @@ using System.Collections;
 using Code.Misc;
 using UnityEngine;
 using UnityEngine.Serialization;
-using UnityEngine.WSA;
+
 
 namespace Code.Fsm.TrialCollectibleFSM
 {

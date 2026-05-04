@@ -10,20 +10,19 @@ using UnityEngine.SceneManagement;
 using Wasp;
 using Util = Code.Misc.Util;
 
-public class CultistIncenseFsm : CultistFsm
+public class CultistCosmeticFsm : CultistFsm
 {
-    private const string ItemGivenPersistentEventSuffix = "CultistIncenseGiven";
+    private const string ItemGivenPersistentEventSuffix = "CultistCosmeticGiven";
     private KeyItem _keyItem;
-    public int incenseAmount = 3;
+    public string dyeName = "Yellow";
     public static event Action<string> OnIncenseGiven;
-    public static event Action OnItemGiven;
     
-    public class CultistIncenseFsmState : CultistFsmState
+    public class CultistCosmeticFsmState : CultistFsmState
     {
 
     }
 
-    public class CultistIncenseFsmTrigger : CultistFsmTrigger
+    public class CultistCosmeticFsmTrigger : CultistFsmTrigger
     {
         
     }
@@ -36,7 +35,7 @@ public class CultistIncenseFsm : CultistFsm
         _keyItem.gameObject.SetActive(false);
         DialogueController.currentDialogueIndex = SaveSystem.GetPersistentEventCompleted(GetItemGivenPersistentEvent()) ? 1 : 0;
         
-        robeDetailRenderer.enabled = false;
+        circletRenderer.enabled = false;
 
     }
 
@@ -59,14 +58,13 @@ public class CultistIncenseFsm : CultistFsm
                 Interactable.SetEnabled(false);
 
                 StartCoroutine(CampId == 0 ? IncenseBurnerCoroutine() : IncenseCoroutine());
-                OnItemGiven?.Invoke();
 
                 IEnumerator IncenseBurnerCoroutine()
                 {
                     _keyItem.gameObject.SetActive(true);
                     yield return new WaitForSeconds(0.5f);
                     _keyItem.OnInteracted();
-                    SaveSystem.AddIncenseAmount(incenseAmount);
+                    // SaveSystem.AddDye(dyeName);
                     SaveSystem.WritePersistentEvent(GetItemGivenPersistentEvent());
 
                 }
@@ -74,9 +72,9 @@ public class CultistIncenseFsm : CultistFsm
                 IEnumerator IncenseCoroutine()
                 {
                     yield return new WaitForSeconds(0.5f);
-                    OnIncenseGiven?.Invoke(incenseAmount + " incense cones");
+                    OnIncenseGiven?.Invoke(dyeName + " dye");
                     SaveSystem.WritePersistentEvent(GetItemGivenPersistentEvent());
-                    SaveSystem.AddIncenseAmount(incenseAmount);
+                    // SaveSystem.AddDye(dyeName);
                 }
             })
             .OnExit(_ =>
@@ -114,11 +112,28 @@ public class CultistIncenseFsm : CultistFsm
     {
         base.OnDialogueCompleted();
         
-        if (!SaveSystem.GetPersistentEventCompleted(GetItemGivenPersistentEvent())) Machine.Jump(CultistFsmState.Give);
+        // if (!SaveSystem.GetPersistentEventCompleted(GetItemGivenPersistentEvent())) Machine.Jump(CultistFsmState.Give);
     }
 
     private string GetItemGivenPersistentEvent()
     {
         return ItemGivenPersistentEventSuffix + CampId;
+    }
+    
+    protected override void OnEnable()
+    {
+        base.OnEnable();
+        CultistIncenseFsm.OnItemGiven += OnDance;
+    }
+
+    private void OnDance()
+    {
+        
+    }
+
+    protected override void OnDisable()
+    {
+        base.OnDisable();
+        CultistIncenseFsm.OnItemGiven -= OnDance;
     }
 }

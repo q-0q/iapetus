@@ -44,6 +44,55 @@ MonoBehaviour:
   texture:
     m_OverrideState: 1
     m_Value: {fileID: 0}
+--- !u!114 &-6390222635208806340
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17e560cd37fc494396a6dfdf2c0588bb, type: 3}
+  m_Name: CustomFogVolumeComponent
+  m_EditorClassIdentifier: Assembly-CSharp::Code.Misc.CustomFogVolumeComponent
+  active: 1
+  Color:
+    m_OverrideState: 1
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  YMin:
+    m_OverrideState: 1
+    m_Value: -50
+  YMax:
+    m_OverrideState: 1
+    m_Value: 50
+  YPower:
+    m_OverrideState: 1
+    m_Value: 2
+  DepthMin:
+    m_OverrideState: 1
+    m_Value: 20
+  DepthMax:
+    m_OverrideState: 1
+    m_Value: 100
+  DepthPower:
+    m_OverrideState: 1
+    m_Value: 2
+  NoiseSubtractionAmount:
+    m_OverrideState: 1
+    m_Value: 50
+  NoiseAScale:
+    m_OverrideState: 1
+    m_Value: 0.01
+  NoiseAVelocity:
+    m_OverrideState: 1
+    m_Value: {x: -1, y: -1, z: -1}
+  NoiseBScale:
+    m_OverrideState: 1
+    m_Value: 0.02
+  NoiseBVelocity:
+    m_OverrideState: 1
+    m_Value: {x: 2, y: 2, z: 2}
 --- !u!114 &-6244697048590517172
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -455,6 +504,7 @@ MonoBehaviour:
   - {fileID: -5251714163508643373}
   - {fileID: 7787153767674259516}
   - {fileID: 5955733747001122897}
+  - {fileID: -6390222635208806340}
 --- !u!114 &168593438357664079
 MonoBehaviour:
   m_ObjectHideFlags: 3
