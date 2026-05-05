@@ -34,6 +34,8 @@ public class CustomFogManager : MonoBehaviour
 
     private void UpdateCurrentController(bool snap)
     {
+        if (PlayerFsm.Singleton == null) return;
+        
         var colliders = Physics.OverlapSphere(PlayerFsm.Singleton.transform.position, 5f,
             LayerMask.GetMask("CustomFogController"), QueryTriggerInteraction.Collide);
         CustomFogController _currentHighestPriorityController = null;

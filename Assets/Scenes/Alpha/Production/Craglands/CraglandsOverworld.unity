@@ -7710,6 +7710,7 @@ MonoBehaviour:
   NoiseBScale: 0.02
   NoiseBVelocity: {x: -1, y: -1, z: -1}
   SkyboxLift: 1500
+  force: 0
 --- !u!4 &157765423
 Transform:
   m_ObjectHideFlags: 0
@@ -27361,6 +27362,7 @@ MonoBehaviour:
   NoiseBScale: 0.02
   NoiseBVelocity: {x: -1, y: -1, z: -1}
   SkyboxLift: 1500
+  force: 0
 --- !u!4 &631439174
 Transform:
   m_ObjectHideFlags: 0
@@ -35768,6 +35770,7 @@ Transform:
   - {fileID: 836652388}
   - {fileID: 1722659732}
   - {fileID: 1163820168}
+  - {fileID: 1428330661}
   m_Father: {fileID: 470311842}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &834462118
@@ -36477,6 +36480,7 @@ MonoBehaviour:
   NoiseBScale: 0.02
   NoiseBVelocity: {x: -1, y: -1, z: -1}
   SkyboxLift: 1500
+  force: 0
 --- !u!4 &842745470
 Transform:
   m_ObjectHideFlags: 0
@@ -65808,6 +65812,52 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1428330660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1428330661}
+  - component: {fileID: 1428330662}
+  m_Layer: 0
+  m_Name: PositionId
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1428330661
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428330660}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.38268343, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: 21.5, y: -0.9, z: -24}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 834243192}
+  m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
+--- !u!114 &1428330662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1428330660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c80cff62dcba4876b169641d3cdb3cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerGamePosition
+  Id: CrabPass
+  CameraRotationOffset: 0
 --- !u!1001 &1429303650
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -78532,6 +78582,7 @@ MonoBehaviour:
   NoiseBScale: 0.02
   NoiseBVelocity: {x: -1, y: -1, z: -1}
   SkyboxLift: 1500
+  force: 0
 --- !u!4 &1752060522
 Transform:
   m_ObjectHideFlags: 0
@@ -82378,6 +82429,7 @@ MonoBehaviour:
   NoiseBScale: 0.02
   NoiseBVelocity: {x: -1, y: -1, z: -1}
   SkyboxLift: 1500
+  force: 0
 --- !u!1001 &1848625464
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -95820,6 +95872,7 @@ MonoBehaviour:
   NoiseBScale: 0.02
   NoiseBVelocity: {x: -1, y: -1, z: -1}
   SkyboxLift: 1500
+  force: 0
 --- !u!65 &2143443348
 BoxCollider:
   m_ObjectHideFlags: 0

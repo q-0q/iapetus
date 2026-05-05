@@ -168,6 +168,7 @@ public partial class TestCutsceneFsm
                 }
                 _interactable.SetEnabled(false);
                 _channelCamera.Priority = 20;
+                
             })
             .OnExit(_ =>
             {

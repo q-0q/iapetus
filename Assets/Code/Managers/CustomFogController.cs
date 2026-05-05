@@ -33,13 +33,22 @@ public class CustomFogController : MonoBehaviour
     
     public float SkyboxLift = 1500f;
 
+    public bool force = false;
+
     private Collider _collider;
 
     private void Awake()
     {
         TryGetComponent(out _collider);
     }
-    
+
+    private void Start()
+    {
+        if (!force) return;
+        Shader.SetGlobalVector("_CameraFollowWorldPosition", Camera.main.transform.position);
+        CustomFogManager.Singleton.SetCurrentController(this, true);
+    }
+
     void OnEnable() => CustomFogManager.CustomFogControllerRegistry.Add(this);
     void OnDisable() => CustomFogManager.CustomFogControllerRegistry.Remove(this);
 

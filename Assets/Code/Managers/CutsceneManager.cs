@@ -10,6 +10,9 @@ public class CutsceneManager : MonoBehaviour
 
     private CutsceneFsm _activeCutscene;
     private bool _pseudoCutsceneActive;
+    public bool _overwriteCameraFollowShaderPosition;
+
+    public static event Action OnOverwriteCameraFollowEnded;
 
     private void Awake()
     {
@@ -23,14 +26,17 @@ public class CutsceneManager : MonoBehaviour
         _activeCutscene = activeCutscene;
     }
     
-    public void SetPseudoCutsceneActive()
+    public void SetPseudoCutsceneActive(bool overwriteCameraFollowShaderPosition = false)
     {
         _pseudoCutsceneActive = true;
+        _overwriteCameraFollowShaderPosition = overwriteCameraFollowShaderPosition;
     }
     
     public void ClearPseudoCutsceneActive()
     {
         _pseudoCutsceneActive = false;
+        if (_overwriteCameraFollowShaderPosition) OnOverwriteCameraFollowEnded?.Invoke();
+        _overwriteCameraFollowShaderPosition = false;
     }
 
 
@@ -71,4 +77,10 @@ public class CutsceneManager : MonoBehaviour
         if (_activeCutscene == null) return false;
         return _activeCutscene.StateMapConfig.CutsceneHardLand.Get(_activeCutscene);
     }
+
+    public bool IsCutsceneOverwriteCameraFollowShaderPosition()
+    {
+        return _overwriteCameraFollowShaderPosition;
+    }
+    
 }

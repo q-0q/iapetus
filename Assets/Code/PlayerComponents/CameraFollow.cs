@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Unity.VisualScripting;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
@@ -19,6 +18,11 @@ public class CameraFollow : MonoBehaviour
 
     private Vector3 _currentDialogueOffset;
 
+    private CinemachineBrain _brain;
+    private CinemachineFreeLook _freeLook;
+    
+    private Vector3 _nonCutsceneLocation;
+
     private void Start()
     {
         transform.position = PlayerFsm.Singleton.transform.position;
@@ -26,6 +30,8 @@ public class CameraFollow : MonoBehaviour
         _currentXZLerp = 100f;
         _currentYLerp = YLerpRate;
         Shader.SetGlobalVector("_CameraFollowWorldPosition", transform.position);
+        _brain = Camera.main.GetComponent<CinemachineBrain>();
+        _freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
     }
 
     private void OnTriggerStay(Collider other)
@@ -44,12 +50,14 @@ public class CameraFollow : MonoBehaviour
     {
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
         PlayerFsm.OnPlayerTeleported += OnWarp;
+        CutsceneManager.OnOverwriteCameraFollowEnded += OnShaderPositionReset;
     }
 
     private void OnDisable()
     {
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
         PlayerFsm.OnPlayerTeleported -= OnWarp;
+        CutsceneManager.OnOverwriteCameraFollowEnded -= OnShaderPositionReset;
     }
 
     private void OnWarp(Vector3 delta)
@@ -70,11 +78,20 @@ public class CameraFollow : MonoBehaviour
         //     }
         // }
 
+        if (CutsceneManager.Singleton.IsCutsceneOverwriteCameraFollowShaderPosition() && _freeLook.gameObject != _brain.ActiveVirtualCamera.VirtualCameraGameObject)
+        {
+            Shader.SetGlobalVector("_CameraFollowWorldPosition", Camera.main.transform.position);
+        }
+        else
+        {
+            var shaderPositionLerpSpeed =
+                Mathf.Lerp(1.75f, 10f, Mathf.InverseLerp(-15f, -30f, PlayerFsm.Singleton.GetYVelocity()));
+            Shader.SetGlobalVector("_CameraFollowWorldPosition",
+                Vector3.Lerp(Shader.GetGlobalVector("_CameraFollowWorldPosition"), transform.position,
+                    Time.deltaTime * shaderPositionLerpSpeed));
+        }
 
-        var shaderPositionLerpSpeed =
-            Mathf.Lerp(1.75f, 10f, Mathf.InverseLerp(-15f, -30f, PlayerFsm.Singleton.GetYVelocity()));
-        Shader.SetGlobalVector("_CameraFollowWorldPosition", Vector3.Lerp(Shader.GetGlobalVector("_CameraFollowWorldPosition"), transform.position, Time.deltaTime * shaderPositionLerpSpeed));
-        
+
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
         
         var pos = CameraFollowTarget.Singleton.transform.position;
@@ -166,5 +183,13 @@ public class CameraFollow : MonoBehaviour
         }
 
         return highestPriorityZone;
+    }
+
+    private void OnShaderPositionReset()
+    {
+        print("reset");
+        Shader.SetGlobalVector("_CameraFollowWorldPosition", transform.position);
+        
+        Debug.DrawRay(transform.position, Vector3.up, Color.magenta, 5f);
     }
 }

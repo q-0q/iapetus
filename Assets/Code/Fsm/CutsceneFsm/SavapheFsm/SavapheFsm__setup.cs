@@ -26,6 +26,7 @@ public partial class SavapheFsm
             .SubstateOf(CutsceneFsmState.Active)
             .OnEntry(_ =>
             {
+                CutsceneManager.Singleton._overwriteCameraFollowShaderPosition = true;
                 _virtualCameraA.Priority = 20;
             })
             .OnExit(_ =>
@@ -41,10 +42,12 @@ public partial class SavapheFsm
                 _marker.position = _endPosition.position;
                 _marker.rotation = _endPosition.rotation;
                 _virtualCameraB.Priority = 20;
+
             })
             .OnExit(_ =>
             {
                 _virtualCameraB.Priority = -10;
+                CutsceneManager.Singleton._overwriteCameraFollowShaderPosition = false;
             });
         
         Machine.Configure(SavapheFsmState.Crossed)

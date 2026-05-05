@@ -3,6 +3,7 @@ using System.Collections;
 using Code.Misc;
 using DG.Tweening;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,11 +12,17 @@ public class CultTrialManager : MonoBehaviour
     public static CultTrialManager Singleton;
     
         
+   [NonSerialized]
     public DialogueController dialogueNoItem;
+   [NonSerialized]
     public DialogueController dialogueItem;
+   [NonSerialized]
     public DialogueController dialogueFirstTimeUse1;
+   [NonSerialized]
     public DialogueController dialogueFirstTimeUse2;
+   [NonSerialized]
     public DialogueController dialogueFirstTimeUse3;
+   [NonSerialized]
     public DialogueController dialogueFirstTimeUse4;
 
     private const string FirstTimeUsePersistentEvent = "CultTrialUsed";
@@ -81,6 +88,13 @@ public class CultTrialManager : MonoBehaviour
 
         _activeHalo = transform.Find("ActiveHalo");
         _activeHaloMaterial = _activeHalo.GetComponent<Renderer>().material;
+
+        dialogueNoItem = transform.Find("DialogueNoItem").GetComponent<DialogueController>();
+        dialogueItem = transform.Find("DialogueItem").GetComponent<DialogueController>();
+        dialogueFirstTimeUse1 = transform.Find("DialogueFirstTimeUse1").GetComponent<DialogueController>();
+        dialogueFirstTimeUse2 = transform.Find("DialogueFirstTimeUse2").GetComponent<DialogueController>();
+        dialogueFirstTimeUse3 = transform.Find("DialogueFirstTimeUse3").GetComponent<DialogueController>();
+        dialogueFirstTimeUse4 = transform.Find("DialogueFirstTimeUse4").GetComponent<DialogueController>();
         
         DisableCurse();
     }

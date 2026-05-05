@@ -58,7 +58,7 @@ public class SaveSystem : MonoBehaviour
         public float goldTime;
     }
 
-    private const bool DeleteOutdatedSaves = true;
+    private const bool DeleteOutdatedSaves = false;
 
     [System.Serializable]
     public class SaveData
@@ -84,7 +84,7 @@ public class SaveSystem : MonoBehaviour
 
         public SaveData()
         {
-            scene = "C1-Tutorial";
+            scene = "CraglandsTutorial";
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
             playerInGamePositionId = "";
@@ -528,7 +528,7 @@ public class MetaSaveSystem : MonoBehaviour
         public bool enableAmbientParticles;
         public bool enableFpsDisplay;
         public bool autoCamEnabled;
-        [FormerlySerializedAs("foliageRenderDistance")] public int foliageRenderDistanceLevel;
+        public int foliageRenderDistanceLevel;
 
         public MetaSaveData()
         {
@@ -537,7 +537,7 @@ public class MetaSaveSystem : MonoBehaviour
             this.enableAmbientParticles = true;
             this.enableFpsDisplay = true;
             this.autoCamEnabled = false;
-            this.foliageRenderDistanceLevel = 2;
+            this.foliageRenderDistanceLevel = 1;
         }
     }
     

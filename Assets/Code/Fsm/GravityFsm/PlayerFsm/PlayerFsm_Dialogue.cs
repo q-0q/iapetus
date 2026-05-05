@@ -22,15 +22,25 @@ public partial class PlayerFsm
         Animator.SetLayerWeight(1, 0);
         
         
-        if (DialogueCanvas.Singleton.currentDialogueController is null) return;
+        HandleLookAt();
+    }
+
+    private void HandleLookAt()
+    {
+        if (DialogueCanvas.Singleton == null) return;
+        if (DialogueCanvas.Singleton.currentDialogueController == null) return;
         
-        var lookAt = DialogueCanvas.Singleton.currentDialogueController.LookAtOverride == null
-            ? DialogueCanvas.Singleton.currentDialogueController.transform
-            : DialogueCanvas.Singleton.currentDialogueController.LookAtOverride;
+        var lookAt = GetLookAtTransform();
         
         var rotationTarget = lookAt.position - transform.position;
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(rotationTarget + transform.forward * 0.01f, transform.up), Time.deltaTime * 10f);
+    }
 
+    private static Transform GetLookAtTransform()
+    {
+        return DialogueCanvas.Singleton.currentDialogueController.LookAtOverride == null
+            ? DialogueCanvas.Singleton.currentDialogueController.transform
+            : DialogueCanvas.Singleton.currentDialogueController.LookAtOverride;
     }
 
     private void DialogueConfigure()

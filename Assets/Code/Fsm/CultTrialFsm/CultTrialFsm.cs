@@ -41,12 +41,7 @@ public partial class CultTrialFsm : Fsm
         _interactable = GetComponentInChildren<Interactable>();
         
         UpdateKeyframes();
-        _dialogueNoItem = CultTrialManager.Singleton.dialogueNoItem;
-        _dialogueItem = CultTrialManager.Singleton.dialogueItem;
-        _dialogueFirstTimeUse1 = CultTrialManager.Singleton.dialogueFirstTimeUse1;
-        _dialogueFirstTimeUse2 = CultTrialManager.Singleton.dialogueFirstTimeUse2;
-        _dialogueFirstTimeUse3 = CultTrialManager.Singleton.dialogueFirstTimeUse3;
-        _dialogueFirstTimeUse4 = CultTrialManager.Singleton.dialogueFirstTimeUse4;
+
         
         UpdateInteractable();
     }
@@ -54,6 +49,15 @@ public partial class CultTrialFsm : Fsm
     protected override void OnStart()
     {
         base.OnStart();
+        
+        _dialogueNoItem = CultTrialManager.Singleton.dialogueNoItem;
+        _dialogueItem = CultTrialManager.Singleton.dialogueItem;
+        _dialogueFirstTimeUse1 = CultTrialManager.Singleton.dialogueFirstTimeUse1;
+        _dialogueFirstTimeUse2 = CultTrialManager.Singleton.dialogueFirstTimeUse2;
+        _dialogueFirstTimeUse3 = CultTrialManager.Singleton.dialogueFirstTimeUse3;
+        _dialogueFirstTimeUse4 = CultTrialManager.Singleton.dialogueFirstTimeUse4;
+        
+        
         InitState = CultTrialFsmState.LockedIdle;
         _interactable.SetEnabled(true);
 
@@ -100,11 +104,11 @@ public partial class CultTrialFsm : Fsm
     private void OnEnable()
     {
         _interactable.OnInteracted += OnInteracted;
-        _dialogueItem.OnCompleted += OnDialogueCompleted;
-        _dialogueNoItem.OnCompleted += OnDialogueCompleted;
-        _dialogueFirstTimeUse1.OnCompleted += OnDialogueCompleted;
-        _dialogueFirstTimeUse2.OnCompleted += OnDialogueCompleted;
-        _dialogueFirstTimeUse4.OnCompleted += OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueItem.OnCompleted += OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueNoItem.OnCompleted += OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueFirstTimeUse1.OnCompleted += OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueFirstTimeUse2.OnCompleted += OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueFirstTimeUse4.OnCompleted += OnDialogueCompleted;
         PlayerFsm.OnPlayerCultTrialDeath += OnPlayerCultTrialDeath;
 
     }
@@ -112,11 +116,11 @@ public partial class CultTrialFsm : Fsm
     private void OnDisable()
     {
         _interactable.OnInteracted -= OnInteracted;
-        _dialogueItem.OnCompleted -= OnDialogueCompleted;
-        _dialogueNoItem.OnCompleted -= OnDialogueCompleted;
-        _dialogueFirstTimeUse1.OnCompleted -= OnDialogueCompleted;
-        _dialogueFirstTimeUse2.OnCompleted -= OnDialogueCompleted;
-        _dialogueFirstTimeUse4.OnCompleted -= OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueItem.OnCompleted -= OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueNoItem.OnCompleted -= OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueFirstTimeUse1.OnCompleted -= OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueFirstTimeUse2.OnCompleted -= OnDialogueCompleted;
+        CultTrialManager.Singleton.dialogueFirstTimeUse4.OnCompleted -= OnDialogueCompleted;
         PlayerFsm.OnPlayerCultTrialDeath -= OnPlayerCultTrialDeath;
     }
 

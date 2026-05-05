@@ -27,6 +27,7 @@ public partial class CrabPassageCutsceneFsm
                 DialogueCanvas.Singleton.StartDialogue(warning1);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
                 CutsceneTrigger1.gameObject.SetActive(false);
+                SaveSystem.WritePlayerInGamePosition(Vector3.zero, "CrabPass", 0);
             });
         
         Machine.Configure(CrabPassageCutsceneFsmState.Warning2)

@@ -154,6 +154,8 @@ public class InventoryCanvas : MonoBehaviour
         
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+        
+        EventSystem.current.SetSelectedGameObject(null);
     }
 
     void Open()
