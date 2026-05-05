@@ -575,16 +575,16 @@ public partial class PlayerFsm : GravityFsm
             InventorySlowdownOnUpdate();
         }
 
-        
-        if (_playerInput.actions["Reset"].WasPerformedThisFrame())
-        {
-            InvokePlayerDeath();
-        }
-        
-        if (Input.GetKeyDown(KeyCode.X))
-        {
-            SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
-        }
+        //
+        // if (_playerInput.actions["Reset"].WasPerformedThisFrame())
+        // {
+        //     InvokePlayerDeath();
+        // }
+        //
+        // if (Input.GetKeyDown(KeyCode.X))
+        // {
+        //     SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
+        // }
         
         HandleRaycastKill();
 
