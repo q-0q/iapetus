@@ -17,6 +17,7 @@ public class TutorialCanvas : MonoBehaviour
     private string action;
 
     public Image Image;
+    private TextMeshProUGUI _tapTmp;
 
     private void Awake()
     {
@@ -29,12 +30,14 @@ public class TutorialCanvas : MonoBehaviour
         _canvasGroup = GetComponent<CanvasGroup>();
         _tmpText = transform.Find("LayoutGroup").Find("Text").GetComponent<TextMeshProUGUI>();
         _canvasGroup.alpha = 0;
+        _tapTmp = Image.GetComponentInChildren<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
     void Update()
     {
         Image.sprite = InputTypeManager.Singleton.GetSpriteForAction(action);
+        _tapTmp.gameObject.SetActive(action != "Move" && action != "Look");
         
         if (_open && !GameMenu.Singleton.IsMenuOpen())
         {
