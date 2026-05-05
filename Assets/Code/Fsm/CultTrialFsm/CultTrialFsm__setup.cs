@@ -7,8 +7,6 @@ using UnityEngine;
 public partial class CultTrialFsm
 {
 
-
-    public static event Action<CultTrialFsm> OnTrialInactive;
     
     private IEnumerator CurseCameraCleanupCoroutine()
     {
@@ -75,7 +73,6 @@ public partial class CultTrialFsm
             {
                 CultTrialManager.Singleton.StopTimer();
                 UpdateInteractable();
-                OnTrialInactive?.Invoke(this);
             })
             .OnEntryFrom(CultTrialFsmTrigger.OnUnlock, _ =>
             {
@@ -105,12 +102,13 @@ public partial class CultTrialFsm
                 CultTrialManager.Singleton.EnableActiveFog();
                 // CultTrialManager.Singleton.EnableCurseFog();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
+                PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(_startingLine.transform.forward, 3f, 0.5f);
             })
             .OnExit(_ =>
             {
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
                 Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
-                CultTrialManager.Singleton.EnableCurse();
+                CultTrialManager.Singleton.EnableCurse(this);
                 CultTrialManager.Singleton.ClearTimer();
                 // CultTrialManager.Singleton.DisableCurseFog();
                 StartCoroutine(CurseCameraCleanupCoroutine());
@@ -155,6 +153,14 @@ public partial class CultTrialFsm
                 CultTrialManager.Singleton.StartCurseTicking(this);
                 Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
             })
+            .OnExitFrom(CultTrialFsmTrigger.PlayerTrialDeath, _ =>
+            {
+                CultTrialManager.Singleton.EnableCurse(this);
+            })
+            .OnExitFrom(CultTrialFsmTrigger.FinalKeyframeTriggered, _ =>
+            {
+                CultTrialManager.Singleton.EnableCurse(this);
+            })
             .OnExit(_ =>
             {
                 _interactable.SetEnabled(true);
@@ -169,7 +175,6 @@ public partial class CultTrialFsm
                 SaveSystem.WritePersistentEvent(metaName+"-complete");
                 CultTrialManager.Singleton.StopTimer();
                 CultTrialManager.Singleton.isCurseTicking = false;
-                OnTrialInactive?.Invoke(this);
             })
             .OnExit(_ =>
             {

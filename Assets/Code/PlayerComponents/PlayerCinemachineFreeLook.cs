@@ -75,8 +75,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private void Update()
     {
-        if (_scriptActive) return;
-        if (_brain.ActiveVirtualCamera != _freeLook || GameMenu.Singleton.IsMenuOpen() || InventoryCanvas.Singleton.GetIsOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
+        if (_scriptActive || _brain.ActiveVirtualCamera != _freeLook || GameMenu.Singleton.IsMenuOpen() || InventoryCanvas.Singleton.GetIsOpen() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport) || CutsceneManager.Singleton.IsCutsceneCameraDisabled())
         {
             _freeLook.m_XAxis.m_InputAxisValue = 0;
             _freeLook.m_XAxis.Reset();
@@ -211,7 +210,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         // _timeSinceRecenter = _recenterTime + _rampUpTime;
     }
 
-    public void OnPlayerCinemachineFreeLookScript(Vector3 direction, float duration)
+    public void OnPlayerCinemachineFreeLookScript(Vector3 direction, float duration, float y = 0.7f)
     {
         if (_scriptActive) return;
         StartCoroutine(InvokeScript(direction, duration));
@@ -220,14 +219,18 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
             direction = new Vector3(direction.x, 0f, direction.z);
             var xAngle = Vector3.SignedAngle(Vector3.forward, direction, transform.up);
             var newXQuat = Quaternion.Euler(0, xAngle, 0);
+            var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
+
+            var oldY = _freeLook.m_YAxis.Value;
+            
             _scriptActive = true;
             
             float t = 0;
             while (t < duration)
             {
-                var w = t / duration;
-                var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
-                _freeLook.m_XAxis.Value = Quaternion.Slerp(oldXQuat, newXQuat, Time.deltaTime * 6f).eulerAngles.y;
+                var w = Util.SmoothLerp01( t / duration);
+                _freeLook.m_XAxis.Value = Quaternion.Lerp(oldXQuat, newXQuat, w).eulerAngles.y;
+                _freeLook.m_YAxis.Value = Mathf.Lerp(oldY, y, w);
                 t += Time.deltaTime;
                 yield return null;
             }

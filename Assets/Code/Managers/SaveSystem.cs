@@ -58,7 +58,7 @@ public class SaveSystem : MonoBehaviour
         public float goldTime;
     }
 
-    private const bool DeleteOutdatedSaves = false;
+    private const bool DeleteOutdatedSaves = true;
 
     [System.Serializable]
     public class SaveData

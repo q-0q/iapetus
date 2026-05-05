@@ -28,9 +28,9 @@ namespace Code.Fsm.TrialCollectibleFSM
 
         private void OnEnable()
         {
-            CultTrialManager.OnTrialActive += OnTrialActive;
+            CultTrialManager.OnCurseApplied += OnTrialActive;
             _triggerProxy.OnTriggerProxyStay += OnTrigger;
-            CultTrialFsm.OnTrialInactive += OnTrialInactive;
+            CultTrialManager.OnCurseRemoved += OnTrialInactive;
         }
 
         private void OnTrigger(Collider obj)
@@ -47,8 +47,8 @@ namespace Code.Fsm.TrialCollectibleFSM
 
         private void OnDisable()
         {
-            CultTrialManager.OnTrialActive -= OnTrialActive;
-            CultTrialFsm.OnTrialInactive -= OnTrialInactive;
+            CultTrialManager.OnCurseApplied -= OnTrialActive;
+            CultTrialManager.OnCurseRemoved -= OnTrialInactive;
             _triggerProxy.OnTriggerProxyStay -= OnTrigger;
         }
 
@@ -58,9 +58,8 @@ namespace Code.Fsm.TrialCollectibleFSM
             Activate();
         }
         
-        private void OnTrialInactive(CultTrialFsm fsm)
+        private void OnTrialInactive()
         {
-            if (fsm != _ownerFsm) return;
             Deactivate();
         }
 

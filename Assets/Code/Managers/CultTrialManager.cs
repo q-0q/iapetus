@@ -49,6 +49,8 @@ public class CultTrialManager : MonoBehaviour
     private float _activeFogControllerDepthMax;
 
     public static event Action<CultTrialFsm> OnTrialActive;
+    public static event Action<CultTrialFsm> OnCurseApplied;
+    public static event Action OnCurseRemoved;
 
     private Transform _activeHalo;
     private Material _activeHaloMaterial;
@@ -205,13 +207,14 @@ public class CultTrialManager : MonoBehaviour
         _activeFogController.Priority = -10;
     }
 
-    public void EnableCurse()
+    public void EnableCurse(CultTrialFsm fsm)
     {
         _curseHudTextMaterial.SetFloat("_BarGlowMultiply", 0f);
         _markHudCanvasGroup.alpha = 1f;
         _curseDuration = CurseMaximumDuration;
         isCurseEnabled = true;
         HudTmpPunchPosition();
+        OnCurseApplied?.Invoke(fsm);
     }
     
     public void DisableCurse()
@@ -222,6 +225,7 @@ public class CultTrialManager : MonoBehaviour
         _activeHaloMaterial.SetFloat("_Alpha", 0);
         _activeFogController.Color = _activeFogControllerBaseColor;
         _activeFogController.DepthMax = _activeFogControllerDepthMax;
+        OnCurseRemoved?.Invoke();
     }
 
     public void StartCurseTicking(CultTrialFsm fsm)
@@ -248,7 +252,6 @@ public class CultTrialManager : MonoBehaviour
     private void OnPlayerCultTrialDeath()
     {
         _activeHaloMaterial.SetFloat("_Alpha", 0);
-
     }
 
     public void ClearTimer()
