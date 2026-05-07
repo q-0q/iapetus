@@ -228,6 +228,10 @@ public partial class PlayerFsm
     private const float PitonMaximumWallInteractYVelocity = 5f;
 
 
+    private MinorLeyline _currentMinorLeyline;
+    private const float MinorLeylineSpeed = 5f;
+
+
 
     private const float KiMomentumThreshhold = 11.5f;
     

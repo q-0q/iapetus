@@ -119,6 +119,10 @@ public partial class PlayerFsm : GravityFsm
 
         public static int UseIncenseBurner;
         public static int MajorLeylineNodeInteract;
+        
+        public static int MinorLeylineInteractable;
+        public static int MinorLeylineStartup;
+        public static int MinorLeylineActive;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -169,7 +173,8 @@ public partial class PlayerFsm : GravityFsm
         public static int Inventory;
         public static int UseIncenseBurner;
 
-
+        public static int MinorLeylineTrigger;
+        
     }
     
     protected override void OnAwake()
@@ -574,6 +579,16 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.InventorySlowdown))
         {
             InventorySlowdownOnUpdate();
+        }
+
+        if (Machine.IsInState(PlayerFsmState.MinorLeylineStartup))
+        {
+            MinorLeylineStartupOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.MinorLeylineActive))
+        {
+            MinorLeylineActiveOnUpdate();
         }
 
         

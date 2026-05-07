@@ -60,6 +60,7 @@ public partial class PlayerFsm
         KeyItemCollectConfigure();
         InventoryConfigure();
         MajorLeylineNodeInteractConfigure();
+        MinorLeylineConfigure();
     }
 
     public override void SetupStateMaps()
