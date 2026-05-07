@@ -11,6 +11,7 @@ public class SnapSplineToEnvironment : MonoBehaviour
 {
     private const KeyCode AlignmentKey = KeyCode.P;
     private const float RaycastDistance = 10f;
+    private const float surfaceDistanceOffset = 0.25f;
 
     private SplineContainer _splineContainer;
 
@@ -67,19 +68,47 @@ public class SnapSplineToEnvironment : MonoBehaviour
 
     private void AlignKnotToSurface(int index)
     {
-        var knot = _splineContainer.Spline[index];
-        var knotPosition = transform.TransformPoint(new Vector3(knot.Position.x, knot.Position.y, knot.Position.z));
-        var direction = transform.TransformDirection(((Quaternion)knot.Rotation) * Vector3.down);
-        
-        Ray ray = new Ray(knotPosition - direction * 0.5f, direction);
-        Debug.DrawRay(knotPosition, direction, Color.magenta, 10f);
-        
+        var spline = _splineContainer.Spline;
+        var knot = spline[index];
+
+        // 1. Calculate World Space Knot Properties
+        Vector3 worldKnotPos = transform.TransformPoint(knot.Position);
+    
+        // Combine container rotation with knot rotation to get the world-space orientation
+        Quaternion worldKnotRotation = transform.rotation * (Quaternion)knot.Rotation;
+    
+        // This is the "Local Down" of the knot in World Space
+        Vector3 localDownDirection = worldKnotRotation * Vector3.down;
+
+        // 2. Raycast from slightly 'above' the knot relative to its own orientation
+        // We offset it back along its 'up' axis to ensure we don't start inside the geometry
+        Ray ray = new Ray(worldKnotPos - (localDownDirection * RaycastDistance * 0.5f), localDownDirection);
+        Debug.DrawRay(ray.origin, localDownDirection * RaycastDistance, Color.magenta, 2f);
+
         if (Physics.Raycast(ray, out RaycastHit hit, RaycastDistance, ~0, QueryTriggerInteraction.Ignore))
         {
+            // 3. Update Position
+            knot.Position = transform.InverseTransformPoint(hit.point + hit.normal * surfaceDistanceOffset);
+
+            // 4. Update Rotation
+            // We want to keep the current Forward direction but align the Up to the surface normal
+            Vector3 worldForward = worldKnotRotation * Vector3.forward;
+            Vector3 worldNormal = hit.normal;
+
+            // Project forward onto the surface plane to keep the path tangential to the ground
+            Vector3 projectedForward = Vector3.ProjectOnPlane(worldForward, worldNormal);
+
+            if (projectedForward.sqrMagnitude > 0.001f)
+            {
+                // Create the new world rotation
+                Quaternion newWorldRot = Quaternion.LookRotation(projectedForward, worldNormal);
             
-            knot.Position = transform.InverseTransformPoint(hit.point);
-            knot.Rotation = Quaternion.LookRotation((Quaternion)knot.Rotation * Vector3.forward, transform.InverseTransformDirection(hit.normal));
-            _splineContainer.Spline[index] = knot;
+                // Convert the world rotation back to the Spline's local space
+                knot.Rotation = Quaternion.Inverse(transform.rotation) * newWorldRot;
+            }
+
+            // 5. Apply changes back to the spline
+            spline[index] = knot;
         }
     }
 

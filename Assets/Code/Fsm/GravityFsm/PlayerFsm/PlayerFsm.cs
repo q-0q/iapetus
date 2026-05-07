@@ -118,6 +118,7 @@ public partial class PlayerFsm : GravityFsm
         public static int InventorySlowdown;
 
         public static int UseIncenseBurner;
+        public static int MajorLeylineNodeInteract;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

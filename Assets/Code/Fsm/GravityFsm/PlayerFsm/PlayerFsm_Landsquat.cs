@@ -21,7 +21,6 @@ public partial class PlayerFsm
             .OnEntryFrom(GravityFsmTrigger.StartFrameGrounded, @params =>
             {
                 if (@params is not RaycastHitParam raycastHitParam) return;
-                print("it happened");
                 Debug.DrawLine(transform.position + Vector3.up * 5f, raycastHitParam.Hit.point, Color.yellow, 1f);
             })
             .OnExit(_ =>
