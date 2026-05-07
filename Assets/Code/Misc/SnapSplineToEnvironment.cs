@@ -9,7 +9,7 @@ using UnityEditor;
 [ExecuteAlways]
 public class SnapSplineToEnvironment : MonoBehaviour
 {
-    private const KeyCode AlignmentKey = KeyCode.P;
+    private const KeyCode AlignmentKey = KeyCode.K;
     private const float RaycastDistance = 10f;
     private const float surfaceDistanceOffset = 0.25f;
 
@@ -56,14 +56,10 @@ public class SnapSplineToEnvironment : MonoBehaviour
 
     private void AlignKnotsToSurface()
     {
-        Undo.RecordObject(transform, "Align to Surface");
-
         for (int i = 0; i < _splineContainer.Spline.Count; i++)
         {
             AlignKnotToSurface(i);
         }
-        
-        EditorUtility.SetDirty(transform);
     }
 
     private void AlignKnotToSurface(int index)
@@ -109,6 +105,12 @@ public class SnapSplineToEnvironment : MonoBehaviour
 
             // 5. Apply changes back to the spline
             spline[index] = knot;
+            
+            // 3. EXPLICITLY MARK DIRTY (Crucial for Prefabs)
+            EditorUtility.SetDirty(_splineContainer);
+            
+            // If this is a prefab, this ensures the override is recorded
+            PrefabUtility.RecordPrefabInstancePropertyModifications(_splineContainer);
         }
     }
 

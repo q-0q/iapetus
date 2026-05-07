@@ -54,11 +54,15 @@ public class MajorLeylineNode : MonoBehaviour
     private void OnEnable()
     {
         _interactable.OnInteracted += OnInteracted;
+        SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
     }
+
+
 
     private void OnDisable()
     {
         _interactable.OnInteracted -= OnInteracted;
+        SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
     }
 
     void Start()
@@ -116,5 +120,14 @@ public class MajorLeylineNode : MonoBehaviour
     void Update()
     {
         
+    }
+    
+    private void OnSaveDataUpdated(SaveSystem.SaveData saveData)
+    {
+        if (!_interactable.isEnabled && !SaveSystem.GetMajorLeylineNode(metaName) &&
+            SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
+        {
+            _interactable.SetEnabled(true);
+        }
     }
 }
