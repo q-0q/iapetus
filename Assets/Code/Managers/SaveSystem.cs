@@ -77,6 +77,7 @@ public class SaveSystem : MonoBehaviour
         public int incenseAmount;
         public int cultLocationCampId;
         public List<string> bitDeposits;
+        public List<string> majorLeylineNodes;
         public float playTime;
         public string gameVersion;
         
@@ -360,6 +361,27 @@ public class SaveSystem : MonoBehaviour
     {
         var data = LoadCachedSaveData();
         return data.bitCount;
+    }
+
+    public static void WriteMajorLeylineNode(string metaName)
+    {
+        if (metaName == "") 
+        {
+            Debug.LogError("Tried to write empty major leyline node");
+            return;
+        };
+        
+        SaveData data = LoadCachedSaveData();
+        if (data.majorLeylineNodes.Contains(metaName)) return;
+        data.majorLeylineNodes.Add(metaName);
+        Singleton._cachedSaveData = data;
+        WriteSaveData(data);
+    }
+
+    public static bool GetMajorLeylineNode(string metaName)
+    {
+        SaveData data = LoadCachedSaveData();
+        return data.majorLeylineNodes.Contains(metaName);
     }
     
     private static void WriteSaveData(SaveData saveData, bool screenCapture = true)

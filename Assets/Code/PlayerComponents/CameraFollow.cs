@@ -78,9 +78,9 @@ public class CameraFollow : MonoBehaviour
         //     }
         // }
 
-        if (CutsceneManager.Singleton.IsCutsceneOverwriteCameraFollowShaderPosition() && _freeLook.gameObject != _brain.ActiveVirtualCamera.VirtualCameraGameObject)
+        if (CutsceneManager.Singleton.IsCutsceneOverwriteCameraFollowShaderPosition(out var t) && _freeLook.gameObject != _brain.ActiveVirtualCamera.VirtualCameraGameObject)
         {
-            Shader.SetGlobalVector("_CameraFollowWorldPosition", Camera.main.transform.position);
+            Shader.SetGlobalVector("_CameraFollowWorldPosition",  t == null ? Camera.main.transform.position : t.position);
         }
         else
         {
