@@ -7,7 +7,8 @@ using UnityEngine.InputSystem;
 
 public partial class PlayerFsm
 {
-   
+    
+
     public override void OnFireTriggers()
     {
         
@@ -119,12 +120,17 @@ public partial class PlayerFsm
         
         if (PressRaycast(out _)) Machine.Fire(PlayerFsmTrigger.Press);
         
-        Debug.DrawRay(transform.position + transform.forward * (GetRaycastTimeModifier() * Mathf.Lerp(0, 6f, ComputeMomentumWeight())), Vector3.down * 20f, Color.red);
         if (!Physics.Raycast(transform.position + transform.forward * (GetRaycastTimeModifier() * Mathf.Lerp(0, 6f, ComputeMomentumWeight())), Vector3.down, out var hit2, 25f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             Machine.Fire(PlayerFsmTrigger.IsAboveLongFall);
         }
         
+        foreach (var neighbor in Physics.OverlapSphere(transform.position, 2.75f, LayerMask.GetMask("MinorLeylineTrigger"), QueryTriggerInteraction.Collide))
+        {
+            _currentMinorLeyline = neighbor.transform.parent.parent.GetComponent<MinorLeyline>();
+            _currentMinorLeylineTrigger = neighbor.transform;
+            Machine.Fire(PlayerFsmTrigger.MinorLeylineTrigger);
+        }
     }
 
     private bool PressRaycast(out RaycastHit hit)

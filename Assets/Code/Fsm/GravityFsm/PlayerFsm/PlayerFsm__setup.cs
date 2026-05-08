@@ -105,6 +105,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 1.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.UseIncenseBurner, 1.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.MajorLeylineNodeInteract, 1.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.MinorLeylineStartup, 0.75f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");

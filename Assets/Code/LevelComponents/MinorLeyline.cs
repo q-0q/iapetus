@@ -10,10 +10,15 @@ public class MinorLeyline : MonoBehaviour
     private Transform _nodeA;
     private Transform _nodeB;
 
+    private SplineContainer _splineContainer;
+    private float _length;
+
     private void Awake()
     {
         _nodeA = transform.Find("MinorLeylineNodeA");
         _nodeB = transform.Find("MinorLeylineNodeB");
+        _splineContainer = GetComponentInChildren<SplineContainer>();
+        _length = _splineContainer.Spline.GetLength();
         AlignNodes();
     }
     
@@ -26,17 +31,28 @@ public class MinorLeyline : MonoBehaviour
         var a = transform.Find("MinorLeylineNodeA");
         var b = transform.Find("MinorLeylineNodeB");
         
-        a.rotation = GetWorldRotationAt(splineContainer, 0f);
+        a.rotation = GetWorldRotationAt(0f);
         a.position = splineContainer.transform.TransformPoint(spline.EvaluatePosition(0f));
 
-        b.rotation = GetWorldRotationAt(splineContainer, 1f) * Quaternion.Euler(0, 180f, 0);
+        b.rotation = GetWorldRotationAt(1f) * Quaternion.Euler(0, 180f, 0);
         b.position = splineContainer.transform.TransformPoint(spline.EvaluatePosition(1f));
     }
 
-    private Quaternion GetWorldRotationAt(SplineContainer container, float t)
+    public Quaternion GetWorldRotationAt(float t)
     {
+        var container = GetComponentInChildren<SplineContainer>();
         container.Evaluate(t, out float3 position, out float3 tangent, out float3 upVector);
         return Quaternion.LookRotation(tangent, upVector);
+    }
+    
+    public Quaternion GetPlayerRotationAt(float t, bool direction)
+    {
+        _splineContainer.Evaluate(t, out float3 position, out float3 tangent, out float3 upVector);
+        var worldRotation = Quaternion.LookRotation(tangent, upVector);
+        
+        var upAngle = Vector3.Angle(Vector3.up, worldRotation * Vector3.up);
+        if (upAngle < 70f) return worldRotation * Quaternion.Euler(0, direction ? 0f : 180f, 0f);
+        return Quaternion.LookRotation(upVector, Vector3.up);
     }
 
     private void OnDrawGizmos()
@@ -44,10 +60,20 @@ public class MinorLeyline : MonoBehaviour
         AlignNodes();
     }
 
-    // public bool TrySetPlayerDirection(Transform trigger)
-    // {
-    //     
-    // }
+    public bool GetDirectionFromTrigger(Transform trigger)
+    {
+        return trigger.parent == _nodeA;
+    }
+
+    public Vector3 EvaluatePosition(float t)
+    {
+        return _splineContainer.transform.TransformPoint(_splineContainer.Spline.EvaluatePosition(t));
+    }
+
+    public float Length()
+    {
+        return _length;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

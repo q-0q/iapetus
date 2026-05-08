@@ -229,7 +229,10 @@ public partial class PlayerFsm
 
 
     private MinorLeyline _currentMinorLeyline;
-    private const float MinorLeylineSpeed = 5f;
+    private Transform _currentMinorLeylineTrigger;
+    private const float MinorLeylineSpeed = 50f;
+    private bool _currentMinorLeylineDirection = false;
+    private float _currentMinorLeylineWeight = 0;
 
 
 

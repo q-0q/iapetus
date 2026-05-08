@@ -24,6 +24,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
+            .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
             .Permit(PlayerFsmTrigger.Press, PlayerFsmState.Press)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurfaceRise, IsSwimTrigger)
             .Permit(PlayerFsm.PlayerFsmTrigger.IdleMomentumThresholdPassedDecelerating, PlayerFsm.PlayerFsmState.StepEnd)
