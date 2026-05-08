@@ -1,3 +1,4 @@
+using System.Collections;
 using Code.Misc;
 using UnityEngine;
 
@@ -6,7 +7,10 @@ public partial class PlayerFsm
     private void MinorLeylineConfigure()
     {
         Machine.Configure(PlayerFsmState.MinorLeylineInteractable)
-            .Permit(PlayerFsmTrigger.MinorLeylineTrigger, PlayerFsmState.MinorLeylineStartup);
+            .PermitIf(PlayerFsmTrigger.MinorLeylineTrigger, PlayerFsmState.MinorLeylineStartup, _ =>
+            {
+                return !Machine.IsInState(PlayerFsmState.Jump) || YVelocity < 5f;
+            });
         
         Machine.Configure(PlayerFsmState.MinorLeylineStartup)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.MinorLeylineActive)
@@ -14,8 +18,8 @@ public partial class PlayerFsm
             {
                 Util.InvokeSphereEffect(transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
 
-                _speedLinesParticlesDuration = -1f;
-                _speedLinesParticles.Play();
+                // _speedLinesParticlesDuration = -1f;
+                // _speedLinesParticles.Play();
                 YVelocity = 0;
                 _minorLeylineHalo.Show();
                 MakeAllRenderersInvisible();
@@ -24,6 +28,7 @@ public partial class PlayerFsm
             })
             .OnExit(_ =>
             {
+
 
             })
             .SubstateOf(GravityFsmState.IgnoreDepenetration);
@@ -37,14 +42,27 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .OnExit(_ =>
             {
+                _inputBuffer.ConsumeBuffer("Jump");
+                StartCoroutine(MinorLeylineCameraCleanupCoroutine());
+                LastUpwardsY = transform.position.y;
                 Util.InvokeSphereEffect(transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
                 isSprinting = true;
                 _timeSinceMinorLeyline = 0;
                 _minorLeylineHalo.Hide();
-                transform.rotation = _currentMinorLeyline.GetPlayerRotationAt(_currentMinorLeylineWeight, _currentMinorLeylineDirection, out var yVelocityMod);
-                _momentum = Mathf.Lerp(MaxMomentum, 6f, yVelocityMod);
-                PlaySpeedLineParticlesForDuration(Mathf.Lerp(0.75f, 0.25f, yVelocityMod));
-                YVelocity = Mathf.Max(YVelocity, 20f * yVelocityMod + 20f);
+                transform.rotation = _currentMinorLeyline.GetPlayerRotationAt(_currentMinorLeylineWeight, _currentMinorLeylineDirection, out var _);
+
+                transform.position += _currentMinorLeyline.GetUpVectorAt(_currentMinorLeylineWeight) * 1f;
+                
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+                currentRopeSwing = null;
+
+                float upMod = _timeSinceMinorLeylineUp < 0.3f ? 1f : 0;
+                _momentum = Mathf.Lerp(MaxMomentum, 6f, upMod);
+                PlaySpeedLineParticlesForDuration(Mathf.Lerp(0.75f, 0.25f, upMod));
+                YVelocity = Mathf.Max(YVelocity, 27f * upMod + 26f);
                 MakeAllRenderersVisible();
             });
     }
@@ -54,6 +72,7 @@ public partial class PlayerFsm
         var speedModifier = Mathf.Lerp(0.25f, 1f, Mathf.InverseLerp(0.3f, 0.45f, TimeInCurrentState()));
         var lerpSpeed = Mathf.Lerp(0.05f, 3f, Mathf.InverseLerp(0.3f, 0.5f, TimeInCurrentState()));
         MoveAlongCurrentMinorLeyline(speedModifier, lerpSpeed);
+        PushOutMinorLeylineCamera();
      
         // MoveAlongCurrentMinorLeyline(1f, 3f);
     }
@@ -61,6 +80,7 @@ public partial class PlayerFsm
     private void MinorLeylineActiveOnUpdate()
     {
      
+        PushOutMinorLeylineCamera();
         MoveAlongCurrentMinorLeyline(1f, 3f);
     }
 
@@ -71,5 +91,37 @@ public partial class PlayerFsm
 
         transform.position = Vector3.Lerp(transform.position, _currentMinorLeyline.EvaluatePosition(newWeight), lerpSpeed);
         _currentMinorLeylineWeight = newWeight;
+        
+        _currentMinorLeyline.GetPlayerRotationAt(_currentMinorLeylineWeight, _currentMinorLeylineDirection, out var yVelocityMod);
+        if (yVelocityMod > 0.01f)
+        {
+            _timeSinceMinorLeylineUp = 0f;
+        }
+        
+    }
+
+    private void PushOutMinorLeylineCamera()
+    {
+        var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+        var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
+        offset.m_Offset = Vector3.Lerp(offset.m_Offset,
+            new Vector3(0, 0, -8f), Time.deltaTime * 1f);
+    }
+
+    private IEnumerator MinorLeylineCameraCleanupCoroutine()
+    {
+        var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+        var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
+        
+        var t = 0f;
+        var d = 1f;
+        while (t < d)
+        {
+            var w = t / d;
+            offset.m_Offset = Vector3.Lerp(offset.m_Offset,
+                new Vector3(0, 0, 0), w);
+            t += Time.deltaTime;
+            yield return null;
+        }
     }
 }

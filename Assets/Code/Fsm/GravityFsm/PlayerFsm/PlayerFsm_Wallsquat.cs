@@ -16,6 +16,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.DontApplyGustYVelocity)
             // .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params => !IsSlideTrigger(@params))
             .PermitIf(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall, _ => TimeInCurrentState() > WallsquatMinimumDuration)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Wallstep,

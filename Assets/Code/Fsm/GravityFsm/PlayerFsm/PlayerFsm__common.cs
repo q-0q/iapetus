@@ -56,6 +56,7 @@ public partial class PlayerFsm
     private ParticleSystem _splashParticles;
     private PlayerDashParticles _playerDashParticles;
     private ParticleSystem _speedLinesParticles;
+    private Transform _speedLinesParticlesTransform;
     
     private float _timeSinceSpeedLinesParticlesPlayed;
     private float _speedLinesParticlesDuration;
@@ -235,6 +236,7 @@ public partial class PlayerFsm
     private float _currentMinorLeylineWeight = 0;
     private PlayerMinorLeylineHalo _minorLeylineHalo;
     private float _timeSinceMinorLeyline = 100f;
+    private float _timeSinceMinorLeylineUp = 100f;
 
 
     private const float KiMomentumThreshhold = 11.5f;
@@ -493,7 +495,7 @@ public partial class PlayerFsm
 
     private float GetCurrentMiscSpeedMultiplier()
     {
-        return Mathf.Lerp(2f, 1f, Mathf.InverseLerp(0.1f, 0.3f, _timeSinceMinorLeyline));
+        return Mathf.Lerp(2.5f, 1f, Mathf.InverseLerp(0.25f, 0.6f, _timeSinceMinorLeyline));
     }
 
     private float GetCurrentBoostSpeedMultiplier()
@@ -1179,6 +1181,8 @@ public partial class PlayerFsm
 
     private void HandleSpeedLines()
     {
+        _speedLinesParticles.transform.position = Camera.main.transform.position;
+        _speedLinesParticles.transform.rotation = Quaternion.Lerp(_speedLinesParticles.transform.rotation, Camera.main.transform.rotation, Time.deltaTime * 10f);
         _timeSinceSpeedLinesParticlesPlayed += Time.deltaTime;
         if (_timeSinceSpeedLinesParticlesPlayed > _speedLinesParticlesDuration && _speedLinesParticlesDuration > 0) _speedLinesParticles.Stop();
     }

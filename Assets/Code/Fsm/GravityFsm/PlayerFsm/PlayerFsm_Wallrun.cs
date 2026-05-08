@@ -30,7 +30,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
             .SubstateOf(PlayerFsmState.RopeSwingInteractable)
-
+            .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
             .SubstateOf(PlayerFsmState.Landable)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .Permit(PlayerFsmTrigger.FlankOpen, PlayerFsmState.Fall)

@@ -128,6 +128,7 @@ public class CameraFollow : MonoBehaviour
         if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.MinorLeylineStartup) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.MinorLeylineActive))
         {
             yLerp *= 3f;
+            newYOffset = 4f;
         }
         
         yLerp = Mathf.Lerp(yLerp, yLerp * 2.75f, Mathf.InverseLerp(-5f, -30f, playerYVelocity));

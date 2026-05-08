@@ -45,16 +45,29 @@ public class MinorLeyline : MonoBehaviour
         return Quaternion.LookRotation(tangent, upVector);
     }
     
-    public Quaternion GetPlayerRotationAt(float t, bool direction, out float yVelocityMod)
+    public Quaternion GetPlayerRotationAt(float t, bool direction, out float upMod)
     {
-        yVelocityMod = 0;
+        upMod = 0;
         _splineContainer.Evaluate(t, out float3 position, out float3 tangent, out float3 upVector);
         var worldRotation = Quaternion.LookRotation(tangent, upVector);
+
+        var v = tangent;
+        var upAngle = Vector3.Angle(Vector3.up, direction ? tangent : -tangent );
+        if (upAngle < 40f)
+        {
+            v = upVector;
+            upMod = 1f;
+        }
         
-        var upAngle = Vector3.Angle(Vector3.up, worldRotation * Vector3.up);
-        if (upAngle < 70f) return worldRotation * Quaternion.Euler(0, direction ? 0f : 180f, 0f);
-        yVelocityMod = 1f;
-        return Quaternion.LookRotation(upVector, Vector3.up);
+        return Quaternion.LookRotation(Vector3.ProjectOnPlane(v, Vector3.up), Vector3.up)
+                                  * Quaternion.Euler(0, direction ? 0f : 180f, 0f);
+    }
+    
+    
+    public Vector3 GetUpVectorAt(float t)
+    {
+        _splineContainer.Evaluate(t, out float3 position, out float3 tangent, out float3 upVector);
+        return upVector;
     }
 
     private void OnDrawGizmos()

@@ -258,6 +258,8 @@ public partial class PlayerFsm : GravityFsm
         _playerSurgeHalo = GetComponentInChildren<PlayerSurgeHalo>();
         _playerSurgeHalo.transform.SetParent(null);
         _speedLinesParticles = Camera.main.transform.Find("SpeedLinesParticles").GetComponent<ParticleSystem>();
+        _speedLinesParticlesTransform = _speedLinesParticles.transform;
+        _speedLinesParticlesTransform.SetParent(null);
         _minorLeylineHalo = GetComponentInChildren<PlayerMinorLeylineHalo>();
         _minorLeylineHalo.transform.SetParent(null);
         
@@ -293,6 +295,7 @@ public partial class PlayerFsm : GravityFsm
         _timeSinceSurgeStarted += Time.deltaTime;
         _timeSinceBoostStarted += Time.deltaTime;
         _timeSinceMinorLeyline += Time.deltaTime;
+        _timeSinceMinorLeylineUp += Time.deltaTime;
         
         if (_comboTimer > ComboTimeoutDuration)
         {
@@ -634,7 +637,7 @@ public partial class PlayerFsm : GravityFsm
     
     private void OnStateChangedCompleted(TriggerParams obj)
     {
-        // print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
         ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 

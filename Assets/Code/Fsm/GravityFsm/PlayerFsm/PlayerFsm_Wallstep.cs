@@ -18,6 +18,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.PitonInteractable)
             .SubstateOf(PlayerFsmState.RopeSwingInteractable)
+            .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
             .OnEntry(_ =>
             {
                 Animator.SetLayerWeight(1, 0);
