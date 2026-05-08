@@ -258,6 +258,8 @@ public partial class PlayerFsm : GravityFsm
         _playerSurgeHalo = GetComponentInChildren<PlayerSurgeHalo>();
         _playerSurgeHalo.transform.SetParent(null);
         _speedLinesParticles = Camera.main.transform.Find("SpeedLinesParticles").GetComponent<ParticleSystem>();
+        _minorLeylineHalo = GetComponentInChildren<PlayerMinorLeylineHalo>();
+        _minorLeylineHalo.transform.SetParent(null);
         
         ApplyMetaSaveData(MetaSaveSystem.LoadCachedMetaSaveData());
         // transform.Find("KiIndicatorParticles").SetParent(null);
@@ -290,6 +292,7 @@ public partial class PlayerFsm : GravityFsm
         _timeSinceRopeSwing += Time.deltaTime;
         _timeSinceSurgeStarted += Time.deltaTime;
         _timeSinceBoostStarted += Time.deltaTime;
+        _timeSinceMinorLeyline += Time.deltaTime;
         
         if (_comboTimer > ComboTimeoutDuration)
         {

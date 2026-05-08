@@ -45,13 +45,15 @@ public class MinorLeyline : MonoBehaviour
         return Quaternion.LookRotation(tangent, upVector);
     }
     
-    public Quaternion GetPlayerRotationAt(float t, bool direction)
+    public Quaternion GetPlayerRotationAt(float t, bool direction, out float yVelocityMod)
     {
+        yVelocityMod = 0;
         _splineContainer.Evaluate(t, out float3 position, out float3 tangent, out float3 upVector);
         var worldRotation = Quaternion.LookRotation(tangent, upVector);
         
         var upAngle = Vector3.Angle(Vector3.up, worldRotation * Vector3.up);
         if (upAngle < 70f) return worldRotation * Quaternion.Euler(0, direction ? 0f : 180f, 0f);
+        yVelocityMod = 1f;
         return Quaternion.LookRotation(upVector, Vector3.up);
     }
 

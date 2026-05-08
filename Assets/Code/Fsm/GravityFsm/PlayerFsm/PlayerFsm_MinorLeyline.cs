@@ -1,3 +1,4 @@
+using Code.Misc;
 using UnityEngine;
 
 public partial class PlayerFsm
@@ -11,6 +12,12 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.MinorLeylineActive)
             .OnEntry(_ =>
             {
+                Util.InvokeSphereEffect(transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+
+                _speedLinesParticlesDuration = -1f;
+                _speedLinesParticles.Play();
+                YVelocity = 0;
+                _minorLeylineHalo.Show();
                 MakeAllRenderersInvisible();
                 _currentMinorLeylineDirection = _currentMinorLeyline.GetDirectionFromTrigger(_currentMinorLeylineTrigger);
                 _currentMinorLeylineWeight = _currentMinorLeylineDirection ? 0f : 1f;
@@ -23,11 +30,21 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.MinorLeylineActive)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jump)
+            .OnEntry(_ =>
+            {
+
+            })
             .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .OnExit(_ =>
             {
-                YVelocity = Mathf.Max(YVelocity, 30f);
-                transform.rotation = _currentMinorLeyline.GetPlayerRotationAt(_currentMinorLeylineWeight, _currentMinorLeylineDirection);
+                Util.InvokeSphereEffect(transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );
+                isSprinting = true;
+                _timeSinceMinorLeyline = 0;
+                _minorLeylineHalo.Hide();
+                transform.rotation = _currentMinorLeyline.GetPlayerRotationAt(_currentMinorLeylineWeight, _currentMinorLeylineDirection, out var yVelocityMod);
+                _momentum = Mathf.Lerp(MaxMomentum, 6f, yVelocityMod);
+                PlaySpeedLineParticlesForDuration(Mathf.Lerp(0.75f, 0.25f, yVelocityMod));
+                YVelocity = Mathf.Max(YVelocity, 20f * yVelocityMod + 20f);
                 MakeAllRenderersVisible();
             });
     }

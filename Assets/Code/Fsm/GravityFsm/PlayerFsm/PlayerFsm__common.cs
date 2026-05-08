@@ -233,7 +233,8 @@ public partial class PlayerFsm
     private const float MinorLeylineSpeed = 50f;
     private bool _currentMinorLeylineDirection = false;
     private float _currentMinorLeylineWeight = 0;
-
+    private PlayerMinorLeylineHalo _minorLeylineHalo;
+    private float _timeSinceMinorLeyline = 100f;
 
 
     private const float KiMomentumThreshhold = 11.5f;
@@ -486,7 +487,13 @@ public partial class PlayerFsm
         var value = Mathf.Lerp(0f, MaximumMomentumSpeedMod, ComputeMomentumWeight());
         var comboMultiplier = GetCurrentSurgeSpeedMultiplier();
         var boostMultiplier = GetCurrentBoostSpeedMultiplier();
-        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier * boostMultiplier);
+        var miscMultiplier = GetCurrentMiscSpeedMultiplier();
+        return transform.forward.normalized * (MoveSpeed * value * comboMultiplier * boostMultiplier * miscMultiplier);
+    }
+
+    private float GetCurrentMiscSpeedMultiplier()
+    {
+        return Mathf.Lerp(2f, 1f, Mathf.InverseLerp(0.1f, 0.3f, _timeSinceMinorLeyline));
     }
 
     private float GetCurrentBoostSpeedMultiplier()
