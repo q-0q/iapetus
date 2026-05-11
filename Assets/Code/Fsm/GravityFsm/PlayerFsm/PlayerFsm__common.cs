@@ -37,7 +37,7 @@ public partial class PlayerFsm
     private FlankType _previousWallrunSide;
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
-    private Vector3 _walkToPositionTarget;
+    public Vector3 walkToPositionTarget;
     private List<ParticleSystem> _kiIndicatorParticles;
     private List<Renderer> _renderers;
     private SkinnedMeshRenderer _skinnedMeshRenderer;

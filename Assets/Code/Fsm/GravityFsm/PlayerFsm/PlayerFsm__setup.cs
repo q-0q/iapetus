@@ -104,7 +104,8 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDashStartup, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 1.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.UseIncenseBurner, 1.25f);
-        StateMapConfig.Duration.Add(PlayerFsmState.MajorLeylineNodeInteract, 1.25f);
+        StateMapConfig.Duration.Add(PlayerFsmState.WalkToMajorLeylinePosition, 1.5f);
+        StateMapConfig.Duration.Add(PlayerFsmState.MajorLeylineNodeInteract, 2.75f);
         StateMapConfig.Duration.Add(PlayerFsmState.MinorLeylineStartup, 0.75f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
@@ -126,6 +127,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Vault, "Vault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToDialoguePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToSwitchPosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToMajorLeylinePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");
@@ -166,7 +168,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.KeyItemCollect, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Inventory, "Inventory");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MajorLeylineNodeInteract, "KeyItemCollect");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MajorLeylineNodeInteract, "MajorLeylineInteract");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);

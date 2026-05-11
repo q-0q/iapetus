@@ -57,7 +57,7 @@ public partial class PlayerFsm
         }
 
 
-        var walkToPositionTargetDistance = Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(_walkToPositionTarget.x, _walkToPositionTarget.z));
+        var walkToPositionTargetDistance = Vector3.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(walkToPositionTarget.x, walkToPositionTarget.z));
         if (walkToPositionTargetDistance < ArriveAtWalkPositionTargetDistance)
         {
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTarget);

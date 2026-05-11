@@ -75,7 +75,9 @@ public class MajorLeylineNode : MonoBehaviour
 
     void OnInteracted()
     {
-        PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.MajorLeylineNodeInteract);
+        PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition);
+        PlayerFsm.Singleton.walkToPositionTarget = _interactable.transform.position;
+        
         if (previousNodeMetaName == "")
         {
             
@@ -92,7 +94,7 @@ public class MajorLeylineNode : MonoBehaviour
             var t = 0f;
             var d = _visualSplineContainer.Spline.GetLength() * 0.03f;
             CutsceneManager.Singleton.SetPseudoCutsceneActive(true, _cameraLookAt);
-            yield return new WaitForSeconds(1.25f);
+            yield return new WaitForSeconds(3f);
 
             _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(0);
             _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);

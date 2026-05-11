@@ -98,6 +98,8 @@ public partial class PlayerFsm
             _timeSinceMinorLeylineUp = 0f;
         }
         
+        _currentMinorLeyline.SetShaderWeight(_currentMinorLeylineWeight);
+        
     }
 
     private void PushOutMinorLeylineCamera()

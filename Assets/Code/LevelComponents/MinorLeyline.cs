@@ -12,6 +12,8 @@ public class MinorLeyline : MonoBehaviour
 
     private SplineContainer _splineContainer;
     private float _length;
+    
+    private Material _material;
 
     private void Awake()
     {
@@ -19,6 +21,9 @@ public class MinorLeyline : MonoBehaviour
         _nodeB = transform.Find("MinorLeylineNodeB");
         _splineContainer = GetComponentInChildren<SplineContainer>();
         _length = _splineContainer.Spline.GetLength();
+        _material = _splineContainer.GetComponent<MeshRenderer>().material;
+        var curveLength = _splineContainer.Spline.GetLength();
+        _material.SetFloat("_SplineLength", curveLength);
         AlignNodes();
     }
     
@@ -83,6 +88,11 @@ public class MinorLeyline : MonoBehaviour
     public Vector3 EvaluatePosition(float t)
     {
         return _splineContainer.transform.TransformPoint(_splineContainer.Spline.EvaluatePosition(t));
+    }
+
+    public void SetShaderWeight(float weight)
+    {
+        _material.SetFloat("_FillWeight", weight);
     }
 
     public float Length()

@@ -5,7 +5,7 @@ public partial class PlayerFsm
 {
     private void WalkToPositionOnUpdate()
     {
-        var toTarget = _walkToPositionTarget - transform.position;
+        var toTarget = walkToPositionTarget - transform.position;
         toTarget = new Vector3(toTarget.x, 0, toTarget.z);
         var angle = Vector3.Angle(transform.forward, toTarget);
         var isInTurnPhase = angle > WalkToPositionTurnPhaseAngle;
@@ -31,8 +31,12 @@ public partial class PlayerFsm
             .OnEntry(param =>
             {
                 if (param is not InteractableParam interactionParam) return;
-                _walkToPositionTarget = interactionParam.WalkToPositionTarget;
+                walkToPositionTarget = interactionParam.WalkToPositionTarget;
             });
+        
+        Machine.Configure(PlayerFsmState.WalkToMajorLeylinePosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.MajorLeylineNodeInteract);
     }
     
     private void WalkToSwitchPositionConfigure()

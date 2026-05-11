@@ -123,6 +123,7 @@ public partial class PlayerFsm : GravityFsm
         public static int MinorLeylineInteractable;
         public static int MinorLeylineStartup;
         public static int MinorLeylineActive;
+        public static int WalkToMajorLeylinePosition;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -310,9 +311,9 @@ public partial class PlayerFsm : GravityFsm
         HandleSpeedLines();
         
         
-        aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)
-            ? transform.forward * Mathf.Lerp(0, 1.5f, ComputeMomentumWeight())
-            : Vector3.zero;
+        // aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)
+        //     ? transform.forward * Mathf.Lerp(0, 1.5f, ComputeMomentumWeight())
+        //     : Vector3.zero;
 
 
         var previousPosition = transform.position;
@@ -606,6 +607,11 @@ public partial class PlayerFsm : GravityFsm
         if (Input.GetKeyDown(KeyCode.X))
         {
             SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
+        }
+        
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            Machine.Jump(PlayerFsm.PlayerFsmState.MajorLeylineNodeInteract);
         }
         
         HandleRaycastKill();
