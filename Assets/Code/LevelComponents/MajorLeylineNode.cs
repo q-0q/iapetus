@@ -21,6 +21,9 @@ public class MajorLeylineNode : MonoBehaviour
     private Material _completedHaloMaterial;
     private Renderer _channelHaloRenderer;
     private Material _channelHaloMaterial;
+    private Material _nodeBaseMaterial;
+    private Light _interactableLight;
+    private Material _curvedStarMaterial;
 
     private ParticleSystem _channelParticles;
     private ParticleSystem _completedParticles;
@@ -50,10 +53,14 @@ public class MajorLeylineNode : MonoBehaviour
         _completedHaloRenderer = transform.Find("Node").Find("CompletedHalo").GetComponent<Renderer>();
         _completedHaloMaterial = _completedHaloRenderer.material;
         
+        _curvedStarMaterial = transform.Find("Node").Find("CurvedStar").GetComponent<Renderer>().material;
         _channelHaloRenderer = transform.Find("Node").Find("ChannelHalo").GetComponent<Renderer>();
         _channelHaloMaterial = _channelHaloRenderer.material;
         _channelParticles = transform.Find("Node").Find("ChannelParticles").GetComponent<ParticleSystem>();
         _completedParticles = transform.Find("Node").Find("CompletedParticles").GetComponent<ParticleSystem>();
+        _interactableLight = transform.Find("Node").Find("InteractableLight").GetComponent<Light>();
+        
+        _nodeBaseMaterial = transform.Find("Node").Find("major-leyline-node").GetComponent<Renderer>().material;
 
         if (previousNodeMetaName == "")
         {
@@ -68,6 +75,7 @@ public class MajorLeylineNode : MonoBehaviour
         if (SaveSystem.GetMajorLeylineNode(metaName))
         {
             _interactable.SetEnabled(false);
+            _interactable.enabled = false;
             _visualSplineMaterial.SetFloat("_FillWeight", 1f);
         }
     }
@@ -125,6 +133,7 @@ public class MajorLeylineNode : MonoBehaviour
                 _channelHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(3f, 0, w));
                 _interactableHaloMaterial.SetFloat("_Dot", Mathf.Lerp(1.5f, 0, w));
                 _interactableHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(2f, 0, w));
+                _curvedStarMaterial.SetFloat("_Clip", w);
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -132,9 +141,10 @@ public class MajorLeylineNode : MonoBehaviour
             _interactableHaloRenderer.enabled = false;
             yield return new WaitForSeconds(0.9f);
             _completedParticles.Play();
+            _interactableLight.enabled = false;
             yield return new WaitForSeconds(1.1f);
             CutsceneManager.Singleton.SetPseudoCutsceneActive(true, _cameraLookAt);
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
             
             
             t = 0f;
@@ -145,6 +155,10 @@ public class MajorLeylineNode : MonoBehaviour
 
             _channelParticles.Stop();
             _completedParticles.Stop();
+
+            var cameraFollowEndPosition = _cameraSplineContainer.EvaluatePosition(1);
+            var finalDirection = PlayerFsm.Singleton.transform.position - new Vector3(cameraFollowEndPosition.x, cameraFollowEndPosition.y, cameraFollowEndPosition.z);
+            PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(finalDirection, 0.5f);
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
@@ -155,10 +169,21 @@ public class MajorLeylineNode : MonoBehaviour
                 yield return null;
             }
             
-            yield return new WaitForSeconds(0.4f);
-            
-            CutsceneManager.Singleton.ClearPseudoCutsceneActive();
+
             _virtualCamera.Priority = -20;
+
+            t = 0;
+            d = 0.6f;
+
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                _nodeBaseMaterial.SetFloat("_CompletionWeight", w);
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            CutsceneManager.Singleton.ClearPseudoCutsceneActive();
         }
         
         IEnumerator FovCoroutine()
@@ -189,7 +214,7 @@ public class MajorLeylineNode : MonoBehaviour
             _channelHaloRenderer.enabled = false;
             
             t = 0f;
-            d = 0.5f;
+            d = 0.75f;
             
             while (t < d)
             {
@@ -218,6 +243,7 @@ public class MajorLeylineNode : MonoBehaviour
             SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
         {
             _interactable.SetEnabled(true);
+            _interactable.enabled = true;
         }
     }
 }

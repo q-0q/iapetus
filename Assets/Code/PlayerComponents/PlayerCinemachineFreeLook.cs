@@ -236,7 +236,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
             }
             _scriptActive = false;  
         }
-        
     }
 
     public void SetAxes(float xValue, float yValue)
