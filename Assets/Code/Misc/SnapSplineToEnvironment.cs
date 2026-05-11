@@ -81,8 +81,10 @@ public class SnapSplineToEnvironment : MonoBehaviour
         Ray ray = new Ray(worldKnotPos - (localDownDirection * RaycastDistance * 0.5f), localDownDirection);
         Debug.DrawRay(ray.origin, localDownDirection * RaycastDistance, Color.magenta, 2f);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, RaycastDistance, ~0, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(ray, out RaycastHit hit, RaycastDistance, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
+            
+            Debug.DrawRay(hit.point, Vector3.up, Color.yellow, 2f );
             // 3. Update Position
             knot.Position = transform.InverseTransformPoint(hit.point + hit.normal * surfaceDistanceOffset);
 

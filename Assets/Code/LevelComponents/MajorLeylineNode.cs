@@ -13,7 +13,17 @@ public class MajorLeylineNode : MonoBehaviour
     private SplineContainer _visualSplineContainer;
     private SplineContainer _cameraSplineContainer;
     private Interactable _interactable;
-    private Material _material;
+    private Material _visualSplineMaterial;
+
+    private Renderer _interactableHaloRenderer;
+    private Material _interactableHaloMaterial;
+    private Renderer _completedHaloRenderer;
+    private Material _completedHaloMaterial;
+    private Renderer _channelHaloRenderer;
+    private Material _channelHaloMaterial;
+
+    private ParticleSystem _channelParticles;
+    private ParticleSystem _completedParticles;
 
     private CinemachineVirtualCamera _virtualCamera;
     private Transform _cameraLookAt;
@@ -29,15 +39,26 @@ public class MajorLeylineNode : MonoBehaviour
         _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(0);
         _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
 
-        _material = _visualSplineContainer.GetComponent<MeshRenderer>().material;
+        _visualSplineMaterial = _visualSplineContainer.GetComponent<MeshRenderer>().material;
         _interactable = GetComponentInChildren<Interactable>();
         
         _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
         _virtualCamera.Priority = -20;
 
+        _interactableHaloRenderer = transform.Find("Node").Find("InteractableHalo").GetComponent<Renderer>();
+        _interactableHaloMaterial = _interactableHaloRenderer.material;
+        _completedHaloRenderer = transform.Find("Node").Find("CompletedHalo").GetComponent<Renderer>();
+        _completedHaloMaterial = _completedHaloRenderer.material;
+        
+        _channelHaloRenderer = transform.Find("Node").Find("ChannelHalo").GetComponent<Renderer>();
+        _channelHaloMaterial = _channelHaloRenderer.material;
+        _channelParticles = transform.Find("Node").Find("ChannelParticles").GetComponent<ParticleSystem>();
+        _completedParticles = transform.Find("Node").Find("CompletedParticles").GetComponent<ParticleSystem>();
+
         if (previousNodeMetaName == "")
         {
-            _visualSplineContainer.gameObject.SetActive(false);
+            // _visualSplineContainer.gameObject.SetActive(false);
+            _interactable.SetEnabled(true);
         }
         else
         {
@@ -47,7 +68,7 @@ public class MajorLeylineNode : MonoBehaviour
         if (SaveSystem.GetMajorLeylineNode(metaName))
         {
             _interactable.SetEnabled(false);
-            _material.SetFloat("_FillWeight", 1f);
+            _visualSplineMaterial.SetFloat("_FillWeight", 1f);
         }
     }
 
@@ -67,9 +88,9 @@ public class MajorLeylineNode : MonoBehaviour
 
     void Start()
     {
-        if (previousNodeMetaName == "") return;
+        
         var curveLength = _visualSplineContainer.Spline.GetLength();
-        _material.SetFloat("_SplineLength", curveLength);
+        _visualSplineMaterial.SetFloat("_SplineLength", curveLength);
         
     }
 
@@ -78,35 +99,58 @@ public class MajorLeylineNode : MonoBehaviour
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition);
         PlayerFsm.Singleton.walkToPositionTarget = _interactable.transform.position;
         
-        if (previousNodeMetaName == "")
-        {
-            
-        }
-        else
-        {
-            StartCoroutine(Coroutine());
-        }
-        SaveSystem.WriteMajorLeylineNode(metaName);
+        StartCoroutine(MainCoroutine());
+        StartCoroutine(FovCoroutine());
+        
+        // SaveSystem.WriteMajorLeylineNode(metaName);
         _interactable.SetEnabled(false);
 
-        IEnumerator Coroutine()
+        IEnumerator MainCoroutine()
         {
             var t = 0f;
-            var d = _visualSplineContainer.Spline.GetLength() * 0.03f;
-            CutsceneManager.Singleton.SetPseudoCutsceneActive(true, _cameraLookAt);
-            yield return new WaitForSeconds(3f);
+            var d = 0.5f;
+            var channelBaseScale = _channelHaloRenderer.transform.localScale;
 
+            while (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition))
+                yield return null;
+
+            _channelParticles.Play();
+
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                _channelHaloRenderer.transform.localScale = Vector3.Lerp(channelBaseScale, channelBaseScale * 0.8f, w);
+                
+                _channelHaloMaterial.SetFloat("_Dot", Mathf.Lerp(2f, 0, w));
+                _channelHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(3f, 0, w));
+                _interactableHaloMaterial.SetFloat("_Dot", Mathf.Lerp(1.5f, 0, w));
+                _interactableHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(2f, 0, w));
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            _interactableHaloRenderer.enabled = false;
+            yield return new WaitForSeconds(0.9f);
+            _completedParticles.Play();
+            yield return new WaitForSeconds(1.1f);
+            CutsceneManager.Singleton.SetPseudoCutsceneActive(true, _cameraLookAt);
+            yield return new WaitForSeconds(1f);
+            
+            
+            t = 0f;
+            d = _visualSplineContainer.Spline.GetLength() * 0.03f;
             _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(0);
             _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
             _virtualCamera.Priority = 20;
-            yield return new WaitForSeconds(0.25f);
 
+            _channelParticles.Stop();
+            _completedParticles.Stop();
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
                 _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(w);
                 _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(w);
-                _material.SetFloat("_FillWeight", w);
+                _visualSplineMaterial.SetFloat("_FillWeight", w);
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -115,6 +159,50 @@ public class MajorLeylineNode : MonoBehaviour
             
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
             _virtualCamera.Priority = -20;
+        }
+        
+        IEnumerator FovCoroutine()
+        {
+            var t = 0f;
+            var d = 1.5f;
+
+            var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+            var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
+            var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
+
+            var desiredOffset = new Vector3(0, 0, -8f);
+            var desiredFov = 65f;
+
+            
+            
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                
+                offset.m_Offset = Vector3.Lerp(Vector3.zero, desiredOffset, w);
+                freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, desiredFov, w);
+
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            _channelHaloRenderer.enabled = false;
+            
+            t = 0f;
+            d = 0.5f;
+            
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                
+                offset.m_Offset = Vector3.Lerp(desiredOffset, Vector3.zero, w);
+                freeLook.m_Lens.FieldOfView = Mathf.Lerp(desiredFov, baseFov, w);
+                t += Time.deltaTime;
+                yield return null;
+            }
+            
+            offset.m_Offset = Vector3.zero;
+            freeLook.m_Lens.FieldOfView = baseFov;
         }
     }
 
