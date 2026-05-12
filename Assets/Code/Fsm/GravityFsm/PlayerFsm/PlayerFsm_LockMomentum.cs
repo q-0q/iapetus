@@ -8,10 +8,13 @@ public partial class PlayerFsm
         if (Machine.IsInState(PlayerFsmState.SurgeDash)) return;
         Animator.SetFloat("SpeedMod", Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()));
         SetAnimatorMomentum();
-        
-        HandleInputMomentumChange();
-        HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);
-        
+
+
+        if (!Machine.IsInState(PlayerFsmState.Wallrun))
+        {
+            HandleInputMomentumChange();
+            HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);
+        }
         
         HandleCollisionMove();
     }

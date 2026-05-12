@@ -19,6 +19,7 @@ public class FoliageChunkManager : MonoBehaviour
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, List<Matrix4x4>>> _masterRegistry = new();
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, Matrix4x4[][]>> _bakedChunks = new();
     public static readonly List<FoliageMaskSpline> MaskSplines = new();
+    private static int FoliageLayer;
 
     private Camera _camera;
     private void Awake() => Instance = this;
@@ -28,6 +29,7 @@ public class FoliageChunkManager : MonoBehaviour
         _camera = Camera.main;
         _renderDistance = ComputeWorldspaceRenderDistance(MetaSaveSystem.LoadCachedMetaSaveData().foliageRenderDistanceLevel);
         Invoke(nameof(BakeAll), 0.1f);
+        FoliageLayer = LayerMask.NameToLayer("Foliage");
     }
 
     public void RegisterFoliage(Mesh mesh, Material mat, Matrix4x4[] instances)
@@ -102,6 +104,7 @@ public class FoliageChunkManager : MonoBehaviour
             Mesh mesh = entry.Key.Item1;
             Material mat = entry.Key.Item2;
             RenderParams rp = new RenderParams(mat);
+            rp.layer = FoliageLayer;
 
             foreach (var chunk in entry.Value)
             {

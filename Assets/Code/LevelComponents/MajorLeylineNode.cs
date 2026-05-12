@@ -3,12 +3,14 @@ using System.Collections;
 using Cinemachine;
 using Code.Misc;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Splines;
 
 public class MajorLeylineNode : MonoBehaviour
 {
     public string metaName;
     public string previousNodeMetaName;
+    public float cameraSplineFollowDurationMultiplier = 1.0f;
     
     private SplineContainer _visualSplineContainer;
     private SplineContainer _cameraSplineContainer;
@@ -31,6 +33,8 @@ public class MajorLeylineNode : MonoBehaviour
     private CinemachineVirtualCamera _virtualCamera;
     private Transform _cameraLookAt;
     private Transform _cameraFollow;
+
+    private MinorCheckpoint _checkpoint;
 
     private void Awake()
     {
@@ -62,6 +66,11 @@ public class MajorLeylineNode : MonoBehaviour
         
         _nodeBaseMaterial = transform.Find("Node").Find("major-leyline-node").GetComponent<Renderer>().material;
 
+        _checkpoint = GetComponentInChildren<MinorCheckpoint>();
+
+        _visualSplineMaterial.SetFloat("_FillWeight", 0f);
+        _checkpoint.gameObject.SetActive(false);
+        
         if (previousNodeMetaName == "")
         {
             // _visualSplineContainer.gameObject.SetActive(false);
@@ -70,6 +79,13 @@ public class MajorLeylineNode : MonoBehaviour
         else
         {
             _interactable.SetEnabled(SaveSystem.GetMajorLeylineNode(previousNodeMetaName));
+
+            if (!SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
+            {
+                _interactableHaloRenderer.enabled = false;
+                _channelHaloRenderer.enabled = false;
+                _curvedStarMaterial.SetFloat("_Clip", 0);
+            }
         }
         
         if (SaveSystem.GetMajorLeylineNode(metaName))
@@ -77,6 +93,13 @@ public class MajorLeylineNode : MonoBehaviour
             _interactable.SetEnabled(false);
             _interactable.enabled = false;
             _visualSplineMaterial.SetFloat("_FillWeight", 1f);
+
+            _interactableHaloRenderer.enabled = false;
+            _channelHaloRenderer.enabled = false;
+            _curvedStarMaterial.SetFloat("_Clip", 1);
+            _interactableLight.enabled = false;
+            _nodeBaseMaterial.SetFloat("_CompletionWeight", 1f);
+            _checkpoint.gameObject.SetActive(true);
         }
     }
 
@@ -110,7 +133,7 @@ public class MajorLeylineNode : MonoBehaviour
         StartCoroutine(MainCoroutine());
         StartCoroutine(FovCoroutine());
         
-        // SaveSystem.WriteMajorLeylineNode(metaName);
+        SaveSystem.WriteMajorLeylineNode(metaName);
         _interactable.SetEnabled(false);
 
         IEnumerator MainCoroutine()
@@ -148,7 +171,7 @@ public class MajorLeylineNode : MonoBehaviour
             
             
             t = 0f;
-            d = _visualSplineContainer.Spline.GetLength() * 0.03f;
+            d = Mathf.Min(_visualSplineContainer.Spline.GetLength() * 0.03f, 7f);
             _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(0);
             _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
             _virtualCamera.Priority = 20;
@@ -162,7 +185,8 @@ public class MajorLeylineNode : MonoBehaviour
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
-                _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(w);
+                _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(t /
+                    (d * cameraSplineFollowDurationMultiplier));
                 _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(w);
                 _visualSplineMaterial.SetFloat("_FillWeight", w);
                 t += Time.deltaTime;
@@ -183,6 +207,7 @@ public class MajorLeylineNode : MonoBehaviour
                 yield return null;
             }
 
+            _checkpoint.gameObject.SetActive(true);
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
         }
         
@@ -244,6 +269,11 @@ public class MajorLeylineNode : MonoBehaviour
         {
             _interactable.SetEnabled(true);
             _interactable.enabled = true;
+            
+            _interactableLight.enabled = true;
+            _interactableHaloRenderer.enabled = true;
+            _channelHaloRenderer.enabled = true;
+            _curvedStarMaterial.SetFloat("_Clip", 0);
         }
     }
 }
