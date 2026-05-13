@@ -36,6 +36,9 @@ public class MajorLeylineNode : MonoBehaviour
 
     private MinorCheckpoint _checkpoint;
 
+    private TriggerProxy _tutorialTriggerProxy;
+    private DialogueController _tutorialDialogueController;
+
     private void Awake()
     {
         _visualSplineContainer = transform.Find("VisualSpline").GetComponent<SplineContainer>();
@@ -70,6 +73,9 @@ public class MajorLeylineNode : MonoBehaviour
 
         _visualSplineMaterial.SetFloat("_FillWeight", 0f);
         _checkpoint.gameObject.SetActive(false);
+
+        _tutorialTriggerProxy = GetComponentInChildren<TriggerProxy>();
+        _tutorialDialogueController = transform.Find("TutorialDialogue").GetComponent<DialogueController>();
         
         if (previousNodeMetaName == "")
         {
@@ -107,14 +113,22 @@ public class MajorLeylineNode : MonoBehaviour
     {
         _interactable.OnInteracted += OnInteracted;
         SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
+        _tutorialTriggerProxy.OnTriggerProxyStay += OnTutorialTrigger;
     }
 
+    private void OnTutorialTrigger(Collider obj)
+    {
+        //
+        // DialogueCanvas.Singleton.StartDialogue(_tutorialDialogueController);
+        // PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+    }
 
 
     private void OnDisable()
     {
         _interactable.OnInteracted -= OnInteracted;
         SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
+        _tutorialTriggerProxy.OnTriggerProxyStay -= OnTutorialTrigger;
     }
 
     void Start()

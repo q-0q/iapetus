@@ -73,7 +73,7 @@ public class MultiSwitchDoor : MonoBehaviour
 
     private void OnSwitch(OnetimeSwitchFsm switchFsm)
     {
-
+        if (!IsSwitchInMySwitches(switchFsm)) return;
         StartCoroutine(MaterialCoroutine());
         if (!IsAllSwitchesEnabled()) return;
         StartCoroutine(CameraCoroutine());
@@ -138,6 +138,16 @@ public class MultiSwitchDoor : MonoBehaviour
         }
 
         return true;
+    }
+    
+    private bool IsSwitchInMySwitches(OnetimeSwitchFsm fsm)
+    {
+        foreach (var switchFsm in SwitchFsms)
+        {
+            if (fsm == switchFsm) return true;
+        } 
+
+        return false;
     }
 
     private void OnTriggerEnter(Collider other)

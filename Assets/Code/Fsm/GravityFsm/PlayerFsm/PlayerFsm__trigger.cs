@@ -32,7 +32,7 @@ public partial class PlayerFsm
         
         if (_inputBuffer.IsBuffered("Inventory"))
         {
-            Machine.Fire(PlayerFsmTrigger.Inventory);
+            if (SaveSystem.GetAllItems().Count > 0) Machine.Fire(PlayerFsmTrigger.Inventory);
         }
         
         var v3 = GetInputMovementVector3();

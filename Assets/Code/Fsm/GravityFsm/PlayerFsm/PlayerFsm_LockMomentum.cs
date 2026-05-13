@@ -10,7 +10,7 @@ public partial class PlayerFsm
         SetAnimatorMomentum();
 
 
-        if (!Machine.IsInState(PlayerFsmState.Wallrun))
+        if (!Machine.IsInState(PlayerFsmState.Wallrun) && !Machine.IsInState(PlayerFsmState.HardTurn))
         {
             HandleInputMomentumChange();
             HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);

@@ -94,6 +94,7 @@ public class SaveSystem : MonoBehaviour
             trialCompletions = new List<TrialCompletionEntry>();
             lemonCollections = new List<string>();
             bells = new List<string>();
+            majorLeylineNodes = new List<string>();
             bitCount = 0;
             bellCount = 0;
             playTime = 0;
