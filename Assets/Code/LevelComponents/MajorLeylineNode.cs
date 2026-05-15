@@ -30,9 +30,10 @@ public class MajorLeylineNode : MonoBehaviour
     private ParticleSystem _channelParticles;
     private ParticleSystem _completedParticles;
 
-    private CinemachineVirtualCamera _virtualCamera;
+    private CinemachineVirtualCamera _splineCamera;
     private Transform _cameraLookAt;
     private Transform _cameraFollow;
+    private CinemachineVirtualCamera _finalCamera;
 
     private MinorCheckpoint _checkpoint;
 
@@ -52,8 +53,10 @@ public class MajorLeylineNode : MonoBehaviour
         _visualSplineMaterial = _visualSplineContainer.GetComponent<MeshRenderer>().material;
         _interactable = GetComponentInChildren<Interactable>();
         
-        _virtualCamera = GetComponentInChildren<CinemachineVirtualCamera>();
-        _virtualCamera.Priority = -20;
+        _splineCamera = transform.Find("MajorLeylineNodeSplineCamera").GetComponent<CinemachineVirtualCamera>();
+        _finalCamera = transform.Find("Node").Find("FinalCameraHolder").GetComponentInChildren<CinemachineVirtualCamera>();
+        _splineCamera.Priority = -20;
+        _finalCamera.Priority = -20;
 
         _interactableHaloRenderer = transform.Find("Node").Find("InteractableHalo").GetComponent<Renderer>();
         _interactableHaloMaterial = _interactableHaloRenderer.material;
@@ -67,7 +70,7 @@ public class MajorLeylineNode : MonoBehaviour
         _completedParticles = transform.Find("Node").Find("CompletedParticles").GetComponent<ParticleSystem>();
         _interactableLight = transform.Find("Node").Find("InteractableLight").GetComponent<Light>();
         
-        _nodeBaseMaterial = transform.Find("Node").Find("major-leyline-node").GetComponent<Renderer>().material;
+        _nodeBaseMaterial = transform.Find("Node").Find("major-leyline-node").Find("MajorLeylineNodeBase").GetComponent<Renderer>().material;
 
         _checkpoint = GetComponentInChildren<MinorCheckpoint>();
 
@@ -152,6 +155,7 @@ public class MajorLeylineNode : MonoBehaviour
 
         IEnumerator MainCoroutine()
         {
+            
             var t = 0f;
             var d = 0.5f;
             var channelBaseScale = _channelHaloRenderer.transform.localScale;
@@ -159,6 +163,8 @@ public class MajorLeylineNode : MonoBehaviour
             while (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition))
                 yield return null;
 
+            yield return new WaitForSeconds(0.5f);
+            
             _channelParticles.Play();
 
             while (t < d)
@@ -177,6 +183,7 @@ public class MajorLeylineNode : MonoBehaviour
 
             _interactableHaloRenderer.enabled = false;
             yield return new WaitForSeconds(0.9f);
+            Util.InvokeSphereEffect(_interactable.transform.position + Vector3.up * 2f, Vector3.one * 17f, 1.15f, 1.25f, -3f);
             _completedParticles.Play();
             _interactableLight.enabled = false;
             yield return new WaitForSeconds(1.1f);
@@ -188,17 +195,19 @@ public class MajorLeylineNode : MonoBehaviour
             d = Mathf.Min(_visualSplineContainer.Spline.GetLength() * 0.03f, 7f);
             _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(0);
             _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
-            _virtualCamera.Priority = 20;
+            _splineCamera.Priority = 20;
 
             _channelParticles.Stop();
             _completedParticles.Stop();
 
             var cameraFollowEndPosition = _cameraSplineContainer.EvaluatePosition(1);
-            var finalDirection = PlayerFsm.Singleton.transform.position - new Vector3(cameraFollowEndPosition.x, cameraFollowEndPosition.y, cameraFollowEndPosition.z);
+            var finalDirection = PlayerFsm.Singleton.transform.position - _finalCamera.transform.position;
             PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(finalDirection, 0.5f);
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
+                
+                if (d - t < 0.75f) _finalCamera.Priority = 30;
                 _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(t /
                     (d * cameraSplineFollowDurationMultiplier));
                 _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(w);
@@ -208,11 +217,13 @@ public class MajorLeylineNode : MonoBehaviour
             }
             
 
-            _virtualCamera.Priority = -20;
-
             t = 0;
             d = 0.6f;
 
+            _splineCamera.Priority = -20;
+            
+            _checkpoint.gameObject.SetActive(true);
+            
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
@@ -220,13 +231,19 @@ public class MajorLeylineNode : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
-
-            _checkpoint.gameObject.SetActive(true);
+            
+            
+            yield return new WaitForSeconds(1.75f);
+            
+            _finalCamera.Priority = -20;
+            
+            
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
         }
         
         IEnumerator FovCoroutine()
         {
+            
             var t = 0f;
             var d = 1.5f;
 
@@ -235,8 +252,11 @@ public class MajorLeylineNode : MonoBehaviour
             var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
 
             var desiredOffset = new Vector3(0, 0, -8f);
-            var desiredFov = 65f;
+            var desiredFov = 60f;
 
+            
+            while (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition))
+                yield return null;
             
             
             while (t < d)
@@ -250,10 +270,12 @@ public class MajorLeylineNode : MonoBehaviour
                 yield return null;
             }
 
+            yield return new WaitForSeconds(0.75f);
+            
             _channelHaloRenderer.enabled = false;
             
             t = 0f;
-            d = 0.75f;
+            d = 1.5f;
             
             while (t < d)
             {

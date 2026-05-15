@@ -221,7 +221,7 @@ public partial class PlayerFsm
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
     private const float ArriveAtWalkPositionTargetDistance = 1.75f;
-    private const float ArriveAtWalkPositionTargetRangedDistance = 100f;
+    private const float ArriveAtWalkPositionTargetRangedDistance = 5f;
 
     private const float TrialTeleportStartupDuration = 0.5f;
     private const float TrialTeleportDuration = 1.5f;
