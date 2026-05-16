@@ -138,13 +138,18 @@ public class FoliageSystem : MonoBehaviour
         
         if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
                 QueryTriggerInteraction.Collide)) return true;
+
+        if (Physics.Raycast(hitInfo.point + Vector3.up, Vector3.up, height - gap, Fsm.GetEnvironmentalLayermask(),
+                QueryTriggerInteraction.Ignore))
+        {
+            // TODO: COMPUTE HEIGHT BASED ON UPWARDS RAYCAST POINT
+            height = 10;
+            origin = hitInfo.point + Vector3.up * height;
+        };
         
         // raycast both up and down to check for overhangs
-        if (!Physics.Raycast(origin, Vector3.down, height - gap, Fsm.GetEnvironmentalLayermask(),
-                QueryTriggerInteraction.Ignore)) return false;
-        
-        return !Physics.Raycast(hitInfo.point + Vector3.up, Vector3.up, height - gap, Fsm.GetEnvironmentalLayermask(),
-                QueryTriggerInteraction.Ignore);
+        return Physics.Raycast(origin, Vector3.down, height - gap, Fsm.GetEnvironmentalLayermask(),
+            QueryTriggerInteraction.Ignore);
     }
 
     Bounds GetLocalColliderBounds(Collider col)

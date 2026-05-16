@@ -13,10 +13,12 @@ public partial class PlayerFsm
         SetAnimatorMomentum();
         SetAnimatorSpeedMod();
 
-        if (WaterRaycast(out var swimRaycastParam))
-        {
-            if (swimRaycastParam.distance > 3f && !_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
-        }
+        if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
+        
+        // if (WaterRaycast(out var swimRaycastParam))
+        // {
+        //     if (swimRaycastParam.distance > 3f && !_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
+        // }
     }
 
     private void GroundMoveConfigure()
