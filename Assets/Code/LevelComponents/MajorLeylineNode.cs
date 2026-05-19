@@ -14,18 +14,22 @@ public class MajorLeylineNode : MonoBehaviour
     
     private SplineContainer _visualSplineContainer;
     private SplineContainer _cameraSplineContainer;
-    private Interactable _interactable;
+    private Interactable _mainInteractable;
+    private Interactable _dialogueInteractable;
     private Material _visualSplineMaterial;
 
-    private Renderer _interactableHaloRenderer;
-    private Material _interactableHaloMaterial;
+    // private Renderer _interactableHaloRenderer;
+    // private Material _interactableHaloMaterial;
     private Renderer _completedHaloRenderer;
     private Material _completedHaloMaterial;
     private Renderer _channelHaloRenderer;
     private Material _channelHaloMaterial;
     private Material _nodeBaseMaterial;
     private Light _interactableLight;
-    private Material _curvedStarMaterial;
+
+    private Renderer _curvedStarRenderer;
+    private Renderer _curvedStarOutlineRenderer;
+
 
     private ParticleSystem _channelParticles;
     private ParticleSystem _completedParticles;
@@ -36,9 +40,8 @@ public class MajorLeylineNode : MonoBehaviour
     private CinemachineVirtualCamera _finalCamera;
 
     private MinorCheckpoint _checkpoint;
-
-    private TriggerProxy _tutorialTriggerProxy;
-    private DialogueController _tutorialDialogueController;
+    
+    private Transform _nodeTransform;
 
     private void Awake()
     {
@@ -51,19 +54,21 @@ public class MajorLeylineNode : MonoBehaviour
         _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
 
         _visualSplineMaterial = _visualSplineContainer.GetComponent<MeshRenderer>().material;
-        _interactable = GetComponentInChildren<Interactable>();
+        _mainInteractable = transform.Find("Node").Find("Interactable").GetComponent<Interactable>();
+        _dialogueInteractable = transform.Find("Node").Find("Dialogue").GetComponent<Interactable>();
         
         _splineCamera = transform.Find("MajorLeylineNodeSplineCamera").GetComponent<CinemachineVirtualCamera>();
         _finalCamera = transform.Find("Node").Find("FinalCameraHolder").GetComponentInChildren<CinemachineVirtualCamera>();
         _splineCamera.Priority = -20;
         _finalCamera.Priority = -20;
 
-        _interactableHaloRenderer = transform.Find("Node").Find("InteractableHalo").GetComponent<Renderer>();
-        _interactableHaloMaterial = _interactableHaloRenderer.material;
+        _nodeTransform = transform.Find("Node");
         _completedHaloRenderer = transform.Find("Node").Find("CompletedHalo").GetComponent<Renderer>();
         _completedHaloMaterial = _completedHaloRenderer.material;
         
-        _curvedStarMaterial = transform.Find("Node").Find("CurvedStar").GetComponent<Renderer>().material;
+        _curvedStarRenderer = transform.Find("Node").Find("CurvedStar").GetComponent<Renderer>();
+        _curvedStarOutlineRenderer = transform.Find("Node").Find("CurvedStarOutline").GetComponent<Renderer>();
+        
         _channelHaloRenderer = transform.Find("Node").Find("ChannelHalo").GetComponent<Renderer>();
         _channelHaloMaterial = _channelHaloRenderer.material;
         _channelParticles = transform.Find("Node").Find("ChannelParticles").GetComponent<ParticleSystem>();
@@ -76,48 +81,37 @@ public class MajorLeylineNode : MonoBehaviour
 
         _visualSplineMaterial.SetFloat("_FillWeight", 0f);
         _checkpoint.gameObject.SetActive(false);
-
-        _tutorialTriggerProxy = GetComponentInChildren<TriggerProxy>();
-        _tutorialDialogueController = transform.Find("TutorialDialogue").GetComponent<DialogueController>();
         
-        if (previousNodeMetaName == "")
-        {
-            // _visualSplineContainer.gameObject.SetActive(false);
-            _interactable.SetEnabled(true);
-        }
-        else
-        {
-            _interactable.SetEnabled(SaveSystem.GetMajorLeylineNode(previousNodeMetaName));
-
-            if (!SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
-            {
-                _interactableHaloRenderer.enabled = false;
-                _channelHaloRenderer.enabled = false;
-                // _curvedStarMaterial.SetFloat("_Clip", 1);
-                _interactableLight.enabled = false;
-            }
-        }
         
+        _curvedStarRenderer.enabled = false;
+        _curvedStarOutlineRenderer.enabled = false;
+
+
+        if (previousNodeMetaName == "" && !SaveSystem.GetMajorLeylineNode(metaName))
+        {
+            MakeInteractable();
+            return;
+        }
+
         if (SaveSystem.GetMajorLeylineNode(metaName))
         {
-            _interactable.SetEnabled(false);
-            _interactable.enabled = false;
-            _visualSplineMaterial.SetFloat("_FillWeight", 1f);
-
-            _interactableHaloRenderer.enabled = false;
-            _channelHaloRenderer.enabled = false;
-            // _curvedStarMaterial.SetFloat("_Clip", 1f);
-            _interactableLight.enabled = false;
-            _nodeBaseMaterial.SetFloat("_CompletionWeight", 1f);
-            _checkpoint.gameObject.SetActive(true);
+            MakeCompleted();
+            return;
         }
+
+        if (!SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
+        {
+            MakeUninteractable();
+            return;
+        }
+        
+        MakeInteractable();
     }
 
     private void OnEnable()
     {
-        _interactable.OnInteracted += OnInteracted;
+        _mainInteractable.OnInteracted += OnInteracted;
         SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
-        _tutorialTriggerProxy.OnTriggerProxyStay += OnTutorialTrigger;
     }
 
     private void OnTutorialTrigger(Collider obj)
@@ -130,9 +124,8 @@ public class MajorLeylineNode : MonoBehaviour
 
     private void OnDisable()
     {
-        _interactable.OnInteracted -= OnInteracted;
+        _mainInteractable.OnInteracted -= OnInteracted;
         SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
-        _tutorialTriggerProxy.OnTriggerProxyStay -= OnTutorialTrigger;
     }
 
     void Start()
@@ -146,91 +139,62 @@ public class MajorLeylineNode : MonoBehaviour
     void OnInteracted()
     {
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition);
-        PlayerFsm.Singleton.walkToPositionTarget = _interactable.transform.position;
+        PlayerFsm.Singleton.walkToPositionTarget = _mainInteractable.transform.position;
         
         StartCoroutine(MainCoroutine());
         StartCoroutine(FovCoroutine());
         
         SaveSystem.WriteMajorLeylineNode(metaName);
-        _interactable.SetEnabled(false);
+        _mainInteractable.SetEnabled(false);
 
         IEnumerator MainCoroutine()
         {
             
-            var t = 0f;
-            var d = 0.5f;
-            var channelBaseScale = _channelHaloRenderer.transform.localScale;
 
+            var cameraDirection = _nodeTransform.position - Camera.main.transform.position;
+            PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(cameraDirection, 3f, 0.4f, 2f);
+            
+            // Wait for player to be in animation
             while (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition))
                 yield return null;
-
+            
+            CutsceneManager.Singleton.SetPseudoCutsceneActive();
+            
             yield return new WaitForSeconds(0.5f);
             
+            // Animate halos
+            var t = 0f;
+            var d = 1.5f;
+            var channelBaseScale = _channelHaloRenderer.transform.localScale;
             _channelParticles.Play();
-            
-            var cameraSplineDuration = Mathf.Min(_visualSplineContainer.Spline.GetLength() * 0.03f, 7f);
-            var cameraSplineT = Mathf.Max(0, cameraSplineDuration - 2.5f);
-            _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(cameraSplineT);
-            _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(cameraSplineT);
-
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
                 _channelHaloRenderer.transform.localScale = Vector3.Lerp(channelBaseScale, channelBaseScale * 0.8f, w);
                 
-                _channelHaloMaterial.SetFloat("_Dot", Mathf.Lerp(2f, 0, w));
+                _channelHaloMaterial.SetFloat("_Dot", Mathf.Lerp(3f, 0, w));
                 _channelHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(3f, 0, w));
-                _interactableHaloMaterial.SetFloat("_Dot", Mathf.Lerp(1.5f, 0, w));
-                _interactableHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(2f, 0, w));
+                // _interactableHaloMaterial.SetFloat("_Dot", Mathf.Lerp(1.5f, 0, w));
+                // _interactableHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(2f, 0, w));
                 
                 t += Time.deltaTime;
                 yield return null;
             }
-
-            _interactableHaloRenderer.enabled = false;
-            _channelHaloRenderer.enabled = false;
-            yield return new WaitForSeconds(0.9f);
-            // Util.InvokeSphereEffect(_interactable.transform.position + Vector3.up * 2f, Vector3.one * 17f, 1.15f, 1.25f, -3f);
-            // _completedParticles.Play();
-            yield return new WaitForSeconds(0.5f);
-            // CutsceneManager.Singleton.SetPseudoCutsceneActive(true, _cameraLookAt);
             
-            // _splineCamera.Priority = 20;
-
+            // _interactableHaloRenderer.enabled = false;
+            _channelHaloRenderer.enabled = false;
             _interactableLight.enabled = false;
             _channelParticles.Stop();
-            _completedParticles.Stop();
             _visualSplineMaterial.SetFloat("_FillWeight", 1f);
-            // _curvedStarMaterial.SetFloat("_Clip", 1f);
-
-            var cameraFollowEndPosition = _cameraSplineContainer.EvaluatePosition(1);
-            var finalDirection = PlayerFsm.Singleton.transform.position - _finalCamera.transform.position;
-            // PlayerCinemachineFreeLook.Singleton.OnPlayerCinemachineFreeLookScript(finalDirection, 0.5f);
-
-            // _finalCamera.Priority = 30;
             
-            // while (cameraSplineT < cameraSplineDuration)
-            // {
-            //     var w = Util.SmoothLerp01(cameraSplineT / cameraSplineDuration);
-            //     
-            //     print(w);
-            //     
-            //     if (cameraSplineDuration - cameraSplineT < 0.75f) _finalCamera.Priority = 30;
-            //     _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(cameraSplineT /
-            //         (cameraSplineDuration * cameraSplineFollowDurationMultiplier));
-            //     _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(w);
-            //     _visualSplineMaterial.SetFloat("_FillWeight", w);
-            //     cameraSplineT += Time.deltaTime;
-            //     yield return null;
-            // }
+            yield return new WaitForSeconds(0.5f);
+            _checkpoint.gameObject.SetActive(true);
             
-
+            yield return new WaitForSeconds(1.0f);
+            
+            // Animate line glow on node base
             t = 0;
             d = 0.6f;
-
-            _splineCamera.Priority = -20;
-            
-            _checkpoint.gameObject.SetActive(true);
             
             while (t < d)
             {
@@ -240,12 +204,9 @@ public class MajorLeylineNode : MonoBehaviour
                 yield return null;
             }
             
-            
-            yield return new WaitForSeconds(1.75f);
-            
-            _finalCamera.Priority = -20;
-            
-            
+            yield return new WaitForSeconds(1f);
+            _dialogueInteractable.SetEnabled(true);
+            ShowCurvedStarForDialogue();
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
         }
         
@@ -253,14 +214,14 @@ public class MajorLeylineNode : MonoBehaviour
         {
             
             var t = 0f;
-            var d = 2f;
+            var d = 1f;
 
             var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
             var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
             var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
 
-            var desiredOffset = new Vector3(0, 0, -30f);
-            var desiredFov = 42f;
+            var desiredOffset = new Vector3(0, 0, -10f);
+            var desiredFov = 60f;
 
             
             while (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition))
@@ -278,13 +239,13 @@ public class MajorLeylineNode : MonoBehaviour
                 yield return null;
             }
 
-            yield return new WaitForSeconds(0.4f);
-            
-
+            while (!_checkpoint.gameObject.activeInHierarchy) yield return null;
             
             t = 0f;
-            d = 0.25f;
-            var s = 10f;
+            d = 10f;
+            var s = 2f;
+            // freeLook.m_Lens.FieldOfView = 85f;
+            // offset.m_Offset = new Vector3(0, 0, 3f);
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
@@ -308,16 +269,53 @@ public class MajorLeylineNode : MonoBehaviour
     
     private void OnSaveDataUpdated(SaveSystem.SaveData saveData)
     {
-        if (!_interactable.isEnabled && !SaveSystem.GetMajorLeylineNode(metaName) &&
+        if (!_mainInteractable.isEnabled && !SaveSystem.GetMajorLeylineNode(metaName) &&
             SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
         {
-            _interactable.SetEnabled(true);
-            _interactable.enabled = true;
-            
-            _interactableLight.enabled = true;
-            _interactableHaloRenderer.enabled = true;
-            _channelHaloRenderer.enabled = true;
-            // _curvedStarMaterial.SetFloat("_Clip", 0.5f);
+            MakeInteractable();
         }
+    }
+
+    private void MakeUninteractable()
+    {
+        _mainInteractable.SetEnabled(false);
+        // _interactableHaloRenderer.enabled = false;
+        _channelHaloRenderer.enabled = false;
+        // _curvedStarMaterial.SetFloat("_Clip", 1);
+        // _curvedStarOutlineMaterial.SetFloat("_Clip", 1);
+        _interactableLight.enabled = false;
+        _dialogueInteractable.SetEnabled(false);
+    }
+
+    private void MakeInteractable()
+    {
+        _mainInteractable.SetEnabled(true);
+        // _curvedStarMaterial.SetFloat("_Clip", 0);
+        // _curvedStarOutlineMaterial.SetFloat("_Clip", 0);
+        _interactableLight.enabled = true;
+        _channelHaloRenderer.enabled = true;
+        _dialogueInteractable.SetEnabled(false);
+    }
+
+    private void MakeCompleted()
+    {
+        _mainInteractable.SetEnabled(false);
+        _mainInteractable.enabled = false;
+        _visualSplineMaterial.SetFloat("_FillWeight", 1f);
+        // _interactableHaloRenderer.enabled = false;
+        _channelHaloRenderer.enabled = false;
+        // _curvedStarMaterial.SetFloat("_Clip", 1f);
+        _interactableLight.enabled = false;
+        _nodeBaseMaterial.SetFloat("_CompletionWeight", 1f);
+        _checkpoint.gameObject.SetActive(true);
+        _dialogueInteractable.SetEnabled(SaveSystem.GetMajorLeylineNodeDialogueLocation() == metaName);
+        ShowCurvedStarForDialogue();
+    }
+
+    private void ShowCurvedStarForDialogue()
+    {
+        if (!_dialogueInteractable.isEnabled || !_dialogueInteractable.gameObject.activeInHierarchy) return;
+        _curvedStarRenderer.enabled = true;
+        _curvedStarOutlineRenderer.enabled = true;
     }
 }

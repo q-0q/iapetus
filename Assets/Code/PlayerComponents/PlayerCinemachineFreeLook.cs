@@ -210,7 +210,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         // _timeSinceRecenter = _recenterTime + _rampUpTime;
     }
 
-    public void OnPlayerCinemachineFreeLookScript(Vector3 direction, float duration, float y = 0.7f)
+    public void OnPlayerCinemachineFreeLookScript(Vector3 direction, float duration, float y = 0.7f, float linger = 0f)
     {
         if (_scriptActive) return;
         StartCoroutine(InvokeScript(direction, duration));
@@ -234,6 +234,9 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
                 t += Time.deltaTime;
                 yield return null;
             }
+
+            yield return new WaitForSeconds(linger);
+            
             _scriptActive = false;  
         }
     }

@@ -13,6 +13,7 @@ public class InteractionCanvas : MonoBehaviour
     public Image Image;
     private bool psuedo;
     private string psuedoText;
+    private RectTransform rectTransform;
 
     private void Awake()
     {
@@ -24,6 +25,7 @@ public class InteractionCanvas : MonoBehaviour
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         _tmp = GetComponentInChildren<TextMeshProUGUI>();
+        rectTransform = _tmp.transform.parent.GetComponent<RectTransform>();
         _canvasGroup.alpha = 0;
         psuedo = false;
     }
@@ -45,6 +47,8 @@ public class InteractionCanvas : MonoBehaviour
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 10f);
             _tmp.text = interactable.text;
+            _tmp.CalculateLayoutInputHorizontal();
+            LayoutRebuilder.ForceRebuildLayoutImmediate(rectTransform);
         }
         else
         {

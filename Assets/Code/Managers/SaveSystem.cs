@@ -78,6 +78,7 @@ public class SaveSystem : MonoBehaviour
         public int cultLocationCampId;
         public List<string> bitDeposits;
         public List<string> majorLeylineNodes;
+        public string majorLeylineNodeDialogueLocation;
         public float playTime;
         public string gameVersion;
         
@@ -95,6 +96,7 @@ public class SaveSystem : MonoBehaviour
             lemonCollections = new List<string>();
             bells = new List<string>();
             majorLeylineNodes = new List<string>();
+            majorLeylineNodeDialogueLocation = "";
             bitCount = 0;
             bellCount = 0;
             playTime = 0;
@@ -102,6 +104,7 @@ public class SaveSystem : MonoBehaviour
             cultLocationCampId = 0;
             bitDeposits = new List<string>();
             gameVersion = "";
+            
         }
     }
 
@@ -375,6 +378,7 @@ public class SaveSystem : MonoBehaviour
         SaveData data = LoadCachedSaveData();
         if (data.majorLeylineNodes.Contains(metaName)) return;
         data.majorLeylineNodes.Add(metaName);
+        data.majorLeylineNodeDialogueLocation = metaName;
         Singleton._cachedSaveData = data;
         WriteSaveData(data);
     }
@@ -383,6 +387,12 @@ public class SaveSystem : MonoBehaviour
     {
         SaveData data = LoadCachedSaveData();
         return data.majorLeylineNodes.Contains(metaName);
+    }
+    
+    public static string GetMajorLeylineNodeDialogueLocation()
+    {
+        SaveData data = LoadCachedSaveData();
+        return data.majorLeylineNodeDialogueLocation;
     }
     
     private static void WriteSaveData(SaveData saveData, bool screenCapture = true)

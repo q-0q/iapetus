@@ -75,7 +75,7 @@ public class MultiSwitchDoor : MonoBehaviour
     {
         if (!IsSwitchInMySwitches(switchFsm)) return;
         StartCoroutine(MaterialCoroutine());
-        if (!IsAllSwitchesEnabled()) return;
+        // if (!IsAllSwitchesEnabled()) return;
         StartCoroutine(CameraCoroutine());
         
 

@@ -7,18 +7,17 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MajorLeylineNodeWaterMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: 060ababdec39847a8ad1c61bf86d8d2d,
+  m_Name: CurvedOutlineMaterial
+  m_Shader: {fileID: -6465566751694194690, guid: c89a020c096e34d5db1639ffebdbe426,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
-  m_InvalidKeywords:
-  - _EMISSION
-  m_LightmapFlags: 2
+  m_InvalidKeywords: []
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
@@ -40,39 +39,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Foam_Distance_A: 0.69
-    - _Foam_Distance_B: 8.2
-    - _FogEnd_A: 3
-    - _FogStart_A: -1
-    - _Fog_End_B: 0
-    - _Fog_Start_B: -40
-    - _InvertLerp: 1
-    - _LerpDistance: 91
-    - _LerpFalloff: 10
-    - _Metallic_A: 0
-    - _Metallic_B: 0.6
-    - _Noise_Scale_A: 0.225
-    - _Noise_Scale_B: 0.244
-    - _QueueControl: 1
+    - _Clip: 0.3
+    - _QueueControl: 0
     - _QueueOffset: 0
-    - _Refraction_A: 0.1
-    - _Refraction_B: 0.0913
-    - _Smoothness_A: 0.929
-    - _Smoothness_B: 1
-    - _Transparency: 0.205
-    - _Wave_Speed_A: 1.8
-    - _Wave_Speed_B: 4.4
-    m_Colors:
-    - _Foam_Color_A: {r: 0.6981132, g: 0.6981132, b: 0.6981132, a: 0.77254903}
-    - _Foam_Color_B: {r: 1, g: 1, b: 1, a: 0.30980393}
-    - _FogColor_A: {r: 0, g: 0, b: 0, a: 0}
-    - _Fog_Color_B: {r: 0, g: 0.37254903, b: 0.4627451, a: 0}
-    - _LerpOrigin: {r: 0, g: 0, b: 0, a: 0}
-    - _Water_Color_A: {r: 0, g: 0, b: 0, a: 0}
-    - _Water_Color_B: {r: 0, g: 0.30588236, b: 0.32156864, a: 0.21176471}
+    m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &6969150351881974758
+--- !u!114 &2534227994405077604
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,5 +56,5 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
   version: 10

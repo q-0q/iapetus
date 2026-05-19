@@ -11,12 +11,13 @@ public class MinorCheckpoint : MonoBehaviour
 {
 
     private static MinorCheckpoint _currentMinorCheckpoint;
-    private ParticleSystem _activeParticles;
     private ParticleSystem _triggerParticles;
     private ParticleSystem _seekParticles;
     private Transform _playerSpawnTransform;
     private Light _light;
-    private Renderer _haloRenderer;
+    private GameObject _haloRenderer;
+
+    private bool haloCoroutineActive = false;
 
 
     private static event Action<MinorCheckpoint> OnPlayerMinorCheckpointSet;
@@ -27,22 +28,15 @@ public class MinorCheckpoint : MonoBehaviour
     private void OnPlayerMinorCheckpointSetMethod(MinorCheckpoint minorCheckpoint)
     {
         
-        // print(minorCheckpoint.name);
-        // return;
-        
         if (minorCheckpoint == this)
         {
-            // _haloRenderer.enabled = false;
             if (_currentMinorCheckpoint == this) return;
             _currentMinorCheckpoint = this;
             StartCoroutine(InvokeSeekParticles());
         }
         else
         {
-            _haloRenderer.enabled = true;
-            _light.enabled = false;
             _triggerParticles.Stop();
-            _activeParticles.Stop();
         }
         
     }
@@ -50,30 +44,40 @@ public class MinorCheckpoint : MonoBehaviour
     private void OnEnable()
     {
         OnPlayerMinorCheckpointSet += OnPlayerMinorCheckpointSetMethod;
+        _haloRenderer.SetActive(false);
+        StartCoroutine(MakeHaloRendererEnabled());
+    }
+
+    private IEnumerator MakeHaloRendererEnabled()
+    {
+        haloCoroutineActive = true;
+        yield return new WaitForSeconds(0.2f);
+        _haloRenderer.SetActive(true);
+        haloCoroutineActive = false;
     }
 
     private void OnDisable()
     {
         OnPlayerMinorCheckpointSet -= OnPlayerMinorCheckpointSetMethod;
+        _haloRenderer.SetActive(false);
     }
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         transform.Find("TriggerParticles").TryGetComponent(out _triggerParticles);
-        transform.Find("ActiveParticles").TryGetComponent(out _activeParticles);
         transform.Find("SeekParticles").TryGetComponent(out _seekParticles);
-        _haloRenderer = transform.Find("Halo").GetComponent<Renderer>();
+        _haloRenderer = transform.Find("Halo").gameObject;
         _playerSpawnTransform = transform.Find("PlayerSpawnTransform");
-        _light = GetComponentInChildren<Light>();
         _currentMinorCheckpoint = null;
+        _light = GetComponentInChildren<Light>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        _haloRenderer.enabled = !CultTrialManager.Singleton.isCurseEnabled;
+        if (!haloCoroutineActive) _haloRenderer.SetActive(!CultTrialManager.Singleton.isCurseEnabled);
         if (CultTrialManager.Singleton.isCurseEnabled) return;
         var playerDistance = Vector3.Distance(PlayerFsm.Singleton.transform.position, transform.position);
         var playerYDelta = PlayerFsm.Singleton.transform.position.y - transform.position.y;
@@ -83,10 +87,7 @@ public class MinorCheckpoint : MonoBehaviour
         }
         else if (playerDistance > 80f && _currentMinorCheckpoint == this)
         {
-            _haloRenderer.enabled = true;
-            _light.enabled = false;
             _triggerParticles.Stop();
-            _activeParticles.Stop();
             _currentMinorCheckpoint = null;
         }
         
@@ -95,7 +96,7 @@ public class MinorCheckpoint : MonoBehaviour
     IEnumerator InvokeSeekParticles()
     {
         _seekParticles.Play();
-        Util.InvokeSphereEffect(transform.position, Vector3.one * 15f, 1.25f, 1f, -3f);
+        Util.InvokeSphereEffect(_haloRenderer.transform.position - Vector3.up, Vector3.one * 15f, 1.25f, 1f, -3f);
         FMODUnity.RuntimeManager.PlayOneShotAttached(seekEventReference, gameObject);
         var seekParticlesStartPosition = PlayerFsm.Singleton.transform.position + Vector3.up * 3f;
         var seekParticlesEndPosition = transform.position + Vector3.up * 0.1f;
@@ -109,9 +110,8 @@ public class MinorCheckpoint : MonoBehaviour
             yield return null;
         }
 
-        _triggerParticles.Play();
-        _activeParticles.Play();
-        _light.enabled = true;
+        // _triggerParticles.Play();
+        // _light.enabled = true;
         FMODUnity.RuntimeManager.PlayOneShotAttached(triggerEventReference, gameObject);
         _seekParticles.Stop();
         SaveSystem.WritePlayerInGamePosition(_playerSpawnTransform.position,

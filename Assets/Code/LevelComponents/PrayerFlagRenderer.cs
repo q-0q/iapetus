@@ -54,6 +54,8 @@ public class PrayerFlagRenderer : MonoBehaviour
 
     void Update()
     {
+        // return;
+        
         var spline = _splineContainer.Spline;
         float len = spline.GetLength();
 
