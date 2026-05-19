@@ -11,6 +11,7 @@ public class MajorLeylineNode : MonoBehaviour
     public string metaName;
     public string previousNodeMetaName;
     public float cameraSplineFollowDurationMultiplier = 1.0f;
+    public bool cameraSpline = false;
     
     private SplineContainer _visualSplineContainer;
     private SplineContainer _cameraSplineContainer;
@@ -42,6 +43,10 @@ public class MajorLeylineNode : MonoBehaviour
     private MinorCheckpoint _checkpoint;
     
     private Transform _nodeTransform;
+
+    private bool _cameraSplineActive;
+
+    private const float CameraSplineDistance = 15f;
 
     private void Awake()
     {
@@ -85,6 +90,7 @@ public class MajorLeylineNode : MonoBehaviour
         
         _curvedStarRenderer.enabled = false;
         _curvedStarOutlineRenderer.enabled = false;
+        _cameraSplineActive = false;
 
 
         if (previousNodeMetaName == "" && !SaveSystem.GetMajorLeylineNode(metaName))
@@ -134,6 +140,10 @@ public class MajorLeylineNode : MonoBehaviour
         var curveLength = _visualSplineContainer.Spline.GetLength();
         _visualSplineMaterial.SetFloat("_SplineLength", curveLength);
         
+        var startingT = (curveLength - CameraSplineDistance) / curveLength;
+        _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(startingT));
+        _cameraFollow.position = _cameraSplineContainer.transform.TransformPoint(_cameraSplineContainer.Spline.EvaluatePosition(0));
+        
     }
 
     void OnInteracted()
@@ -173,9 +183,7 @@ public class MajorLeylineNode : MonoBehaviour
                 _channelHaloRenderer.transform.localScale = Vector3.Lerp(channelBaseScale, channelBaseScale * 0.8f, w);
                 
                 _channelHaloMaterial.SetFloat("_Dot", Mathf.Lerp(3f, 0, w));
-                _channelHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(3f, 0, w));
-                // _interactableHaloMaterial.SetFloat("_Dot", Mathf.Lerp(1.5f, 0, w));
-                // _interactableHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(2f, 0, w));
+                _channelHaloMaterial.SetFloat("_FresnelDepth", Mathf.Lerp(3f, 0, w)); 
                 
                 t += Time.deltaTime;
                 yield return null;
@@ -185,10 +193,16 @@ public class MajorLeylineNode : MonoBehaviour
             _channelHaloRenderer.enabled = false;
             _interactableLight.enabled = false;
             _channelParticles.Stop();
-            _visualSplineMaterial.SetFloat("_FillWeight", 1f);
+            
+            if (cameraSpline) StartCoroutine(CameraSplineCoroutine());
+            while (_cameraSplineActive) yield return null;
             
             yield return new WaitForSeconds(0.5f);
+            
+            _visualSplineMaterial.SetFloat("_FillWeight", 1f);
             _checkpoint.gameObject.SetActive(true);
+            _dialogueInteractable.SetEnabled(true);
+            ShowCurvedStarForDialogue();
             
             yield return new WaitForSeconds(1.0f);
             
@@ -205,8 +219,7 @@ public class MajorLeylineNode : MonoBehaviour
             }
             
             yield return new WaitForSeconds(1f);
-            _dialogueInteractable.SetEnabled(true);
-            ShowCurvedStarForDialogue();
+
             CutsceneManager.Singleton.ClearPseudoCutsceneActive();
         }
         
@@ -258,6 +271,33 @@ public class MajorLeylineNode : MonoBehaviour
             
             offset.m_Offset = Vector3.zero;
             freeLook.m_Lens.FieldOfView = baseFov;
+        }
+
+        IEnumerator CameraSplineCoroutine()
+        {
+            _cameraSplineActive = true;
+            var splineLength = _cameraSplineContainer.Spline.GetLength();
+            var startingT = (splineLength - CameraSplineDistance) / splineLength;
+            CutsceneManager.Singleton.SetPseudoCutsceneActive(_cameraLookAt);
+            _splineCamera.Priority = 30;
+
+            var t = 0f;
+            var d = 4f;
+
+            while (t < d)
+            {
+                var fillWeight = Mathf.Lerp(startingT, 1f, t / d);
+                _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(fillWeight));
+                _visualSplineMaterial.SetFloat("_FillWeight", fillWeight);
+                _cameraFollow.position = _cameraSplineContainer.transform.TransformPoint(_cameraSplineContainer.Spline.EvaluatePosition(Util.SmoothLerp01(t / d * 0.75f)));
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            
+            _splineCamera.Priority = -30;
+            _cameraSplineActive = false;
         }
     }
 

@@ -386,6 +386,7 @@ public class SaveSystem : MonoBehaviour
     public static bool GetMajorLeylineNode(string metaName)
     {
         SaveData data = LoadCachedSaveData();
+        if (data.majorLeylineNodes == null) return false;
         return data.majorLeylineNodes.Contains(metaName);
     }
     
@@ -493,7 +494,7 @@ public class SaveSystem : MonoBehaviour
                 throw new Exception("JsonUtility returned null.");
             }
 
-            if (data.gameVersion != Application.version && DeleteOutdatedSaves)
+            if (data.gameVersion != "" && data.gameVersion != Application.version && DeleteOutdatedSaves)
             {
                 throw new Exception("Outdated save.");
             }
