@@ -58,7 +58,7 @@ public partial class PlayerFsm
         SurgeConfigure();
         PressConfigure();
         KeyItemCollectConfigure();
-        InventoryConfigure();
+        ItemsConfigure();
         MajorLeylineNodeInteractConfigure();
         MinorLeylineConfigure();
     }
@@ -167,6 +167,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LongFall, "LongFall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.KeyItemCollect, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Inventory, "Inventory");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseMap, "Inventory");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MajorLeylineNodeInteract, "MajorLeylineInteract");
 

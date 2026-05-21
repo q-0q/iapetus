@@ -115,7 +115,7 @@ public partial class PlayerFsm : GravityFsm
         public static int KeyItemCollect;
 
         public static int Inventory;
-        public static int InventorySlowdown;
+        public static int ItemSlowdown;
 
         public static int UseIncenseBurner;
         public static int MajorLeylineNodeInteract;
@@ -124,6 +124,9 @@ public partial class PlayerFsm : GravityFsm
         public static int MinorLeylineStartup;
         public static int MinorLeylineActive;
         public static int WalkToMajorLeylinePosition;
+        public static int UseMap;
+        public static int InventorySlowdown;
+        public static int MapSlowdown;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -175,7 +178,7 @@ public partial class PlayerFsm : GravityFsm
         public static int UseIncenseBurner;
 
         public static int MinorLeylineTrigger;
-        
+        public static int Map;
     }
     
     protected override void OnAwake()
@@ -240,6 +243,7 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Attack");
         _inputBuffer.InitInput("Interact", false, true);
         _inputBuffer.InitInput("Inventory");
+        _inputBuffer.InitInput("Map");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
         _checkpointVector3 = transform.position;
@@ -583,9 +587,9 @@ public partial class PlayerFsm : GravityFsm
             PressOnUpdate();
         }
         
-        if (Machine.IsInState(PlayerFsmState.InventorySlowdown))
+        if (Machine.IsInState(PlayerFsmState.ItemSlowdown))
         {
-            InventorySlowdownOnUpdate();
+            ItemSlowdownOnUpdate();
         }
 
         if (Machine.IsInState(PlayerFsmState.MinorLeylineStartup))

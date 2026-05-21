@@ -35,6 +35,11 @@ public partial class PlayerFsm
             if (SaveSystem.GetAllItems().Count > 0) Machine.Fire(PlayerFsmTrigger.Inventory);
         }
         
+        if (_inputBuffer.IsBuffered("Map"))
+        {
+            if (SaveSystem.GetAllItems().Contains("Map")) Machine.Fire(PlayerFsmTrigger.Map);
+        }
+        
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
         if (angle > HardTurnMinimumAngle)

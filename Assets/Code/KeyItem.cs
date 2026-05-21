@@ -92,6 +92,21 @@ public static class KeyItemRegistry
             GetUseConfirmation = () => "Return to a previous location?"
         });
         
+        KeyItemRegistrations.Add("Map", new KeyItemRegistration()
+        {
+            displayName = "Glyphstone",
+            description = "A chunk of stone engraved with the Mountain Glyph.\n\nAccording to the Archaeol, the pattern is a sacred geometric depiction of the Mountain itself.",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            GetUseDescription = () => "Shows your location.",
+            GetCanUse = () => true,
+            onUse = () =>
+            {
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.UseMap);
+            },
+            GetUseConfirmation = () => "Open the map?"
+        });
+        
     }
 }
 

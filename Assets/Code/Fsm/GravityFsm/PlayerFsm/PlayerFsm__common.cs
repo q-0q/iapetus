@@ -140,7 +140,7 @@ public partial class PlayerFsm
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
     private const float GroundMoveMinimumAnimatorSpeedMod = 0.6f;
-    private const float GroundMoveMaximumAnimatorSpeedMod = 3f;
+    private const float GroundMoveMaximumAnimatorSpeedMod = 2.6f;
     private const float GroundSlopeMaximumMomentumAngle = 130f;
     private const float GroundSlopeMaximumMomentumModifier = 0.45f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
