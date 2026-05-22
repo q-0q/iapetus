@@ -102,7 +102,7 @@ public static class KeyItemRegistry
             GetCanUse = () => true,
             onUse = () =>
             {
-                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.UseMap);
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.MapSlowdown);
             },
             GetUseConfirmation = () => "Open the map?"
         });
