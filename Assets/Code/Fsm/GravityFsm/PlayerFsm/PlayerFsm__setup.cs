@@ -69,7 +69,7 @@ public partial class PlayerFsm
 
         base.SetupStateMaps();
         StateMapConfig.Duration.Add(PlayerFsmState.Jumpsquat, 0.145f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Landsquat, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.HardLand, 0.65f);
         StateMapConfig.Duration.Add(PlayerFsmState.CutsceneHardLand, 2.8f, 1);
         StateMapConfig.Duration.Add(PlayerFsmState.HardLandRoll, 0.35f);

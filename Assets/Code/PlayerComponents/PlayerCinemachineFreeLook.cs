@@ -94,14 +94,14 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * Time.deltaTime;
         _timeSincePlayerLookInput += Time.deltaTime;
 
-        if (_timeSincePlayerLookInput >= 1.75f)
+        if (_timeSincePlayerLookInput >= 2.5f)
         {
             var y = 0.7f;
             if (DialogueCanvas.Singleton.currentDialogueController != null)
             {
                 y = DialogueCanvas.Singleton.currentDialogueController.CameraY;
             }
-            _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * Mathf.Lerp(0.25f, 2f, Mathf.InverseLerp(1.75f, 2.5f, _timeSincePlayerLookInput)));
+            _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * Mathf.Lerp(0.25f, 2f, Mathf.InverseLerp(2.5f, 3.5f, _timeSincePlayerLookInput)));
         }
         if (lookVector2.magnitude < 0.01f)
         {

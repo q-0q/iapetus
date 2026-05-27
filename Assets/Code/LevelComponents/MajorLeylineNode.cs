@@ -91,7 +91,7 @@ public class MajorLeylineNode : MonoBehaviour
         _curvedStarRenderer.enabled = false;
         _curvedStarOutlineRenderer.enabled = false;
         _cameraSplineActive = false;
-
+        
 
         if (previousNodeMetaName == "" && !SaveSystem.GetMajorLeylineNode(metaName))
         {
@@ -118,6 +118,7 @@ public class MajorLeylineNode : MonoBehaviour
     {
         _mainInteractable.OnInteracted += OnInteracted;
         SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
+        GlyphManager.MajorLeylineNodes.Add(this);
     }
 
     private void OnTutorialTrigger(Collider obj)
@@ -132,6 +133,7 @@ public class MajorLeylineNode : MonoBehaviour
     {
         _mainInteractable.OnInteracted -= OnInteracted;
         SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
+        GlyphManager.MajorLeylineNodes.Remove(this);
     }
 
     void Start()
@@ -357,5 +359,10 @@ public class MajorLeylineNode : MonoBehaviour
         if (!_dialogueInteractable.isEnabled || !_dialogueInteractable.gameObject.activeInHierarchy) return;
         _curvedStarRenderer.enabled = true;
         _curvedStarOutlineRenderer.enabled = true;
+    }
+
+    public SplineContainer GetVisualSplineContaier()
+    {
+        return _visualSplineContainer;
     }
 }

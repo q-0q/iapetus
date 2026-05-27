@@ -44,6 +44,7 @@ public partial class PlayerFsm
                 _currentPitonTransform.GetComponent<PitonController>().Rotate = true;
                 _wallsquattedSinceLeavingGround = true;
                 YVelocity = 0f;
+                LastUpwardsY = transform.position.y;
                 _currentPitonTransform.GetComponent<PitonController>().PlayLatchEvent();
                 
                 if (_currentPitonTransform != parentTransform)

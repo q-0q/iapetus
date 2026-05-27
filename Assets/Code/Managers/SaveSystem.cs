@@ -79,8 +79,11 @@ public class SaveSystem : MonoBehaviour
         public List<string> bitDeposits;
         public List<string> majorLeylineNodes;
         public string majorLeylineNodeDialogueLocation;
+        public string currentNearestMajorLeylineNode;
+        public float currentNeatestMajorLeylineNodeT;
         public float playTime;
         public string gameVersion;
+        
         
             
 
@@ -97,6 +100,8 @@ public class SaveSystem : MonoBehaviour
             bells = new List<string>();
             majorLeylineNodes = new List<string>();
             majorLeylineNodeDialogueLocation = "";
+            currentNearestMajorLeylineNode = "";
+            currentNeatestMajorLeylineNodeT = 0;
             bitCount = 0;
             bellCount = 0;
             playTime = 0;
@@ -394,6 +399,21 @@ public class SaveSystem : MonoBehaviour
     {
         SaveData data = LoadCachedSaveData();
         return data.majorLeylineNodeDialogueLocation;
+    }
+
+    public static void WriteNearestMajorLeylineNode(string node, float t)
+    {
+        SaveData data = LoadCachedSaveData();
+        data.currentNearestMajorLeylineNode = node;
+        data.currentNeatestMajorLeylineNodeT = t;
+        WriteSaveData(data);
+    }
+
+    public static string GetNearestMajorLeylineNode(out float t)
+    {
+        SaveData data = LoadCachedSaveData();
+        t = data.currentNeatestMajorLeylineNodeT;
+        return data.currentNearestMajorLeylineNode;
     }
     
     private static void WriteSaveData(SaveData saveData, bool screenCapture = true)

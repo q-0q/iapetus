@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Splines;
 using UnityEngine.UI;
 
 public class MapCanvas : MonoBehaviour
@@ -14,6 +16,9 @@ public class MapCanvas : MonoBehaviour
     private CanvasGroup _useConfirmationCanvasGroup;
     private Image _closeImage;
     private MapCanvasState _state;
+    private Transform _playerMarkerTransform;
+
+    private Dictionary<string, SplineContainer> _splineContainers;
     
     enum MapCanvasState
     {
@@ -37,6 +42,15 @@ public class MapCanvas : MonoBehaviour
         _useConfirmationCanvasGroup.alpha = 0;
         
         _closeImage = _mainCanvasGroup.transform.Find("CloseInput").Find("Image").GetComponent<Image>();
+        _playerMarkerTransform = _mainCanvasGroup.transform.Find("PlayerMarker");
+
+        _splineContainers = new Dictionary<string, SplineContainer>();
+        var splinesParent = _mainCanvasGroup.transform.Find("Minimap").Find("Splines");
+        for (int i = 0; i < splinesParent.childCount; i++)
+        {
+            var splineContainer = splinesParent.GetChild(i).GetComponent<SplineContainer>();
+            _splineContainers[splineContainer.gameObject.name] = splineContainer;
+        }
     }
 
     private void OnEnable()
@@ -91,6 +105,12 @@ public class MapCanvas : MonoBehaviour
         _mainCanvasGroup.blocksRaycasts = true;
         _useConfirmationCanvasGroup.blocksRaycasts = false;
         _useConfirmationCanvasGroup.alpha = 0;
+        
+        GlyphManager.Singleton.ComputePlayerMapPosition();
+
+        var currentNearestMajorLeylineNode = SaveSystem.GetNearestMajorLeylineNode(out var currentMajorLeylineNodeT);
+        var splineContainer = _splineContainers[currentNearestMajorLeylineNode];
+        _playerMarkerTransform.position = splineContainer.EvaluatePosition(Mathf.Clamp01(currentMajorLeylineNodeT));
         
         if (TutorialCanvas.Singleton.GetCurrentAction() == "Map") TutorialCanvas.Singleton.HideTutorialText();
     }
