@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Cinemachine;
+using Code.LevelComponents;
 using Code.Misc;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -47,6 +50,8 @@ public class MajorLeylineNode : MonoBehaviour
     private bool _cameraSplineActive;
 
     private const float CameraSplineDistance = 15f;
+    private List<TerminalColumn> _terminalColumns;
+    
 
     private void Awake()
     {
@@ -81,6 +86,7 @@ public class MajorLeylineNode : MonoBehaviour
         _interactableLight = transform.Find("Node").Find("InteractableLight").GetComponent<Light>();
         
         _nodeBaseMaterial = transform.Find("Node").Find("major-leyline-node").Find("MajorLeylineNodeBase").GetComponent<Renderer>().material;
+        _terminalColumns = GetComponentsInChildren<TerminalColumn>().ToList();
 
         _checkpoint = GetComponentInChildren<MinorCheckpoint>();
 
@@ -91,6 +97,8 @@ public class MajorLeylineNode : MonoBehaviour
         _curvedStarRenderer.enabled = false;
         _curvedStarOutlineRenderer.enabled = false;
         _cameraSplineActive = false;
+        
+
         
 
         if (previousNodeMetaName == "" && !SaveSystem.GetMajorLeylineNode(metaName))
@@ -216,6 +224,7 @@ public class MajorLeylineNode : MonoBehaviour
             {
                 var w = Util.SmoothLerp01(t / d);
                 _nodeBaseMaterial.SetFloat("_CompletionWeight", w);
+                SetTerminalColumnWeights(w);
                 t += Time.deltaTime;
                 yield return null;
             }
@@ -349,6 +358,7 @@ public class MajorLeylineNode : MonoBehaviour
         // _curvedStarMaterial.SetFloat("_Clip", 1f);
         _interactableLight.enabled = false;
         _nodeBaseMaterial.SetFloat("_CompletionWeight", 1f);
+        SetTerminalColumnWeights(1f);
         _checkpoint.gameObject.SetActive(true);
         _dialogueInteractable.SetEnabled(SaveSystem.GetMajorLeylineNodeDialogueLocation() == metaName);
         ShowCurvedStarForDialogue();
@@ -364,5 +374,13 @@ public class MajorLeylineNode : MonoBehaviour
     public SplineContainer GetVisualSplineContaier()
     {
         return _visualSplineContainer;
+    }
+
+    private void SetTerminalColumnWeights(float w)
+    {
+        foreach (var tc in _terminalColumns)
+        {
+            tc.SetCompletionWeight(w);
+        }
     }
 }

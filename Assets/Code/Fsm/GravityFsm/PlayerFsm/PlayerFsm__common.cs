@@ -144,7 +144,7 @@ public partial class PlayerFsm
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.65f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
-    private const float SprintMomentumGainMultiplier = 2.65f;
+    private const float SprintMomentumGainMultiplier = 3.5f;
     private const float SprintTurnLossMultiplier = 1.5f;
     private const float IdleMomentumThreshold = 3f;
     

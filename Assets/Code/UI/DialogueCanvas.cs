@@ -75,7 +75,9 @@ public class DialogueCanvas : MonoBehaviour
         StartCoroutine(Coroutine());
         IEnumerator Coroutine()
         {
-            yield return new WaitForSeconds(controller.canvasDelay + controller.dialogues[controller.currentDialogueIndex].canvasDelayOffset);
+            var delay = controller.canvasDelay + controller.dialogues[controller.currentDialogueIndex].canvasDelayOffset;
+            StartCoroutine(PlayerCinemachineFreeLook.Singleton.PreventYRecenterForDuration(delay));
+            yield return new WaitForSeconds(delay);
             currentDialogueController = controller;
             _currentTextIndex = 0;
         }

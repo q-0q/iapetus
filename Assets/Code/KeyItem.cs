@@ -154,7 +154,7 @@ public class KeyItem : MonoBehaviour
         if (collected) return;
         collected = true;
         if (_interactable != null) _interactable.SetEnabled(false);
-        Collect();
+        Collect(Id);
 
          
         StartCoroutine(PositionCoroutine());
@@ -230,10 +230,10 @@ public class KeyItem : MonoBehaviour
         }
     }
 
-    private void Collect()
+    private void Collect(string id)
     {
-        SaveSystem.WriteItem(Id);
-        SaveSystem.WritePersistentEvent(Id);
+        SaveSystem.WriteItem(id);
+        SaveSystem.WritePersistentEvent(id);
         
         if (!SaveSystem.GetPersistentEventCompleted(GenericCollectionPersistentEvent))
         {
@@ -255,5 +255,10 @@ public class KeyItem : MonoBehaviour
         // _meshTransform.Rotate(Vector3.up, Time.deltaTime * 130f);
         // _meshTransform.localPosition = new Vector3(0, (Mathf.Sin(Time.time * 2f) + 1f) * 0.5f,0);
         // _particleSystem.transform.position = _meshTransform.position;
+    }
+
+    public static void InvokeKeyItemCollected(string id)
+    {
+        OnKeyItemCollected?.Invoke(id);
     }
 }

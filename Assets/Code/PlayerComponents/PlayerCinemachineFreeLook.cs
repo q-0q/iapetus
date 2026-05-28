@@ -33,6 +33,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private CinemachineBrain _brain;
 
     private float _baseFov;
+    private bool _preventYRecenter;
 
     void Awake()
     {
@@ -47,6 +48,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _freeLook.m_YAxis.Value = 0.7f;
         _freeLook.m_YAxis.m_InputAxisValue = 0f;
         _freeLook.m_XAxis.m_InputAxisValue = 0f;
+        _preventYRecenter = false;
         
         OnMetaSaveDataUpdated(MetaSaveSystem.LoadCachedMetaSaveData());
     }
@@ -94,13 +96,14 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * Time.deltaTime;
         _timeSincePlayerLookInput += Time.deltaTime;
 
-        if (_timeSincePlayerLookInput >= 2.5f)
+        if (_timeSincePlayerLookInput >= 2.5f && !_preventYRecenter)
         {
             var y = 0.7f;
             if (DialogueCanvas.Singleton.currentDialogueController != null)
             {
                 y = DialogueCanvas.Singleton.currentDialogueController.CameraY;
             }
+            
             _freeLook.m_YAxis.Value = Mathf.Lerp(_freeLook.m_YAxis.Value, y, Time.deltaTime * Mathf.Lerp(0.25f, 2f, Mathf.InverseLerp(2.5f, 3.5f, _timeSincePlayerLookInput)));
         }
         if (lookVector2.magnitude < 0.01f)
@@ -256,6 +259,13 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     public float GetBaseFov()
     {
         return _baseFov;
+    }
+
+    public IEnumerator PreventYRecenterForDuration(float duration)
+    {
+        _preventYRecenter = true;
+        yield return new WaitForSeconds(duration);
+        _preventYRecenter = false;
     }
 
     
