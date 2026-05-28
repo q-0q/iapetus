@@ -82,7 +82,7 @@ public class MapCanvas : MonoBehaviour
         }
         
         _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, GetIsOpen() ? 1f : 0f, Time.deltaTime * 20f);
-        // _closeImage.sprite = InputTypeManager.Singleton.GetSpriteForAction("Map");
+        _closeImage.sprite = InputTypeManager.Singleton.GetSpriteForAction("Map");
 
         if (_state == MapCanvasState.Main)
         {

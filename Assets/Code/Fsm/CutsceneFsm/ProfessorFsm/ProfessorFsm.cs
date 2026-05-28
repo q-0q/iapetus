@@ -20,6 +20,7 @@ public partial class ProfessorFsm : CutsceneFsm
         public static int ShockedToSpeakingMural;
 
         public static int Speaking;
+        public static int MuralIdle;
     }
 
     public class ProfessorFsmTrigger : CutsceneFsm.CutsceneFsmTrigger
@@ -34,10 +35,10 @@ public partial class ProfessorFsm : CutsceneFsm
         base.OnAwake();
         _interactable = GetComponentInChildren<Interactable>();
         _dialogueController = GetComponentInChildren<DialogueController>();
-        SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
         Animator = GetComponentInChildren<Animator>();
 
     }
+    
 
     protected override void OnStart()
     {
@@ -60,7 +61,7 @@ public partial class ProfessorFsm : CutsceneFsm
     {
         base.OnStartComplete();
         Machine.Jump(ProfessorFsmState.Busy);
-        
+        OnSaveDataUpdated(SaveSystem.LoadCachedSaveData());
     }
 
     protected override void OnStateChanged(TriggerParams triggerParams)
@@ -73,6 +74,7 @@ public partial class ProfessorFsm : CutsceneFsm
         _interactable.OnInteracted += OnInteracted;
         _dialogueController.OnCompleted += OnDialogueCompleted;
         _dialogueController.OnProgressed += OnDialogueProgressed;
+        SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
     }
 
     private void OnDisable()
@@ -80,5 +82,6 @@ public partial class ProfessorFsm : CutsceneFsm
         _interactable.OnInteracted -= OnInteracted;
         _dialogueController.OnCompleted -= OnDialogueCompleted;
         _dialogueController.OnProgressed -= OnDialogueProgressed;
+        SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
     }
 }

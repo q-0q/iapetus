@@ -32,6 +32,10 @@ public class CutsceneManager : MonoBehaviour
         _pseudoCutsceneActive = true;
         _overwriteCameraFollowShaderPosition = overwriteCameraFollowShaderPosition;
         _cameraFollowShaderTransform = cameraFollowShaderTransform;
+        if (cameraFollowShaderTransform != null)
+        {
+            Shader.SetGlobalVector("_CameraFollowWorldPosition", cameraFollowShaderTransform.position);
+        }
     }
     
     public void ClearPseudoCutsceneActive()

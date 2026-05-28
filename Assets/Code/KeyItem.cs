@@ -95,7 +95,7 @@ public static class KeyItemRegistry
         KeyItemRegistrations.Add("Map", new KeyItemRegistration()
         {
             displayName = "Glyphstone",
-            description = "A chunk of stone engraved with the Mountain Glyph.\n\nAccording to the Archaeol, the pattern is a sacred geometric depiction of the Mountain itself.",
+            description = "A chunk of stone engraved with the sealing Glyph.\n\nAccording to Silicant Diamber, the pattern is a sacred geometric depiction of the Mountain itself.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             GetUseDescription = () => "Shows your location.",

@@ -66,7 +66,7 @@ public class CameraFollow : MonoBehaviour
         Shader.SetGlobalVector("_CameraFollowWorldPosition", transform.position);
     }
     
-    private void Update()
+    private void LateUpdate()
     {
         // if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport))
         // {

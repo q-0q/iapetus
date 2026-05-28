@@ -96,7 +96,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * Time.deltaTime;
         _timeSincePlayerLookInput += Time.deltaTime;
 
-        if (_timeSincePlayerLookInput >= 2.5f && !_preventYRecenter)
+        if (_timeSincePlayerLookInput >= 2.5f && !_preventYRecenter && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 2.5f)
         {
             var y = 0.7f;
             if (DialogueCanvas.Singleton.currentDialogueController != null)

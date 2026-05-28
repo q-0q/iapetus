@@ -49,7 +49,7 @@ public class MajorLeylineNode : MonoBehaviour
 
     private bool _cameraSplineActive;
 
-    private const float CameraSplineDistance = 15f;
+    private const float CameraSplineDistance = 20f;
     private List<TerminalColumn> _terminalColumns;
     
 
@@ -101,25 +101,7 @@ public class MajorLeylineNode : MonoBehaviour
 
         
 
-        if (previousNodeMetaName == "" && !SaveSystem.GetMajorLeylineNode(metaName))
-        {
-            MakeInteractable();
-            return;
-        }
 
-        if (SaveSystem.GetMajorLeylineNode(metaName))
-        {
-            MakeCompleted();
-            return;
-        }
-
-        if (!SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
-        {
-            MakeUninteractable();
-            return;
-        }
-        
-        MakeInteractable();
     }
 
     private void OnEnable()
@@ -153,6 +135,26 @@ public class MajorLeylineNode : MonoBehaviour
         var startingT = (curveLength - CameraSplineDistance) / curveLength;
         _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(startingT));
         _cameraFollow.position = _cameraSplineContainer.transform.TransformPoint(_cameraSplineContainer.Spline.EvaluatePosition(0));
+        
+        if (previousNodeMetaName == "" && !SaveSystem.GetMajorLeylineNode(metaName))
+        {
+            MakeInteractable();
+            return;
+        }
+
+        if (SaveSystem.GetMajorLeylineNode(metaName))
+        {
+            MakeCompleted();
+            return;
+        }
+
+        if (!SaveSystem.GetMajorLeylineNode(previousNodeMetaName))
+        {
+            MakeUninteractable();
+            return;
+        }
+        
+        MakeInteractable();
         
     }
 
@@ -245,7 +247,7 @@ public class MajorLeylineNode : MonoBehaviour
             var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
 
             var desiredOffset = new Vector3(0, 0, -10f);
-            var desiredFov = 60f;
+            var desiredFov = 50f;
 
             
             while (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.WalkToMajorLeylinePosition))
@@ -287,9 +289,10 @@ public class MajorLeylineNode : MonoBehaviour
         IEnumerator CameraSplineCoroutine()
         {
             _cameraSplineActive = true;
+            yield return new WaitForSeconds(1f);
             var splineLength = _cameraSplineContainer.Spline.GetLength();
             var startingT = (splineLength - CameraSplineDistance) / splineLength;
-            CutsceneManager.Singleton.SetPseudoCutsceneActive(_cameraLookAt);
+            CutsceneManager.Singleton.SetPseudoCutsceneActive(true, _cameraLookAt);
             _splineCamera.Priority = 30;
 
             var t = 0f;
@@ -298,7 +301,7 @@ public class MajorLeylineNode : MonoBehaviour
             while (t < d)
             {
                 var fillWeight = Mathf.Lerp(startingT, 1f, t / d);
-                _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(fillWeight));
+                // _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(fillWeight));
                 _visualSplineMaterial.SetFloat("_FillWeight", fillWeight);
                 _cameraFollow.position = _cameraSplineContainer.transform.TransformPoint(_cameraSplineContainer.Spline.EvaluatePosition(Util.SmoothLerp01(t / d * 0.75f)));
                 t += Time.deltaTime;

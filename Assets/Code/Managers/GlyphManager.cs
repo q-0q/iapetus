@@ -47,6 +47,7 @@ public class GlyphManager : MonoBehaviour
 
         foreach (var majorLeylineNode in MajorLeylineNodes)
         {
+            print(majorLeylineNode.metaName);
             var visualSpline = majorLeylineNode.GetVisualSplineContaier();
             SplineUtility.GetNearestPoint(visualSpline.Spline, visualSpline.transform.InverseTransformPoint(playerPosition), out var nearest, out var t);
             var vector3 = new Vector3(nearest.x, nearest.y, nearest.z);
