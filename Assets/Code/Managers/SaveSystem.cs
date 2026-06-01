@@ -81,6 +81,7 @@ public class SaveSystem : MonoBehaviour
         public string majorLeylineNodeDialogueLocation;
         public string currentNearestMajorLeylineNode;
         public float currentNeatestMajorLeylineNodeT;
+        public string checkpointPath;
         public float playTime;
         public string gameVersion;
         
@@ -102,6 +103,7 @@ public class SaveSystem : MonoBehaviour
             majorLeylineNodeDialogueLocation = "";
             currentNearestMajorLeylineNode = "";
             currentNeatestMajorLeylineNodeT = 0;
+            checkpointPath = "";
             bitCount = 0;
             bellCount = 0;
             playTime = 0;
@@ -414,6 +416,19 @@ public class SaveSystem : MonoBehaviour
         SaveData data = LoadCachedSaveData();
         t = data.currentNeatestMajorLeylineNodeT;
         return data.currentNearestMajorLeylineNode;
+    }
+
+    public static void WriteCheckpointPath(string path)
+    {
+        SaveData data = LoadCachedSaveData();
+        data.checkpointPath = path;
+        WriteSaveData(data);
+    }
+
+    public static string GetCheckpointPath()
+    {
+        SaveData data = LoadCachedSaveData();
+        return data.checkpointPath;
     }
     
     private static void WriteSaveData(SaveData saveData, bool screenCapture = true)

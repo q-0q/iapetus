@@ -14,6 +14,7 @@ public class CustomFogManager : MonoBehaviour
 
     private CustomFogController _currentController;
     public static readonly List<CustomFogController> CustomFogControllerRegistry = new();
+    public static readonly List<CustomFogObserver> CustomFogObserverRegistry = new();
     public const float LerpStrength = 1f;
 
     public void SetCurrentController(CustomFogController controller, bool snap = false)
@@ -53,6 +54,7 @@ public class CustomFogManager : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
+        UpdateObserversVectorArray();
         if (!Application.isPlaying)
         {
             ApplyEditorSettings();
@@ -137,6 +139,36 @@ public class CustomFogManager : MonoBehaviour
             return;
         }
         Shader.SetGlobalVector(name, Vector3.Lerp(Shader.GetGlobalVector(name), value, Time.deltaTime * strength));
+    }
+
+    
+    private Vector4[] _observerPositions = new Vector4[64]; // Max 64 points
+    private static readonly int PointsID = Shader.PropertyToID("_CustomFogObservers");
+    private static readonly int CountID = Shader.PropertyToID("_CustomFogObserverCount");
+    
+    private void UpdateObserversVectorArray()
+    {
+        int count = Mathf.Min(CustomFogObserverRegistry.Count, 64);
+        
+        for (int i = 0; i < 64; i++)
+        {
+            if (i < count)
+            {
+                Vector3 pos = CustomFogObserverRegistry[i].transform.position;
+                // We store position in xyz and radius in w
+                
+                
+                _observerPositions[i] = new Vector4(pos.x, pos.y, pos.z, 0);
+            }
+            else
+            {
+                _observerPositions[i] = new Vector4(0,0,0, 0);
+            }
+        }
+
+        // Send the data to all shaders globally
+        Shader.SetGlobalVectorArray(PointsID, _observerPositions);
+        Shader.SetGlobalInt(CountID, count);
     }
     
 

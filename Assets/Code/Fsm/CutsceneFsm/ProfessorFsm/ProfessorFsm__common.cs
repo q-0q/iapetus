@@ -16,6 +16,7 @@ public partial class ProfessorFsm
     private const string PersistentEvent = "c1-snail-quest";
     [SerializeField] private Light HeadLight;
     private float baseHeadlightIntensity;
+    private GameObject _halo;
     
     private void OnDialogueProgressed(int textIndex)
     {

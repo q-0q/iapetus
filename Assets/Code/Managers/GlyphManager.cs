@@ -30,6 +30,7 @@ public class GlyphManager : MonoBehaviour
 
     private void OnSaveDataUpdated(SaveSystem.SaveData saveData)
     {
+        if (saveData.majorLeylineNodes == null) return;
         Shader.SetGlobalFloat("_GlyphMaskWeight_A", saveData.majorLeylineNodes.Contains(a) ? 1f : 0f);
         Shader.SetGlobalFloat("_GlyphMaskWeight_B", saveData.majorLeylineNodes.Contains(b) ? 1f : 0f);
         Shader.SetGlobalFloat("_GlyphMaskWeight_C", saveData.majorLeylineNodes.Contains(c) ? 1f : 0f);

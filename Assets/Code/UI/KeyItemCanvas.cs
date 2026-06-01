@@ -17,7 +17,7 @@ public class KeyItemCanvas : MonoBehaviour
         IEnumerator CanvasCoroutine()
         {
             var t = 0f;
-            var d = 0.1f;
+            var d = 0.5f;
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
@@ -27,7 +27,7 @@ public class KeyItemCanvas : MonoBehaviour
             }
 
             t = 0;
-            d = 2f;
+            d = 3.5f;
             while (t < d)
             {
                 if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.InventorySlowdown))

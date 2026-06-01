@@ -4,6 +4,7 @@ using DG.Tweening;
 using FMOD.Studio;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Util = Code.Misc.Util;
 
 public partial class ProfessorFsm
 {
@@ -16,9 +17,14 @@ public partial class ProfessorFsm
             .PermitIf(ProfessorFsmTrigger.OnNodeCompleted, ProfessorFsmState.Shocked, _ => true)
             .OnExitFrom(ProfessorFsmTrigger.OnNodeCompleted, _ =>
             {
-                _dialogueController.currentDialogueIndex = SaveSystem.GetAllItems().Contains("Map") ? 2 : 1;
+                var map = SaveSystem.GetAllItems().Contains("Map");
+                _dialogueController.currentDialogueIndex = map ? 2 : 1;
                 _dialogueController.DialogueName = "Silicant Diamber";
                 _interactable.text = "Speak";
+                if (!map)
+                {
+                    _halo.SetActive(true);
+                }
             });
 
         Machine.Configure(ProfessorFsmState.Shocked)
@@ -34,6 +40,9 @@ public partial class ProfessorFsm
             .OnExitFrom(FsmTrigger.Timeout, _ =>
             {
                 ReplaceAnimatorTrigger("SpeakingMural"); // doing it this way prevents animation from retriggering when we dont want it to
+                
+                
+
             })
             .SubstateOf(ProfessorFsmState.Speaking);;
         
@@ -46,13 +55,35 @@ public partial class ProfessorFsm
                 SaveSystem.WriteItem("Map");
                 SaveSystem.WritePersistentEvent("Map");
                 KeyItem.InvokeKeyItemCollected("Glyphstone");
+                
                 StartCoroutine(TutorialCoroutine());
+                
+                StartCoroutine(HaloCoroutine());
+                IEnumerator HaloCoroutine()
+                {
+                    var t = 0f;
+                    var d = 2f;
+                    var renderer = _halo.GetComponent<Renderer>();
+                    _halo.GetComponentInChildren<ParticleSystem>().Stop();
+                    while (t < d)
+                    {
+                        var w = Util.SmoothLerp01(t / d);
+                        renderer.material.SetFloat("_Dot", Mathf.Lerp(1f, 0, w));
+                        renderer.material.SetFloat("_FresnelDepth", Mathf.Lerp(15f, 0, w));
+                        t += Time.deltaTime;
+                        yield return null;
+                    }
+                    _halo.SetActive(false);
+                    
+                }
                 
                 IEnumerator TutorialCoroutine()
                 {
-                    yield return new WaitForSeconds(3.5f);
+                    yield return new WaitForSeconds(5.5f);
                     TutorialCanvas.Singleton.ShowTutorialText("Open map", "Map");
                 }
+
+
             });
 
         Machine.Configure(ProfessorFsmState.MuralIdle)
@@ -72,7 +103,7 @@ public partial class ProfessorFsm
         base.SetupStateMaps();
         
         StateMapConfig.Duration.Add(ProfessorFsmState.ShockedToSpeakingMural, 2f);
-        StateMapConfig.Duration.Add(ProfessorFsmState.MuralIdle, 3.5f);
+        StateMapConfig.Duration.Add(ProfessorFsmState.MuralIdle, 4.5f);
         StateMapConfig.AnimationTrigger.Add(ProfessorFsmState.Busy, "Busy");
         StateMapConfig.AnimationTrigger.Add(ProfessorFsmState.Shocked, "Shocked");
         // StateMapConfig.AnimationTrigger.Add(ProfessorFsmState.SpeakingMural, "SpeakingMural");

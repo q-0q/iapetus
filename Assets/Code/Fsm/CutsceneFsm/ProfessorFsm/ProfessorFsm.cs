@@ -36,6 +36,8 @@ public partial class ProfessorFsm : CutsceneFsm
         _interactable = GetComponentInChildren<Interactable>();
         _dialogueController = GetComponentInChildren<DialogueController>();
         Animator = GetComponentInChildren<Animator>();
+        _halo = transform.Find("Halo").gameObject;
+        _halo.SetActive(false);
 
     }
     
