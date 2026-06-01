@@ -4937,7 +4937,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 185.675, y: -25}
-  m_SizeDelta: {x: 183.16, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &211854111140663272
 CanvasRenderer:
@@ -21880,6 +21880,7 @@ Transform:
   - {fileID: 6281893247398587383}
   - {fileID: 6741883139719198685}
   - {fileID: 689153785027060128}
+  - {fileID: 7724327628110857641}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3931886744555404312
@@ -29824,6 +29825,51 @@ MonoBehaviour:
   a: summit-glyph
   b: test-b
   c: test-c
+--- !u!1 &6004028026867755573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7724327628110857641}
+  - component: {fileID: 3263973227594299316}
+  m_Layer: 0
+  m_Name: FogObserver
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7724327628110857641
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6004028026867755573}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5395825063543935060}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3263973227594299316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6004028026867755573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b93bcc51460a46b5a1bae72dd92cd999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CustomFogObserver
+  isPlayer: 1
 --- !u!1 &6011976522930052405
 GameObject:
   m_ObjectHideFlags: 0
@@ -51790,10 +51836,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 120937403964557721}
-    - targetCorrespondingSourceObject: {fileID: 4097753219644997447, guid: cfa08eb73afb448af83b6793859a7ebd,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 626352423537630596}
   m_SourcePrefab: {fileID: 100100000, guid: cfa08eb73afb448af83b6793859a7ebd, type: 3}
 --- !u!4 &2708302335789184839 stripped
 Transform:
@@ -51855,18 +51897,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &626352423537630596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7533630893530257262}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b93bcc51460a46b5a1bae72dd92cd999, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CustomFogObserver
 --- !u!1001 &5945675773396517466
 PrefabInstance:
   m_ObjectHideFlags: 0

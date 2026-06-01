@@ -84,11 +84,18 @@ public class CameraFollow : MonoBehaviour
         }
         else
         {
-            var shaderPositionLerpSpeed =
+            var shaderPositionXZLerpSpeed = 10f;
+            var shaderPositionYLerpSpeed =
                 Mathf.Lerp(1.75f, 10f, Mathf.InverseLerp(-15f, -30f, PlayerFsm.Singleton.GetYVelocity()));
-            Shader.SetGlobalVector("_CameraFollowWorldPosition",
-                Vector3.Lerp(Shader.GetGlobalVector("_CameraFollowWorldPosition"), transform.position,
-                    Time.deltaTime * shaderPositionLerpSpeed));
+            
+            var currentShaderValue = Shader.GetGlobalVector("_CameraFollowWorldPosition");
+            var newShaderX = Mathf.Lerp(currentShaderValue.x, transform.position.x,
+                Time.deltaTime * shaderPositionXZLerpSpeed);
+            var newShaderY = Mathf.Lerp(currentShaderValue.y, transform.position.y,
+                Time.deltaTime * shaderPositionYLerpSpeed);
+            var newShaderZ = Mathf.Lerp(currentShaderValue.z, transform.position.z,
+                Time.deltaTime * shaderPositionXZLerpSpeed);
+            Shader.SetGlobalVector("_CameraFollowWorldPosition", new Vector3(newShaderX, newShaderY, newShaderZ));
         }
 
 

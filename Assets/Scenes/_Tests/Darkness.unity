@@ -20,7 +20,7 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 50
   m_LinearFogEnd: 200
-  m_AmbientSkyColor: {r: 0.8678355, g: 0.8867331, b: 0.9245283, a: 1}
+  m_AmbientSkyColor: {r: 0.990566, g: 0.79083246, b: 0.7429245, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: 1
   LerpStrengthMultiplier: 1
-  Color: {r: 0.14901961, g: 0.5568628, b: 0.6117647, a: 1}
+  Color: {r: 0, g: 0, b: 0, a: 1}
   YMin: -30
   YMax: 120
   YPower: 2
@@ -182,9 +182,9 @@ MonoBehaviour:
   YAddPower: 1.5
   YAddDepthInversion: 1
   YAddClamp: 0.9
-  DepthMin: 20
-  DepthMax: 90
-  DepthPower: 1
+  DepthMin: 5
+  DepthMax: 15
+  DepthPower: 2
   NoiseSubtractionAmount: 0
   NoiseAScale: 0.02
   NoiseAVelocity: {x: 2, y: 2, z: 2}
@@ -1568,7 +1568,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &1428098110
 Light:
   m_ObjectHideFlags: 0
@@ -1579,7 +1579,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 13
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 0.5152212, b: 0, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30

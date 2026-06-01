@@ -190,7 +190,7 @@ public partial class PlayerFsm
     
     private const float HardLandRollExitMomentum = 12f;
     private const float HardLandRollMinimumMomentum = 7.5f;
-    private const float HardLandRollForwardSpeed = 15f;
+    private const float HardLandRollForwardSpeed = 20f;
     
     private const float HardTurnMinimumAngle = 130f;
     private const float HardTurnMinimumMomentum = 12.5f;
