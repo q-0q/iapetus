@@ -54,12 +54,13 @@ public class CustomFogManager : MonoBehaviour
     // Update is called once per frame
     public void Update()
     {
-        UpdateObserversVectorArray();
         if (!Application.isPlaying)
         {
             ApplyEditorSettings();
             return;
         }
+        
+        UpdateObserversVectorArray();
         UpdateCurrentController(false);
         if (_currentController == null) return;
         LerpAllValues(LerpStrength * _currentController.LerpStrengthMultiplier);
@@ -98,6 +99,9 @@ public class CustomFogManager : MonoBehaviour
 
     private static void ApplyEditorSettings()
     {
+        
+        _observerPositions[1] = new Vector4(0,0,0, 0);
+        Shader.SetGlobalInt(CountID, 1);
         
         Shader.SetGlobalColor("_CustomFogColor", Color.darkGray);
         Shader.SetGlobalFloat("_CustomFogYMin", -10001f);
@@ -142,7 +146,7 @@ public class CustomFogManager : MonoBehaviour
     }
 
     
-    private Vector4[] _observerPositions = new Vector4[64]; // Max 64 points
+    private static Vector4[] _observerPositions = new Vector4[64]; // Max 64 points
     private static readonly int PointsID = Shader.PropertyToID("_CustomFogObservers");
     private static readonly int CountID = Shader.PropertyToID("_CustomFogObserverCount");
     
