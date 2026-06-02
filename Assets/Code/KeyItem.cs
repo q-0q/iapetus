@@ -107,6 +107,21 @@ public static class KeyItemRegistry
             GetUseConfirmation = () => "Open the map?"
         });
         
+        KeyItemRegistrations.Add("Lantern", new KeyItemRegistration()
+        {
+            displayName = "Spiritfyre Pendant",
+            description = "A blush-hued gemstone affixed to a cord for wearing. A flickering swirl dances inside the stone.",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            GetUseDescription = () => "Illuminates dark places.",
+            GetCanUse = () => false,
+            onUse = () =>
+            {
+                
+            },
+            GetUseConfirmation = () => ""
+        });
+        
     }
 }
 

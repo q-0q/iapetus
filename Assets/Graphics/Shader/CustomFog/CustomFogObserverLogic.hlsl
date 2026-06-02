@@ -34,7 +34,7 @@ void CalculateClosestCustomFogObserver_float(float3 WorldPos, out float OutMask)
         float relativeY = WorldPos.y - p.y;
         
         float yFactor = 1.0 - pow(InverseLerp(_CustomFogYMin, _CustomFogYMax, relativeY), _CustomFogYPower);
-        // yFactor = max(yFactor, _CustomFogMinimumYFactor);
+        yFactor = max(yFactor, _CustomFogMinimumYFactor);
         
         float yAddFactor = 1.0 - pow(InverseLerp(_CustomFogYAddMin, _CustomFogYAddMax, relativeY), _CustomFogYAddPower);
         yAddFactor = min(yAddFactor, _CustomFogYAddClamp);
@@ -44,6 +44,7 @@ void CalculateClosestCustomFogObserver_float(float3 WorldPos, out float OutMask)
 
 
         float skyboxLiftFactor = pow(InverseLerp(_CustomFogSkyboxLift, _CustomFogSkyboxLift * -0.5, relativeY), 0.75);
+        skyboxLiftFactor = max(skyboxLiftFactor, _CustomFogMinimumYFactor);
         
         
         // float mask = yAddFactor;

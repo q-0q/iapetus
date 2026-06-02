@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 813ecae78172743dcb3b113f203906dc, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: db265b25e87a44f7c82e9785af8fc532, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -176,15 +176,15 @@ MonoBehaviour:
   YMin: -30
   YMax: 120
   YPower: 2
-  MinimumYFactor: 0.4
+  MinimumYFactor: 1
   YAddMin: -20
   YAddMax: -2
   YAddPower: 1.5
   YAddDepthInversion: 1
   YAddClamp: 0.9
-  DepthMin: 5
+  DepthMin: 0
   DepthMax: 15
-  DepthPower: 2
+  DepthPower: 1
   NoiseSubtractionAmount: 0
   NoiseAScale: 0.02
   NoiseAVelocity: {x: 2, y: 2, z: 2}
@@ -1678,6 +1678,118 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1534394469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1534394471}
+  - component: {fileID: 1534394470}
+  m_Layer: 0
+  m_Name: SceneDarknessIndicator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1534394470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534394469}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a571c3cea29b0458abebec54d19532d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+--- !u!4 &1534394471
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1534394469}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 23.27188, y: -4.42898, z: -26.09962}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1534986001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -49.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -15.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -17.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1820686733753880268, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8571371372086590528, guid: 54eb9b0ad74504905ac137c4190674c2,
+        type: 3}
+      propertyPath: m_Name
+      value: Bonfire
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 54eb9b0ad74504905ac137c4190674c2, type: 3}
 --- !u!1 &1561271264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1906,7 +2018,7 @@ PrefabInstance:
     - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 520.78
       objectReference: {fileID: 0}
     - target: {fileID: 1402950863068252359, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -1931,7 +2043,7 @@ PrefabInstance:
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 183.16
       objectReference: {fileID: 0}
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -2527,6 +2639,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93bcc51460a46b5a1bae72dd92cd999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogObserver
+  isPlayer: 0
 --- !u!4 &1781686294
 Transform:
   m_ObjectHideFlags: 0
@@ -2571,6 +2684,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93bcc51460a46b5a1bae72dd92cd999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogObserver
+  isPlayer: 0
 --- !u!4 &2007091642
 Transform:
   m_ObjectHideFlags: 0
@@ -2615,6 +2729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93bcc51460a46b5a1bae72dd92cd999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogObserver
+  isPlayer: 0
 --- !u!4 &2101646944
 Transform:
   m_ObjectHideFlags: 0
@@ -2653,3 +2768,5 @@ SceneRoots:
   - {fileID: 2101646944}
   - {fileID: 1781686294}
   - {fileID: 2007091642}
+  - {fileID: 1534394471}
+  - {fileID: 1534986001}
