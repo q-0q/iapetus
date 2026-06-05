@@ -19,6 +19,9 @@ public abstract partial class GravityFsm
     private float _timeAtTopOfGust;
     private float _currentSlopeCastMinimumDistanceOffset;
 
+    protected Vector3 _safeGroundPosition;
+    protected Vector3 _firstAirPosition;
+
     public Transform parentTransform;
     protected Vector3 _previousParentTransformPosition;
     protected Quaternion _previousParentRotation;

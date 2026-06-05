@@ -21,6 +21,9 @@ public abstract partial class GravityFsm
     private void AerialConfigure()
     {
         Machine.Configure(GravityFsmState.Aerial)
-            .OnEntryFrom(GravityFsmTrigger.StartFrameAerial, _ => { TimeInAir = 0; });
+            .OnEntryFrom(GravityFsmTrigger.StartFrameAerial, _ =>
+            {
+                TimeInAir = 0;
+            });
     }
 }

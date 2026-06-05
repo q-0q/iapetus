@@ -15,6 +15,7 @@ public partial class PlayerFsm
 
         if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         
+        SetSafeGroundPosition();
         // if (WaterRaycast(out var swimRaycastParam))
         // {
         //     if (swimRaycastParam.distance > 3f && !_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());

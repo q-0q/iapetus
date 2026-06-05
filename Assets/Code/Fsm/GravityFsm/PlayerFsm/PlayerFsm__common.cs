@@ -676,6 +676,9 @@ public partial class PlayerFsm
         var transformPosition = transform.position + Vector3.up * (2f * raycastLength) + forward;
         Gizmos.DrawSphere(transformPosition, 0.35f);
         Gizmos.DrawSphere(transformPosition - Vector3.up * raycastLength * 4f, 0.35f);
+        
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawSphere(_safeGroundPosition, 0.35f);
     }
     
     private bool CanGrapple(TriggerParams? triggerParams)
@@ -974,7 +977,14 @@ public partial class PlayerFsm
             OnPlayerCultTrialDeath?.Invoke();
             return;
         }
-        Machine.Jump(PlayerFsmState.Dying1);
+
+
+        var initialPosition = transform.position;
+        transform.position = _safeGroundPosition;
+        OnPlayerTeleported?.Invoke(transform.position - initialPosition);
+        Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
+        
+        // Machine.Jump(PlayerFsmState.Dying1);
     }
 
     private void SnapToGround()
@@ -1185,5 +1195,28 @@ public partial class PlayerFsm
         _speedLinesParticles.transform.rotation = Quaternion.Lerp(_speedLinesParticles.transform.rotation, Camera.main.transform.rotation, Time.deltaTime * 10f);
         _timeSinceSpeedLinesParticlesPlayed += Time.deltaTime;
         if (_timeSinceSpeedLinesParticlesPlayed > _speedLinesParticlesDuration && _speedLinesParticlesDuration > 0) _speedLinesParticles.Stop();
+    }
+
+    private void SetSafeGroundPosition()
+    {
+        // if (TimeInCurrentState() < 0.5f) return;
+
+        var rayCount = 8;
+        var originHeight = 5f;
+        var originRadius = 5f;
+        var maxDistance = 10f;
+        
+
+        for (int i = 0; i < rayCount; i++)
+        {
+            var origin = transform.position + Vector3.up * originHeight + Quaternion.Euler(0, 360f * ((float)i
+                / rayCount), 0) * (Vector3.forward * originRadius);
+            
+            if (!Physics.Raycast(origin, Vector3.down, out var hit, maxDistance, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+            Debug.DrawRay(origin, Vector3.down * maxDistance, Color.red);
+        }
+
+        _safeGroundPosition = transform.position;
+
     }
 }

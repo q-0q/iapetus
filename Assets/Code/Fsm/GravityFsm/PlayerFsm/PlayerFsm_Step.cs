@@ -6,6 +6,7 @@ public partial class PlayerFsm
     private void IdleOnUpdate()
     {
         HandleInputMomentumChange();
+        SetSafeGroundPosition();
         transform.position += ComputeCollisionMove(ApplyTractionNoTimescale(Vector3.zero) * Time.deltaTime);
     }
     
