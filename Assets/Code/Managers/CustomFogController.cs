@@ -24,6 +24,7 @@ public class CustomFogController : MonoBehaviour
     public float DepthMin = 20f;
     public float DepthMax = 100f;
     public float DepthPower = 2f;
+    public float DepthClamp = 1.0f;
     
     public float NoiseSubtractionAmount = 50f;
     public float NoiseAScale = 0.02f;

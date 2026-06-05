@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class CustomFogObserver : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class CustomFogObserver : MonoBehaviour
     // public bool InvokeHalo = false;
 
     public bool isPlayer;
+    public float radiusMultiplier = 1.0f;
 
     private void Start()
     {

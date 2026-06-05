@@ -285,6 +285,7 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: -1878332245247344467}
   - {fileID: 6408179310831973506}
+  - {fileID: 5561446954449545952}
   - {fileID: -5240917813477884226}
   - {fileID: -1582122864770172705}
   - {fileID: -7244592831256429708}
@@ -293,7 +294,8 @@ MonoBehaviour:
   - {fileID: -474989573106673335}
   - {fileID: -1964302897895590239}
   - {fileID: -3897697690146081015}
-  m_RendererFeatureMap: adc0de57c6d2eee582b42597216dee58be3ea226048544b7dfb8590ea32b0bea747b9e163409769b01911698134d6427b8a699cb9ecd4c764959f6f67f7f68f9a1b6a9f3eb64bde40977fb089a98e8c9
+  - {fileID: 2468945666498714216}
+  m_RendererFeatureMap: adc0de57c6d2eee582b42597216dee58e0aa240d8a3a2e4dbe3ea226048544b7dfb8590ea32b0bea747b9e163409769b01911698134d6427b8a699cb9ecd4c764959f6f67f7f68f9a1b6a9f3eb64bde40977fb089a98e8c9685a65ad00754322
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
@@ -322,6 +324,26 @@ MonoBehaviour:
   m_DepthTextureFormat: 0
   m_AccurateGbufferNormals: 0
   m_IntermediateTextureMode: 0
+--- !u!114 &2468945666498714216
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b00045f12942b46c698459096c89274e, type: 3}
+  m_Name: VolumeDepthDebug
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.FullScreenPassRendererFeature
+  m_Active: 0
+  injectionPoint: 550
+  fetchColorBuffer: 1
+  requirements: 0
+  passMaterial: {fileID: 2100000, guid: 1c2dfa3540c0b4fb781a1dffff06c321, type: 2}
+  passIndex: 0
+  bindDepthStencilAttachment: 0
+  m_Version: 1
 --- !u!114 &2838478411701588225
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -364,6 +386,28 @@ MonoBehaviour:
       restoreCamera: 1
       offset: {x: 0, y: 0, z: 0, w: 0}
       cameraFieldOfView: 60
+--- !u!114 &5561446954449545952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c441000a0fc24a9e887b031172ca4c2, type: 3}
+  m_Name: VolumeDepth
+  m_EditorClassIdentifier: Assembly-CSharp::CustomLayerRendererFeature
+  m_Active: 0
+  settings:
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 64
+    overrideMaterial: {fileID: 2100000, guid: 66b2641df359445668c7e3194769d960, type: 2}
+    targetTextureName: _VolumeDepthTexture
+    textureFormat: 49
+    emptyAreaValue: 10000
+    renderPassEvent: 500
 --- !u!114 &6408179310831973506
 MonoBehaviour:
   m_ObjectHideFlags: 0

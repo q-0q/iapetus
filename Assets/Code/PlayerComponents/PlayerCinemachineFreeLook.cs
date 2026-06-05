@@ -45,7 +45,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _settingsMenuOpen = false;
         _brain = FindObjectOfType<CinemachineBrain>();
         _baseFov = _freeLook.m_Lens.FieldOfView;
-        _freeLook.m_YAxis.Value = 0.7f;
+        _freeLook.m_YAxis.Value = 0.55f;
         _freeLook.m_YAxis.m_InputAxisValue = 0f;
         _freeLook.m_XAxis.m_InputAxisValue = 0f;
         _preventYRecenter = false;
@@ -98,7 +98,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
         if (_timeSincePlayerLookInput >= 2.5f && !_preventYRecenter && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 2.5f)
         {
-            var y = 0.7f;
+            var y = 0.55f;
             if (DialogueCanvas.Singleton.currentDialogueController != null)
             {
                 y = DialogueCanvas.Singleton.currentDialogueController.CameraY;

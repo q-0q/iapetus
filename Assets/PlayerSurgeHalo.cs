@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerSurgeHalo : MonoBehaviour
 {
     
+    private Renderer _renderer;
     private Material _material;
 
     private bool _isChanneling;
@@ -14,7 +15,9 @@ public class PlayerSurgeHalo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _material = GetComponent<Renderer>().material;
+        _renderer = GetComponent<Renderer>();
+        _material = _renderer.material;
+        _renderer.enabled = false;
     }
 
     // Update is called once per frame
@@ -46,6 +49,8 @@ public class PlayerSurgeHalo : MonoBehaviour
     
     private IEnumerator StartupCoroutine()
     {
+
+        _renderer.enabled = true;
         _isChanneling = true;
         var t = 0f;
         var d = 1.25f;
@@ -74,6 +79,7 @@ public class PlayerSurgeHalo : MonoBehaviour
 
         yield return new WaitForSeconds(d);
         _isChanneling = false;
+        _renderer.enabled = false;
         yield break;
     }
 }

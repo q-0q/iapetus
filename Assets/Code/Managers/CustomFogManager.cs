@@ -86,6 +86,7 @@ public class CustomFogManager : MonoBehaviour
         LerpFloat("_CustomFogDepthMin", _currentController.DepthMin, strength);
         LerpFloat("_CustomFogDepthMax", _currentController.DepthMax, strength);
         LerpFloat("_CustomFogDepthPower", _currentController.DepthPower, strength);
+        LerpFloat("_CustomFogDepthClamp", _currentController.DepthClamp, strength);
             
         LerpFloat("_CustomFogNoiseSubtractionAmount", _currentController.NoiseSubtractionAmount, strength);
         LerpFloat("_CustomFogNoiseAScale", _currentController.NoiseAScale, strength);
@@ -162,7 +163,7 @@ public class CustomFogManager : MonoBehaviour
                 // We store position in xyz and radius in w
                 
                 
-                _observerPositions[i] = new Vector4(pos.x, pos.y, pos.z, 0);
+                _observerPositions[i] = new Vector4(pos.x, pos.y, pos.z, CustomFogObserverRegistry[i].isPlayer ? -1.0f : CustomFogObserverRegistry[i].radiusMultiplier);
             }
             else
             {
