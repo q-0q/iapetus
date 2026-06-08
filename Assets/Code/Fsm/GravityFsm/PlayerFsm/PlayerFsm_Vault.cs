@@ -53,6 +53,8 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.DashVault)
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump", 0.25f), 2)
+            // .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump", 0.25f), 2)
+            .SubstateOf(PlayerFsmState.TinsicaUsable)
             .SubstateOf(PlayerFsmState.Vault);
     }
     

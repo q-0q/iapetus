@@ -28,6 +28,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
             .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
+            .SubstateOf(PlayerFsmState.TinsicaUsable)
             .Permit(PlayerFsmTrigger.Press, PlayerFsmState.Press)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurfaceRise, IsSwimTrigger)
             .Permit(PlayerFsm.PlayerFsmTrigger.IdleMomentumThresholdPassedDecelerating, PlayerFsm.PlayerFsmState.StepEnd)

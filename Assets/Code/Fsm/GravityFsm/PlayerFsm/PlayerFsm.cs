@@ -129,7 +129,11 @@ public partial class PlayerFsm : GravityFsm
         public static int UseMap;
         public static int InventorySlowdown;
         public static int MapSlowdown;
-        
+
+        public static int Tinsica;
+        public static int TinsicaUsable;
+        public static int TinsicaJump;
+        public static int TinsicaJumpsquat;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -182,6 +186,8 @@ public partial class PlayerFsm : GravityFsm
 
         public static int MinorLeylineTrigger;
         public static int Map;
+        
+        public static int Trick;
     }
     
     protected override void OnAwake()
@@ -247,6 +253,7 @@ public partial class PlayerFsm : GravityFsm
         _inputBuffer.InitInput("Interact", false, true);
         _inputBuffer.InitInput("Inventory");
         _inputBuffer.InitInput("Map");
+        _inputBuffer.InitInput("Trick");
         _camera = Camera.main;
         _previousWallrunSide = FlankType.None;
         _checkpointVector3 = transform.position;
@@ -609,6 +616,16 @@ public partial class PlayerFsm : GravityFsm
         {
             MinorLeylineActiveOnUpdate();
         }
+        
+        if (Machine.IsInState(PlayerFsmState.Tinsica))
+        {
+            TinsicaOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.TinsicaJump))
+        {
+            TinsicaJumpOnUpdate();
+        }
 
         
         if (_playerInput.actions["Reset"].WasPerformedThisFrame())
@@ -621,10 +638,8 @@ public partial class PlayerFsm : GravityFsm
             SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
         }
         
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            Machine.Jump(PlayerFsm.PlayerFsmState.MajorLeylineNodeInteract);
-        }
+        
+        
         
         HandleRaycastKill();
 

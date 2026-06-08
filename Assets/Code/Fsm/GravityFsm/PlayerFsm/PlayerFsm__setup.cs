@@ -2,6 +2,8 @@ using UnityEngine;
 
 public partial class PlayerFsm
 {
+
+
     public override void SetupMachine()
     {
         base.SetupMachine();
@@ -61,6 +63,7 @@ public partial class PlayerFsm
         ItemsConfigure();
         MajorLeylineNodeInteractConfigure();
         MinorLeylineConfigure();
+        TrickConfigure();
     }
 
     public override void SetupStateMaps()
@@ -110,6 +113,9 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.WalkToMajorLeylinePosition, 1.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.MajorLeylineNodeInteract, 2.75f);
         StateMapConfig.Duration.Add(PlayerFsmState.MinorLeylineStartup, 0.75f);
+        
+        StateMapConfig.Duration.Add(PlayerFsmState.Tinsica, TinsicaDuration);
+        StateMapConfig.Duration.Add(PlayerFsmState.TinsicaJumpsquat, 0.1f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dashsquat, "Dashsquat");
@@ -174,6 +180,10 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseMap, "Inventory");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MajorLeylineNodeInteract, "MajorLeylineInteract");
+        
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Tinsica, "Tinsica");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TinsicaJumpsquat, "TinsicaJumpsquat");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TinsicaJump, "TinsicaJump");
 
         StateMapConfig.IsAbstract.Add(PlayerFsmState.Landable, true);
         StateMapConfig.IsAbstract.Add(PlayerFsmState.ForceWallRotation, true);
@@ -195,6 +205,8 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Swim, 0.75f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.RopeSwingJump, 0.85f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SurgeDash, 0.5f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.TinsicaJump, 0.6f);
+        
         
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Jumpsquat, true);

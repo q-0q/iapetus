@@ -7,6 +7,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Landsquat)
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.LockMomentum)
+            .SubstateOf(PlayerFsmState.TinsicaUsable)
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat, _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)

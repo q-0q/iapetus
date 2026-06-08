@@ -40,6 +40,12 @@ public partial class PlayerFsm
             if (SaveSystem.GetAllItems().Contains("Map")) Machine.Fire(PlayerFsmTrigger.Map);
         }
         
+        if (_inputBuffer.IsBuffered("Trick"))
+        {
+            print("fired trick");
+            Machine.Fire(PlayerFsmTrigger.Trick);
+        }
+        
         var v3 = GetInputMovementVector3();
         var angle = Vector3.Angle(v3.normalized, transform.forward.normalized);
         if (angle > HardTurnMinimumAngle)

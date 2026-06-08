@@ -238,6 +238,9 @@ public partial class PlayerFsm
     private float _timeSinceMinorLeyline = 100f;
     private float _timeSinceMinorLeylineUp = 100f;
 
+    private const float TinsicaDuration = 0.55f;
+    private const float TinsicaEntryMomentum = 9.5f;
+
 
     private const float KiMomentumThreshhold = 11.5f;
     
@@ -518,10 +521,10 @@ public partial class PlayerFsm
     private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
     {
         if (GameMenu.Singleton.IsMenuOpen()) return;
-        var desiredMove = ApplyTractionNoTimescale(ComputeDesiredMoveWithoutTimescale()) * Time.deltaTime;
+        var desiredMove = ApplyTractionNoTimescale(ComputeDesiredMoveWithoutTimescale() * modifier) * Time.deltaTime;
         
         var collisionMove = ComputeCollisionMove(desiredMove);
-        transform.position += collisionMove * modifier;
+        transform.position += collisionMove;
         
         if (Machine.IsInState(PlayerFsmState.Wallsquat)) return;
         if (Machine.IsInState(PlayerFsmState.SlowVaultHang)) return;
