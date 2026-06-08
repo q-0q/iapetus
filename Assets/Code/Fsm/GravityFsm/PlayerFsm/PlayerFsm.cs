@@ -90,6 +90,8 @@ public partial class PlayerFsm : GravityFsm
         public static int Dying1;
         public static int Dying2;
         public static int Dead;
+        public static int Respawn;
+        
         public static int FallAfterSlide;
         public static int FallAfterSlideLateral;
 
@@ -127,6 +129,7 @@ public partial class PlayerFsm : GravityFsm
         public static int UseMap;
         public static int InventorySlowdown;
         public static int MapSlowdown;
+        
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -250,7 +253,7 @@ public partial class PlayerFsm : GravityFsm
         _checkpointQuaternion = transform.rotation;
         _kiIndicatorParticles = transform.Find("Armature").GetComponentsInChildren<ParticleSystem>().Where(d => d.name == "PlayerFootParticles").ToList();
         _teleportParticles = transform.Find("TeleportParticles").GetComponent<ParticleSystem>();
-        _deathParticles = transform.Find("DeathParticles").GetComponent<ParticleSystem>();
+        _deathParticles = transform.Find("DeathParticles").GetComponent<PlayerDeathParticles>();
         _splashParticles = transform.Find("SplashParticles").GetComponent<ParticleSystem>();
         _splashParticles.transform.SetParent(null);
         _teleportParticles.transform.SetParent(null);
@@ -530,6 +533,11 @@ public partial class PlayerFsm : GravityFsm
         if (Machine.IsInState(PlayerFsmState.Dying1))
         {
             DyingOnUpdate();
+        }
+        
+        if (Machine.IsInState(PlayerFsmState.Respawn))
+        {
+            RespawnOnUpdate();
         }
         
         if (Machine.IsInState(PlayerFsmState.Swim))

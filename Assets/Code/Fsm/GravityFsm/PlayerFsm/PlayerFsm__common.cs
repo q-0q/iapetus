@@ -46,7 +46,7 @@ public partial class PlayerFsm
     private float _slideTimer = 0f;
     private float _slideNormalExitTimer = 0f;
     private ParticleSystem _teleportParticles;
-    private ParticleSystem _deathParticles;
+    private PlayerDeathParticles _deathParticles;
     private bool isSprinting;
     private bool _isParentSlippery = false;
     private Vector3 _previousPositionDeltaNoTimescale;
@@ -977,14 +977,8 @@ public partial class PlayerFsm
             OnPlayerCultTrialDeath?.Invoke();
             return;
         }
-
-
-        var initialPosition = transform.position;
-        transform.position = _safeGroundPosition;
-        OnPlayerTeleported?.Invoke(transform.position - initialPosition);
-        Machine.Jump(PlayerFsm.PlayerFsmState.HardLand);
         
-        // Machine.Jump(PlayerFsmState.Dying1);
+        Machine.Jump(PlayerFsmState.Dying1);
     }
 
     private void SnapToGround()

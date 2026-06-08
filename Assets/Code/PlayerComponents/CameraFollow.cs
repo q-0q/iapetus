@@ -50,13 +50,20 @@ public class CameraFollow : MonoBehaviour
     {
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
         PlayerFsm.OnPlayerTeleported += OnWarp;
+        PlayerFsm.OnPlayerRespawn += OnRespawn;
         CutsceneManager.OnOverwriteCameraFollowEnded += OnShaderPositionReset;
+    }
+
+    private void OnRespawn()
+    {
+        transform.position = PlayerFsm.Singleton.transform.position;
     }
 
     private void OnDisable()
     {
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
         PlayerFsm.OnPlayerTeleported -= OnWarp;
+        PlayerFsm.OnPlayerRespawn -= OnRespawn;
         CutsceneManager.OnOverwriteCameraFollowEnded -= OnShaderPositionReset;
     }
 
@@ -99,7 +106,7 @@ public class CameraFollow : MonoBehaviour
         }
 
 
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
+        // if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1)) return;
         
         var pos = CameraFollowTarget.Singleton.transform.position;
         var yLerp = PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.CutsceneWary)

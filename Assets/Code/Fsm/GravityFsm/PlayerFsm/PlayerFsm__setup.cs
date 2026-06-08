@@ -92,8 +92,11 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlipsquat, 0.1f);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlip, 0.9f);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonHoming, 1f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Dying1, 0.3f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dying1, 0.45f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dying2, 0.5f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dead, 0.7f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Respawn, 0.85f);
+        
         StateMapConfig.Duration.Add(PlayerFsmState.FallAfterSlideLateral, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
@@ -148,6 +151,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.PitonHoming, "PitonHoming");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterPitonHoming, "Fall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dying2, "Dying");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Respawn, "Respawn");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlide, "Fall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Idle, "Idle");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepStart, "StepStart");
