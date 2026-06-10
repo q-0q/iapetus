@@ -20,6 +20,8 @@ public class PlayerManaIndicator : MonoBehaviour
         
         _hullRenderer.material.SetFloat("_Alpha", 0);
         _indicatorRenderer.material.SetFloat("_Alpha", 0);
+        _maxManaTime = -10f;
+        _consumedManaTime = -100f;
     }
 
     private void OnEnable()
@@ -107,7 +109,7 @@ public class PlayerManaIndicator : MonoBehaviour
         }
         else
         {
-            var a = 1f - Mathf.InverseLerp(_maxManaTime + 1.15f, _maxManaTime + 1.3f, Time.time);
+            var a = 1f - Mathf.InverseLerp(_maxManaTime + 0.8f, _maxManaTime + 0.9f, Time.time);
             _hullRenderer.material.SetFloat("_Alpha", a);
             _indicatorRenderer.material.SetFloat("_Alpha", a);
         }

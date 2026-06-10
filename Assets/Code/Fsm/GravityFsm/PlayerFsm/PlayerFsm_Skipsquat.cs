@@ -9,6 +9,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Skipsquat)
             .SubstateOf(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.TinsicaUsable)
             // .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, _ => true)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Skip)
             .OnEntry(_ =>

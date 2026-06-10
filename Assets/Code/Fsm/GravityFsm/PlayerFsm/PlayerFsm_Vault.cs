@@ -9,12 +9,13 @@ public partial class PlayerFsm
         var momentumWeight = ComputeMomentumWeight();
         Animator.SetFloat("SpeedMod",
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
+        var dashVault = Machine.IsInState(PlayerFsmState.DashVault);
         if (UpdateLedgePosition(FaceLedgeHeight))
         {
-            MoveYOntoLedge(0f, VaultLedgeLerpStrength);
+            MoveYOntoLedge(0f, dashVault? VaultLedgeLerpStrength : VaultLedgeLerpStrength);
         }
         SetAnimatorMomentum();
-        var movementModifier = Machine.IsInState(PlayerFsmState.DashVault) ? 0.3f : 0.9f;
+        var movementModifier = dashVault ? 0.3f : 0.9f;
         transform.position += ComputeCollisionMove(ComputeDesiredMove()) * movementModifier;
         HandleTurning(VaultTurningMultiplier, true);
     }
@@ -55,7 +56,24 @@ public partial class PlayerFsm
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump", 0.25f), 2)
             // .PermitIf(FsmTrigger.Timeout, PlayerFsmState.Skip, _ => _inputBuffer.IsBuffered("Jump", 0.25f), 2)
             .SubstateOf(PlayerFsmState.TinsicaUsable)
-            .SubstateOf(PlayerFsmState.Vault);
+            .SubstateOf(PlayerFsmState.Vault)
+            .OnEntry(_ =>
+            {
+                
+            })
+            .OnExit(_ =>
+            {
+                _momentum = MaxMomentum;
+                isSprinting = true;
+                
+                var originYOffset = -0.1f;
+                var origin = transform.position + Vector3.up * originYOffset;
+                if (Physics.Raycast(origin, transform.forward, out var hit, 10f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+                {
+                    Debug.DrawLine(origin, hit.point, Color.green, 5f);
+                    transform.position += transform.forward*  (hit.distance + 0.05f);
+                }
+            });
     }
     
     

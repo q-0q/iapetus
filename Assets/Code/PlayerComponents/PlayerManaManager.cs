@@ -12,7 +12,7 @@ public class PlayerManaManager : MonoBehaviour
     private Transform _flipHolder;
     private List<PlayerManaIndicator> _manaIndicators;
 
-    private const float ReplenishCooldown = 1.5f;
+    private const float ReplenishCooldown = 1.3f;
     private float _replenishTimer = 0f;
 
     public static event Action OnPlayerMaxMana;
@@ -52,7 +52,7 @@ public class PlayerManaManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             var obj = Instantiate(manaPrefab, _flipHolder);
-            obj.transform.localPosition = new Vector3(-5.5f, (spacing * i) - (spacing * count * 0.5f) + 1f, 0);
+            obj.transform.localPosition = new Vector3(-5.5f, (spacing * i) - (spacing * count * 0.5f) + 2f, 0);
             _manaIndicators.Add(obj.GetComponent<PlayerManaIndicator>());
         }
     }

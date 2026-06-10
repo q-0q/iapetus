@@ -1,17 +1,26 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Code.Misc;
 using UnityEngine;
 
 public partial class PlayerFsm
 {
 
+    public static event Action<string> OnTrickAcquired;
+
     private void TinsicaOnUpdate()
     {
         var speedMod = Mathf.Lerp(1f, Mathf.Lerp(1.75f, 1f, Mathf.InverseLerp(0.2f, 0.45f, TimeInCurrentState())), 
             Mathf.InverseLerp(0.1f, 0.2f, TimeInCurrentState()));
         HandleCollisionMove(speedMod, false);
+        transform.position += ComputeCollisionMove(Vector3.down * (3f * Time.deltaTime));
         HandleTurning(1f, false, 0f, false, 0.25f);
         SetAnimatorSpeedMod();
+        if (UpdateLedgePosition(FaceLedgeHeight))
+        {
+            MoveYOntoLedge(0f, VaultLedgeLerpStrength);
+        }    
     }
 
     private void TinsicaJumpOnUpdate()
@@ -27,7 +36,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.TinsicaUsable)
             .PermitIf(PlayerFsmTrigger.Trick, PlayerFsmState.Tinsica, _ =>
             {
-                return PlayerManaManager.Singleton.GetCurrentAvailableMana() >= 1;
+                return PlayerManaManager.Singleton.GetCurrentAvailableMana() >= 1 && SaveSystem.GetTrick("Tinsica");
             });
         
         Machine.Configure(PlayerFsmState.Tinsica)
@@ -38,7 +47,7 @@ public partial class PlayerFsm
             }, 2)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jump, _ =>
             {
-                return TimeInCurrentState() > 0.3 * ComputeTiniscaDurationMod()  && PlayerManaManager.Singleton.GetCurrentAvailableMana() < 1;
+                return TimeInCurrentState() > 0.5 * ComputeTiniscaDurationMod()  && PlayerManaManager.Singleton.GetCurrentAvailableMana() < 1;
             })
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.GroundMove, _ =>
             {
@@ -119,5 +128,48 @@ public partial class PlayerFsm
         }
 
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
+    }
+}
+
+
+public class TrickRegistration
+{
+    public string displayName;
+    public string description;
+    public int cost;
+    public string lore;
+    
+    public string useInput;
+    public string useClause;
+}
+
+public static class TrickRegistry
+{
+    public static readonly Dictionary<string, TrickRegistration> TrickRegistrations;
+
+    static TrickRegistry()
+    {
+        TrickRegistrations = new Dictionary<string, TrickRegistration>();
+        
+        TrickRegistrations.Add("Tinsica", new TrickRegistration()
+        {
+            displayName = "Tinsica",
+            description = "A front cartwheel that builds speed and crosses gaps.",
+            lore = "By expelling energy into their palms, Lotus Monks balance qi evenly across their bodies.",
+            cost = 1,
+            useInput = "Trick",
+            useClause = "while on the ground"
+        });
+        
+        TrickRegistrations.Add("TinsicaJump", new TrickRegistration()
+        {
+            displayName = "Tinsica Jump",
+            description = "A floating frontflip that travels far.",
+            lore = "Motion is the plucking of a string.",
+            cost = 1,
+            useInput = "Jump",
+            useClause = "while in a Tinsica"
+        });
+        
     }
 }

@@ -82,6 +82,7 @@ public class SaveSystem : MonoBehaviour
         public string currentNearestMajorLeylineNode;
         public float currentNeatestMajorLeylineNodeT;
         public string checkpointPath;
+        public List<string> tricks;
         public float playTime;
         public string gameVersion;
         
@@ -110,6 +111,7 @@ public class SaveSystem : MonoBehaviour
             incenseAmount = 0;
             cultLocationCampId = 0;
             bitDeposits = new List<string>();
+            tricks = new List<string>();
             gameVersion = "";
             
         }
@@ -430,6 +432,23 @@ public class SaveSystem : MonoBehaviour
         SaveData data = LoadCachedSaveData();
         return data.checkpointPath;
     }
+
+
+    public static void WriteTrick(string trick)
+    {
+        SaveData data = LoadCachedSaveData();
+        if (data.tricks.Contains(trick)) return;
+        data.tricks.Add(trick);
+        WriteSaveData(data);
+    }
+
+    public static bool GetTrick(string trick)
+    {
+        SaveData data = LoadCachedSaveData();
+        if (data.tricks == null) return false;
+        return data.tricks.Contains(trick);
+    }
+    
     
     private static void WriteSaveData(SaveData saveData, bool screenCapture = true)
     {
