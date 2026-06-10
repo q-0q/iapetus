@@ -291,6 +291,7 @@ public partial class PlayerFsm
     private const float SwimFreezeDuration = 3f;
 
     private float _dialogueEntryMomentum;
+    private PlayerTrickParticles _playerTrickParticles;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)

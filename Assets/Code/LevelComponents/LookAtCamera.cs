@@ -8,6 +8,9 @@ public class LookAtCamera : MonoBehaviour
 
     [SerializeField]
     private bool _keepWorldUp = false;
+    
+    [SerializeField]
+    private bool _keepCameraUp = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -16,11 +19,15 @@ public class LookAtCamera : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (_keepWorldUp)
         {
             transform.LookAt(new Vector3(_camera.transform.position.x, transform.position.y, _camera.transform.position.z), Vector3.up);
+        }
+        else if (_keepCameraUp)
+        {
+            transform.LookAt(_camera.transform, _camera.transform.up);
         }
         else
         {

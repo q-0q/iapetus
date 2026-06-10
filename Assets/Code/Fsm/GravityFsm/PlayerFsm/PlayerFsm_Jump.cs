@@ -20,6 +20,11 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)
             .Permit(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft)
             .Permit(PlayerFsmTrigger.IsAboveWater, PlayerFsmState.DiveFall)
-            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash);
+            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
+            .OnEntryFrom(PlayerFsmTrigger.Jump, _ =>
+            {
+                OnPlayerFootstep();
+                YVelocity = JumpYVelocity; 
+            });
     }
 }

@@ -42,7 +42,7 @@ public partial class PlayerFsm
         
         if (_inputBuffer.IsBuffered("Trick"))
         {
-            print("fired trick");
+            
             Machine.Fire(PlayerFsmTrigger.Trick);
         }
         

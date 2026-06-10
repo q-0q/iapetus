@@ -205,7 +205,7 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Swim, 0.75f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.RopeSwingJump, 0.85f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SurgeDash, 0.5f);
-        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.TinsicaJump, 0.6f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.TinsicaJump, 0.55f);
         
         
         StateMapConfig.LockSpringCollider.Add(PlayerFsmState.Landsquat, true);

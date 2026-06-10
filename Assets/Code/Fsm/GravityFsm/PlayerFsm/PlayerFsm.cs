@@ -269,6 +269,9 @@ public partial class PlayerFsm : GravityFsm
         _teleportCameraLookAt = transform.parent.Find("PlayerTeleportCameraLookAt");
         _playerDashParticles = GetComponentInChildren<PlayerDashParticles>();
         _playerDashParticles.transform.SetParent(null);
+        
+        _playerTrickParticles = GetComponentInChildren<PlayerTrickParticles>();
+        _playerTrickParticles.transform.SetParent(null);
         _surgeStartupCamera = transform.parent.Find("SurgeStartupCamera").GetComponent<CinemachineVirtualCamera>();
         _playerSurgeHalo = GetComponentInChildren<PlayerSurgeHalo>();
         _playerSurgeHalo.transform.SetParent(null);
