@@ -151,11 +151,11 @@ public class CultTrialManager : MonoBehaviour
         var strength = 2f;
         var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
         freeLook.m_Lens.FieldOfView =
-            Mathf.Lerp(freeLook.m_Lens.FieldOfView, 65f, Time.deltaTime * strength);
+            Mathf.Lerp(freeLook.m_Lens.FieldOfView, 55f, Time.deltaTime * strength);
 
         var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
         offset.m_Offset = Vector3.Lerp(offset.m_Offset,
-            new Vector3(0, 0, -6f), Time.deltaTime * strength);
+            new Vector3(0, 0, -3f), Time.deltaTime * strength);
         
         _curseHalo.localScale = Vector3.one * Mathf.Lerp(10f, 2f, Mathf.InverseLerp(0, 2.5f, timeInCurrentState));
         var w = Mathf.InverseLerp(0, 2f, timeInCurrentState);

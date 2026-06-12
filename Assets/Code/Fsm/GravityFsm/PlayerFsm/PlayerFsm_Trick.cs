@@ -16,10 +16,19 @@ public partial class PlayerFsm
         HandleCollisionMove(speedMod, false);
         transform.position += ComputeCollisionMove(Vector3.down * (3f * Time.deltaTime));
         HandleTurning(1f, false, 0f, false, 0.25f);
-        SetAnimatorSpeedMod();
-        if (UpdateLedgePosition(FaceLedgeHeight))
+        
+        
+        var animatorSpeedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()) *
+                       (_isSurging ? 1.5f : 1f); // same as SetAnimatorSpeedMod() but whtout boost
+        Animator.SetFloat("SpeedMod", animatorSpeedMod);
+        
+        if (UpdateLedgePosition(FaceHighLedgeHeight))
         {
-            MoveYOntoLedge(0f, VaultLedgeLerpStrength);
+            MoveYOntoLedge(0f, -1f);
+        }
+        else if (UpdateLedgePosition(FaceLedgeHeight))
+        {
+            MoveYOntoLedge(0f, -1f);
         }    
     }
 
@@ -36,6 +45,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.TinsicaUsable)
             .PermitIf(PlayerFsmTrigger.Trick, PlayerFsmState.Tinsica, _ =>
             {
+                if (Machine.IsInState(PlayerFsmState.SlowVaultFinish) && TimeInCurrentState() < 0.1f) return false;
                 return PlayerManaManager.Singleton.GetCurrentAvailableMana() >= 1 && SaveSystem.GetTrick("Tinsica");
             });
         
@@ -109,6 +119,10 @@ public partial class PlayerFsm
 
     private float ComputeTiniscaDurationMod()
     {
+        var comboMultiplier = GetCurrentSurgeSpeedMultiplier();
+        var boostMultiplier = GetCurrentBoostSpeedMultiplier();
+        var miscMultiplier = GetCurrentMiscSpeedMultiplier();
+        
         return Mathf.Lerp(1.3f, 1f, Mathf.InverseLerp(TinsicaEntryMomentum, MaxMomentum, _momentum));
     }
 
@@ -129,6 +143,12 @@ public partial class PlayerFsm
 
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
     }
+
+    public void AcquireTrick(string trick)
+    {
+        SaveSystem.WriteTrick(trick);
+        OnTrickAcquired?.Invoke(trick);
+    }
 }
 
 
@@ -146,7 +166,8 @@ public class TrickRegistration
 public static class TrickRegistry
 {
     public static readonly Dictionary<string, TrickRegistration> TrickRegistrations;
-
+    public const string TrickColor = "D0C4FF";
+    
     static TrickRegistry()
     {
         TrickRegistrations = new Dictionary<string, TrickRegistration>();
@@ -154,7 +175,7 @@ public static class TrickRegistry
         TrickRegistrations.Add("Tinsica", new TrickRegistration()
         {
             displayName = "Tinsica",
-            description = "A front cartwheel that builds speed and crosses gaps.",
+            description = "A fast front cartwheel that crosses gaps and mounts ledges.",
             lore = "By expelling energy into their palms, Lotus Monks balance qi evenly across their bodies.",
             cost = 1,
             useInput = "Trick",
@@ -170,6 +191,8 @@ public static class TrickRegistry
             useInput = "Jump",
             useClause = "while in a Tinsica"
         });
+        
+        
         
     }
 }

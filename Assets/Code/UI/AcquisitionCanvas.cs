@@ -7,8 +7,9 @@ using UnityEngine.UI;
 
 public class AcquisitionCanvas : MonoBehaviour
 {
-    public static event Action OnAcquisitionCanvasOpened;
-    public static event Action OnAcquisitionCanvasClosed;
+    public bool isOpen;
+
+    public static AcquisitionCanvas Singleton;
 
     public CanvasGroup _backgroundCanvasGroup;
     public CanvasGroup _upperCanvasGroup;
@@ -20,6 +21,7 @@ public class AcquisitionCanvas : MonoBehaviour
     public Image _inputImage;
     public TextMeshProUGUI _inputClauseText;
     public TextMeshProUGUI _descriptionText;
+    public TextMeshProUGUI _lowerText;
     
     
     private void OnEnable()
@@ -34,6 +36,7 @@ public class AcquisitionCanvas : MonoBehaviour
 
     private void Awake()
     {
+        Singleton = this;
         _backgroundCanvasGroup.alpha = 0;
         _upperCanvasGroup.alpha = 0;
         _middleCanvasGroup.alpha = 0f;
@@ -43,28 +46,33 @@ public class AcquisitionCanvas : MonoBehaviour
     private void OnTrickAcquired(string trick)
     {
         var data = TrickRegistry.TrickRegistrations[trick];
-        StartCoroutine(Coroutine("Lotus Form learned", data.displayName, data.useInput, data.useClause, data.description));
+        StartCoroutine(Coroutine( "<color=#" + TrickRegistry.TrickColor + ">Lotus Form</color> learned", data.displayName, data.useInput, data.useClause, data.description,
+            "<color=#" + TrickRegistry.TrickColor + ">Lotus Forms</color> cost <color=#" + TrickRegistry.TrickColor + ">ki</color> to perform."));
     }
 
-    IEnumerator Coroutine(string upperSubtext, string upperText, string input, string inputClauseText, string description)
+    IEnumerator Coroutine(string upperSubtext, string upperText, string input, string inputClauseText, string description, string lowerText)
     {
 
         _upperSubtext.text = upperSubtext;
         _upperText.text = upperText;
-        // _inputImage.sprite = InputTypeManager.Singleton.GetSpriteForAction(input);
+        _inputImage.sprite = InputTypeManager.Singleton.GetSpriteForAction(input);
         _inputClauseText.text = inputClauseText;
         _descriptionText.text = description;
+        _lowerText.text = lowerText;
+        isOpen = true;
 
         var t = 0f;
-        var d = 1.5f;
+        var d = 1f;
 
         while (t < d)
         {
             var w = Util.SmoothLerp01(t / d );
-            _backgroundCanvasGroup.alpha = Mathf.Lerp(_backgroundCanvasGroup.alpha, 1f, Time.deltaTime * 4f);
+            _backgroundCanvasGroup.alpha = Mathf.Lerp(_backgroundCanvasGroup.alpha, 1f, Time.deltaTime * 7f);
             t += Time.deltaTime;
             yield return null;
         }
+        
+        _backgroundCanvasGroup.alpha = 1f;
 
         yield return new WaitForSeconds(0.5f);
         
@@ -103,16 +111,17 @@ public class AcquisitionCanvas : MonoBehaviour
             yield return null;
         }
 
-        _backgroundCanvasGroup.alpha = 1f;
+        
         _upperCanvasGroup.alpha = 1f;
         _middleCanvasGroup.alpha = 1f;
         _lowerCanvasGroup.alpha = 1f;
-        OnAcquisitionCanvasOpened?.Invoke();
+        
 
-        yield return new WaitForSeconds(3f);
+
+        yield return new WaitForSeconds(4f);
         
         t = 0f;
-        d = 1.5f;
+        d = 2f;
 
         while (t < d)
         {
@@ -125,11 +134,13 @@ public class AcquisitionCanvas : MonoBehaviour
             yield return null;
         }
         
+        isOpen = false;
+        
         _backgroundCanvasGroup.alpha = 0;
         _upperCanvasGroup.alpha = 0;
         _middleCanvasGroup.alpha = 0f;
         _lowerCanvasGroup.alpha = 0;
-        OnAcquisitionCanvasClosed?.Invoke();
+
         
         yield return null;
     }

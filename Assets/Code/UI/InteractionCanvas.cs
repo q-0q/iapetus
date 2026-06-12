@@ -35,7 +35,7 @@ public class InteractionCanvas : MonoBehaviour
     {
         Image.sprite = InputTypeManager.Singleton.GetSpriteForAction("Interact");
 
-        if (psuedo && !GameMenu.Singleton.IsMenuOpen())
+        if (psuedo && !GameMenu.Singleton.IsMenuOpen() && !AcquisitionCanvas.Singleton.isOpen)
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 15f);
             _tmp.text = psuedoText;
@@ -43,7 +43,7 @@ public class InteractionCanvas : MonoBehaviour
         }
         
         var interactable = PlayerFsm.Singleton.currentPotentialInteractable;
-        if (interactable is not null && !GameMenu.Singleton.IsMenuOpen() && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 0.5f)
+        if (interactable is not null && !GameMenu.Singleton.IsMenuOpen() && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 0.5f && !AcquisitionCanvas.Singleton.isOpen)
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 10f);
             _tmp.text = interactable.text;

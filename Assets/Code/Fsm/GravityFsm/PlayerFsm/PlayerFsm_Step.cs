@@ -5,6 +5,7 @@ public partial class PlayerFsm
 {
     private void IdleOnUpdate()
     {
+        if (GameMenu.Singleton.IsMenuOpen()) return;
         HandleInputMomentumChange();
         SetSafeGroundPosition();
         transform.position += ComputeCollisionMove(ApplyTractionNoTimescale(Vector3.zero) * Time.deltaTime);
@@ -12,6 +13,7 @@ public partial class PlayerFsm
     
     private void StepStartOnUpdate()
     {
+        if (GameMenu.Singleton.IsMenuOpen()) return;
         HandleInputMomentumChange();
         HandleTurning(2f);
 

@@ -23,6 +23,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.SlowVaultFinish)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
+            .SubstateOf(PlayerFsmState.TinsicaUsable)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)

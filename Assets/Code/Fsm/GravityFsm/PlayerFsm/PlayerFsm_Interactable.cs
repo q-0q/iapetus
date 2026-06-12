@@ -5,6 +5,9 @@ public partial class PlayerFsm
 {
     private void InteractableOnUpdate()
     {
+        if (AcquisitionCanvas.Singleton.isOpen) return;
+        if (GameMenu.Singleton.IsMenuOpen()) return;
+        
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (currentPotentialInteractable != null && interacted) currentPotentialInteractable.TriggerInteraction();
         

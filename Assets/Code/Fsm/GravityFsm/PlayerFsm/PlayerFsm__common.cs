@@ -285,7 +285,7 @@ public partial class PlayerFsm
     private float _freezeTimer;
     public float _timeSinceBoostStarted;
     private const float BoostSpeedMultiplier = 1.75f;
-    private const float BoostSpeedDuration = 3.75f;
+    private const float BoostSpeedDuration = 2.75f;
     public static event Action OnPlayerCultTrialDeath;
     public static event Action<Vector3> OnPlayerTeleported;
     private const float SwimFreezeDuration = 3f;
@@ -546,7 +546,7 @@ public partial class PlayerFsm
     {
 
         // if (Input.GetKey(KeyCode.P)) desiredMove = Vector3.zero;
-        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery))
+        if ((!Machine.IsInState(GravityFsmState.Grounded) || !_isParentSlippery) || true)
         {
             _currentSlipWeight = 0f;
             HandleSlipAudio();
@@ -555,7 +555,7 @@ public partial class PlayerFsm
         
         
         var lerpStrength = 1.5f;
-        var afterTraction = Vector3.Lerp(new Vector3(_previousPositionDeltaNoTimescale.x, desiredMoveNoTimescale.y, _previousPositionDeltaNoTimescale.z), desiredMoveNoTimescale, lerpStrength * Time.deltaTime);
+        var afterTraction = Vector3.Lerp(new Vector3(_previousPositionDeltaNoTimescale.x, 0, _previousPositionDeltaNoTimescale.z), desiredMoveNoTimescale, lerpStrength * Time.deltaTime);
         if (afterTraction.magnitude < 0.75f) afterTraction = desiredMoveNoTimescale;
         UpdateSlipWeight(desiredMoveNoTimescale, afterTraction);
         
@@ -1122,7 +1122,7 @@ public partial class PlayerFsm
         isSprinting = true;
         _timeSinceBoostStarted = 0f;
         
-        PlaySpeedLineParticlesForDuration(BoostSpeedDuration * 0.75f);
+        PlaySpeedLineParticlesForDuration(BoostSpeedDuration * 0.35f);
         StartCoroutine(TrailCoroutine());
         StartCoroutine(CameraCoroutine());
         
@@ -1137,10 +1137,10 @@ public partial class PlayerFsm
             {
                 var w = Util.SmoothLerp01(t / d);
                 
-                freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, baseFov + 5f, w);
+                freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, baseFov + 3f, w);
 
                 var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
-                offset.m_Offset = Vector3.Lerp(Vector3.zero, new Vector3(0, 0, 2f), w);
+                offset.m_Offset = Vector3.Lerp(Vector3.zero, new Vector3(0, 0, 1.5f), w);
                 
                 t += Time.deltaTime;
                 yield return null;

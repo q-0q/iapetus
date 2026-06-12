@@ -16,6 +16,8 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)
+            .SubstateOf(PlayerFsmState.TinsicaUsable)
+            .PermitIf(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Jumpsquat, _ => _inputBuffer.IsBuffered("Jump"), 1)
             .OnEntry(_ =>
             {
                 FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);

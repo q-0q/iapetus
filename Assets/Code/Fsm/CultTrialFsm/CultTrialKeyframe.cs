@@ -40,7 +40,7 @@ namespace Code.Fsm.TrialCollectibleFSM
                 _ownerFsm.Machine.Fire(CultTrialFsm.CultTrialFsmTrigger.FinalKeyframeTriggered);
                 return;
             };
-            PlayerFsm.Singleton.OnCultTrialBoostTrigger();
+            // PlayerFsm.Singleton.OnCultTrialBoostTrigger();
             CultTrialManager.Singleton.ReplenishCurseDuration();
             Deactivate();
         }

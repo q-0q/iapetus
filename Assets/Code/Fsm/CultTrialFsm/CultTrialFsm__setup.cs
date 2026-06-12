@@ -148,7 +148,7 @@ public partial class CultTrialFsm
             {
                 CultTrialManager.Singleton.StartTimer();
                 UpdateInteractable();
-                PlayerFsm.Singleton.OnCultTrialBoostTrigger();
+                // PlayerFsm.Singleton.OnCultTrialBoostTrigger();
                 _interactable.SetEnabled(false);
                 CultTrialManager.Singleton.StartCurseTicking(this);
                 Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up, Vector3.one * 5f, 1.5f, 1f, 0 );

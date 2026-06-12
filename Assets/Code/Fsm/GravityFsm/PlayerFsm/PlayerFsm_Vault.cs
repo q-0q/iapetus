@@ -15,7 +15,7 @@ public partial class PlayerFsm
             MoveYOntoLedge(0f, dashVault? VaultLedgeLerpStrength : VaultLedgeLerpStrength);
         }
         SetAnimatorMomentum();
-        var movementModifier = dashVault ? 0.3f : 0.9f;
+        var movementModifier = dashVault ? 0.9f : 0.9f;
         transform.position += ComputeCollisionMove(ComputeDesiredMove()) * movementModifier;
         HandleTurning(VaultTurningMultiplier, true);
     }
@@ -66,13 +66,14 @@ public partial class PlayerFsm
                 _momentum = MaxMomentum;
                 isSprinting = true;
                 
-                var originYOffset = -0.1f;
-                var origin = transform.position + Vector3.up * originYOffset;
-                if (Physics.Raycast(origin, transform.forward, out var hit, 10f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
-                {
-                    Debug.DrawLine(origin, hit.point, Color.green, 5f);
-                    transform.position += transform.forward*  (hit.distance + 0.05f);
-                }
+                // var originYOffset = -0.1f;
+                // var originForwardOffset = -2f;
+                // var origin = transform.position + (Vector3.up * originYOffset) + (transform.forward * originForwardOffset);
+                // if (Physics.Raycast(origin, transform.forward, out var hit, 10f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+                // {
+                //     Debug.DrawLine(origin, hit.point, Color.green, 5f);
+                //     transform.position += transform.forward*  (hit.distance + 0.05f);
+                // }
             });
     }
     
