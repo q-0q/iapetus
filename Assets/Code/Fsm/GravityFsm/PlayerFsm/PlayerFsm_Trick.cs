@@ -21,14 +21,15 @@ public partial class PlayerFsm
         var animatorSpeedMod = Mathf.Lerp(GroundMoveMinimumAnimatorSpeedMod, GroundMoveMaximumAnimatorSpeedMod, ComputeMomentumWeight()) *
                        (_isSurging ? 1.5f : 1f); // same as SetAnimatorSpeedMod() but whtout boost
         Animator.SetFloat("SpeedMod", animatorSpeedMod);
-        
-        if (UpdateLedgePosition(FaceHighLedgeHeight))
+
+        var ledgeMountSpeed = 25f;
+        if (UpdateLedgePosition(FaceHighLedgeHeight, 0.25f, true))
         {
-            MoveYOntoLedge(0f, -1f);
+            MoveYOntoLedgeLinear(0f, ledgeMountSpeed);
         }
-        else if (UpdateLedgePosition(FaceLedgeHeight))
+        else if (UpdateLedgePosition(FaceLedgeHeight, 0.25f, true))
         {
-            MoveYOntoLedge(0f, -1f);
+            MoveYOntoLedgeLinear(0f, ledgeMountSpeed);
         }    
     }
 
@@ -50,7 +51,7 @@ public partial class PlayerFsm
             });
         
         Machine.Configure(PlayerFsmState.Tinsica)
-            .SubstateOf(GravityFsmState.Grounded)
+            // .SubstateOf(GravityFsmState.Grounded)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.TinsicaJump, _ =>
             {
                 return TimeInCurrentState() > 0.4 * ComputeTiniscaDurationMod() && PlayerManaManager.Singleton.GetCurrentAvailableMana() >= 1;;
@@ -94,7 +95,6 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.Landable)
             .SubstateOf(PlayerFsmState.AirControl)
             .SubstateOf(PlayerFsmState.PitonInteractable)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, CanDash)
             .SubstateOf(PlayerFsmState.WallInteractable)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterDash, @params => !IsSlideTrigger(@params) && YVelocity < 0.5f && _momentum > 5f, 1)
@@ -152,47 +152,3 @@ public partial class PlayerFsm
 }
 
 
-public class TrickRegistration
-{
-    public string displayName;
-    public string description;
-    public int cost;
-    public string lore;
-    
-    public string useInput;
-    public string useClause;
-}
-
-public static class TrickRegistry
-{
-    public static readonly Dictionary<string, TrickRegistration> TrickRegistrations;
-    public const string TrickColor = "D0C4FF";
-    
-    static TrickRegistry()
-    {
-        TrickRegistrations = new Dictionary<string, TrickRegistration>();
-        
-        TrickRegistrations.Add("Tinsica", new TrickRegistration()
-        {
-            displayName = "Tinsica",
-            description = "A fast front cartwheel that crosses gaps and mounts ledges.",
-            lore = "By expelling energy into their palms, Lotus Monks balance qi evenly across their bodies.",
-            cost = 1,
-            useInput = "Trick",
-            useClause = "while on the ground"
-        });
-        
-        TrickRegistrations.Add("TinsicaJump", new TrickRegistration()
-        {
-            displayName = "Tinsica Jump",
-            description = "A floating frontflip that travels far.",
-            lore = "Motion is the plucking of a string.",
-            cost = 1,
-            useInput = "Jump",
-            useClause = "while in a Tinsica"
-        });
-        
-        
-        
-    }
-}

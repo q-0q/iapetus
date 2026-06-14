@@ -32,6 +32,13 @@ public partial class PlayerFsm
                 _inputBuffer.ConsumeBuffer("Jump");
                 YVelocity = 0;
                 OnPlayerFootstep();
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                _previousWallrunSide = FlankType.None;
+                _currentFlankType = FlankType.None;
+                _wallsquattedSinceLeavingGround = false;
+                _dashSinceLeavingGround = false;
+                currentRopeSwing = null;
             })
             .OnExit(_ => { 
                 _momentum = 5f;

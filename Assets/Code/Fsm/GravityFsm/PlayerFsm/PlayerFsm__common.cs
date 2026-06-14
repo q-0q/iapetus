@@ -323,8 +323,19 @@ public partial class PlayerFsm
         var newY = lerpStrength < 0 ? _currentLedgePosition.y : Mathf.Lerp(transform.position.y, _currentLedgePosition.y + yOffset, Time.deltaTime * lerpStrength);
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
+    
+    private void MoveYOntoLedgeLinear(float yOffset, float speed)
+    {
+        var desiredY = _currentLedgePosition.y + yOffset;
+        var delta = speed * Time.deltaTime;
+        var newY = transform.position.y > desiredY
+            ? Mathf.Max(desiredY, transform.position.y - delta)
+            : Mathf.Min(desiredY, transform.position.y + delta);
+        print(newY);
+        transform.position = new Vector3(transform.position.x, newY, transform.position.z);
+    }
 
-    private bool UpdateLedgePosition(float ledgeHeight, float forwardOffset = 0.25f)
+    private bool UpdateLedgePosition(float ledgeHeight, float forwardOffset = 0.25f, bool upwardsOnly = false)
     {
         var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
             (ComputeDynamicForwardRaycastDistance() + forwardOffset);
@@ -335,6 +346,7 @@ public partial class PlayerFsm
 
         var slope = Vector3.Angle(hit.normal, Vector3.up);
         if (slope > 60f) return false;
+        if (upwardsOnly && hit.point.y < transform.position.y) return false;
         _currentLedgePosition = hit.point;
         return true;
     }

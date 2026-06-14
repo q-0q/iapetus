@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Code.Fsm.GravityFsm.PlayerFsm;
 using Code.Misc;
 using TMPro;
 using UnityEngine;
@@ -45,9 +46,9 @@ public class AcquisitionCanvas : MonoBehaviour
 
     private void OnTrickAcquired(string trick)
     {
-        var data = TrickRegistry.TrickRegistrations[trick];
-        StartCoroutine(Coroutine( "<color=#" + TrickRegistry.TrickColor + ">Lotus Form</color> learned", data.displayName, data.useInput, data.useClause, data.description,
-            "<color=#" + TrickRegistry.TrickColor + ">Lotus Forms</color> cost <color=#" + TrickRegistry.TrickColor + ">ki</color> to perform."));
+        var data = MovelistRegistry.MovelistRegistrations[trick];
+        StartCoroutine(Coroutine( "<color=#" + MovelistRegistry.TrickColor + ">Lotus Form</color> learned", data.displayName, data.useInput, data.useClause, data.description,
+            "<color=#" + MovelistRegistry.TrickColor + ">Lotus Forms</color> cost <color=#" + MovelistRegistry.TrickColor + ">ki</color> to perform."));
     }
 
     IEnumerator Coroutine(string upperSubtext, string upperText, string input, string inputClauseText, string description, string lowerText)
