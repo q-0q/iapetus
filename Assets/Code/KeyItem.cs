@@ -122,6 +122,20 @@ public static class KeyItemRegistry
             GetUseConfirmation = () => ""
         });
         
+        KeyItemRegistrations.Add("Card", new KeyItemRegistration()
+        {
+            displayName = "Silicant Card",
+            description = "A palm-sized rectangle of sleek, machined metal. Bluish lights faintly twinkle within the surface.",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            GetUseDescription = () => "???",
+            GetCanUse = () => false,
+            onUse = () =>
+            {
+                
+            },
+            GetUseConfirmation = () => ""
+        });
     }
 }
 

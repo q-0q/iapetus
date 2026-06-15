@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class InventoryCanvas : MonoBehaviour
@@ -15,61 +16,77 @@ public class InventoryCanvas : MonoBehaviour
     enum InventoryCanvasState
     {
         Closed,
-        Main,
+        Bag,
+        Movelist,
+        Test,
         UseConfirmation
     }
-
+    
     private PlayerInput _playerInput;
     private InventoryCanvasState _state = InventoryCanvasState.Closed;
     private CanvasGroup _canvasGroup;
-    private CanvasGroup _mainCanvasGroup;
+    private CanvasGroup _bagCanvasGroup;
     private CanvasGroup _useConfirmationCanvasGroup;
     private Image _closeImage;
 
-    public static InventoryCanvas Singleton;
+    private static InventoryCanvas Singleton;
 
     private List<InventorySlot> _inventorySlots;
 
-    private GameObject _selection;
-    private TextMeshProUGUI _selectionName;
-    private TextMeshProUGUI _selectionDescription;
-    private TextMeshProUGUI _selectionUseDescription;
+    private GameObject _bagSelection;
+    private TextMeshProUGUI _bagSelectionName;
+    private TextMeshProUGUI _bagSelectionDescription;
+    private TextMeshProUGUI _bagSelectionUseDescription;
     
-    private TextMeshProUGUI _useConfirmationItemName;
-    private TextMeshProUGUI _useConfirmation;
+    private TextMeshProUGUI _bagUseConfirmationItemName;
+    private TextMeshProUGUI _bagUseConfirmation;
     
     private const int MaximumSlotCount = 10;
     private KeyItemRegistration _confirmationData;
+
+
+
+    public Button navBagButton;
+    public Button navMovelistButton;
+    public Button navTestButton;
+
+    private List<Button> navButtons;
+    
+    
     
     private void Awake()
     {
         Singleton = this;
         _playerInput = GetComponent<PlayerInput>();
         _canvasGroup = GetComponent<CanvasGroup>();
-        _mainCanvasGroup = transform.Find("MainView").GetComponent<CanvasGroup>();
+        _bagCanvasGroup = transform.Find("BagView").GetComponent<CanvasGroup>();
         _useConfirmationCanvasGroup = transform.Find("UseConfirmationView").GetComponent<CanvasGroup>();
 
         _canvasGroup.alpha = 0;
-        _mainCanvasGroup.alpha = 0;
+        _bagCanvasGroup.alpha = 0;
         _useConfirmationCanvasGroup.alpha = 0;
         
-        _closeImage = _mainCanvasGroup.transform.Find("CloseInput").Find("Image").GetComponent<Image>();
+        _closeImage = transform.Find("CloseInput").Find("Image").GetComponent<Image>();
         
-        _selection = _mainCanvasGroup.transform.Find("Selection").gameObject;
-        _selectionName = _mainCanvasGroup.transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
-        _selectionDescription = _mainCanvasGroup.transform.Find("Selection").Find("Description").GetComponent<TextMeshProUGUI>();
-        _selectionUseDescription = _mainCanvasGroup.transform.Find("Selection").Find("UseDescription").GetComponent<TextMeshProUGUI>();
+        _bagSelection = _bagCanvasGroup.transform.Find("Selection").gameObject;
+        _bagSelectionName = _bagCanvasGroup.transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
+        _bagSelectionDescription = _bagCanvasGroup.transform.Find("Selection").Find("Description").GetComponent<TextMeshProUGUI>();
+        _bagSelectionUseDescription = _bagCanvasGroup.transform.Find("Selection").Find("UseDescription").GetComponent<TextMeshProUGUI>();
         
-        _useConfirmation = _useConfirmationCanvasGroup.transform.Find("Selection").Find("UseConfirmation").GetComponent<TextMeshProUGUI>();
-        _useConfirmationItemName = _useConfirmationCanvasGroup.transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
+        _bagUseConfirmation = _useConfirmationCanvasGroup.transform.Find("Selection").Find("UseConfirmation").GetComponent<TextMeshProUGUI>();
+        _bagUseConfirmationItemName = _useConfirmationCanvasGroup.transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
         
-        _selection.SetActive(false);
+        _bagSelection.SetActive(false);
 
         _inventorySlots = new List<InventorySlot>();
         foreach (var slot in GetComponentsInChildren<InventorySlot>())
         {
             _inventorySlots.Add(slot);
         }
+        
+        
+        
+        
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -129,16 +146,16 @@ public class InventoryCanvas : MonoBehaviour
         _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, GetIsOpen() ? 1f : 0f, Time.deltaTime * 20f);
         _closeImage.sprite = InputTypeManager.Singleton.GetSpriteForAction("Inventory");
 
-        if (_state == InventoryCanvasState.Main)
+        if (_state == InventoryCanvasState.Bag)
         {
-            _mainCanvasGroup.alpha = Mathf.Lerp(_mainCanvasGroup.alpha, 1f, Time.deltaTime * 20f);
+            _bagCanvasGroup.alpha = Mathf.Lerp(_bagCanvasGroup.alpha, 1f, Time.deltaTime * 20f);
             _useConfirmationCanvasGroup.alpha = Mathf.Lerp(_useConfirmationCanvasGroup.alpha, 0f, Time.deltaTime * 20f);
         }
         
         if (_state == InventoryCanvasState.UseConfirmation)
         {
             _useConfirmationCanvasGroup.alpha = Mathf.Lerp(_useConfirmationCanvasGroup.alpha, 1f, Time.deltaTime * 20f);
-            _mainCanvasGroup.alpha = Mathf.Lerp(_mainCanvasGroup.alpha, 0f, Time.deltaTime * 20f);
+            _bagCanvasGroup.alpha = Mathf.Lerp(_bagCanvasGroup.alpha, 0f, Time.deltaTime * 20f);
         }
         
         // if (NeedToSelect()) _inventorySlots[0].GetComponentInChildren<Button>().Select();
@@ -149,7 +166,7 @@ public class InventoryCanvas : MonoBehaviour
         _state = InventoryCanvasState.Closed;
         
         _canvasGroup.blocksRaycasts = false;
-        _mainCanvasGroup.blocksRaycasts = false;
+        _bagCanvasGroup.blocksRaycasts = false;
         _useConfirmationCanvasGroup.blocksRaycasts = false;
         
         Cursor.visible = false;
@@ -160,9 +177,9 @@ public class InventoryCanvas : MonoBehaviour
 
     void Open()
     {
-        _state = InventoryCanvasState.Main;
+        _state = InventoryCanvasState.Bag;
         _canvasGroup.blocksRaycasts = true;
-        _mainCanvasGroup.blocksRaycasts = true;
+        _bagCanvasGroup.blocksRaycasts = true;
         _useConfirmationCanvasGroup.blocksRaycasts = false;
         _useConfirmationCanvasGroup.alpha = 0;
         
@@ -175,18 +192,18 @@ public class InventoryCanvas : MonoBehaviour
     void ConfirmationViewOpen()
     {
         _state = InventoryCanvasState.UseConfirmation;
-        _mainCanvasGroup.blocksRaycasts = false;
+        _bagCanvasGroup.blocksRaycasts = false;
         _useConfirmationCanvasGroup.blocksRaycasts = true;
         _useConfirmationCanvasGroup.transform.Find("Selection").Find("Buttons").Find("Back").GetComponent<Button>().Select();
     }
     
     public void ConfirmationViewClose()
     {
-        _state = InventoryCanvasState.Main;
+        _state = InventoryCanvasState.Bag;
         _inventorySlots[0].GetComponentInChildren<Button>().Select();
         OnSlotSelected(_inventorySlots[0].Data);
         
-        _mainCanvasGroup.blocksRaycasts = true;
+        _bagCanvasGroup.blocksRaycasts = true;
         _useConfirmationCanvasGroup.blocksRaycasts = false;
     }
     
@@ -204,7 +221,7 @@ public class InventoryCanvas : MonoBehaviour
     {
         foreach (var selectable in GetComponentsInChildren<Selectable>())
         {
-            if (EventSystem.current.currentSelectedGameObject == selectable.gameObject && _selection.activeSelf) return false;
+            if (EventSystem.current.currentSelectedGameObject == selectable.gameObject && _bagSelection.activeSelf) return false;
         }
 
         return true;
@@ -220,8 +237,8 @@ public class InventoryCanvas : MonoBehaviour
     {
         if (!data.GetCanUse())
         {
-            _selectionUseDescription.transform.DOComplete();
-            _selectionUseDescription.transform.DOPunchPosition(Vector3.right * 10f, 0.25f, 30, 1f);
+            _bagSelectionUseDescription.transform.DOComplete();
+            _bagSelectionUseDescription.transform.DOPunchPosition(Vector3.right * 10f, 0.25f, 30, 1f);
             return;
         }
         
@@ -232,19 +249,19 @@ public class InventoryCanvas : MonoBehaviour
     {
         if (data == null)
         {
-            _selection.SetActive(false);
+            _bagSelection.SetActive(false);
             return;
         }
-        _selection.SetActive(true);
-        _selection.transform.DOComplete();
-        _selection.transform.DOPunchRotation(Vector3.forward * 2f, 0.15f, 20, 1f);
+        _bagSelection.SetActive(true);
+        _bagSelection.transform.DOComplete();
+        _bagSelection.transform.DOPunchRotation(Vector3.forward * 2f, 0.15f, 20, 1f);
         
-        _selectionName.text = data.displayName;
-        _selectionDescription.text = data.description;
-        _selectionUseDescription.text = data.GetUseDescription();
+        _bagSelectionName.text = data.displayName;
+        _bagSelectionDescription.text = data.description;
+        _bagSelectionUseDescription.text = data.GetUseDescription();
 
-        _useConfirmationItemName.text = data.displayName;
-        _useConfirmation.text = data.GetUseConfirmation();
+        _bagUseConfirmationItemName.text = data.displayName;
+        _bagUseConfirmation.text = data.GetUseConfirmation();
         _confirmationData = data;
     }
 
