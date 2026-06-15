@@ -53,7 +53,7 @@ public static class KeyItemRegistry
         KeyItemRegistrations.Add("IncenseBurner", new KeyItemRegistration()
         {
             displayName = "Incense burner",
-            description = "An ornately constructed censer etched with fine runes. A voice seems to whisper within...",
+            description = "An ornately constructed censer etched with fine runes. A faint voice seems to whispering from within the cage...\n\nThe Far Cultists claim this can be used to initiate rituals at the \"Far plinths\" located across the Mountain.",
             MeshGameObject = null as GameObject,
             Sprite = null,
             GetUseDescription = () =>
@@ -83,7 +83,7 @@ public static class KeyItemRegistry
             description = "A palm-sized depiction of Amadea, lovingly carved from stone of the Mountain.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            GetUseDescription = () => "Returns you to the last safe location.",
+            GetUseDescription = () => "Returns you to a place of rest.",
             GetCanUse = () => true,
             onUse = () =>
             {
@@ -98,7 +98,7 @@ public static class KeyItemRegistry
             description = "A chunk of stone engraved with the sealing Glyph.\n\nAccording to Silicant Diamber, the pattern is a sacred geometric depiction of the Mountain itself.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            GetUseDescription = () => "Shows your location.",
+            GetUseDescription = () => "Shows your location in the world.",
             GetCanUse = () => true,
             onUse = () =>
             {
@@ -128,7 +128,7 @@ public static class KeyItemRegistry
             description = "A palm-sized rectangle of sleek, machined metal. Bluish lights faintly twinkle within the surface.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
-            GetUseDescription = () => "???",
+            // GetUseDescription = () => "???",
             GetCanUse = () => false,
             onUse = () =>
             {

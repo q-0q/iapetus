@@ -15,13 +15,16 @@ public class InventoryListItem : MonoBehaviour
         public string displayName;
         public string description;
         public string subText;
+        public string confirmation;
+        public bool canUse;
     }
     
     private CanvasGroup _canvasGroup;
-    public InventoryListItemData Data;
+    private InventoryListItemData data;
 
     public static event Action<InventoryListItemData> OnInventorySlotClicked;
     public static event Action<InventoryListItemData> OnInventorySlotSelected;
+    public static event Action<InventoryListItemData> OnInventoryListItemUsed;
 
     private Transform _visualsTransform;
     private TextMeshProUGUI _mainTmp;
@@ -41,18 +44,25 @@ public class InventoryListItem : MonoBehaviour
         var proxy = GetComponentInChildren<InventoryListItemButtonUIProxy>();
         proxy.OnMakeSelected += MakeSelected;
         proxy.OnMakeDeselected += MakeDeselected;
+        proxy.OnUsed += OnUsed;
     }
-    
+
+    private void OnUsed()
+    {
+        OnInventoryListItemUsed?.Invoke(data);
+    }
+
     private void OnDisable()
     {
         var proxy = GetComponentInChildren<InventoryListItemButtonUIProxy>();
         proxy.OnMakeSelected -= MakeSelected;
         proxy.OnMakeDeselected -= MakeDeselected;
+        proxy.OnUsed -= OnUsed;
     }
 
     public void SetItemData(InventoryListItemData data)
     {
-        Data = data;
+        this.data = data;
         _mainTmp.text = data.displayName;
     }
     
@@ -64,7 +74,7 @@ public class InventoryListItem : MonoBehaviour
         _visualsTransform.DOComplete();
         _visualsTransform.DOPunchPosition(Vector3.down * 10f, 0.15f, 20, 1f);
         
-        OnInventorySlotSelected?.Invoke(Data);
+        OnInventorySlotSelected?.Invoke(data);
         GetComponentInChildren<Button>().Select();
         _mainTmp.color = Color.black;
     }

@@ -86,7 +86,6 @@ public class SaveSystem : MonoBehaviour
         public float playTime;
         public string gameVersion;
         
-        
             
 
         public SaveData()
@@ -113,7 +112,7 @@ public class SaveSystem : MonoBehaviour
             bitDeposits = new List<string>();
             tricks = new List<string>();
             gameVersion = "";
-            
+
         }
     }
 

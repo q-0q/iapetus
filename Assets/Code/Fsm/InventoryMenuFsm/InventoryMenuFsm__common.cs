@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using Code.TriggerParams;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -32,12 +33,14 @@ public partial class InventoryMenuFsm
     private TextMeshProUGUI _useConfirmationItemName;
     private TextMeshProUGUI _useConfirmation;
     
-    private KeyItemRegistration _confirmationData;
+    private InventoryListItem.InventoryListItemData _confirmationData;
     
     public Button navBagButton;
     public Button navMovelistButton;
     public Button navTestButton;
     public GameObject listContentParent;
+    
+    public GameObject useButton;
 
     private List<Button> navButtons;
 
@@ -61,7 +64,7 @@ public partial class InventoryMenuFsm
         return _playerInput.actions["Navigate"].ReadValue<Vector2>().magnitude > 0.1f;
     }
 
-    private void RefreshInventoryData(SaveSystem.SaveData obj)
+    private void PopulateBagData(SaveSystem.SaveData obj)
     {
         var data = new List<InventoryListItem.InventoryListItemData>();
         foreach (var item in obj.items)
@@ -73,6 +76,7 @@ public partial class InventoryMenuFsm
                 displayName = keyItemRegistration.displayName,
                 id = item,
                 subText = keyItemRegistration.GetUseDescription(),
+                canUse = keyItemRegistration.GetCanUse(),
             });
         }
 
@@ -118,6 +122,28 @@ public partial class InventoryMenuFsm
             buttons[i].navigation = navigation;
         }
     }
+    
+    private void OnListItemSelected(InventoryListItem.InventoryListItemData data) 
+    {
+        if (data == null)
+        {
+            _listSelection.SetActive(false);
+            return;
+        }
+        _listSelection.SetActive(true);
+        _listSelection.transform.DOComplete();
+        _listSelection.transform.DOPunchRotation(Vector3.forward * 2f, 0.15f, 20, 1f);
+        
+        _listSelectionName.text = data.displayName;
+        _listSelectionDescription.text = data.description;
+        _listSelectionUseDescription.text = data.subText;
 
+        useButton.gameObject.SetActive(data.canUse);
+        _useConfirmationItemName.text = data.displayName;
+        _useConfirmation.text = data.confirmation;
+        _confirmationData = data;
+        
+        
+    }
     
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -23,7 +24,7 @@ public partial class InventoryMenuFsm : Fsm
         public static int Opened;
         public static int Bag;
         public static int Movelist;
-        public static int Select;
+        public static int Use;
         public static int Confirm;
     }
 
@@ -56,12 +57,17 @@ public partial class InventoryMenuFsm : Fsm
         
         
         TryGetComponent(out _playerInput);
+        
+        
+        
+        
     }
 
     protected override void OnStart()
     {
         base.OnStart();
         InitState = InventoryMenuFsmState.Closed;
+        PopulateBagData(SaveSystem.LoadCachedSaveData());
         
     }
     
@@ -69,19 +75,25 @@ public partial class InventoryMenuFsm : Fsm
     {
         base.OnUpdate();
         
-        if (_playerInput.actions["Look"].ReadValue<Vector2>().magnitude > 0.01 &&
-            InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Kmb && !Machine.IsInState(InventoryMenuFsmState.Closed))
-        {
-            Cursor.visible = true;  
-            Cursor.lockState = CursorLockMode.None;
-        }
+
         
         _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, Machine.IsInState(InventoryMenuFsmState.Closed) ? 0f : 1f, Time.deltaTime * 20f);
         _closeImage.sprite = InputTypeManager.Singleton.GetSpriteForAction("Inventory");
 
-        if (Machine.IsInState(InventoryMenuFsmState.Closed))
+        if (Machine.IsInState(InventoryMenuFsmState.Open))
         {
+            if (_playerInput.actions["Look"].ReadValue<Vector2>().magnitude > 0.01 &&
+                InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Kmb)
+            {
+                Cursor.visible = true;  
+                Cursor.lockState = CursorLockMode.None;
+            }
             
+            if (_playerInput.actions["Move"].ReadValue<Vector2>().magnitude > 0.01)
+            {
+                Cursor.visible = false;  
+                Cursor.lockState = CursorLockMode.Locked;
+            }
         }
         
         if (Machine.IsInState(InventoryMenuFsmState.Bag))
@@ -102,20 +114,23 @@ public partial class InventoryMenuFsm : Fsm
     {
         PlayerFsm.PlayerInventoryEntered += Open;
         PlayerFsm.PlayerInventoryExited += Close;
-        SaveSystem.OnSaveDataUpdated += RefreshInventoryData;
+        SaveSystem.OnSaveDataUpdated += PopulateBagData;
         // InventorySlot.OnInventorySlotClicked += OnSlotClicked;
-        // InventorySlot.OnInventorySlotSelected += OnSlotSelected;
+        InventoryListItem.OnInventorySlotSelected += OnListItemSelected;
+        InventoryListItem.OnInventoryListItemUsed += OnListItemUsed;
         GameMenu.OnGameMenuOpened += OnGameMenuOpened;
         GameMenu.OnGameMenuClosed += OnGameMenuClosed;
+        
     }
 
     private void OnDisable()
     {
         PlayerFsm.PlayerInventoryEntered -= Open;
         PlayerFsm.PlayerInventoryExited -= Close;
-        SaveSystem.OnSaveDataUpdated -= RefreshInventoryData;
+        SaveSystem.OnSaveDataUpdated -= PopulateBagData;
         // InventorySlot.OnInventorySlotClicked -= OnSlotClicked;
-        // InventorySlot.OnInventorySlotSelected -= OnSlotSelected;
+        InventoryListItem.OnInventorySlotSelected -= OnListItemSelected;
+        InventoryListItem.OnInventoryListItemUsed -= OnListItemUsed;
         GameMenu.OnGameMenuOpened -= OnGameMenuOpened;
         GameMenu.OnGameMenuClosed -= OnGameMenuClosed;
     }

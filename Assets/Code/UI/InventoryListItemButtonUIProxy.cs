@@ -10,11 +10,13 @@ public class InventoryListItemButtonUIProxy : MonoBehaviour,
     ISubmitHandler
 {
 
+    public event Action OnUsed;
     public event Action OnMakeSelected;
     public event Action OnMakeDeselected;
     
     public void OnPointerClick(PointerEventData eventData)
     {
+        OnUsed?.Invoke();
         OnMakeSelected?.Invoke();
     }
 
@@ -35,6 +37,7 @@ public class InventoryListItemButtonUIProxy : MonoBehaviour,
 
     public void OnSubmit(BaseEventData eventData)
     {
+        OnUsed?.Invoke();
         OnMakeSelected?.Invoke();
     }
 }
