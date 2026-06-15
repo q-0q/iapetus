@@ -105,6 +105,7 @@ public partial class InventoryMenuFsm
         {
             var obj = Instantiate(prefab, listContentParent.transform);
             buttons.Add(obj.GetComponentInChildren<Button>());
+            obj.GetComponent<InventoryListItem>().SetItemData(data[i]);
         }
 
         for (int i = 0; i < buttons.Count; i++)
@@ -112,9 +113,6 @@ public partial class InventoryMenuFsm
             var prevId = i == 0 ? buttons.Count - 1 : i - 1;
             var nextId = i == buttons.Count - 1 ? 0 : i + 1;
             var navigation = buttons[i].navigation;
-            print("i:" + i);
-            print("prevId:" + prevId);
-            print("nextId:" + nextId);
             navigation.selectOnUp = buttons[prevId];
             navigation.selectOnDown = buttons[nextId];
             buttons[i].navigation = navigation;

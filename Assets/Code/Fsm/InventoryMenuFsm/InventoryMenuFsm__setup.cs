@@ -32,10 +32,7 @@ public partial class InventoryMenuFsm
                 _listCanvasGroup.blocksRaycasts = true;
                 _useConfirmationCanvasGroup.blocksRaycasts = false;
                 _useConfirmationCanvasGroup.alpha = 0;
-        
-                // _inventorySlots[0].GetComponentInChildren<Button>().Select();
-                // OnSlotSelected(_inventorySlots[0].Data);
-        
+                
                 if (TutorialCanvas.Singleton.GetCurrentAction() == "Inventory") TutorialCanvas.Singleton.HideTutorialText();
             });
 
