@@ -67,7 +67,7 @@ public partial class InventoryMenuFsm : Fsm
     {
         base.OnStart();
         InitState = InventoryMenuFsmState.Closed;
-        PopulateBagData(SaveSystem.LoadCachedSaveData());
+        
         
     }
     

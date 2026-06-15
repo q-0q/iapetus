@@ -1,3 +1,4 @@
+using Code.Misc;
 using Code.TriggerParams;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -33,16 +34,30 @@ public partial class InventoryMenuFsm
                 _useConfirmationCanvasGroup.blocksRaycasts = false;
                 _useConfirmationCanvasGroup.alpha = 0;
                 
+                
                 if (TutorialCanvas.Singleton.GetCurrentAction() == "Inventory") TutorialCanvas.Singleton.HideTutorialText();
             });
 
         Machine.Configure(InventoryMenuFsmState.Bag)
+            .PermitIf(InventoryMenuFsmTrigger.Movelist, InventoryMenuFsmState.Movelist, _ => true)
             .SubstateOf(InventoryMenuFsmState.Open)
             .OnEntry(_ =>
             {
                 _listCanvasGroup.GetComponentInChildren<ScrollRect>().content.anchoredPosition = new Vector2(0,0);
-                GetComponentsInChildren<Selectable>()[0].Select();
-                OnInventoryTabSelectedMethod("Bag");
+                _listSelection.SetActive(true);
+                PopulateBagData(SaveSystem.LoadCachedSaveData());
+                OnInventoryTabSelected?.Invoke("Bag");
+            });
+        
+        Machine.Configure(InventoryMenuFsmState.Movelist)
+            .PermitIf(InventoryMenuFsmTrigger.Bag, InventoryMenuFsmState.Bag, _ => true)
+            .SubstateOf(InventoryMenuFsmState.Open)
+            .OnEntry(_ =>
+            {
+                _listCanvasGroup.GetComponentInChildren<ScrollRect>().content.anchoredPosition = new Vector2(0,0);
+                _listSelection.SetActive(true);
+                PopulateMovelistData(SaveSystem.LoadCachedSaveData());
+                OnInventoryTabSelected?.Invoke("Movelist");
             });
     }
 

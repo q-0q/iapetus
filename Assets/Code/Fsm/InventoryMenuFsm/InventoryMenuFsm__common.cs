@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
+using Code.Fsm.GravityFsm.PlayerFsm;
 using Code.TriggerParams;
 using DG.Tweening;
 using TMPro;
@@ -84,6 +85,24 @@ public partial class InventoryMenuFsm
 
         PopulateListView(data);
     }
+    
+    private void PopulateMovelistData(SaveSystem.SaveData obj)
+    {
+        var data = new List<InventoryListItem.InventoryListItemData>();
+        foreach (var (item, registration) in MovelistRegistry.MovelistRegistrations)
+        {
+            data.Add(new InventoryListItem.InventoryListItemData()
+            {
+                description = registration.description,
+                displayName = registration.displayName,
+                id = item,
+                subText = registration.lore,
+                canUse = false,
+            });
+        }
+
+        PopulateListView(data);
+    }
 
     private void OnGameMenuOpened()
     {
@@ -110,8 +129,11 @@ public partial class InventoryMenuFsm
         for (int i = 0; i < data.Count; i++)
         {
             var obj = Instantiate(prefab, listContentParent.transform);
-            buttons.Add(obj.GetComponentInChildren<Button>());
+            obj.name = data[i].id;
+            var button = obj.GetComponentInChildren<Button>();
+            buttons.Add(button);
             obj.GetComponent<InventoryListItem>().SetItemData(data[i]);
+            if (i == 0) button.Select();
         }
 
         for (int i = 0; i < buttons.Count; i++)
@@ -150,7 +172,8 @@ public partial class InventoryMenuFsm
 
     private void OnInventoryTabSelectedMethod(string label)
     {
-        OnInventoryTabSelected?.Invoke(label);
+        if (label == "Bag") Machine.Fire(InventoryMenuFsmTrigger.Bag);
+        if (label == "Movelist") Machine.Fire(InventoryMenuFsmTrigger.Movelist);
     }
     
 }

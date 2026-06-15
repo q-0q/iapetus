@@ -20,7 +20,7 @@ public class InventoryListItem : MonoBehaviour
     }
     
     private CanvasGroup _canvasGroup;
-    private InventoryListItemData data;
+    public InventoryListItemData data;
 
     public static event Action<InventoryListItemData> OnInventorySlotClicked;
     public static event Action<InventoryListItemData> OnInventorySlotSelected;
