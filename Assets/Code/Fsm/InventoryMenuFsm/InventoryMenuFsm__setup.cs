@@ -42,6 +42,7 @@ public partial class InventoryMenuFsm
             {
                 _listCanvasGroup.GetComponentInChildren<ScrollRect>().content.anchoredPosition = new Vector2(0,0);
                 GetComponentsInChildren<Selectable>()[0].Select();
+                OnInventoryTabSelectedMethod("Bag");
             });
     }
 

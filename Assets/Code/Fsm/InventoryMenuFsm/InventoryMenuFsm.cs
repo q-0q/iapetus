@@ -120,7 +120,8 @@ public partial class InventoryMenuFsm : Fsm
         InventoryListItem.OnInventoryListItemUsed += OnListItemUsed;
         GameMenu.OnGameMenuOpened += OnGameMenuOpened;
         GameMenu.OnGameMenuClosed += OnGameMenuClosed;
-        
+        InventoryTabButton.OnInventoryTabButtonHovered += OnInventoryTabSelectedMethod;
+
     }
 
     private void OnDisable()
@@ -133,5 +134,6 @@ public partial class InventoryMenuFsm : Fsm
         InventoryListItem.OnInventoryListItemUsed -= OnListItemUsed;
         GameMenu.OnGameMenuOpened -= OnGameMenuOpened;
         GameMenu.OnGameMenuClosed -= OnGameMenuClosed;
+        InventoryTabButton.OnInventoryTabButtonHovered -= OnInventoryTabSelectedMethod;
     }
 }

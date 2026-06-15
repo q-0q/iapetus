@@ -44,6 +44,8 @@ public partial class InventoryMenuFsm
 
     private List<Button> navButtons;
 
+    public static event Action<string> OnInventoryTabSelected; 
+
     public void OnQuitClicked()
     {
         Application.Quit();
@@ -144,6 +146,11 @@ public partial class InventoryMenuFsm
         _confirmationData = data;
         
         
+    }
+
+    private void OnInventoryTabSelectedMethod(string label)
+    {
+        OnInventoryTabSelected?.Invoke(label);
     }
     
 }
