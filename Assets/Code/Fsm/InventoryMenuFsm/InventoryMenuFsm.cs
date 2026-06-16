@@ -107,7 +107,11 @@ public partial class InventoryMenuFsm : Fsm
         {
             _listCanvasGroup.alpha = Mathf.Lerp(_listCanvasGroup.alpha, 1f, Time.deltaTime * 20f);
             _useConfirmationCanvasGroup.alpha = Mathf.Lerp(_useConfirmationCanvasGroup.alpha, 0f, Time.deltaTime * 20f);
-            // if (NeedToSelect(_listCanvasGroup.gameObject)) _listCanvasGroup.GetComponentsInChildren<Selectable>()[0].Select(); 
+            if (NeedToSelect(_listCanvasGroup.gameObject))
+            {
+                var selectables = _listCanvasGroup.GetComponentsInChildren<Selectable>();
+                if (selectables.Length > 0) selectables[0].Select();
+            }
         }
         
         if (Machine.IsInState(InventoryMenuFsmState.UseConfirmation))

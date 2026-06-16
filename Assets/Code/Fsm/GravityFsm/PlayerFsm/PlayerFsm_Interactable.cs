@@ -28,7 +28,7 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.SurgePedestalInteracted, PlayerFsmState.SurgeStartup)
             .Permit(PlayerFsmTrigger.InteractWithSwitch, PlayerFsmState.WalkToSwitchPosition)
             .Permit(PlayerFsmTrigger.StartDialogue, PlayerFsmState.Dialogue)
-            .Permit(PlayerFsmTrigger.Inventory, PlayerFsmState.InventorySlowdown)
+            .PermitIf(PlayerFsmTrigger.Inventory, PlayerFsmState.InventorySlowdown, _ => !AcquisitionCanvas.Singleton.isOpen)
             .Permit(PlayerFsmTrigger.Map, PlayerFsmState.MapSlowdown);
     }
 }

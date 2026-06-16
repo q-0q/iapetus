@@ -13,6 +13,7 @@ public partial class InventoryMenuFsm
 
         Machine.Configure(InventoryMenuFsmState.Closed)
             .PermitIf(InventoryMenuFsmTrigger.Opened, InventoryMenuFsmState.Bag, _ => true)
+            .PermitIf(InventoryMenuFsmTrigger.Opened, InventoryMenuFsmState.Movelist, _ => TutorialCanvas.Singleton.IsOpen() && TutorialCanvas.Singleton.GetCurrentAction() == "Movelist", 1)
             .OnEntryFrom(InventoryMenuFsmTrigger.Closed, _ =>
             {
                 _canvasGroup.blocksRaycasts = false;
@@ -36,6 +37,7 @@ public partial class InventoryMenuFsm
                 
                 
                 if (TutorialCanvas.Singleton.GetCurrentAction() == "Inventory") TutorialCanvas.Singleton.HideTutorialText();
+                if (TutorialCanvas.Singleton.GetCurrentAction() == "Movelist") TutorialCanvas.Singleton.HideTutorialText();
             });
 
         Machine.Configure(InventoryMenuFsmState.Bag)

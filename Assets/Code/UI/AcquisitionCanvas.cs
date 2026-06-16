@@ -46,11 +46,19 @@ public class AcquisitionCanvas : MonoBehaviour
 
     private void OnTrickAcquired(string trick)
     {
-        var data = MovelistRegistry.BasicMovelistRegistrations[trick];
+        var data = MovelistRegistry.TrickMovelistRegistrations[trick];
         StartCoroutine(Coroutine( "<color=#" + MovelistRegistry.TrickColor + ">Lotus Form</color> learned", data.displayName, data.useInput, data.useClause, data.description,
             "<color=#" + MovelistRegistry.TrickColor + ">Lotus Forms</color> cost <color=#" + MovelistRegistry.TrickColor + ">ki</color> to perform."));
+        if (SaveSystem.LoadCachedSaveData().tricks.Count == 1) StartCoroutine(MovelistTutorialCoroutine());
     }
 
+    IEnumerator MovelistTutorialCoroutine()
+    {
+        yield return new WaitForSeconds(11f);
+        TutorialCanvas.Singleton.ShowTutorialText("View movelist", "Movelist");
+    }
+    
+    
     IEnumerator Coroutine(string upperSubtext, string upperText, string input, string inputClauseText, string description, string lowerText)
     {
 

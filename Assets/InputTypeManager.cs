@@ -72,7 +72,7 @@ public class InputTypeManager : MonoBehaviour
             if (action == "Jump") return kmbJump;
             if (action == "Sprint") return kmbSprint;
             if (action == "Interact") return kmbInteract;
-            if (action == "Inventory") return kmbInventory;
+            if (action == "Inventory" || action == "Movelist") return kmbInventory;
             if (action == "Map") return kmbMap;
             if (action == "Trick") return kmbTrick;
         }
@@ -82,7 +82,7 @@ public class InputTypeManager : MonoBehaviour
         if (action == "Jump") return padJump;
         if (action == "Sprint") return padSprint;
         if (action == "Interact") return padInteract;
-        if (action == "Inventory") return padInventory;
+        if (action == "Inventory" || action == "Movelist") return padInventory;
         if (action == "Map") return padMap;
         if (action == "Trick") return padTrick;
 

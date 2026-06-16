@@ -71,5 +71,10 @@ public class TutorialCanvas : MonoBehaviour
     {
         return action;
     }
+
+    public bool IsOpen()
+    {
+        return _open;
+    }
     
 }

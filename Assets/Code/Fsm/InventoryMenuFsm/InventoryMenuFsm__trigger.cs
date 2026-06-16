@@ -41,6 +41,8 @@ public partial class InventoryMenuFsm
     private void OnListItemUsed(InventoryListItem.InventoryListItemData data)
     {
 
+        if (!Machine.IsInState(InventoryMenuFsmState.Bag)) return;
+        
         var keyItemRegistration = KeyItemRegistry.KeyItemRegistrations[data.id];
         
         
