@@ -28,27 +28,35 @@ public class InventoryTabButton : MonoBehaviour
         _image = _visualsTransform.GetComponent<Image>();
     }
 
+    private void Start()
+    {
+        OnSaveDataUpdated(SaveSystem.LoadCachedSaveData());
+    }
+
     private void OnEnable()
     {
         var proxy = GetComponentInChildren<InventoryListItemButtonUIProxy>();
         proxy.OnMakeSelected += MakeSelected;
         InventoryMenuFsm.OnInventoryTabSelected += OnHover;
+        SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
     }
 
     private void OnHover(string obj)
     {
+        var image = _visualsTransform.GetComponent<Image>();
+        if (image == null) return;
         if (label == obj)
         {
             _visualsTransform.DOComplete();
             _visualsTransform.DOPunchPosition(Vector3.down * 10f, 0.15f, 20, 1f);
             
             _mainTmp.color = Color.black;
-            _visualsTransform.GetComponent<Image>().color = Color.white;
+            image.color = Color.white;
             return;
         };
         
         _mainTmp.color = Color.white;
-        _visualsTransform.GetComponent<Image>().color = Color.black;
+        image.color = Color.black;
         
     }
 
@@ -56,12 +64,25 @@ public class InventoryTabButton : MonoBehaviour
     {
         var proxy = GetComponentInChildren<InventoryListItemButtonUIProxy>();
         proxy.OnMakeSelected -= MakeSelected;
+        SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
     }
-    
-    
+
+    private void OnSaveDataUpdated(SaveSystem.SaveData obj)
+    {
+        _visualsTransform.gameObject.SetActive(TabCondition());
+    }
+
+
     public void MakeSelected()
     {
+        if (!TabCondition()) return;
         OnInventoryTabButtonHovered?.Invoke(label);
+    }
+
+    private bool TabCondition()
+    {
+        if (label == "Movelist") return InventoryMenuFsm.MovelistTabCondition();
+        return true;
     }
     
     

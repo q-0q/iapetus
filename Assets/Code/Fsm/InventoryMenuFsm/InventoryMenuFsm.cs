@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Code.Misc;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
@@ -26,6 +28,9 @@ public partial class InventoryMenuFsm : Fsm
         public static int Movelist;
         public static int Use;
         public static int Confirm;
+        public static int Back;
+        public static int Right;
+        public static int Left;
     }
 
     protected override void OnAwake()
@@ -42,13 +47,15 @@ public partial class InventoryMenuFsm : Fsm
         _canvasGroup.alpha = 0;
         _listCanvasGroup.alpha = 0;
         _useConfirmationCanvasGroup.alpha = 0;
+
+        _xMoveInput = false;
         
         _closeImage = transform.Find("CloseInput").Find("Image").GetComponent<Image>();
         
         _listSelection = _listCanvasGroup.transform.Find("Selection").gameObject;
         _listSelectionName = _listCanvasGroup.transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
         _listSelectionDescription = _listCanvasGroup.transform.Find("Selection").Find("Description").GetComponent<TextMeshProUGUI>();
-        _listSelectionUseDescription = _listCanvasGroup.transform.Find("Selection").Find("UseDescription").GetComponent<TextMeshProUGUI>();
+        _listSelectionUseDescription = _listCanvasGroup.transform.Find("Selection").Find("UseHolder").Find("UseDescription").GetComponent<TextMeshProUGUI>();
         
         _useConfirmation = _useConfirmationCanvasGroup.transform.Find("Selection").Find("UseConfirmation").GetComponent<TextMeshProUGUI>();
         _useConfirmationItemName = _useConfirmationCanvasGroup.transform.Find("Selection").Find("Name").GetComponent<TextMeshProUGUI>();
@@ -96,16 +103,23 @@ public partial class InventoryMenuFsm : Fsm
             }
         }
         
-        if (Machine.IsInState(InventoryMenuFsmState.Bag))
+        if (Machine.IsInState(InventoryMenuFsmState.Bag) || Machine.IsInState(InventoryMenuFsmState.Movelist))
         {
             _listCanvasGroup.alpha = Mathf.Lerp(_listCanvasGroup.alpha, 1f, Time.deltaTime * 20f);
             _useConfirmationCanvasGroup.alpha = Mathf.Lerp(_useConfirmationCanvasGroup.alpha, 0f, Time.deltaTime * 20f);
+            // if (NeedToSelect(_listCanvasGroup.gameObject)) _listCanvasGroup.GetComponentsInChildren<Selectable>()[0].Select(); 
         }
         
         if (Machine.IsInState(InventoryMenuFsmState.UseConfirmation))
         {
             _useConfirmationCanvasGroup.alpha = Mathf.Lerp(_useConfirmationCanvasGroup.alpha, 1f, Time.deltaTime * 20f);
             _listCanvasGroup.alpha = Mathf.Lerp(_listCanvasGroup.alpha, 0f, Time.deltaTime * 20f);
+            if (NeedToSelect(_useConfirmationCanvasGroup.gameObject))
+            {
+                var btn = _useConfirmationCanvasGroup.transform.Find("Selection").Find("Buttons").Find("Back")
+                    .GetComponent<Button>();
+                btn.Select();
+            }
         }
         
     }
@@ -114,7 +128,7 @@ public partial class InventoryMenuFsm : Fsm
     {
         PlayerFsm.PlayerInventoryEntered += Open;
         PlayerFsm.PlayerInventoryExited += Close;
-        SaveSystem.OnSaveDataUpdated += PopulateBagData;
+        // SaveSystem.OnSaveDataUpdated += PopulateBagData;
         // InventorySlot.OnInventorySlotClicked += OnSlotClicked;
         InventoryListItem.OnInventorySlotSelected += OnListItemSelected;
         InventoryListItem.OnInventoryListItemUsed += OnListItemUsed;
@@ -128,7 +142,7 @@ public partial class InventoryMenuFsm : Fsm
     {
         PlayerFsm.PlayerInventoryEntered -= Open;
         PlayerFsm.PlayerInventoryExited -= Close;
-        SaveSystem.OnSaveDataUpdated -= PopulateBagData;
+        // SaveSystem.OnSaveDataUpdated -= PopulateBagData;
         // InventorySlot.OnInventorySlotClicked -= OnSlotClicked;
         InventoryListItem.OnInventorySlotSelected -= OnListItemSelected;
         InventoryListItem.OnInventoryListItemUsed -= OnListItemUsed;

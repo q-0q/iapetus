@@ -46,7 +46,7 @@ public class AcquisitionCanvas : MonoBehaviour
 
     private void OnTrickAcquired(string trick)
     {
-        var data = MovelistRegistry.MovelistRegistrations[trick];
+        var data = MovelistRegistry.BasicMovelistRegistrations[trick];
         StartCoroutine(Coroutine( "<color=#" + MovelistRegistry.TrickColor + ">Lotus Form</color> learned", data.displayName, data.useInput, data.useClause, data.description,
             "<color=#" + MovelistRegistry.TrickColor + ">Lotus Forms</color> cost <color=#" + MovelistRegistry.TrickColor + ">ki</color> to perform."));
     }

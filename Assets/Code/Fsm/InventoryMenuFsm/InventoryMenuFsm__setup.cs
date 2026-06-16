@@ -39,18 +39,41 @@ public partial class InventoryMenuFsm
             });
 
         Machine.Configure(InventoryMenuFsmState.Bag)
-            .PermitIf(InventoryMenuFsmTrigger.Movelist, InventoryMenuFsmState.Movelist, _ => true)
+            .PermitIf(InventoryMenuFsmTrigger.Use, InventoryMenuFsmState.UseConfirmation, _ => true)
+            .PermitIf(InventoryMenuFsmTrigger.Movelist, InventoryMenuFsmState.Movelist, _ => MovelistTabCondition())
+            .PermitIf(InventoryMenuFsmTrigger.Right, InventoryMenuFsmState.Movelist, _ => MovelistTabCondition())
+            .PermitIf(InventoryMenuFsmTrigger.Left, InventoryMenuFsmState.Movelist, _ => MovelistTabCondition())
             .SubstateOf(InventoryMenuFsmState.Open)
             .OnEntry(_ =>
             {
-                _listCanvasGroup.GetComponentInChildren<ScrollRect>().content.anchoredPosition = new Vector2(0,0);
+                _listCanvasGroup.GetComponentInChildren<ScrollRect>().content.anchoredPosition = new Vector2(0, 0);
                 _listSelection.SetActive(true);
                 PopulateBagData(SaveSystem.LoadCachedSaveData());
                 OnInventoryTabSelected?.Invoke("Bag");
             });
+
+        Machine.Configure(InventoryMenuFsmState.UseConfirmation)
+            .Permit(InventoryMenuFsmTrigger.Back, InventoryMenuFsmState.Bag)
+            .Permit(InventoryMenuFsmTrigger.Use, InventoryMenuFsmState.Closed)
+            .SubstateOf(InventoryMenuFsmState.Open)
+            .OnEntry(_ =>
+            {
+                _listCanvasGroup.blocksRaycasts = false;
+                _useConfirmationCanvasGroup.blocksRaycasts = true;
+                var btn = _useConfirmationCanvasGroup.transform.Find("Selection").Find("Buttons").Find("Back")
+                    .GetComponent<Button>();
+                StartCoroutine(DelayedSelect(btn));
+            })
+            .OnExit(_ =>
+            {
+                _listCanvasGroup.blocksRaycasts = true;
+                _useConfirmationCanvasGroup.blocksRaycasts = false;
+            });
         
         Machine.Configure(InventoryMenuFsmState.Movelist)
             .PermitIf(InventoryMenuFsmTrigger.Bag, InventoryMenuFsmState.Bag, _ => true)
+            .PermitIf(InventoryMenuFsmTrigger.Right, InventoryMenuFsmState.Bag, _ => true)
+            .PermitIf(InventoryMenuFsmTrigger.Left, InventoryMenuFsmState.Bag, _ => true)
             .SubstateOf(InventoryMenuFsmState.Open)
             .OnEntry(_ =>
             {
@@ -65,5 +88,10 @@ public partial class InventoryMenuFsm
     {
         base.SetupStateMaps();
         
+    }
+
+    public static bool MovelistTabCondition()
+    {
+        return SaveSystem.LoadCachedSaveData().tricks.Count >= 1;
     }
 }

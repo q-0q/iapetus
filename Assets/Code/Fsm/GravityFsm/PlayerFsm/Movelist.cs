@@ -21,14 +21,15 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
 
     public static class MovelistRegistry
     {
-        public static readonly Dictionary<string, MovelistRegistration> MovelistRegistrations;
+        public static readonly Dictionary<string, MovelistRegistration> BasicMovelistRegistrations;
+        public static readonly Dictionary<string, MovelistRegistration> TrickMovelistRegistrations;
         public const string TrickColor = "D0C4FF";
     
         static MovelistRegistry()
         {
-            MovelistRegistrations = new Dictionary<string, MovelistRegistration>();
+            BasicMovelistRegistrations = new Dictionary<string, MovelistRegistration>();
         
-            MovelistRegistrations.Add("Run", new MovelistRegistration()
+            BasicMovelistRegistrations.Add("Run", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Run",
@@ -39,7 +40,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useClause = "while on the ground"
             });
             
-            MovelistRegistrations.Add("Jump", new MovelistRegistration()
+            BasicMovelistRegistrations.Add("Jump", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Jump",
@@ -50,7 +51,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useClause = "while on the ground"
             });
             
-            MovelistRegistrations.Add("Sprint", new MovelistRegistration()
+            BasicMovelistRegistrations.Add("Sprint", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Sprint",
@@ -61,7 +62,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useClause = "while moving"
             });
             
-            MovelistRegistrations.Add("Dash", new MovelistRegistration()
+            BasicMovelistRegistrations.Add("Dash", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Dash",
@@ -72,7 +73,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useClause = "while in the air"
             });
             
-            MovelistRegistrations.Add("Skip", new MovelistRegistration()
+            BasicMovelistRegistrations.Add("Skip", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Skip",
@@ -83,7 +84,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useClause = "immediately after landing from Dash"
             });
             
-            MovelistRegistrations.Add("Wallrun", new MovelistRegistration()
+            BasicMovelistRegistrations.Add("Wallrun", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Wallrun",
@@ -93,9 +94,10 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useInput = "Jump",
                 useClause = "while Sprinting next to a wall"
             });
-            
-            
-            MovelistRegistrations.Add("Tinsica", new MovelistRegistration()
+
+
+            TrickMovelistRegistrations = new Dictionary<string, MovelistRegistration>();
+            TrickMovelistRegistrations.Add("Tinsica", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Trick,
                 displayName = "Tinsica",
@@ -106,7 +108,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
                 useClause = "while on the ground"
             });
         
-            MovelistRegistrations.Add("TinsicaJump", new MovelistRegistration()
+            TrickMovelistRegistrations.Add("TinsicaJump", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Trick,
                 displayName = "Tinsica Jump",

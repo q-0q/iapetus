@@ -45,6 +45,8 @@ public partial class InventoryMenuFsm
 
     private List<Button> navButtons;
 
+    private bool _xMoveInput;
+
     public static event Action<string> OnInventoryTabSelected; 
 
     public void OnQuitClicked()
@@ -59,12 +61,12 @@ public partial class InventoryMenuFsm
 
     private bool NeedToSelect(GameObject currentObject)
     {
-        foreach (var selectable in GetComponentsInChildren<Selectable>())
+        foreach (var selectable in currentObject.GetComponentsInChildren<Selectable>())
         {
             if (EventSystem.current.currentSelectedGameObject == selectable.gameObject) return false;
         }
 
-        return _playerInput.actions["Navigate"].ReadValue<Vector2>().magnitude > 0.1f;
+        return _playerInput.actions["Move"].ReadValue<Vector2>().magnitude > 0.01f;
     }
 
     private void PopulateBagData(SaveSystem.SaveData obj)
@@ -80,6 +82,8 @@ public partial class InventoryMenuFsm
                 id = item,
                 subText = keyItemRegistration.GetUseDescription(),
                 canUse = keyItemRegistration.GetCanUse(),
+                confirmation = keyItemRegistration.GetUseConfirmation(),
+                dividerText = ""
             });
         }
 
@@ -89,7 +93,13 @@ public partial class InventoryMenuFsm
     private void PopulateMovelistData(SaveSystem.SaveData obj)
     {
         var data = new List<InventoryListItem.InventoryListItemData>();
-        foreach (var (item, registration) in MovelistRegistry.MovelistRegistrations)
+        
+        data.Add(new InventoryListItem.InventoryListItemData()
+        {
+            dividerText = "Lotus Forms"
+        });
+        
+        foreach (var (item, registration) in MovelistRegistry.TrickMovelistRegistrations)
         {
             data.Add(new InventoryListItem.InventoryListItemData()
             {
@@ -98,6 +108,25 @@ public partial class InventoryMenuFsm
                 id = item,
                 subText = registration.lore,
                 canUse = false,
+                dividerText = "",
+            });
+        }
+        
+        data.Add(new InventoryListItem.InventoryListItemData()
+        {
+            dividerText = "Basic actions"
+        });
+        
+        foreach (var (item, registration) in MovelistRegistry.BasicMovelistRegistrations)
+        {
+            data.Add(new InventoryListItem.InventoryListItemData()
+            {
+                description = registration.description,
+                displayName = registration.displayName,
+                id = item,
+                subText = registration.lore,
+                canUse = false,
+                dividerText = "",
             });
         }
 
@@ -125,15 +154,32 @@ public partial class InventoryMenuFsm
             Destroy(listContentParent.transform.GetChild(i).gameObject);
         }
         var prefab = Resources.Load("Prefab/InventoryListItem") as GameObject;
+
+        var dividerPrefab = Resources.Load("Prefab/InventoryListDivider") as GameObject;
+
+        bool selected = false;
         var buttons = new List<Button>();
         for (int i = 0; i < data.Count; i++)
         {
-            var obj = Instantiate(prefab, listContentParent.transform);
-            obj.name = data[i].id;
-            var button = obj.GetComponentInChildren<Button>();
-            buttons.Add(button);
-            obj.GetComponent<InventoryListItem>().SetItemData(data[i]);
-            if (i == 0) button.Select();
+            if (data[i].dividerText == "")
+            {
+                var obj = Instantiate(prefab, listContentParent.transform);
+                obj.name = data[i].id;
+                var button = obj.GetComponentInChildren<Button>();
+                buttons.Add(button);
+                obj.GetComponent<InventoryListItem>().SetItemData(data[i]);
+                if (!selected)
+                {
+                    button.Select();
+                    selected = true;
+                }
+            }
+            else
+            {
+                var obj = Instantiate(dividerPrefab, listContentParent.transform);
+                obj.GetComponentInChildren<TextMeshProUGUI>().text = data[i].dividerText;
+            }
+            
         }
 
         for (int i = 0; i < buttons.Count; i++)
@@ -174,6 +220,18 @@ public partial class InventoryMenuFsm
     {
         if (label == "Bag") Machine.Fire(InventoryMenuFsmTrigger.Bag);
         if (label == "Movelist") Machine.Fire(InventoryMenuFsmTrigger.Movelist);
+    }
+
+    public void OnUseConfirmation()
+    {
+        KeyItemRegistry.KeyItemRegistrations[_confirmationData.id].onUse();
+        Machine.Fire(InventoryMenuFsmTrigger.Use);
+    }
+
+    private IEnumerator DelayedSelect(Selectable selectable)
+    {
+        yield return null;
+        selectable.Select();
     }
     
 }

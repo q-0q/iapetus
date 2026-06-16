@@ -17,6 +17,7 @@ public class InventoryListItem : MonoBehaviour
         public string subText;
         public string confirmation;
         public bool canUse;
+        public string dividerText;
     }
     
     private CanvasGroup _canvasGroup;

@@ -73,6 +73,14 @@ public class ScrollToSelected : MonoBehaviour
 
 void DetermineTargetScrollPosition(RectTransform target)
 {
+
+    if (GetComponentsInChildren<Selectable>()[0].gameObject == EventSystem.current.currentSelectedGameObject)
+    {
+        targetY = 0;
+        return;
+    }
+    
+    
     // 1. Get the local position of the selected element's pivot inside the Content panel
     Vector3 targetLocalPos = contentRect.InverseTransformPoint(target.position);
 
