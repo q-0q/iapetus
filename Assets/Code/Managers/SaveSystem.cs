@@ -90,7 +90,7 @@ public class SaveSystem : MonoBehaviour
 
         public SaveData()
         {
-            scene = "CraglandsTutorial";
+            scene = "00-Tutorial";
             playerInGamePosition = null;
             playerInGameYAngle = 0f;
             playerInGamePositionId = "";

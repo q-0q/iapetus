@@ -9,6 +9,12 @@ using UnityEngine.UI;
 public class InventoryListItem : MonoBehaviour
 {
 
+    public enum UseType
+    {
+        None,
+        Use,
+        Input
+    }
     public class InventoryListItemData
     {
         public string id;
@@ -16,8 +22,9 @@ public class InventoryListItem : MonoBehaviour
         public string description;
         public string subText;
         public string confirmation;
-        public bool canUse;
+        public UseType UseType;
         public string dividerText;
+        public string inputAction;
     }
     
     private CanvasGroup _canvasGroup;

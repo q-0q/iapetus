@@ -46,6 +46,7 @@ public partial class InventoryMenuFsm
     private List<Button> navButtons;
 
     private bool _xMoveInput;
+    public Image useInputImage;
 
     public static event Action<string> OnInventoryTabSelected; 
 
@@ -75,15 +76,24 @@ public partial class InventoryMenuFsm
         foreach (var item in obj.items)
         {
             var keyItemRegistration = KeyItemRegistry.KeyItemRegistrations[item];
+            var useType = keyItemRegistration.GetCanUse() ? InventoryListItem.UseType.Use : InventoryListItem.UseType.None;
+            var inputAction = "";
+            if (item == "Map")
+            {
+                useType = InventoryListItem.UseType.Input;
+                inputAction = "Map";
+            }
+
             data.Add(new InventoryListItem.InventoryListItemData()
             {
                 description = keyItemRegistration.description,
                 displayName = keyItemRegistration.displayName,
                 id = item,
                 subText = keyItemRegistration.GetUseDescription(),
-                canUse = keyItemRegistration.GetCanUse(),
+                UseType = useType,
                 confirmation = keyItemRegistration.GetUseConfirmation(),
-                dividerText = ""
+                dividerText = "",
+                inputAction = inputAction,
             });
         }
 
@@ -96,7 +106,8 @@ public partial class InventoryMenuFsm
         
         data.Add(new InventoryListItem.InventoryListItemData()
         {
-            dividerText = "Lotus Forms"
+            dividerText = "<color=#" + MovelistRegistry.TrickColor +  ">Lotus Forms</color>",
+            UseType = InventoryListItem.UseType.None
         });
         
         foreach (var (item, registration) in MovelistRegistry.TrickMovelistRegistrations)
@@ -106,15 +117,17 @@ public partial class InventoryMenuFsm
                 description = registration.description,
                 displayName = registration.displayName,
                 id = item,
-                subText = registration.lore,
-                canUse = false,
+                subText = registration.useClause,
+                UseType = InventoryListItem.UseType.Input,
                 dividerText = "",
+                inputAction = registration.useInput,
             });
         }
         
         data.Add(new InventoryListItem.InventoryListItemData()
         {
-            dividerText = "Basic actions"
+            dividerText = "Basic actions",
+            UseType = InventoryListItem.UseType.None
         });
         
         foreach (var (item, registration) in MovelistRegistry.BasicMovelistRegistrations)
@@ -124,9 +137,10 @@ public partial class InventoryMenuFsm
                 description = registration.description,
                 displayName = registration.displayName,
                 id = item,
-                subText = registration.lore,
-                canUse = false,
+                subText = registration.useClause,
+                UseType = InventoryListItem.UseType.Input,
                 dividerText = "",
+                inputAction = registration.useInput,
             });
         }
 
@@ -208,7 +222,9 @@ public partial class InventoryMenuFsm
         _listSelectionDescription.text = data.description;
         _listSelectionUseDescription.text = data.subText;
 
-        useButton.gameObject.SetActive(data.canUse);
+        useButton.gameObject.SetActive(data.UseType == InventoryListItem.UseType.Use);
+        useInputImage.gameObject.SetActive(data.UseType == InventoryListItem.UseType.Input);
+        useInputImage.sprite = InputTypeManager.Singleton.GetSpriteForAction(data.inputAction);
         _useConfirmationItemName.text = data.displayName;
         _useConfirmation.text = data.confirmation;
         _confirmationData = data;

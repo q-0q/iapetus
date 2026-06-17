@@ -146,7 +146,7 @@ public partial class PlayerFsm
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 3.5f;
     private const float SprintTurnLossMultiplier = 1.5f;
-    private const float IdleMomentumThreshold = 3f;
+    private const float IdleMomentumThreshold = 1f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;

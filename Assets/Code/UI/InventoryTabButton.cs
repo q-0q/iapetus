@@ -43,6 +43,7 @@ public class InventoryTabButton : MonoBehaviour
 
     private void OnHover(string obj)
     {
+        if (_visualsTransform == null) return;
         var image = _visualsTransform.GetComponent<Image>();
         if (image == null) return;
         if (label == obj)

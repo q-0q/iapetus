@@ -37,6 +37,7 @@ public class SilicantDoor : MonoBehaviour
     private void OnEnable()
     {
         _interactable.OnInteracted += OnInteracted;
+        SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
         
     }
 
