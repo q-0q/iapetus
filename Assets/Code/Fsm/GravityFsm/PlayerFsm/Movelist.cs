@@ -33,7 +33,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Run",
-                description = "",
+                description = "An easy jog that takes you from here to there.",
                 lore = "",
                 cost = 0,
                 useInput = "Move",
@@ -44,7 +44,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Jump",
-                description = "",
+                description = "A short upwards hop.\n\nJumping clears gaps and allows vaulting over short ledges.",
                 lore = "",
                 cost = 0,
                 useInput = "Jump",
@@ -55,18 +55,18 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Sprint",
-                description = "",
+                description = "A true forward sprint. You are the Mountain Wind.\n\nSprinting modifies the behavior of other actions.",
                 lore = "",
                 cost = 0,
                 useInput = "Sprint",
-                useClause = "while moving"
+                useClause = "(tap) while running on the ground"
             });
             
             BasicMovelistRegistrations.Add("Dash", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
-                displayName = "Dash",
-                description = "A quick frontflip.",
+                displayName = "Flipdash",
+                description = "An advancing aerial frontflip.\n\nIt gives a quick burst of speed and lateral distance.",
                 lore = "",
                 cost = 0,
                 useInput = "Sprint",
@@ -77,18 +77,18 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Skip",
-                description = "A spring-like bound that provides great distance and height.",
+                description = "A spring-like bound that sends the user into a high arcing trajectory.",
                 lore = "",
                 cost = 0,
                 useInput = "Jump",
-                useClause = "immediately after landing from Dash"
+                useClause = "immediately after landing from Flipdash"
             });
             
             BasicMovelistRegistrations.Add("Wallrun", new MovelistRegistration()
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Wallrun",
-                description = "Run laterally alongside a wall, significantly slowing your descent.",
+                description = "An acrobatic run along a vertical lateral surface.\n\nWallrunning slows descent and gives speed.",
                 lore = "",
                 cost = 0,
                 useInput = "Jump",

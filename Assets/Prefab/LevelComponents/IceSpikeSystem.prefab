@@ -101,6 +101,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2ac63bcd10dc4e94932538787306bf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  requireGroundedState: 1
 --- !u!23 &6584972318271423467
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -118,6 +119,11 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -139,9 +145,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &3510828858261398332
 MeshFilter:
@@ -202,6 +210,7 @@ MonoBehaviour:
   maxInstances: 10000
   raycastDepth: 4
   raycastOriginYOffset: 1
+  edgeDistance: 1.5
   scaleRange: {x: 0.5, y: 3}
   rotationYRange: {x: 0, y: 360}
   offsetRange: {x: -2, y: 2}

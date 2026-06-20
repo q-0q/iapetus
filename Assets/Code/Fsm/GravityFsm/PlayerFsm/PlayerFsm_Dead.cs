@@ -62,7 +62,7 @@ public partial class PlayerFsm
         
         
         Machine.Configure(PlayerFsmState.Respawn)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.IdleLong)
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ =>
             {

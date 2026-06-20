@@ -51,6 +51,8 @@ public class MajorLeylineNode : MonoBehaviour
 
     private const float CameraSplineDistance = 20f;
     private List<TerminalColumn> _terminalColumns;
+
+    public float mapSplineTMultiplier = 1f;
     
 
     private void Awake()

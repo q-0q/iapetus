@@ -54,7 +54,7 @@ public partial class ProfessorFsm
                 if (SaveSystem.GetAllItems().Contains("Map")) return;
                 SaveSystem.WriteItem("Map");
                 SaveSystem.WritePersistentEvent("Map");
-                KeyItem.InvokeKeyItemCollected("Glyphstone");
+                AcquisitionCanvas.Singleton.InvokeMapAcquisition();
                 
                 StartCoroutine(TutorialCoroutine());
                 
@@ -79,7 +79,7 @@ public partial class ProfessorFsm
                 
                 IEnumerator TutorialCoroutine()
                 {
-                    yield return new WaitForSeconds(5.5f);
+                    yield return new WaitForSeconds(11f);
                     TutorialCanvas.Singleton.ShowTutorialText("Open map", "Map");
                 }
 

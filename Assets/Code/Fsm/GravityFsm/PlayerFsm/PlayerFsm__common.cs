@@ -292,6 +292,7 @@ public partial class PlayerFsm
 
     private float _dialogueEntryMomentum;
     private PlayerTrickParticles _playerTrickParticles;
+    private bool _dialogueIdle;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)

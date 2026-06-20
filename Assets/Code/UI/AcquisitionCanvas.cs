@@ -153,4 +153,11 @@ public class AcquisitionCanvas : MonoBehaviour
         
         yield return null;
     }
+
+    public void InvokeMapAcquisition()
+    {
+        var data = KeyItemRegistry.KeyItemRegistrations["Map"];
+        StartCoroutine(Coroutine( "Acquired the", data.displayName, "Map", "Open map", data.GetUseDescription(),
+            ""));
+    }
 }

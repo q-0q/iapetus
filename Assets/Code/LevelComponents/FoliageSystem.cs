@@ -15,6 +15,7 @@ public class FoliageSystem : MonoBehaviour
     public int maxInstances = 10000;
     public float raycastDepth = 50f;
     public float raycastOriginYOffset = 1f;
+    public float edgeDistance = 1f;
 
     [Header("Randomization")]
     public Vector2 scaleRange = new Vector2(0.8f, 1.2f);
@@ -79,22 +80,8 @@ public class FoliageSystem : MonoBehaviour
             // Ray direction now fully respects GameObject rotation
             Vector3 rayDirection = -transform.up;
 
-            if (!Physics.Raycast(
-                worldOrigin,
-                rayDirection,
-                out RaycastHit hit,
-                raycastDepth,
-                ~LayerMask.GetMask(),
-                QueryTriggerInteraction.Ignore))
-                continue;
-            
-            
-            if (Vector3.Angle(hit.normal, -rayDirection) > 60f) continue;
-
-            if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
-                continue;
-
-            if (RaycastCheckSphere(hit, rayDirection)) continue;
+            if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) ;
+            if (IsNearEdge(worldOrigin, rayDirection)) continue;
 
             Vector3 position = hit.point;
 
@@ -177,19 +164,21 @@ public class FoliageSystem : MonoBehaviour
 
         return new Bounds(center, size);
     }
-
-    private float edgeThreshold = 0.1f;
     
-    bool IsNearEdge(RaycastHit hit)
+    
+    bool IsNearEdge(Vector3 worldOrigin, Vector3 rayDirection)
     {
-        // barycentricCoordinate returns a Vector3 (u, v, w)
-        // where x=u, y=v, and z=w
-        Vector3 bary = hit.barycentricCoordinate;
 
-        // Check if any coordinate is close to zero
-        if (bary.x < edgeThreshold || bary.y < edgeThreshold || bary.z < edgeThreshold)
+        var rayCount = 8;
+        var originRadius = edgeDistance;
+        
+
+        for (int i = 0; i < rayCount; i++)
         {
-            return true;
+            var origin = worldOrigin + Quaternion.Euler(0, 360f * ((float)i
+                / rayCount), 0) * (Vector3.forward * originRadius);
+
+            if (!Test(origin, rayDirection, out var _)) return true;
         }
 
         return false;
@@ -203,5 +192,28 @@ public class FoliageSystem : MonoBehaviour
         }
 
         return false;
+    }
+
+
+    private bool Test(Vector3 worldOrigin, Vector3 rayDirection, out RaycastHit hit)
+    {
+        if (!Physics.Raycast(
+                worldOrigin,
+                rayDirection,
+                out hit,
+                raycastDepth,
+                ~LayerMask.GetMask(),
+                QueryTriggerInteraction.Ignore))
+            return false;
+
+
+        if (Vector3.Angle(hit.normal, -rayDirection) > 60f) return false;
+
+        if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
+            return false;
+
+        if (RaycastCheckSphere(hit, rayDirection)) return false;
+
+        return true;
     }
 }

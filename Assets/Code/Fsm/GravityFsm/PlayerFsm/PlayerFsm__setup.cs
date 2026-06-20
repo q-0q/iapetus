@@ -101,8 +101,9 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.Respawn, 0.85f);
         
         StateMapConfig.Duration.Add(PlayerFsmState.FallAfterSlideLateral, 0.25f);
-        StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.075f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Idle, 2.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingJumpsquat, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeStartup, 1.5f);
@@ -148,7 +149,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlideLateral, "FallAfterSlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "Idle");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "IdleLong");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Updraft, "Updraft");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TrialTeleport, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Climb, "Climb");
@@ -160,6 +161,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Respawn, "Respawn");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlide, "Fall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Idle, "Idle");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.IdleLong, "IdleLong");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepStart, "StepStart");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepEnd, "StepEnd");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurfaceRise, "SwimSurfaceRise");

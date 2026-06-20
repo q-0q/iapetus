@@ -17,7 +17,7 @@ public partial class PlayerFsm
         HandleInputMomentumChange();
         HandleTurning(2f);
 
-        var movement = transform.forward * (3f);
+        var movement = transform.forward * (1.5f);
         transform.position += ComputeCollisionMove(ApplyTractionNoTimescale(movement) * Time.deltaTime);
         SetAnimatorMomentum();
     }
@@ -43,7 +43,11 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6);
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.IdleLong, _ => true, 1);
+
+        Machine.Configure(PlayerFsmState.IdleLong)
+            .SubstateOf(PlayerFsmState.Idle);
         
         Machine.Configure(PlayerFsmState.StepStart)
             .SubstateOf(GravityFsmState.Grounded)

@@ -8,7 +8,8 @@ using Util = Code.Misc.Util;
 
 public class Lemon : MonoBehaviour
 {
-    
+
+    public static event Action OnLemonCollected;
     private Animator _animator;
     private ParticleSystem _readyParticles;
     private Material _material;
@@ -28,7 +29,7 @@ public class Lemon : MonoBehaviour
         _material = _renderer.material;
         _bone = transform.Find("Mesh").Find("lemon").Find("Armature").Find("Bone");
         
-        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 10f))
+        if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 10f, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
             transform.position = hit.point;
         }
@@ -63,8 +64,10 @@ public class Lemon : MonoBehaviour
 
     private void OnCollected()
     {
+        StartCoroutine(TimescaleCoroutine());
         Util.ReplaceAnimatorTrigger(_animator, "Collected");
         _readyParticles.Stop();
+        _readyParticles.Clear();
         
         var main = _readyParticles.main;
         main.simulationSpeed = 2.75f;
@@ -72,15 +75,16 @@ public class Lemon : MonoBehaviour
         SaveSystem.WriteLemonCollection(MetaName);
         FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference("event:/LemonCollect"), gameObject);
         _passiveInstance.stop(STOP_MODE.ALLOWFADEOUT);
-        Util.InvokeSphereEffect(PlayerFsm.Singleton.transform.position + Vector3.up * 5.5f, Vector3.one * 6f, 1.25f, 0.8f, -1f);
+        Util.InvokeSphereEffect(transform.position + Vector3.up * 2.5f, Vector3.one * 6f, 1.25f, 0.8f, -1f);
         StartCoroutine(DoCollectionTintWeight());
+        OnLemonCollected?.Invoke();
     }
 
     private IEnumerator DoCollectionTintWeight()
     {
         yield return new WaitForSeconds(0.25f);
         float t = 0;
-        float duration = 0.5f;
+        float duration = 0.25f;
         while (t < duration)
         {
             _material.SetFloat("_TintWeight", t / duration);
@@ -89,9 +93,40 @@ public class Lemon : MonoBehaviour
         }
 
         
-        yield return new WaitForSeconds(0.75f);
+        yield return new WaitForSeconds(0.5f);
         Util.InvokeSphereEffect(transform.position + Vector3.up * 5.5f, Vector3.one * 6f, 1.25f, 0.8f, -1f);
         // _renderer.enabled = false;
+    }
+    
+    private IEnumerator TimescaleCoroutine()
+    {
+
+        yield return new WaitForSeconds(0.15f);
+        
+        float timescale = 0.15f;
+        float t = 0;
+        float duration = 0.1f;
+        while (t < duration)
+        {
+            Time.timeScale = Mathf.Lerp(1f, timescale, Util.SmoothLerp01(t / duration));
+            yield return null;
+            t += Time.deltaTime;
+        }
+        
+        yield return new WaitForSeconds(0.1f);
+        
+        t = 0;
+        duration = 0.25f;
+        while (t < duration)
+        {
+            Time.timeScale = Mathf.Lerp(timescale, 1f, Util.SmoothLerp01(t / duration));
+            yield return null;
+            t += Time.deltaTime;
+        }
+
+
+        Time.timeScale = 1f;
+        
     }
 
     private void Awake()

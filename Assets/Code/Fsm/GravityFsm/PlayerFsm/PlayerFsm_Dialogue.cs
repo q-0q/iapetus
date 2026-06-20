@@ -9,7 +9,11 @@ public partial class PlayerFsm
 
         var newMomentum = Mathf.Lerp(_momentum, 0f, Time.deltaTime * 10f);
         _momentum = newMomentum;
-        if (_momentum < 1.25f) ReplaceAnimatorTrigger("Idle");
+        if (_momentum < 1.25f && !_dialogueIdle)
+        {
+            _dialogueIdle = true;
+            ReplaceAnimatorTrigger("IdleLong");
+        }
         HandleCollisionMove();
         var interacted = _inputBuffer.IsBuffered("Interact");
         if (interacted)
@@ -47,11 +51,13 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Dialogue)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.Idle)
+            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.IdleLong)
             .OnEntry(_ =>
             {
                 _dialogueEntryMomentum = _momentum;
                 _inputBuffer.ConsumeBuffer("Interact");
+                _dialogueIdle = false;
+                // ReplaceAnimatorTrigger("IdleLong");
             });
     }
 }

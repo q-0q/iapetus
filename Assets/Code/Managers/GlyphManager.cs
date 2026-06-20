@@ -59,7 +59,7 @@ public class GlyphManager : MonoBehaviour
             {
                 nearestDistance = d;
                 nearestNode = majorLeylineNode.metaName;
-                nearestT = t;
+                nearestT = t * majorLeylineNode.mapSplineTMultiplier;
             }
         }
         
