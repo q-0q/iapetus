@@ -37,6 +37,13 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.WalkToMajorLeylinePosition)
             .SubstateOf(PlayerFsmState.WalkToPosition)
             .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged, PlayerFsmState.MajorLeylineNodeInteract);
+        
+        Machine.Configure(PlayerFsmState.WalkToRotationDaisPosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.RotationDaisInteract);
+
+        Machine.Configure(PlayerFsmState.RotationDaisInteract)
+            .SubstateOf(PlayerFsmState.Interactable);
     }
     
     private void WalkToSwitchPositionConfigure()

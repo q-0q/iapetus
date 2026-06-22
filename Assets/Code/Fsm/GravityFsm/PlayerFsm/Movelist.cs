@@ -55,7 +55,7 @@ namespace Code.Fsm.GravityFsm.PlayerFsm
             {
                 MovelistRegistrationType = MovelistRegistrationType.Basic,
                 displayName = "Sprint",
-                description = "A true forward sprint. You are the Mountain Wind.\n\nSprinting modifies the behavior of other actions.",
+                description = "A full-powered forward sprint.\n\nYou are the Mountain Wind. Sprinting modifies the behavior of other actions.",
                 lore = "",
                 cost = 0,
                 useInput = "Sprint",

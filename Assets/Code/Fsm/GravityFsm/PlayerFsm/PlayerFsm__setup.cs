@@ -138,6 +138,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToDialoguePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToSwitchPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToMajorLeylinePosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToRotationDaisPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");
@@ -182,6 +183,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseMap, "Inventory");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MajorLeylineNodeInteract, "MajorLeylineInteract");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RotationDaisInteract, "DaisInteract");
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Tinsica, "Tinsica");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TinsicaJumpsquat, "TinsicaJumpsquat");

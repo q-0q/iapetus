@@ -135,6 +135,8 @@ public partial class PlayerFsm : GravityFsm
         public static int TinsicaJump;
         public static int TinsicaJumpsquat;
         public static int IdleLong;
+        public static int WalkToRotationDaisPosition;
+        public static int RotationDaisInteract;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

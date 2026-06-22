@@ -139,8 +139,8 @@ public partial class PlayerFsm
     private const float LowMomentumRotationMod = 5.25f;
     private const float LowMomentumMomentumGainMod = 1.15f;
     private const float LowMomentumMomentumLossMod = 1.25f;
-    private const float GroundMoveMinimumAnimatorSpeedMod = 0.9f;
-    private const float GroundMoveMaximumAnimatorSpeedMod = 2.6f;
+    private const float GroundMoveMinimumAnimatorSpeedMod = 1.25f;
+    private const float GroundMoveMaximumAnimatorSpeedMod = 2.3f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
     private const float GroundSlopeMaximumMomentumModifier = 0.65f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
@@ -220,7 +220,7 @@ public partial class PlayerFsm
     private const float WalkToPositionTurnPhaseAngle = 30f;
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
-    private const float ArriveAtWalkPositionTargetDistance = 1.75f;
+    private const float ArriveAtWalkPositionTargetDistance = 2.25f;
     private const float ArriveAtWalkPositionTargetRangedDistance = 10f;
 
     private const float TrialTeleportStartupDuration = 0.5f;

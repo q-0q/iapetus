@@ -73,6 +73,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
             .SubstateOf(PlayerFsmState.TinsicaUsable)
+            .Permit(PlayerFsm.PlayerFsmTrigger.Accelerating, PlayerFsm.PlayerFsmState.StepStart)
             .PermitIf(PlayerFsmTrigger.SwimTriggerRaycastHit, PlayerFsmState.SwimSurfaceRise, IsSwimTrigger)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
             .Permit(GravityFsmTrigger.StartFrameAerial, PlayerFsmState.Fall)

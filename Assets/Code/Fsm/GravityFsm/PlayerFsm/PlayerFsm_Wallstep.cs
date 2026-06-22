@@ -7,7 +7,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Wallstep)
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
-            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params => !IsSlideTrigger(@params))
+            // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params => !IsSlideTrigger(@params))
             .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.SlowVaultHang,
                 _ => YVelocity < MediumVaultHangMinimumYVelocity)
@@ -37,6 +37,10 @@ public partial class PlayerFsm
                 
                 OnPlayerFootstep();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);
+            })
+            .OnExitFrom(GravityFsmTrigger.StartFrameGrounded, _ =>
+            {
+                Debug.LogError("dfsasef");
             });
     }
 }
