@@ -8,7 +8,7 @@ public class RotationDais : MonoBehaviour
     private Interactable _interactable;
     private bool _active;
     private Transform _rotator;
-    private Transform _ball;
+    public Transform _ball;
     private PlayerInput _playerInput;
 
     private void Awake()
@@ -16,7 +16,6 @@ public class RotationDais : MonoBehaviour
         _interactable = GetComponentInChildren<Interactable>();
         _playerInput = GetComponent<PlayerInput>();
         _rotator = transform.Find("Rotator");
-        _ball = transform.Find("Dais").Find("Ball");
     }
 
     private void OnEnable()

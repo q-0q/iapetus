@@ -137,6 +137,7 @@ public partial class PlayerFsm : GravityFsm
         public static int IdleLong;
         public static int WalkToRotationDaisPosition;
         public static int RotationDaisInteract;
+        public static int DisplaceFoliage;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

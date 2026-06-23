@@ -146,7 +146,7 @@ public partial class PlayerFsm
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 3.5f;
     private const float SprintTurnLossMultiplier = 1.5f;
-    private const float IdleMomentumThreshold = 1f;
+    private const float IdleMomentumThreshold = 0.5f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -840,7 +840,7 @@ public partial class PlayerFsm
         Shader.SetGlobalVector("_PlayerWorldPosition", transform.position);
 
         var shaderGrounded = Shader.GetGlobalFloat("_PlayerGrounded");
-        shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(GravityFsmState.Grounded) || Machine.IsInState(PlayerFsmState.Dying1) ? 2f : -0.5f);
+        shaderGrounded += Time.deltaTime * 5f * (Machine.IsInState(PlayerFsmState.DisplaceFoliage) ? 2f : -0.5f);
         shaderGrounded = Mathf.Clamp(shaderGrounded, 0f, 1f);
         Shader.SetGlobalFloat("_PlayerGrounded", shaderGrounded);
         

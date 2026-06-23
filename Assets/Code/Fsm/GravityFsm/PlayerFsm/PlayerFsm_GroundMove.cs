@@ -56,5 +56,8 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.GroundMoveAfterVault)
             .SubstateOf(PlayerFsmState.GroundMove);
+        
+        Machine.Configure(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.DisplaceFoliage);
     }
 }

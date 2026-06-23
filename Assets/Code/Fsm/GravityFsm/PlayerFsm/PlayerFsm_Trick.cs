@@ -52,6 +52,7 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.Tinsica)
             // .SubstateOf(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.DisplaceFoliage)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.TinsicaJump, _ =>
             {
                 return TimeInCurrentState() > 0.4 * ComputeTiniscaDurationMod() && PlayerManaManager.Singleton.GetCurrentAvailableMana() >= 1;;

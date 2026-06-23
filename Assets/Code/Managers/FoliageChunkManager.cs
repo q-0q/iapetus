@@ -18,6 +18,7 @@ public class FoliageChunkManager : MonoBehaviour
     
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, List<Matrix4x4>>> _masterRegistry = new();
     private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Vector3Int, Matrix4x4[][]>> _bakedChunks = new();
+    private Dictionary<System.ValueTuple<Mesh, Material>, Dictionary<Transform, List<Matrix4x4>>> _transformRegistry = new();
     public static readonly List<FoliageMaskSpline> MaskSplines = new();
     private static int FoliageLayer;
 
@@ -44,6 +45,34 @@ public class FoliageChunkManager : MonoBehaviour
 
             if (!_masterRegistry[key].ContainsKey(chunkPos)) _masterRegistry[key][chunkPos] = new List<Matrix4x4>();
             _masterRegistry[key][chunkPos].Add(matrix);
+        }
+    }
+    
+    public void RegisterTransformFoliage(Transform t, Mesh mesh, Material mat, Matrix4x4[] instances)
+    {
+        var key = (mesh, mat);
+        if (!_transformRegistry.ContainsKey(key)) 
+            _transformRegistry[key] = new Dictionary<Transform, List<Matrix4x4>>();
+
+        if (!_transformRegistry[key].ContainsKey(t)) 
+            _transformRegistry[key][t] = new List<Matrix4x4>();
+
+        // An unscaled matrix representing the transform's world position/rotation
+        Matrix4x4 unscaledTransformMatrix = Matrix4x4.TRS(t.position, t.rotation, Vector3.one);
+        // Invert it so we can convert world space to unscaled local space
+        Matrix4x4 inverseUnscaled = unscaledTransformMatrix.inverse;
+
+        foreach (var instanceMatrix in instances)
+        {
+            Matrix4x4 localMatrix = instanceMatrix; 
+            Vector3 worldPos = localMatrix.GetColumn(3);
+        
+            // Transform the world position into an unscaled local position
+            Vector3 unscaledLocalPos = inverseUnscaled.MultiplyPoint3x4(worldPos);
+        
+            localMatrix.SetColumn(3, new Vector4(unscaledLocalPos.x, unscaledLocalPos.y, unscaledLocalPos.z, 1f));
+        
+            _transformRegistry[key][t].Add(localMatrix);
         }
     }
 
@@ -131,6 +160,8 @@ public class FoliageChunkManager : MonoBehaviour
                 }
             }
         }
+        
+        RenderTransformFoliage();
     }
     
     private void Shuffle(List<Matrix4x4> list)
@@ -141,6 +172,50 @@ public class FoliageChunkManager : MonoBehaviour
             int randomIndex = Random.Range(i, list.Count);
             list[i] = list[randomIndex];
             list[randomIndex] = temp;
+        }
+    }
+
+    private List<Matrix4x4> _transformRenderBatch = new List<Matrix4x4>(1023);
+
+    private void RenderTransformFoliage()
+    {
+        foreach (var entry in _transformRegistry)
+        {
+            Mesh mesh = entry.Key.Item1;
+            Material mat = entry.Key.Item2;
+        
+            RenderParams rp = new RenderParams(mat);
+            rp.layer = FoliageLayer;
+
+            _transformRenderBatch.Clear();
+
+            foreach (var keyValuePair in entry.Value)
+            {
+                Transform t = keyValuePair.Key;
+                if (t == null) continue; 
+
+                // Create the world matrix using only position and rotation
+                Matrix4x4 unscaledLocalToWorld = Matrix4x4.TRS(t.position, t.rotation, Vector3.one);
+
+                foreach (var localMatrix in keyValuePair.Value)
+                {
+                    // Both matrices are now completely agnostic of the Transform's scale!
+                    Matrix4x4 worldMatrix = unscaledLocalToWorld * localMatrix;
+                
+                    _transformRenderBatch.Add(worldMatrix);
+
+                    if (_transformRenderBatch.Count >= 1023)
+                    {
+                        Graphics.RenderMeshInstanced(rp, mesh, 0, _transformRenderBatch, _transformRenderBatch.Count);
+                        _transformRenderBatch.Clear();
+                    }
+                }
+            }
+
+            if (_transformRenderBatch.Count > 0)
+            {
+                Graphics.RenderMeshInstanced(rp, mesh, 0, _transformRenderBatch, _transformRenderBatch.Count);
+            }
         }
     }
 }

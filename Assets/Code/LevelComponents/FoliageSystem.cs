@@ -28,6 +28,9 @@ public class FoliageSystem : MonoBehaviour
     Matrix4x4[] instData;
     RenderParams rp;
 
+    [Tooltip("If true, binds the foliage to the transform of the foliage system, for use in moving/rotating platforms. not performant, use sparingly")]
+    public bool transformBake = false;
+
     void Start()
     {
         rp = new RenderParams(material)
@@ -113,7 +116,8 @@ public class FoliageSystem : MonoBehaviour
         
         Matrix4x4[] finalMatrices = matrices.ToArray();
         
-        FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
+        if (transformBake) FoliageChunkManager.Instance.RegisterTransformFoliage(transform, mesh,material, finalMatrices);
+        else FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
         
     }
 

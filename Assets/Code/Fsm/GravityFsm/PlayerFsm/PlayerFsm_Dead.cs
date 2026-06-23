@@ -29,6 +29,7 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Dying1)
             .Permit(PlayerFsmTrigger.Timeout, PlayerFsmState.Dead)
+            .SubstateOf(PlayerFsmState.DisplaceFoliage)
             .OnEntry(_ =>
             {
                 FMODUnity.RuntimeManager.PlayOneShot(deathFmodEvent);

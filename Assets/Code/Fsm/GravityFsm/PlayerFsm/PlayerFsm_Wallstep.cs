@@ -8,6 +8,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             // .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat, @params => !IsSlideTrigger(@params))
+            .PermitIf(PlayerFsmTrigger.FaceOpen, PlayerFsmState.Fall, _ => TimeInCurrentState() > WallsquatMinimumDuration)
             .Permit(GravityFsmTrigger.StartFrameWithNegativeYVelocity, PlayerFsmState.Fall)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.SlowVaultHang,
                 _ => YVelocity < MediumVaultHangMinimumYVelocity)
