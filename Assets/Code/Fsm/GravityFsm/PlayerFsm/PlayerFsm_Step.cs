@@ -44,9 +44,12 @@ public partial class PlayerFsm
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Skipsquat,
                 _ => _timeSinceDashFinished <= SkipWindowDuration, 1)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.TightropeMove, IsTightropeTrigger, 6)
-            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.IdleLong, _ => true, 1);
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.IdleLong, _ => !Machine.IsInState(PlayerFsmState.IdleLongLoop), 1);
 
         Machine.Configure(PlayerFsmState.IdleLong)
+            .SubstateOf(PlayerFsmState.Idle);
+        
+        Machine.Configure(PlayerFsmState.IdleLongLoop)
             .SubstateOf(PlayerFsmState.Idle);
         
         Machine.Configure(PlayerFsmState.StepStart)

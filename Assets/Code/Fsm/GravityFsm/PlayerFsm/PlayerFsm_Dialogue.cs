@@ -51,13 +51,15 @@ public partial class PlayerFsm
     {
         Machine.Configure(PlayerFsmState.Dialogue)
             .SubstateOf(GravityFsmState.Grounded)
-            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.IdleLong)
+            .Permit(PlayerFsmTrigger.EndDialogue, PlayerFsmState.IdleLongLoop)
             .OnEntry(_ =>
             {
                 _dialogueEntryMomentum = _momentum;
                 _inputBuffer.ConsumeBuffer("Interact");
-                _dialogueIdle = false;
-                // ReplaceAnimatorTrigger("IdleLong");
+                
+                // this is genuinely insane and completely pattern-breaking, but it seems like it works...
+                _dialogueIdle = Animator.GetCurrentAnimatorStateInfo(0).IsName("IdleLongLoop") ||
+                                Animator.GetCurrentAnimatorStateInfo(0).IsName("IdleLong");
             });
     }
 }

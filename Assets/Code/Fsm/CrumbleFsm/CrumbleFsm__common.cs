@@ -19,16 +19,18 @@ public partial class CrumbleFsm
     private const string eventPath3 = "event:/Crumble3";
     private const string eventPath4 = "event:/Crumble4";
 
-    private void WorldspaceShake(Transform t, float duration, float strength)
+    private void WorldspaceShake(float duration, float strength)
     {
+        transform.DOComplete();
+        
         // 1. Store the starting world position
-        Vector3 origin = t.position;
+        Vector3 origin = transform.position;
 
         // 2. Shake a virtual vector from zero to the desired strength
         DOTween.Shake(() => Vector3.zero, v => 
         {
             // 3. Apply the offset to the original world origin
-            t.position = origin + v;
+            transform.position = origin + v;
         }, duration, strength, 20);
     }
 

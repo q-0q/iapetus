@@ -150,7 +150,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlideLateral, "FallAfterSlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "IdleLong");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "IdleLongLoop");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Updraft, "Updraft");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TrialTeleport, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Climb, "Climb");
@@ -163,6 +163,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlide, "Fall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Idle, "Idle");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.IdleLong, "IdleLong");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.IdleLongLoop, "IdleLongLoop", 2);
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepStart, "StepStart");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.StepEnd, "StepEnd");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SwimSurfaceRise, "SwimSurfaceRise");

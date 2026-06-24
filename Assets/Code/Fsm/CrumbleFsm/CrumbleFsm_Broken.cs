@@ -15,8 +15,8 @@ public partial class CrumbleFsm
                 _renderer.material.SetFloat("_Glow", 1f);
                 _renderer.material.SetFloat("_CrackAmount", 1.5f);
                 _renderer.transform.DOComplete();
-                WorldspaceShake(_renderer.transform, 0.5f, 1.25f);
-                WorldspaceShake(_renderer.transform, 2f, 0.4f);
+                WorldspaceShake(0.5f, 1.25f);
+                WorldspaceShake(2f, 0.4f);
                 _collider.enabled = false;
                 _renderer.enabled = false;
                 FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(eventPath4), gameObject);

@@ -23,6 +23,8 @@ public partial class PlayerFsm : GravityFsm
     public class PlayerFsmState : GravityFsmState
     {
         public static int Idle;
+        public static int IdleLong;
+        public static int IdleLongLoop;
         public static int StepStart;
         public static int StepEnd;
         
@@ -134,7 +136,7 @@ public partial class PlayerFsm : GravityFsm
         public static int TinsicaUsable;
         public static int TinsicaJump;
         public static int TinsicaJumpsquat;
-        public static int IdleLong;
+        
         public static int WalkToRotationDaisPosition;
         public static int RotationDaisInteract;
         public static int DisplaceFoliage;
@@ -244,7 +246,7 @@ public partial class PlayerFsm : GravityFsm
         base.OnStart();
         TryGetComponent(out Animator);
         Singleton = this;
-        InitState = PlayerFsmState.GroundMove;
+        InitState = PlayerFsmState.IdleLongLoop;
         isSprinting = false;
         Time.timeScale = 1f;
         _timeSinceBoostStarted = 100f;
@@ -293,6 +295,14 @@ public partial class PlayerFsm : GravityFsm
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
         SaveSystem.UpdateScreenshot(0.3f);
         SnapToGround();
+    }
+    
+    protected override void OnStartComplete()
+    {
+        base.OnStartComplete();
+        
+        ReplaceAnimatorTrigger("IdleLongLoop");
+        Animator.SetLayerWeight(1, 0f);
     }
 
 

@@ -17,8 +17,8 @@ public partial class CrumbleFsm
                 _renderer.transform.DOComplete();
                 
                 FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(eventPath1), gameObject);
-                WorldspaceShake(_renderer.transform, 0.15f, 0.3f);
-                WorldspaceShake(_renderer.transform, 1f, 0.15f);
+                WorldspaceShake(0.15f, 0.3f);
+                WorldspaceShake(1f, 0.15f);
             });
     }
 }
