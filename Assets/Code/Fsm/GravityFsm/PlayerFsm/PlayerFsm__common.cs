@@ -146,7 +146,7 @@ public partial class PlayerFsm
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 3.5f;
     private const float SprintTurnLossMultiplier = 1.5f;
-    private const float IdleMomentumThreshold = 7f;
+    private const float IdleMomentumThreshold = 0.5f;
     
     private const float JumpYVelocity = 22f; 
     private const float CoyoteTime = 0.04f;
@@ -166,7 +166,7 @@ public partial class PlayerFsm
     private const float VaultLedgeLerpStrength = 35f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
-    private const float SlowVaultFinishForwardSpeed = 2f;
+    private const float SlowVaultFinishForwardSpeed = 3.5f;
     private const float WallsquatMinimumYVelocity = 10f;
     private const float WallSquatMinimumMomentum = 0f;
     public const float WallsquatMinimumDuration = 0.2f;
@@ -220,7 +220,7 @@ public partial class PlayerFsm
     private const float WalkToPositionTurnPhaseAngle = 30f;
     private const float WalkToPositionMomentum = 6f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
-    private const float ArriveAtWalkPositionTargetDistance = 2.25f;
+    private const float ArriveAtWalkPositionTargetDistance = 3.25f;
     private const float ArriveAtWalkPositionTargetRangedDistance = 10f;
 
     private const float TrialTeleportStartupDuration = 0.5f;

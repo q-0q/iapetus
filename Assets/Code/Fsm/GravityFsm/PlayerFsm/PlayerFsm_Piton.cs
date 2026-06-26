@@ -34,7 +34,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.FallAfterPitonHoming)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.PitonFlipsquat, _ => TimeInCurrentState() > 0.25f)
-            .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
+            // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.Landsquat)
             .OnEntry(@params =>
             {
                 if (@params is not PitonParam pitonParam) return;
@@ -108,6 +108,8 @@ public partial class PlayerFsm
             {
                 if (@params is not PitonParam pitonParam) return false;
                 if (Vector3.Angle(transform.forward, pitonParam.Piton.forward) >= 100f) return false;
+                var angle = Vector3.Angle(Vector3.down, pitonParam.Piton.forward);
+                if (angle <= 45f) return false;
                 if (Machine.IsInState(PlayerFsmState.FallAfterPitonHoming) && TimeInCurrentState() < 0.5f) return false;
                 if (Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.1f) return false;
                 return YVelocity < 15f;

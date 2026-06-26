@@ -102,7 +102,7 @@ public partial class PlayerFsm
         
         StateMapConfig.Duration.Add(PlayerFsmState.FallAfterSlideLateral, 0.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.StepStart, 0.075f);
-        StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.125f);
+        StateMapConfig.Duration.Add(PlayerFsmState.StepEnd, 0.175f);
         StateMapConfig.Duration.Add(PlayerFsmState.Idle, 2.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingJumpsquat, 0.15f);

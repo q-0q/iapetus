@@ -11,11 +11,17 @@ public class RotationDais : MonoBehaviour
     public Transform _ball;
     private PlayerInput _playerInput;
 
+    private Vector3 _baseBallWorldPosition;
+
+    private string _baseInteractableText;
+
     private void Awake()
     {
         _interactable = GetComponentInChildren<Interactable>();
         _playerInput = GetComponent<PlayerInput>();
         _rotator = transform.Find("Rotator");
+        _baseInteractableText = _interactable.text;
+        _baseBallWorldPosition = _ball.transform.position;
     }
 
     private void OnEnable()
@@ -32,9 +38,9 @@ public class RotationDais : MonoBehaviour
     {
         if (_active)
         {
-            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.IdleLong);
+            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
             _active = false;
-            _interactable.text = "Interact";
+            _interactable.text = _baseInteractableText;
             return;
         }
         
@@ -72,5 +78,7 @@ public class RotationDais : MonoBehaviour
         
         _rotator.Rotate(_currentRotationVelocity * (maxSpeed * Time.deltaTime), Space.World);
         _ball.Rotate(_currentRotationVelocity * (maxSpeed * Time.deltaTime * 3f), Space.World);
+        Vector3 ballWorldSpaceOffset = new Vector3(0f, Mathf.Sin(3f * Time.time) * 0.1f, 0f);
+        _ball.position = _baseBallWorldPosition + ballWorldSpaceOffset;
     }
 }

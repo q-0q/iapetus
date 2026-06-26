@@ -25,7 +25,13 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(PlayerFsmState.TinsicaUsable)
             .SubstateOf(GravityFsmState.RespectParentTransform)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .SubstateOf(GravityFsmState.IgnoreDepenetration)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
+            .PermitIf(FsmTrigger.Timeout, PlayerFsmState.GroundMove, _ =>
+            {
+                var v2 = GetInputMovementVector2();
+                return v2.magnitude > InputMagnitudeThreshhold;
+            }, 2)
             // .Permit(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.GroundMove)
             .OnEntry(_ =>
             {
