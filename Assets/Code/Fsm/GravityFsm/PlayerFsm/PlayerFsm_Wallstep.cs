@@ -34,7 +34,7 @@ public partial class PlayerFsm
                     YVelocity = WallstepMaximumYVelocityGain;
                     Animator.SetFloat("VerticalMomentum", 1f);
                 }
-                _momentum = 0;
+                _momentum = 10f;
                 
                 OnPlayerFootstep();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(jumpFmodEvent, gameObject);

@@ -12,7 +12,11 @@ public partial class PlayerFsm
 
         if (!Machine.IsInState(PlayerFsmState.Wallrun) && !Machine.IsInState(PlayerFsmState.HardTurn) && !Machine.IsInState(PlayerFsmState.Slide) && !Machine.IsInState(PlayerFsmState.PitonHoming))
         {
-            HandleInputMomentumChange();
+            if (!Machine.IsInState(PlayerFsmState.Wallstep))
+            {
+                HandleInputMomentumChange();
+            }
+            
             var animationTurnModifier = 1f;
             if (Machine.IsInState(PlayerFsmState.Jumpsquat) || Machine.IsInState(PlayerFsmState.Landsquat))
                 animationTurnModifier = 0f;

@@ -152,7 +152,6 @@ public partial class PlayerFsm : GravityFsm
         public static int FaceWall;
         public static int FaceWallStrict;
         public static int FaceOpen;
-        public static int FaceOpenLenient;
         public static int FlankWall;
         public static int FlankOpen;
         public static int Dash;
@@ -684,7 +683,7 @@ public partial class PlayerFsm : GravityFsm
     
     private void OnStateChangedCompleted(TriggerParams obj)
     {
-        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        // print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
         ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 

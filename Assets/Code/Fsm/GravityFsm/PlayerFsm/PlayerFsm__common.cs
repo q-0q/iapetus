@@ -336,17 +336,18 @@ public partial class PlayerFsm
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
-    private bool UpdateLedgePosition(float ledgeHeight, float forwardOffset = 0.25f, bool upwardsOnly = false)
+    private bool UpdateLedgePosition(float ledgeHeight, bool upwardsOnly = false)
     {
+        var forwardOffset = 1.75f * GetRaycastTimeModifier();
         var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
-            (ComputeDynamicForwardRaycastDistance() + forwardOffset);
+            (forwardOffset);
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
 
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
                 (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
 
         var slope = Vector3.Angle(hit.normal, Vector3.up);
-        if (slope > 60f) return false;
+        // if (slope > 60f) return false;
         if (upwardsOnly && hit.point.y < transform.position.y) return false;
         _currentLedgePosition = hit.point;
         return true;

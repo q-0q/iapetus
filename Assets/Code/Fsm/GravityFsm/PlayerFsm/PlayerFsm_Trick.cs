@@ -23,11 +23,11 @@ public partial class PlayerFsm
         Animator.SetFloat("SpeedMod", animatorSpeedMod);
 
         var ledgeMountSpeed = 25f;
-        if (UpdateLedgePosition(FaceHighLedgeHeight, 0.25f, true))
+        if (UpdateLedgePosition(FaceHighLedgeHeight, true))
         {
             MoveYOntoLedgeLinear(0f, ledgeMountSpeed);
         }
-        else if (UpdateLedgePosition(FaceLedgeHeight, 0.25f, true))
+        else if (UpdateLedgePosition(FaceLedgeHeight, true))
         {
             MoveYOntoLedgeLinear(0f, ledgeMountSpeed);
         }    

@@ -177,6 +177,8 @@ public abstract partial class GravityFsm
             {
                 _depenetrationTimer += Time.deltaTime;
                 if (Machine.IsInState(GravityFsmState.IgnoreDepenetration)) return;
+                if (Machine.IsInState(GravityFsmState.IgnoreVerticalDepenetration))
+                    direction = new Vector3(direction.x, 0f, direction.z);
                 transform.position += direction * distance;
             }
             else

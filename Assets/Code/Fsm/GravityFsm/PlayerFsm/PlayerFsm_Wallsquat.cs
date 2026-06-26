@@ -14,6 +14,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Aerial)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(PlayerFsmState.DontApplyGustYVelocity)
+            .SubstateOf(GravityFsmState.IgnoreVerticalDepenetration)
             // .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             .SubstateOf(PlayerFsmState.MinorLeylineInteractable)

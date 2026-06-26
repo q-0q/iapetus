@@ -78,7 +78,7 @@ public partial class PlayerFsm
             Machine.Fire(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged);
         } 
 
-        FireFaceTriggers();
+        FireFaceTriggersRedux();
         var flank = FireFlankTriggers();
 
         if (IsInGust)
@@ -152,29 +152,121 @@ public partial class PlayerFsm
 
         if (!b) return false;
         var slope = Vector3.Angle(hit.normal, Vector3.up);
-        if (slope < 70f) return false;
-        var angle = Vector3.SignedAngle(-hit.normal, transform.forward, Vector3.up);
+        // if (slope < 70f) return false;
+        var angle = Vector3.SignedAngle(-Flatten(hit.normal), transform.forward, Vector3.up);
         var angleWeight = Mathf.InverseLerp(0, 40f, Mathf.Abs(angle));
-        var distanceThreshhold = Mathf.Lerp(1.75f, 2.15f + (Machine.IsInState(PlayerFsmState.Press) ? 4f : 0f), angleWeight);
+        var distanceThreshhold = Mathf.Lerp(2f, 2.25f + (Machine.IsInState(PlayerFsmState.Press) ? 4f : 0f), angleWeight);
         return hit.distance < distanceThreshhold;
     }
 
-    private bool ProbeHighLedge()
+    private bool ProbeWallAboveLedge()
     {
         var origin = transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset());
-        if (Physics.Raycast(origin,
+        if (!Physics.Raycast(origin,
                 transform.forward,
-                out var hit, 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+                out var hit, 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
+        var slope = Vector3.Angle(hit.normal, Vector3.up);
+        return slope > 60f;
+    }
+    
+    Vector3 Flatten(Vector3 vector3)
+    {
+        return new Vector3(vector3.x, 0f, vector3.z);
+    }
+    
+    private void FireFaceTriggersRedux()
+    {
+        var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance() + 1f;
+
+        bool ProbeDownwardsLedge(Vector3 wallPoint)
         {
-            Debug.DrawRay(origin, transform.forward, Color.magenta, 1f);
+            var v = 2f;
+            var h = 0.6f;
+            var origin = wallPoint + (Vector3.up *
+                                                v) + (transform.forward * h);
+            if (!Physics.Raycast(origin, Vector3.down,
+                    out var hit, v * 2f, GetEnvironmentalLayermask(),
+                    QueryTriggerInteraction.Ignore)) return false;
+            
+            
+
             return true;
         }
+        
+        bool ProbeWall()
+        {
+            var origin = transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset());
+            
+            if (!Physics.Raycast(
+                    origin,
+                    transform.forward,
+                    out var hit, forwardRaycastDistance, GetEnvironmentalLayermask(),
+                    QueryTriggerInteraction.Ignore)) return false;
 
-        return false;
+            if (Vector3.Angle(-Flatten(hit.normal), transform.forward) > FaceWallMaximumAngle) return false;
+            
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
+            if (slope < 60f) return false;
+            
+            Machine.Fire(Vector3.Angle(-Flatten(hit.normal), transform.forward) < FaceWallStrictMaximumAngle
+                ? PlayerFsmTrigger.FaceWallStrict
+                : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
+            
+            return true;
+        }
+        
+        bool ProbeHighLedge()
+        {
+
+            var origin = transform.position + Vector3.up *
+                (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset());
+            if (!Physics.Raycast(origin, transform.forward,
+                    out var hit, forwardRaycastDistance, GetEnvironmentalLayermask(),
+                    QueryTriggerInteraction.Ignore)) return false;
+            
+            if (Vector3.Angle(-Flatten(hit.normal), transform.forward) > FaceWallMaximumAngle) return false;
+            if (ProbeWallAboveLedge()) return false;
+            if (!ProbeDownwardsLedge(hit.point)) return false;
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
+            if (slope < 60f) return false;
+            Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
+            return true;
+        }
+        
+        bool ProbeLedge()
+        {
+
+            var origin = transform.position + Vector3.up *
+                (FaceLedgeHeight + GetCurrentDashRaycastHeightOffset());
+            if (!Physics.Raycast(origin, transform.forward,
+                    out var hit, forwardRaycastDistance, GetEnvironmentalLayermask(),
+                    QueryTriggerInteraction.Ignore)) return false;
+            
+            if (Vector3.Angle(-Flatten(hit.normal), transform.forward) > FaceWallMaximumAngle) return false;
+            if (ProbeWallAboveLedge()) return false;
+            if (!ProbeDownwardsLedge(hit.point)) return false;
+            var slope = Vector3.Angle(hit.normal, Vector3.up);
+            if (slope < 60f) return false;
+            Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});
+            return true;
+        }
+        
+        if (ProbeWall()) return;
+        if (ProbeHighLedge()) return;
+        if (ProbeLedge()) return;
+        
+        Machine.Fire(PlayerFsmTrigger.FaceOpen);
+        
     }
 
     private void FireFaceTriggers()
     {
+        // todo: rewrite this method
+        
+        // reverse the order of checks and use nested ifs to propogate logic
+        // that way we can fall back, ie if a more specific wall check fails we can 
+        // fall back onto ledge
+        
         var forwardRaycastDistance = ComputeDynamicForwardRaycastDistance();
         var skew = FaceRaycastSkew * GetRaycastTimeModifier();
         var minSlope = 80f;
@@ -183,6 +275,8 @@ public partial class PlayerFsm
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
+            
+            // right now if this if fails, we arent able to fall back on other ledge types at this point
             if (slope > minSlope - 30f) Machine.Fire(Vector3.Angle(-hit.normal, transform.forward) < FaceWallStrictMaximumAngle
                 ? PlayerFsmTrigger.FaceWallStrict
                 : PlayerFsmTrigger.FaceWall, new RaycastHitParam() { Hit = hit});
@@ -190,27 +284,23 @@ public partial class PlayerFsm
                        (FaceHighLedgeHeight + GetCurrentDashRaycastHeightOffset()), transform.forward, 
                        out hit, forwardRaycastDistance + skew, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
-            if (ProbeHighLedge()) return;
+            if (ProbeWallAboveLedge()) return;
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
+            // same here
             if (slope > minSlope) Machine.Fire(PlayerFsmTrigger.FaceHighLedge, new RaycastHitParam() { Hit = hit});
         } else if (Physics.Raycast(transform.position + Vector3.up * FaceLedgeHeight, transform.forward,
                        out hit, forwardRaycastDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore) && Vector3.Angle(-hit.normal, transform.forward) < FaceWallMaximumAngle)
         {
-            if (ProbeHighLedge()) return;
+            if (ProbeWallAboveLedge()) return;
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ForceSlide")) return;
             var slope = Vector3.Angle(hit.normal, Vector3.up);
+            // and even here for face open
             if (slope > minSlope) Machine.Fire(PlayerFsmTrigger.FaceLedge, new RaycastHitParam() { Hit = hit});
         }
         else
         {
             Machine.Fire(PlayerFsmTrigger.FaceOpen);
-        }
-
-        if (!Physics.Raycast(transform.position + Vector3.up * FaceWallHeight, transform.forward,
-                out hit, (forwardRaycastDistance + skew * 2f) + 0.25f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
-        {
-            Machine.Fire(PlayerFsmTrigger.FaceOpenLenient);
         }
         
         Debug.DrawRay(transform.position + Vector3.up * (FaceWallHeight  + GetCurrentDashRaycastHeightOffset()), transform.forward *
