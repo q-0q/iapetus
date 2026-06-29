@@ -29,6 +29,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.GroundMove, _ =>
             {
+                if (PhotoManager.Singleton.IsActive()) return false;
                 var v2 = GetInputMovementVector2();
                 return v2.magnitude > InputMagnitudeThreshhold;
             }, 2)

@@ -7,6 +7,7 @@ public partial class PlayerFsm
     {
         if (AcquisitionCanvas.Singleton.isOpen) return;
         if (GameMenu.Singleton.IsMenuOpen()) return;
+        if (PhotoManager.Singleton.IsActive()) return;
         
         var interacted = _playerInput.actions["Interact"].WasPressedThisFrame();
         if (currentPotentialInteractable != null && interacted) currentPotentialInteractable.TriggerInteraction();

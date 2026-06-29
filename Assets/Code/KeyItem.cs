@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using FMOD.Studio;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using Util = Code.Misc.Util;
 
 public class KeyItemRegistration
@@ -135,6 +136,22 @@ public static class KeyItemRegistry
                 
             },
             GetUseConfirmation = () => ""
+        });
+        
+        KeyItemRegistrations.Add("Camera", new KeyItemRegistration()
+        {
+            displayName = "Obscura",
+            description = "A finely made cylindrical wooden device. A pinpoint-sized hole at one end projects light into an image.",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            GetUseDescription = () => "Opens Photo mode.",
+            GetCanUse = () => true,
+            onUse = () =>
+            {
+                PhotoManager.Singleton.MakeActive();
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.IdleLong);
+            },
+            GetUseConfirmation = () => "Open the Photo mode?"
         });
     }
 }

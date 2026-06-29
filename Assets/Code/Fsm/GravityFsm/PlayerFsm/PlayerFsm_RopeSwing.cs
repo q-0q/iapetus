@@ -26,7 +26,7 @@ public partial class PlayerFsm
         
         // HandleInputMomentumChange();
         
-        var v3 = GetInputMovementVector3();
+        var v3 = PhotoManager.Singleton.IsActive() ? Vector3.zero : GetInputMovementVector3();
         var angle = Vector3.Angle(transform.forward, v3);
         var turnStrength = Mathf.Lerp(0, 0.175f, Mathf.InverseLerp(45f, 30f, Mathf.Abs(angle - 90)));
         HandleTurning(turnStrength, true, 1f, false, 0f);

@@ -15,6 +15,7 @@ public class InputTypeManager : MonoBehaviour
     public Sprite kmbInventory;
     public Sprite kmbMap;
     public Sprite kmbTrick;
+    public Sprite kmbCamera;
 
     public Sprite padMove;
     public Sprite padLook;
@@ -24,6 +25,7 @@ public class InputTypeManager : MonoBehaviour
     public Sprite padInventory;
     public Sprite padMap;
     public Sprite padTrick;
+    public Sprite padCamera;
     
     public static InputTypeManager Singleton;
     private PlayerInput _playerInput;
@@ -75,6 +77,7 @@ public class InputTypeManager : MonoBehaviour
             if (action == "Inventory" || action == "Movelist") return kmbInventory;
             if (action == "Map") return kmbMap;
             if (action == "Trick") return kmbTrick;
+            if (action == "Camera") return kmbCamera;
         }
         
         if (action == "Move") return padMove;
@@ -85,6 +88,7 @@ public class InputTypeManager : MonoBehaviour
         if (action == "Inventory" || action == "Movelist") return padInventory;
         if (action == "Map") return padMap;
         if (action == "Trick") return padTrick;
+        if (action == "Camera") return padCamera;
 
         return null;
     }

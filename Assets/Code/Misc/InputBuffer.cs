@@ -40,6 +40,8 @@ public class InputBuffer
     public void OnUpdate(bool cutscenePlayerDisabled)
     {
         if (GameMenu.Singleton.IsMenuOpen()) return;
+        if (PhotoManager.Singleton.IsActive()) return;
+        
         List<string> keys = new List<string>(_buffer.Keys);
         foreach (var input in keys)
         {

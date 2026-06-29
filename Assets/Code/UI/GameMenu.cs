@@ -42,7 +42,12 @@ public class GameMenu : MonoBehaviour
     {
         if (_playerInput.actions["Menu"].WasPressedThisFrame())
         {
-            print("menu pressed");
+            if (PhotoManager.Singleton.IsActive())
+            {
+                PhotoManager.Singleton.MakeInactive();
+                return;
+            }
+            
             if (_menu.activeInHierarchy)
             {
                 OnMenuClosed();

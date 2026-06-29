@@ -83,6 +83,11 @@ public partial class InventoryMenuFsm
                 useType = InventoryListItem.UseType.Input;
                 inputAction = "Map";
             }
+            if (item == "Camera")
+            {
+                useType = InventoryListItem.UseType.Input;
+                inputAction = "Camera";
+            }
 
             data.Add(new InventoryListItem.InventoryListItemData()
             {
@@ -249,5 +254,16 @@ public partial class InventoryMenuFsm
         yield return null;
         selectable.Select();
     }
-    
+
+    private void OnPhotoModeActivated()
+    {
+        _canvasGroup.alpha = 0;
+        if (Machine.IsInState(InventoryMenuFsmState.Open)) PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.IdleLong);
+        Machine.Jump(InventoryMenuFsmState.Closed);
+    }
+
+    private void OnPhotoModeDeactivated()
+    {
+        
+    }
 }

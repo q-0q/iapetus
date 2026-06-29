@@ -332,7 +332,6 @@ public partial class PlayerFsm
         var newY = transform.position.y > desiredY
             ? Mathf.Max(desiredY, transform.position.y - delta)
             : Mathf.Min(desiredY, transform.position.y + delta);
-        print(newY);
         transform.position = new Vector3(transform.position.x, newY, transform.position.z);
     }
 
@@ -368,7 +367,7 @@ public partial class PlayerFsm
     private void HandleTurning(float multiplier = 1f, bool forceForwardInput = false,
         float momentumDecayMultiplier = 1f, bool ignoreTurnAnimationLayer = false, float animationTurnModifier = 1f)
     {
-        
+        if (PhotoManager.Singleton.IsActive()) return;
         var v3 = GetInputMovementVector3();
         var inputVector3 = forceForwardInput ? MirrorInputForward(v3, transform.forward) : v3;
         
@@ -431,6 +430,7 @@ public partial class PlayerFsm
 
     private void HandleInputMomentumChange(float increaseMultiplier = 1f, float decreaseMultiplier = 1f, bool removeV2 = false)
     { 
+        if (PhotoManager.Singleton.IsActive()) return;
         var sprinting = isSprinting;
         var isSprintingOver = !isSprinting && _momentum >= MaxMomentum * SprintMomentumCutoffMultiplier;
         var v2 = removeV2 ? Vector2.zero : GetInputMovementVector2();

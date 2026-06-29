@@ -8,20 +8,27 @@ public class RotationDais : MonoBehaviour
     private Interactable _interactable;
     private bool _active;
     private Transform _rotator;
+    private Transform _rotatorBob;
     public Transform _ball;
     private PlayerInput _playerInput;
 
     private Vector3 _baseBallWorldPosition;
+    private Vector3 _baseRotatorBobWorldPosition;
 
     private string _baseInteractableText;
+
+    private bool _postsActive;
 
     private void Awake()
     {
         _interactable = GetComponentInChildren<Interactable>();
         _playerInput = GetComponent<PlayerInput>();
-        _rotator = transform.Find("Rotator");
+        _rotatorBob = transform.Find("RotatorBob");
+        _rotator = _rotatorBob.Find("Rotator");
         _baseInteractableText = _interactable.text;
-        _baseBallWorldPosition = _ball.transform.position;
+        _baseBallWorldPosition = _ball.position;
+        _baseRotatorBobWorldPosition = _rotator.position;
+        _postsActive = false;
     }
 
     private void OnEnable()
@@ -41,12 +48,22 @@ public class RotationDais : MonoBehaviour
             PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
             _active = false;
             _interactable.text = _baseInteractableText;
+
+            foreach (var post in GetComponentsInChildren<RotationDaisPost>())
+            {
+                post.Deactivate();
+            }
+
+            _postsActive = false;
             return;
         }
         
         _interactable.text = "Leave";
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToRotationDaisPosition);
         PlayerFsm.Singleton.walkToPositionTarget = _interactable.transform.position;
+        
+
+        
         _active = true;
     }
 
@@ -62,6 +79,16 @@ public class RotationDais : MonoBehaviour
     {
         Vector2 input = _active && PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RotationDaisInteract) 
             ? _playerInput.actions["Move"].ReadValue<Vector2>() : Vector3.zero;
+
+        if (_active && PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RotationDaisInteract) &&
+            !_postsActive)
+        {
+            foreach (var post in GetComponentsInChildren<RotationDaisPost>())
+            {
+                post.Activate();
+            }
+            _postsActive = true;
+        }
         
         Vector3 right = transform.right;
         Vector3 up = -transform.up; 
@@ -80,5 +107,10 @@ public class RotationDais : MonoBehaviour
         _ball.Rotate(_currentRotationVelocity * (maxSpeed * Time.deltaTime * 3f), Space.World);
         Vector3 ballWorldSpaceOffset = new Vector3(0f, Mathf.Sin(3f * Time.time) * 0.1f, 0f);
         _ball.position = _baseBallWorldPosition + ballWorldSpaceOffset;
+        
+        Vector3 rotatorBobWorldspaceOffset = new Vector3(0f, Mathf.Sin(1.5f * Time.time) * 0.75f, 0f);
+        _rotatorBob.position = _baseRotatorBobWorldPosition + rotatorBobWorldspaceOffset;
+        
+        
     }
 }

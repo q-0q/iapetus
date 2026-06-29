@@ -139,6 +139,9 @@ public partial class InventoryMenuFsm : Fsm
         GameMenu.OnGameMenuOpened += OnGameMenuOpened;
         GameMenu.OnGameMenuClosed += OnGameMenuClosed;
         InventoryTabButton.OnInventoryTabButtonHovered += OnInventoryTabSelectedMethod;
+        PhotoManager.Singleton.OnPhotoModeActivated += OnPhotoModeActivated;
+        PhotoManager.Singleton.OnPhotoModeDeactivated += OnPhotoModeDeactivated;
+        
 
     }
 
@@ -153,5 +156,7 @@ public partial class InventoryMenuFsm : Fsm
         GameMenu.OnGameMenuOpened -= OnGameMenuOpened;
         GameMenu.OnGameMenuClosed -= OnGameMenuClosed;
         InventoryTabButton.OnInventoryTabButtonHovered -= OnInventoryTabSelectedMethod;
+        PhotoManager.Singleton.OnPhotoModeActivated -= OnPhotoModeActivated;
+        PhotoManager.Singleton.OnPhotoModeDeactivated -= OnPhotoModeDeactivated;
     }
 }
