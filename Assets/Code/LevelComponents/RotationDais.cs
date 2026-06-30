@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,7 +18,7 @@ public class RotationDais : MonoBehaviour
 
     private string _baseInteractableText;
 
-    private bool _postsActive;
+    private bool _setupComplete;
 
     private void Awake()
     {
@@ -28,7 +29,7 @@ public class RotationDais : MonoBehaviour
         _baseInteractableText = _interactable.text;
         _baseBallWorldPosition = _ball.position;
         _baseRotatorBobWorldPosition = _rotator.position;
-        _postsActive = false;
+        _setupComplete = false;
     }
 
     private void OnEnable()
@@ -48,23 +49,28 @@ public class RotationDais : MonoBehaviour
             PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Idle);
             _active = false;
             _interactable.text = _baseInteractableText;
+            Vibrate();
 
             foreach (var post in GetComponentsInChildren<RotationDaisPost>())
             {
                 post.Deactivate();
             }
 
-            _postsActive = false;
+            _setupComplete = false;
             return;
         }
         
-        _interactable.text = "Leave";
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToRotationDaisPosition);
         PlayerFsm.Singleton.walkToPositionTarget = _interactable.transform.position;
         
 
         
         _active = true;
+    }
+
+    private void Vibrate()
+    {
+        _rotator.DOShakePosition(0.4f, 0.3f, 20);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -81,13 +87,16 @@ public class RotationDais : MonoBehaviour
             ? _playerInput.actions["Move"].ReadValue<Vector2>() : Vector3.zero;
 
         if (_active && PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.RotationDaisInteract) &&
-            !_postsActive)
+            !_setupComplete)
         {
             foreach (var post in GetComponentsInChildren<RotationDaisPost>())
             {
                 post.Activate();
             }
-            _postsActive = true;
+            _interactable.text = "Leave";
+            _rotator.DOComplete();
+            Vibrate();
+            _setupComplete = true;
         }
         
         Vector3 right = transform.right;

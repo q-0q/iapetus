@@ -8,6 +8,15 @@ public partial class PlayerFsm
         
         HandleInputMomentumChange();
         HandleTurning(1f, false, 1f, false, isSprinting ? 0.5f : 1f);
+
+        // var slopeMovementModifier = 1f;
+        // if (GetGroundedRaycastHit(out var hit))
+        // {
+        //     var angle = Vector3.Angle(hit.normal, Vector3.up);
+        //
+        //     slopeMovementModifier = Mathf.Lerp(1f, 0.25f, Mathf.InverseLerp(30f, 70f, angle));
+        // }
+        
         HandleCollisionMove();
 
         SetAnimatorMomentum();
@@ -16,6 +25,9 @@ public partial class PlayerFsm
         if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         
         SetSafeGroundPosition();
+
+
+        
         // if (WaterRaycast(out var swimRaycastParam))
         // {
         //     if (swimRaycastParam.distance > 3f && !_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());

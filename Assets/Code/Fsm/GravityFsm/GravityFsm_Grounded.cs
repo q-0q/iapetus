@@ -13,6 +13,7 @@ public abstract partial class GravityFsm
             var newY = Mathf.Lerp(transform.position.y, hit.point.y, Time.deltaTime * GroundedYPositionLerpStrength);
             transform.position = new Vector3(transform.position.x, newY, transform.position.z);
             GroundForwardSlope = Vector3.Angle(transform.forward, hit.normal);
+            GroundNormal = hit.normal;
             if (hit.transform != parentTransform)
             {
                 parentTransform = hit.transform;

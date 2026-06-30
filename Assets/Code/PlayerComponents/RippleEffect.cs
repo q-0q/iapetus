@@ -99,6 +99,7 @@ public class RippleEffect : MonoBehaviour
 
         while (true)
         {
+            if (PhotoManager.Singleton.IsActive()) yield return null;
             ApplyWorldShift();
         
             timer += Time.deltaTime;

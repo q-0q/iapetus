@@ -77,7 +77,7 @@ public partial class PlayerFsm
             };
         }
 
-        OnPlayerWakeGenerated?.Invoke(GetRipplePosition(), Mathf.Lerp(0.075f, 0.075f, ComputeMomentumWeight()), Mathf.Lerp(0.0011f, 0.0009f, ComputeMomentumWeight()));
+        if (!PhotoManager.Singleton.IsActive()) OnPlayerWakeGenerated?.Invoke(GetRipplePosition(), Mathf.Lerp(0.075f, 0.075f, ComputeMomentumWeight()), Mathf.Lerp(0.0011f, 0.0009f, ComputeMomentumWeight()));
         if (!_swimSurfaceRippleQueued) StartCoroutine(SwimSurfaceRippleCoroutine());
         HandleCollisionMove(0.0925f * 0.75f);
     }

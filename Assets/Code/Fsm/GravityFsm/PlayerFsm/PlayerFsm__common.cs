@@ -142,7 +142,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 1.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 2.3f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.65f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.45f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 3.5f;
     private const float SprintTurnLossMultiplier = 1.5f;
@@ -439,10 +439,16 @@ public partial class PlayerFsm
             var grounded = Machine.IsInState(GravityFsmState.Grounded);
             
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
-            var weight = Mathf.InverseLerp(90f, GroundSlopeMaximumMomentumAngle, GroundForwardSlope);
+            var superSteepComponent = Mathf.InverseLerp(50f, 55f, Vector3.Angle(GroundNormal, Vector3.up));
+            var weight = (Mathf.Max(Mathf.InverseLerp(100f, 140f, GroundForwardSlope), superSteepComponent));
+            
+            print(superSteepComponent);
             
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
+
+            if (!grounded) slopeMaxMomentumMod = 1f;
+            
             var localMaximum = MaxMomentum * slopeMaxMomentumMod * (!sprinting && grounded ? SprintMomentumCutoffMultiplier : 1f);
             var sprintMomentumGainMod = (sprinting && grounded ? SprintMomentumGainMultiplier : 1f);
             

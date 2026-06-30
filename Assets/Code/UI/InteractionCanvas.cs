@@ -35,6 +35,12 @@ public class InteractionCanvas : MonoBehaviour
     {
         Image.sprite = InputTypeManager.Singleton.GetSpriteForAction("Interact");
 
+        if (PhotoManager.Singleton.IsActive())
+        {
+            _canvasGroup.alpha = 0f;
+            return;
+        }
+
         if (psuedo && !GameMenu.Singleton.IsMenuOpen() && !AcquisitionCanvas.Singleton.isOpen)
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 15f);

@@ -1,9 +1,11 @@
 using System;
 using System.Collections;
+using System.IO;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PhotoManager : MonoBehaviour
 {
@@ -70,6 +72,8 @@ public class PhotoManager : MonoBehaviour
         DoTranslation();
         DoRotation();
         DoAdvanceGame();
+        if (Input.GetKeyDown(KeyCode.P)) ScreenCapture.CaptureScreenshot(Path.Combine(Application.persistentDataPath, "saves", "screenshot" + Random.Range(0, 100000) + ".png"), 1);
+
     }
 
     public void MakeActive()
