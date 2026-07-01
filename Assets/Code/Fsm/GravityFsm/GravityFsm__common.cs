@@ -116,50 +116,59 @@ public abstract partial class GravityFsm
             LastUpwardsY = transform.position.y;
     }
 
-    protected Vector3 ComputeCollisionMove(Vector3 desiredMove)
+protected Vector3 ComputeCollisionMove(Vector3 desiredMove, float yModifier = 1f)
+{
+    if (GameMenu.Singleton.IsMenuOpen()) return Vector3.zero;
+    var output = desiredMove;
+
+    // Radius of your character (adjust as needed)
+    var backwardsPadding = 0.45f;
+    float radius = CollisionMoveSphereCastRadius;
+    float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f) +
+                         backwardsPadding;
+
+    Vector3 position = transform.position + Vector3.up *
+        (YVelocity > FallingCollisionMoveSphereCastHeightYVelocityThreshhold
+            ? GroundCollisionMoveSphereCastHeight
+            : FallingCollisionMoveSphereCastHeight);
+    Vector3 direction = output.normalized;
+
+    // SphereCast to account for player volume
+    if (Physics.SphereCast(position - transform.forward * backwardsPadding, radius, direction, out RaycastHit hit,
+            castDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
     {
-        if (GameMenu.Singleton.IsMenuOpen()) return Vector3.zero;
-        var output = desiredMove;
+        // First collision: slide along the surface
+        Vector3 firstNormal = hit.normal;
+        
+        // Full sliding along the actual slope
+        Vector3 slideMax = Vector3.ProjectOnPlane(output, firstNormal);
+        // Zero vertical sliding (your original wall-flattening method)
+        Vector3 slideZero = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up).normalized);
+        
+        // Interpolate based on the modifier
+        output = Vector3.Lerp(slideZero, slideMax, yModifier);
 
-        // Radius of your character (adjust as needed)
-        var backwardsPadding = 0.45f;
-        float radius = CollisionMoveSphereCastRadius;
-        float castDistance = (CollisionMoveSphereCastDistance * GetRaycastTimeModifier()) - (radius * 0.45f) +
-                             backwardsPadding;
-
-        Vector3 position = transform.position + Vector3.up *
-            (YVelocity > FallingCollisionMoveSphereCastHeightYVelocityThreshhold
-                ? GroundCollisionMoveSphereCastHeight
-                : FallingCollisionMoveSphereCastHeight);
-        Vector3 direction = output.normalized;
-
-        // SphereCast to account for player volume
-        if (Physics.SphereCast(position - transform.forward * backwardsPadding, radius, direction, out RaycastHit hit,
-                castDistance, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        // Cast again in the new direction to handle corner (second surface)
+        if (Physics.SphereCast(position - firstNormal * backwardsPadding, radius, output.normalized,
+                out RaycastHit secondHit, output.magnitude + backwardsPadding))
         {
-            // First collision: slide along the surface
-            Vector3 firstNormal = hit.normal;
-            output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(firstNormal, Vector3.up).normalized);
+            Vector3 secondNormal = secondHit.normal;
 
+            // Slide again for the second surface
+            Vector3 secondSlideMax = Vector3.ProjectOnPlane(output, secondNormal);
+            Vector3 secondSlideZero = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, Vector3.up).normalized);
+            
+            output = Vector3.Lerp(secondSlideZero, secondSlideMax, yModifier);
 
-            // Cast again in the new direction to handle corner (second surface)
-            if (Physics.SphereCast(position - firstNormal * backwardsPadding, radius, output.normalized,
-                    out RaycastHit secondHit, output.magnitude + backwardsPadding))
+            if (output.magnitude < 0.01f)
             {
-                Vector3 secondNormal = secondHit.normal;
-
-                // Slide again
-                output = Vector3.ProjectOnPlane(output, Vector3.ProjectOnPlane(secondNormal, Vector3.up).normalized);
-
-                if (output.magnitude < 0.01f)
-                {
-                    output = Vector3.zero;
-                }
+                output = Vector3.zero;
             }
         }
-
-        return output;
     }
+
+    return output;
+}
 
 
     private void HandleDepenetration()

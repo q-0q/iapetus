@@ -10,7 +10,7 @@ public partial class PlayerFsm
         {
             Machine.Fire(PlayerFsmTrigger.VaultHangFarFromLedge);
         }
-        HandleCollisionMove();
+        HandleCollisionMove(1f, true, 1f);
         Animator.SetLayerWeight(1, 0);
     }
 

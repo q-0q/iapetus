@@ -34,9 +34,9 @@ public partial class PlayerFsm
                 walkToPositionTarget = interactionParam.WalkToPositionTarget;
             });
         
-        Machine.Configure(PlayerFsmState.WalkToMajorLeylinePosition)
+        Machine.Configure(PlayerFsmState.WalkToTerminalNodePosition)
             .SubstateOf(PlayerFsmState.WalkToPosition)
-            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTargetRanged, PlayerFsmState.MajorLeylineNodeInteract);
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.TerminalNodeInteract);
         
         Machine.Configure(PlayerFsmState.WalkToRotationDaisPosition)
             .SubstateOf(PlayerFsmState.WalkToPosition)

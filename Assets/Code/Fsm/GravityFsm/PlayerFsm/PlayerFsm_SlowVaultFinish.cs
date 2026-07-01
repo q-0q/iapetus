@@ -49,6 +49,7 @@ public partial class PlayerFsm
             })
             .OnExit(_ => { 
                 _momentum = 5f;
+                // SnapToGround();
             });
     }
 }

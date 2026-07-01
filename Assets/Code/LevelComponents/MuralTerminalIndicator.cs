@@ -34,7 +34,7 @@ public class MuralTerminalIndicator : MonoBehaviour
 
     private void SetVisibility()
     {
-        var visible = SaveSystem.GetMajorLeylineNode(node);
+        var visible = SaveSystem.GetTerminalNode(node);
         curvedStar.SetActive(visible);
         halo.SetActive(visible);
     }

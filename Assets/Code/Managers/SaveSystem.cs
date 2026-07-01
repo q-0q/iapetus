@@ -77,10 +77,9 @@ public class SaveSystem : MonoBehaviour
         public int incenseAmount;
         public int cultLocationCampId;
         public List<string> bitDeposits;
-        public List<string> majorLeylineNodes;
-        public string majorLeylineNodeDialogueLocation;
-        public string currentNearestMajorLeylineNode;
-        public float currentNeatestMajorLeylineNodeT;
+        [FormerlySerializedAs("TerminalNodes")] public List<string> terminalNodes;
+        public string currentNearestTerminalNode;
+        public float currentNeatestTerminalNodeT;
         public string checkpointPath;
         public List<string> tricks;
         public float playTime;
@@ -99,10 +98,9 @@ public class SaveSystem : MonoBehaviour
             trialCompletions = new List<TrialCompletionEntry>();
             lemonCollections = new List<string>();
             bells = new List<string>();
-            majorLeylineNodes = new List<string>();
-            majorLeylineNodeDialogueLocation = "";
-            currentNearestMajorLeylineNode = "";
-            currentNeatestMajorLeylineNodeT = 0;
+            terminalNodes = new List<string>();
+            currentNearestTerminalNode = "";
+            currentNeatestTerminalNodeT = 0;
             checkpointPath = "";
             bitCount = 0;
             bellCount = 0;
@@ -375,7 +373,7 @@ public class SaveSystem : MonoBehaviour
         return data.bitCount;
     }
 
-    public static void WriteMajorLeylineNode(string metaName)
+    public static void WriteTerminalNode(string metaName)
     {
         if (metaName == "") 
         {
@@ -384,39 +382,32 @@ public class SaveSystem : MonoBehaviour
         };
         
         SaveData data = LoadCachedSaveData();
-        if (data.majorLeylineNodes.Contains(metaName)) return;
-        data.majorLeylineNodes.Add(metaName);
-        data.majorLeylineNodeDialogueLocation = metaName;
+        if (data.terminalNodes.Contains(metaName)) return;
+        data.terminalNodes.Add(metaName);
         Singleton._cachedSaveData = data;
         WriteSaveData(data);
     }
 
-    public static bool GetMajorLeylineNode(string metaName)
+    public static bool GetTerminalNode(string metaName)
     {
         SaveData data = LoadCachedSaveData();
-        if (data.majorLeylineNodes == null) return false;
-        return data.majorLeylineNodes.Contains(metaName);
-    }
-    
-    public static string GetMajorLeylineNodeDialogueLocation()
-    {
-        SaveData data = LoadCachedSaveData();
-        return data.majorLeylineNodeDialogueLocation;
+        if (data.terminalNodes == null) return false;
+        return data.terminalNodes.Contains(metaName);
     }
 
-    public static void WriteNearestMajorLeylineNode(string node, float t)
+    public static void WriteNearestTerminalNode(string node, float t)
     {
         SaveData data = LoadCachedSaveData();
-        data.currentNearestMajorLeylineNode = node;
-        data.currentNeatestMajorLeylineNodeT = t;
+        data.currentNearestTerminalNode = node;
+        data.currentNeatestTerminalNodeT = t;
         WriteSaveData(data);
     }
 
-    public static string GetNearestMajorLeylineNode(out float t)
+    public static string GetNearestTerminalNode(out float t)
     {
         SaveData data = LoadCachedSaveData();
-        t = data.currentNeatestMajorLeylineNodeT;
-        return data.currentNearestMajorLeylineNode;
+        t = data.currentNeatestTerminalNodeT;
+        return data.currentNearestTerminalNode;
     }
 
     public static void WriteCheckpointPath(string path)

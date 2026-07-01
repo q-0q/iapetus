@@ -11,8 +11,6 @@ public partial class PlayerFsm
                 (!Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity) && !CutsceneManager.Singleton.IsCutscenePlayerDisabled()  && _timeSinceMinorLeyline > 0.2f)
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
-            .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.MediumVaultHang,
-                IsTightropeTrigger, 1)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FaceHighLedge, PlayerFsmState.Wallsquat,

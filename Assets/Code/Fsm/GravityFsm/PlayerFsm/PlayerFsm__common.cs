@@ -345,9 +345,9 @@ public partial class PlayerFsm
         if (!Physics.Raycast(downwardRaycastOrigin, -Vector3.up, out var hit,
                 (ledgeHeight + UpdateLedgePositionEpsilon) * GetRaycastTimeModifier(), GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
 
-        var slope = Vector3.Angle(hit.normal, Vector3.up);
         // if (slope > 60f) return false;
         if (upwardsOnly && hit.point.y < transform.position.y) return false;
+        var slope = Vector3.Angle(hit.normal, Vector3.up);
         _currentLedgePosition = hit.point;
         return true;
     }
@@ -441,9 +441,6 @@ public partial class PlayerFsm
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             var superSteepComponent = Mathf.InverseLerp(50f, 55f, Vector3.Angle(GroundNormal, Vector3.up));
             var weight = (Mathf.Max(Mathf.InverseLerp(100f, 140f, GroundForwardSlope), superSteepComponent));
-            
-            print(superSteepComponent);
-            
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
 
@@ -539,7 +536,7 @@ public partial class PlayerFsm
         Animator.SetFloat("Momentum", Mathf.Lerp(currentMomentumFloat, ComputeMomentumWeight(), Time.deltaTime * 10f));
     }
 
-    private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true)
+    private void HandleCollisionMove(float modifier = 1f, bool updateMomentum = true, float slopeModifier = 1f)
     {
         if (GameMenu.Singleton.IsMenuOpen()) return;
         var desiredMove = ApplyTractionNoTimescale(ComputeDesiredMoveWithoutTimescale() * modifier) * Time.deltaTime;

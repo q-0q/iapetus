@@ -46,7 +46,6 @@ public class CustomFogController : MonoBehaviour
     private void Start()
     {
         if (!force) return;
-        Shader.SetGlobalVector("_CameraFollowWorldPosition", Camera.main.transform.position);
         CustomFogManager.Singleton.SetCurrentController(this, true);
     }
 

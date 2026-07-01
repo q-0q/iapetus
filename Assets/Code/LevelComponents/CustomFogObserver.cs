@@ -17,6 +17,11 @@ public class CustomFogObserver : MonoBehaviour
     private void Start()
     {
         if (!isPlayer) return;
+
+        if (PlayerFsm.Singleton == null)
+        {
+            Shader.SetGlobalVector("_CameraFollowWorldPosition", transform.position);
+        }
         transform.SetParent(null);
     }
 

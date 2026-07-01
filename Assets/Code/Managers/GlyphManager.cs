@@ -6,11 +6,43 @@ using UnityEngine.Splines;
 public class GlyphManager : MonoBehaviour
 {
     
-    public static readonly List<MajorLeylineNode> MajorLeylineNodes = new();
+    public static readonly List<TerminalNode> MajorLeylineNodes = new();
     public static GlyphManager Singleton;
     public string a = "summit-glyph";
     public string b = "test-b";
     public string c = "test-c";
+
+    
+    public class TerminalData
+    {
+        public string previousNode = "";
+        public List<string> loreDialogue = new List<string>() { };
+
+    }
+
+    public static readonly Dictionary<string, TerminalData> TerminalRegistry = new()
+    {
+        { "tutorial-0", new TerminalData()
+            {
+                previousNode = "",
+                loreDialogue = new List<string>()
+            } 
+        },
+        
+        { "tutorial-1", new TerminalData()
+            {
+                previousNode = "tutorial-0",
+                loreDialogue = new List<string>() { "Lore test A.", "Lore test B!" }
+            } 
+        },
+        
+        { "icy-canals", new TerminalData()
+            {
+                previousNode = "tutorial-1",
+                loreDialogue = new List<string>() { "Lore about icy canals.", "Here's some more!" }
+            } 
+        }
+    };
 
     private void Awake()
     {
@@ -30,10 +62,10 @@ public class GlyphManager : MonoBehaviour
 
     private void OnSaveDataUpdated(SaveSystem.SaveData saveData)
     {
-        if (saveData.majorLeylineNodes == null) return;
-        Shader.SetGlobalFloat("_GlyphMaskWeight_A", saveData.majorLeylineNodes.Contains(a) ? 1f : 0f);
-        Shader.SetGlobalFloat("_GlyphMaskWeight_B", saveData.majorLeylineNodes.Contains(b) ? 1f : 0f);
-        Shader.SetGlobalFloat("_GlyphMaskWeight_C", saveData.majorLeylineNodes.Contains(c) ? 1f : 0f);
+        if (saveData.terminalNodes == null) return;
+        Shader.SetGlobalFloat("_GlyphMaskWeight_A", saveData.terminalNodes.Contains(a) ? 1f : 0f);
+        Shader.SetGlobalFloat("_GlyphMaskWeight_B", saveData.terminalNodes.Contains(b) ? 1f : 0f);
+        Shader.SetGlobalFloat("_GlyphMaskWeight_C", saveData.terminalNodes.Contains(c) ? 1f : 0f);
     }
 
     public void ComputePlayerMapPosition()
@@ -63,7 +95,7 @@ public class GlyphManager : MonoBehaviour
             }
         }
         
-        SaveSystem.WriteNearestMajorLeylineNode(nearestNode, nearestT);
+        SaveSystem.WriteNearestTerminalNode(nearestNode, nearestT);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

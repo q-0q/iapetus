@@ -15,6 +15,7 @@ public partial class MainMenuFsm
             {
                 _homeObject.SetActive(true);
                 _backButtonObject.SetActive(false);
+                _homeObject.transform.Find("Buttons").Find("Play").GetComponent<Button>().Select();
             })
             .OnExit(_ =>
             {
@@ -34,7 +35,7 @@ public partial class MainMenuFsm
             {
                 _savesObject.SetActive(true);
                 _backButtonObject.SetActive(true);
-                // _savesObject.transform.Find("Buttons").Find("SaveSlot1").GetComponent<Button>().Select();
+                _savesObject.transform.Find("Buttons").Find("SaveSlot1").GetComponent<Button>().Select();
             })
             .OnExit(_ =>
             {
@@ -58,6 +59,7 @@ public partial class MainMenuFsm
             {
                 _newGameObject.SetActive(true);
                 _backButtonObject.SetActive(false);
+                _newGameObject.transform.Find("Buttons").Find("Back").GetComponent<Button>().Select();
             })
             .OnExit(_ =>
             {

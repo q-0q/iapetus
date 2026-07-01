@@ -122,12 +122,12 @@ public partial class PlayerFsm : GravityFsm
         public static int ItemSlowdown;
 
         public static int UseIncenseBurner;
-        public static int MajorLeylineNodeInteract;
+        public static int TerminalNodeInteract;
         
         public static int MinorLeylineInteractable;
         public static int MinorLeylineStartup;
         public static int MinorLeylineActive;
-        public static int WalkToMajorLeylinePosition;
+        public static int WalkToTerminalNodePosition;
         public static int UseMap;
         public static int InventorySlowdown;
         public static int MapSlowdown;
@@ -683,7 +683,7 @@ public partial class PlayerFsm : GravityFsm
     
     private void OnStateChangedCompleted(TriggerParams obj)
     {
-        // print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
+        print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
         ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
     }
 

@@ -61,7 +61,7 @@ public partial class PlayerFsm
         PressConfigure();
         KeyItemCollectConfigure();
         ItemsConfigure();
-        MajorLeylineNodeInteractConfigure();
+        TerminalNodeInteractConfigure();
         MinorLeylineConfigure();
         TrickConfigure();
     }
@@ -111,8 +111,8 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDashStartup, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 1.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.UseIncenseBurner, 1.25f);
-        StateMapConfig.Duration.Add(PlayerFsmState.WalkToMajorLeylinePosition, 1.5f);
-        StateMapConfig.Duration.Add(PlayerFsmState.MajorLeylineNodeInteract, 2.75f);
+        StateMapConfig.Duration.Add(PlayerFsmState.WalkToTerminalNodePosition, 1.5f);
+        StateMapConfig.Duration.Add(PlayerFsmState.TerminalNodeInteract, 2.75f);
         StateMapConfig.Duration.Add(PlayerFsmState.MinorLeylineStartup, 0.75f);
         
         StateMapConfig.Duration.Add(PlayerFsmState.Tinsica, TinsicaDuration);
@@ -137,7 +137,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Vault, "Vault");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToDialoguePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToSwitchPosition, "GroundMove");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToMajorLeylinePosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToTerminalNodePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToRotationDaisPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
@@ -183,7 +183,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Inventory, "Inventory");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseMap, "Inventory");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.MajorLeylineNodeInteract, "MajorLeylineInteract");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TerminalNodeInteract, "DaisInteract");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RotationDaisInteract, "DaisInteract");
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Tinsica, "Tinsica");

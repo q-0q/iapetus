@@ -51,6 +51,11 @@ public partial class MainMenuFsm : Fsm
         FMODSceneManager.Singleton.StopAll();
         FMODSceneManager.Singleton.Play(FMODSceneManager.FMODSceneEvent.WindAmbience);
     }
+
+    protected override void OnStartComplete()
+    {
+        Machine.Jump(MainMenuFsmState.Home);
+    }
     
     public override void OnUpdate()
     {

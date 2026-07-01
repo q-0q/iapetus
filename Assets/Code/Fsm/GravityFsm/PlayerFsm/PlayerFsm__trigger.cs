@@ -167,10 +167,11 @@ public partial class PlayerFsm
 
     private bool ProbeWallAboveLedge()
     {
+        return false;
         var origin = transform.position + Vector3.up * (FaceWallHeight + GetCurrentDashRaycastHeightOffset());
         if (!Physics.Raycast(origin,
                 transform.forward,
-                out var hit, 2f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
+                out var hit, 0.4f, GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return false;
         var slope = Vector3.Angle(hit.normal, Vector3.up);
         return slope > 60f;
     }
@@ -193,7 +194,9 @@ public partial class PlayerFsm
             if (!Physics.Raycast(origin, Vector3.down,
                     out var hit, v * 2f, GetEnvironmentalLayermask(),
                     QueryTriggerInteraction.Ignore)) return false;
-            
+
+            var angle = Vector3.Angle(Vector3.up, hit.normal);
+            if (angle > 60f) return false;
             
 
             return true;

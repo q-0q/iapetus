@@ -108,7 +108,7 @@ public class MapCanvas : MonoBehaviour
         
         GlyphManager.Singleton.ComputePlayerMapPosition();
 
-        var currentNearestMajorLeylineNode = SaveSystem.GetNearestMajorLeylineNode(out var currentMajorLeylineNodeT);
+        var currentNearestMajorLeylineNode = SaveSystem.GetNearestTerminalNode(out var currentMajorLeylineNodeT);
         var splineContainer = _splineContainers[currentNearestMajorLeylineNode];
         _playerMarkerTransform.position = splineContainer.EvaluatePosition(Mathf.Clamp01(currentMajorLeylineNodeT));
         
