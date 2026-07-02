@@ -38,6 +38,7 @@ public partial class PlayerFsm
     private Vector3 _checkpointVector3;
     private Quaternion _checkpointQuaternion;
     public Vector3 walkToPositionTarget;
+    public float walkToPositionArrivalDistanceModifier;
     private List<ParticleSystem> _kiIndicatorParticles;
     private List<Renderer> _renderers;
     private SkinnedMeshRenderer _skinnedMeshRenderer;
@@ -163,7 +164,7 @@ public partial class PlayerFsm
     private const float VaultTurningMultiplier = 0.75f;
     private const float VaultMinimumAnimatorSpeedMod = 0.5f;
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
-    private const float VaultLedgeLerpStrength = 35f;
+    private const float VaultLedgeLerpStrength = 30f;
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 3.5f;
@@ -218,7 +219,7 @@ public partial class PlayerFsm
     private const float GrappleStartupMomentumLossMod = 1.25f;
 
     private const float WalkToPositionTurnPhaseAngle = 30f;
-    private const float WalkToPositionMomentum = 6f;
+    private const float WalkToPositionMomentum = 8f;
     private const float WalkToPositionMomentumLerpStrength = 9f;
     private const float ArriveAtWalkPositionTargetDistance = 3.25f;
     private const float ArriveAtWalkPositionTargetRangedDistance = 10f;
@@ -337,7 +338,14 @@ public partial class PlayerFsm
 
     private bool UpdateLedgePosition(float ledgeHeight, bool upwardsOnly = false)
     {
-        var forwardOffset = 1.75f * GetRaycastTimeModifier();
+
+        var wallDistance = 0f;
+        if (Physics.Raycast(transform.position, transform.forward, out var forwardHit, 5f, GetEnvironmentalLayermask()))
+        {
+            wallDistance = forwardHit.distance;
+        }
+        
+        var forwardOffset = (0.5f * GetRaycastTimeModifier()) + wallDistance;
         var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
             (forwardOffset);
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
@@ -439,7 +447,8 @@ public partial class PlayerFsm
             var grounded = Machine.IsInState(GravityFsmState.Grounded);
             
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
-            var superSteepComponent = Mathf.InverseLerp(50f, 55f, Vector3.Angle(GroundNormal, Vector3.up));
+            // var superSteepComponent = Mathf.InverseLerp(50f, 55f, Vector3.Angle(GroundNormal, Vector3.up));
+            var superSteepComponent = 0f;
             var weight = (Mathf.Max(Mathf.InverseLerp(100f, 140f, GroundForwardSlope), superSteepComponent));
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);

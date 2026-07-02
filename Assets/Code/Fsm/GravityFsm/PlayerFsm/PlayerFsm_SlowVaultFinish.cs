@@ -25,7 +25,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
             .SubstateOf(PlayerFsmState.TinsicaUsable)
             .SubstateOf(GravityFsmState.RespectParentTransform)
-            .SubstateOf(GravityFsmState.IgnoreDepenetration)
+            // .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.GroundMove, _ =>
             {

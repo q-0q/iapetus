@@ -25,7 +25,7 @@ public class GlyphManager : MonoBehaviour
         { "tutorial-0", new TerminalData()
             {
                 previousNode = "",
-                loreDialogue = new List<string>()
+                loreDialogue = new List<string>() { "First node. Leyline signal is drawn directly from source.", "...As such, node is a potential point of failure for entire network. Uptime is critical." }
             } 
         },
         
@@ -39,7 +39,14 @@ public class GlyphManager : MonoBehaviour
         { "icy-canals", new TerminalData()
             {
                 previousNode = "tutorial-1",
-                loreDialogue = new List<string>() { "Lore about icy canals.", "Here's some more!" }
+                loreDialogue = new List<string>() {  }
+            } 
+        },
+        
+        { "piton-climb", new TerminalData()
+            {
+                previousNode = "icy-canals",
+                loreDialogue = new List<string>() { }
             } 
         }
     };

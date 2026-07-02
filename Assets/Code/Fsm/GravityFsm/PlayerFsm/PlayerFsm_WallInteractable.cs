@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 using Wasp;
 
 public partial class PlayerFsm
@@ -8,7 +9,17 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.WallInteractable)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.MediumVaultHang, _ =>
-                (!Machine.IsInState(PlayerFsmState.PitonFlip) || YVelocity < PitonMaximumWallInteractYVelocity) && !CutsceneManager.Singleton.IsCutscenePlayerDisabled()  && _timeSinceMinorLeyline > 0.2f)
+            {
+                if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out var hit, 5f, GetEnvironmentalLayermask()))
+                {
+                    var deltaY = hit.point.y - transform.position.y;
+                    if (deltaY > -2f) return false;
+                }
+                
+                return (!Machine.IsInState(PlayerFsmState.PitonFlip) ||
+                        YVelocity < PitonMaximumWallInteractYVelocity) &&
+                       !CutsceneManager.Singleton.IsCutscenePlayerDisabled() && _timeSinceMinorLeyline > 0.2f;
+            })
             .PermitIf(PlayerFsmTrigger.FaceWall, PlayerFsmState.Wallsquat,
                 _ => _momentum > WallSquatMinimumMomentum && WallsquatVelocityChecker() && !_wallsquattedSinceLeavingGround)
             .PermitIf(PlayerFsmTrigger.FaceWallStrict, PlayerFsmState.Wallsquat,

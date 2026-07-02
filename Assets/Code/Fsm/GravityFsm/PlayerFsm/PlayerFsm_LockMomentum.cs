@@ -10,7 +10,7 @@ public partial class PlayerFsm
         SetAnimatorMomentum();
 
 
-        if (!Machine.IsInState(PlayerFsmState.Wallrun) && !Machine.IsInState(PlayerFsmState.HardTurn) && !Machine.IsInState(PlayerFsmState.Slide) && !Machine.IsInState(PlayerFsmState.PitonHoming))
+        if (!Machine.IsInState(PlayerFsmState.Wallrun) && !Machine.IsInState(PlayerFsmState.HardTurn) && !Machine.IsInState(PlayerFsmState.Slide) && !Machine.IsInState(PlayerFsmState.PitonHoming) && !Machine.IsInState(PlayerFsmState.Wallsquat))
         {
             if (!Machine.IsInState(PlayerFsmState.Wallstep))
             {

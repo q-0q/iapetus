@@ -33,6 +33,7 @@ public partial class PlayerFsm
                 _wallsquattedSinceLeavingGround = true;
                 OnPlayerFootstep();
                 FMODUnity.RuntimeManager.PlayOneShotAttached(landFmodEvent, gameObject);
+                _momentum = 8f;
             })
             .OnExit(_ =>
             {

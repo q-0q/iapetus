@@ -28,8 +28,8 @@ public class DialogueCanvas : MonoBehaviour
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         _tmpText = transform.Find("Text").GetComponent<TextMeshProUGUI>();
-        _tmpName = transform.Find("Name").GetComponent<TextMeshProUGUI>();
         _nameBackground = transform.Find("NameBackground").gameObject;
+        _tmpName = _nameBackground.GetComponentInChildren<TextMeshProUGUI>();
         _canvasGroup.alpha = 0;
     }
 

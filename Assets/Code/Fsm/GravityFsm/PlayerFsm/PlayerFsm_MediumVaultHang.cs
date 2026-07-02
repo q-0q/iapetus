@@ -9,6 +9,7 @@ public partial class PlayerFsm
             {
                 FMODUnity.RuntimeManager.PlayOneShotAttached(impactFmodEvent, gameObject);
                 OnPlayerFootstep();
+                _momentum = 8f;
             });
     }
 }

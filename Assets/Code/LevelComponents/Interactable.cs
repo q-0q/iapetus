@@ -13,6 +13,8 @@ public class Interactable : MonoBehaviour
     public event Action OnHardInteracted;
     private Collider _collider;
     public bool isEnabled = true;
+
+    public float arrivalDistanceModifier = 1.0f;
     
     private void Awake()
     {

@@ -62,6 +62,7 @@ public class RotationDais : MonoBehaviour
         
         PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToRotationDaisPosition);
         PlayerFsm.Singleton.walkToPositionTarget = _interactable.transform.position;
+        PlayerFsm.Singleton.walkToPositionArrivalDistanceModifier = _interactable.arrivalDistanceModifier;
         
 
         

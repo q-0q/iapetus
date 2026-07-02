@@ -19,7 +19,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.VaultHang)
             .SubstateOf(PlayerFsmState.ForceWallRotation)
             .SubstateOf(GravityFsmState.DontApplyYVelocity)
-            .SubstateOf(GravityFsmState.IgnoreDepenetration)
+            // .SubstateOf(GravityFsmState.IgnoreDepenetration)
             .SubstateOf(GravityFsmState.RespectParentTransform)
             // .Permit(PlayerFsmTrigger.VaultHangFarFromLedge, PlayerFsmState.Fall)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)

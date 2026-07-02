@@ -32,6 +32,7 @@ public partial class PlayerFsm
             {
                 if (param is not InteractableParam interactionParam) return;
                 walkToPositionTarget = interactionParam.WalkToPositionTarget;
+                walkToPositionArrivalDistanceModifier = interactionParam.Interactable.arrivalDistanceModifier;
             });
         
         Machine.Configure(PlayerFsmState.WalkToTerminalNodePosition)
