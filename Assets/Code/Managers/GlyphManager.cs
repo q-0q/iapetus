@@ -17,6 +17,7 @@ public class GlyphManager : MonoBehaviour
     {
         public string previousNode = "";
         public List<string> loreDialogue = new List<string>() { };
+        public string displayId;
 
     }
 
@@ -24,20 +25,23 @@ public class GlyphManager : MonoBehaviour
     {
         { "tutorial-0", new TerminalData()
             {
+                displayId = "00",
                 previousNode = "",
-                loreDialogue = new List<string>() { "First node. Leyline signal is drawn directly from source.", "...As such, node is a potential point of failure for entire network. Uptime is critical." }
+                loreDialogue = new List<string>() { "Signal here is drawn directly from source, making this the inception of the entire system.", "...As such, this node is a potential point of failure for entire network. Uptime is critical.", "Hardware health of this station should be monitored especially closely." }
             } 
         },
         
         { "tutorial-1", new TerminalData()
             {
+                displayId = "01",
                 previousNode = "tutorial-0",
-                loreDialogue = new List<string>() { "Lore test A.", "Lore test B!" }
+                loreDialogue = new List<string>() { "01 propagates signal into and through the master chambers.", "Signal density has to be within a very specific range to avoid hardware interference where the line passes indoors.", "That increased workload means this machine may require more regular defrags." }
             } 
         },
         
         { "icy-canals", new TerminalData()
             {
+                displayId = "02",
                 previousNode = "tutorial-1",
                 loreDialogue = new List<string>() {  }
             } 
@@ -45,6 +49,7 @@ public class GlyphManager : MonoBehaviour
         
         { "piton-climb", new TerminalData()
             {
+                displayId = "03",
                 previousNode = "icy-canals",
                 loreDialogue = new List<string>() { }
             } 

@@ -5,6 +5,7 @@ using System.Linq;
 using Cinemachine;
 using Code.LevelComponents;
 using Code.Misc;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Splines;
@@ -33,13 +34,14 @@ public class TerminalNode : MonoBehaviour
 
     private bool _cameraSplineActive;
 
-    private const float CameraSplineDistance = 20f;
+    private const float CameraSplineDistance = 40f;
 
     public float mapSplineTMultiplier = 1f;
 
     private bool _isActive;
     public Canvas _mainCanvas;
     public Image _interactableImage;
+    public TextMeshProUGUI _idTmp;
     
 
     private void Awake()
@@ -67,15 +69,17 @@ public class TerminalNode : MonoBehaviour
 
 
         ConfigureDialogueController();
+        _mainCanvas.transform.localScale = new Vector3(1f, 0f, 1f);
         
         OnSaveDataUpdated(SaveSystem.LoadCachedSaveData());
+        _idTmp.text = GlyphManager.TerminalRegistry[metaName].displayId;
 
     }
 
     private void ConfigureDialogueController()
     {
         var count = SaveSystem.LoadCachedSaveData().terminalNodes.Count;
-        var countString = count == 1 ? "There is now 1 Terminal" : "There are now <color=red>" + count + "</color> Terminals";
+        var countString = count == 1 ? "There is now <color=red>1</color> Terminal" : "There are now <color=red>" + count + "</color> Terminals";
 
         var lore = GlyphManager.TerminalRegistry[metaName].loreDialogue;
 
@@ -86,7 +90,7 @@ public class TerminalNode : MonoBehaviour
             countString + " in the network."
         };
         
-        primaryTexts.Add(lore.Count == 0 ? "No additional data has been logged at this station." : "Additional data on this Terminal is available.");
+        primaryTexts.Add(lore.Count == 0 ? "No additional data has been logged at this station." : "There are additional logs available on this station.");
         
         
         var secondaryTexts = new List<string>()
@@ -141,6 +145,8 @@ public class TerminalNode : MonoBehaviour
                 _mainCanvas.transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(1f, 0f, 1f), w);
                 yield return null;
             }
+            
+            _mainCanvas.transform.localScale = new Vector3(1f, 0f, 1f);
             MakeCompleted();
         }
         StartCoroutine(Coroutine());
@@ -190,14 +196,9 @@ public class TerminalNode : MonoBehaviour
         var isNew = !SaveSystem.LoadCachedSaveData().terminalNodes.Contains(metaName);
         StartCoroutine(MainCoroutine());
         
-        var current = metaName;
-        while (current != "")
-        {
-            SaveSystem.WriteTerminalNode(current);
-            current = GlyphManager.TerminalRegistry[current].previousNode;
-        }
+
         
-        ConfigureDialogueController();
+
 
         IEnumerator MainCoroutine()
         {
@@ -211,8 +212,11 @@ public class TerminalNode : MonoBehaviour
 
             if (isNew)
             {
-                _cameraSplineActive = true;
-                if (cameraSpline) StartCoroutine(CameraSplineCoroutine());
+                if (cameraSpline)
+                {
+                    _cameraSplineActive = true;
+                    StartCoroutine(CameraSplineCoroutine());
+                }
                 while (_cameraSplineActive) yield return null;
                 
                 // _visualSplineMaterial.SetFloat("_FillWeight", 1f);
@@ -232,6 +236,15 @@ public class TerminalNode : MonoBehaviour
             
             DialogueCanvas.Singleton.StartDialogue(_dialogueController);
             PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
+            
+            var current = metaName;
+            while (current != "")
+            {
+                SaveSystem.WriteTerminalNode(current);
+                current = GlyphManager.TerminalRegistry[current].previousNode;
+            }
+            
+            ConfigureDialogueController();
             
         }
         
@@ -279,7 +292,6 @@ public class TerminalNode : MonoBehaviour
     
     private void MakeCompleted()
     {
-        _mainCanvas.transform.localScale = new Vector3(1f, 0f, 1f);
         _arc1Renderer.material.SetFloat("_GlowWeight", 1f);
         _visualSplineMaterial.SetFloat("_FillWeight", 1f);
         // _dialogueController.currentDialogueIndex = 1;
