@@ -6,7 +6,7 @@ using UnityEngine.Splines;
 public class GlyphManager : MonoBehaviour
 {
     
-    public static readonly List<TerminalNode> MajorLeylineNodes = new();
+    public static readonly List<TerminalNode> TerminalsInScene = new();
     public static GlyphManager Singleton;
     public string a = "summit-glyph";
     public string b = "test-b";
@@ -23,10 +23,20 @@ public class GlyphManager : MonoBehaviour
 
     public static readonly Dictionary<string, TerminalData> TerminalRegistry = new()
     {
+        
+        { "bootstrap", new TerminalData()
+            {
+                displayId = "",
+                previousNode = "",
+                loreDialogue = new List<string>() { }
+            } 
+        },
+        
+        
         { "tutorial-0", new TerminalData()
             {
                 displayId = "00",
-                previousNode = "",
+                previousNode = "bootstrap",
                 loreDialogue = new List<string>() { "Signal here is drawn directly from source, making this the inception of the entire system.", "...As such, this node is a potential point of failure for entire network. Uptime is critical.", "Hardware health of this station should be monitored especially closely." }
             } 
         },
@@ -82,7 +92,7 @@ public class GlyphManager : MonoBehaviour
 
     public void ComputePlayerMapPosition()
     {
-        if (MajorLeylineNodes.Count == 0) return;
+        if (TerminalsInScene.Count == 0) return;
 
         var playerPosition = PlayerFsm.Singleton.transform.position;
         
@@ -90,10 +100,10 @@ public class GlyphManager : MonoBehaviour
         var nearestNode = "";
         var nearestT = 0f;
 
-        foreach (var majorLeylineNode in MajorLeylineNodes)
+        foreach (var majorLeylineNode in TerminalsInScene)
         {
             print(majorLeylineNode.metaName);
-            var visualSpline = majorLeylineNode.GetVisualSplineContaier();
+            var visualSpline = majorLeylineNode.GetVisualSplineContainer(out _);
             SplineUtility.GetNearestPoint(visualSpline.Spline, visualSpline.transform.InverseTransformPoint(playerPosition), out var nearest, out var t);
             var vector3 = new Vector3(nearest.x, nearest.y, nearest.z);
             vector3 = visualSpline.transform.TransformPoint(vector3);

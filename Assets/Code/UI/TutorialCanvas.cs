@@ -36,6 +36,7 @@ public class TutorialCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        return;
         Image.sprite = InputTypeManager.Singleton.GetSpriteForAction(action);
         _tapTmp.gameObject.SetActive(action != "Move" && action != "Look");
         

@@ -38,7 +38,7 @@ public class DialogueCanvas : MonoBehaviour
     {
         TimeSinceDialogueClosed += Time.deltaTime;
         
-        if (currentDialogueController != null && !GameMenu.Singleton.IsMenuOpen())
+        if (currentDialogueController != null && !GameMenu.Singleton.IsMenuOpen() && !PhotoManager.Singleton.IsActive())
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 15f);
             _tmpText.text = currentDialogueController.dialogues[currentDialogueController.currentDialogueIndex].texts[_currentTextIndex + currentDialogueController.textStartOffset];

@@ -4,37 +4,41 @@ using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using Code.LevelComponents;
-using Code.Misc;
+using FMOD.Studio;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Splines;
 using UnityEngine.UI;
+using Util = Code.Misc.Util;
 
 public class TerminalNode : MonoBehaviour
 {
     public string metaName;
     public string previousNodeMetaName;
     public float cameraSplineFollowDurationMultiplier = 1.0f;
-    public bool cameraSpline = false;
+    [FormerlySerializedAs("cameraSpline")] public bool intakeCutscene = false;
     
     private SplineContainer _visualSplineContainer;
-    private SplineContainer _cameraSplineContainer;
+    private SplineContainer _intakeVisualSplineContainer;
+    private SplineContainer _intakeCameraSplineContainer;
+    private Material _intakeVisualSplineMaterial;
     private Interactable _interactable;
     private DialogueController _dialogueController;
     private Material _visualSplineMaterial;
     public Renderer _arc1Renderer;
 
     
-    private CinemachineVirtualCamera _splineCamera;
-    private Transform _cameraLookAt;
-    private Transform _cameraFollow;
+    private CinemachineVirtualCamera _intakeCamera;
+    private Transform _intakeCameraLookAt;
+    private Transform _intakeCameraFollow;
     
     private Transform _nodeTransform;
 
-    private bool _cameraSplineActive;
+    private bool _waitingForIntakeCamera;
 
-    private const float CameraSplineDistance = 40f;
+    private const float IntakeCameraSplineDistance = 40f;
 
     public float mapSplineTMultiplier = 1f;
 
@@ -42,29 +46,35 @@ public class TerminalNode : MonoBehaviour
     public Canvas _mainCanvas;
     public Image _interactableImage;
     public TextMeshProUGUI _idTmp;
+
+    private const string intakeEventPath = "event:/TerminalIntake";
+    private const string accessEventPath = "event:/TerminalAccess";
+    private const string ambientEventPath = "event:/TerminalAmbient";
+
+    private EventInstance ambientEventInstance;
     
 
     private void Awake()
     {
         _visualSplineContainer = transform.Find("VisualSpline").GetComponent<SplineContainer>();
-        _cameraSplineContainer = transform.Find("CameraSpline").GetComponent<SplineContainer>();
+        _intakeCameraSplineContainer = transform.Find("IntakeCameraSpline").GetComponent<SplineContainer>();
 
-        _cameraLookAt = transform.Find("CameraLookAt");
-        _cameraFollow = transform.Find("CameraFollow");
-        _cameraFollow.position = _cameraSplineContainer.EvaluatePosition(0);
-        _cameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
+        _intakeCameraLookAt = transform.Find("IntakeCameraLookAt");
+        _intakeCameraFollow = transform.Find("IntakeCameraFollow");
+        _intakeCameraFollow.position = _intakeCameraSplineContainer.EvaluatePosition(0);
+        _intakeCameraLookAt.position = _visualSplineContainer.EvaluatePosition(0);
 
         _visualSplineMaterial = _visualSplineContainer.GetComponent<MeshRenderer>().material;
         _interactable = transform.Find("NodeRedux").Find("Interactable").GetComponent<Interactable>();
         _dialogueController = GetComponentInChildren<DialogueController>();
         
-        _splineCamera = transform.Find("MajorLeylineNodeSplineCamera").GetComponent<CinemachineVirtualCamera>();
-        _splineCamera.Priority = -20;
+        _intakeCamera = transform.Find("TerminalIntakeCamera").GetComponent<CinemachineVirtualCamera>();
+        _intakeCamera.Priority = -20;
 
         _nodeTransform = transform.Find("NodeRedux");
         
         _visualSplineMaterial.SetFloat("_FillWeight", 0f);
-        _cameraSplineActive = false;
+        _waitingForIntakeCamera = false;
         _isActive = false;
 
 
@@ -73,12 +83,18 @@ public class TerminalNode : MonoBehaviour
         
         OnSaveDataUpdated(SaveSystem.LoadCachedSaveData());
         _idTmp.text = GlyphManager.TerminalRegistry[metaName].displayId;
+        
+        
+        
+        
+        
 
     }
+    
 
     private void ConfigureDialogueController()
     {
-        var count = SaveSystem.LoadCachedSaveData().terminalNodes.Count;
+        var count = SaveSystem.LoadCachedSaveData().terminalNodes.Count - 1; // -1 to rm bootstrap node
         var countString = count == 1 ? "There is now <color=red>1</color> Terminal" : "There are now <color=red>" + count + "</color> Terminals";
 
         var lore = GlyphManager.TerminalRegistry[metaName].loreDialogue;
@@ -129,7 +145,10 @@ public class TerminalNode : MonoBehaviour
         _interactable.OnInteracted += OnInteracted;
         _dialogueController.OnCompleted += OnDialogueCompleted;
         SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
-        GlyphManager.MajorLeylineNodes.Add(this);
+        GlyphManager.TerminalsInScene.Add(this);
+        
+        ambientEventInstance = FMODUnity.RuntimeManager.CreateInstance(ambientEventPath);
+        FMODUnity.RuntimeManager.AttachInstanceToGameObject(ambientEventInstance, _mainCanvas.gameObject);
     }
 
     private void OnDialogueCompleted()
@@ -142,7 +161,7 @@ public class TerminalNode : MonoBehaviour
             {
                 var w = Util.SmoothLerp01(t / d);
                 t += Time.deltaTime;
-                _mainCanvas.transform.localScale = Vector3.Lerp(new Vector3(1f, 1f, 1f), new Vector3(1f, 0f, 1f), w);
+                _mainCanvas.transform.localScale = Vector3.Lerp(_mainCanvas.transform.localScale, new Vector3(1f, 0f, 1f), Time.deltaTime * 9f);
                 yield return null;
             }
             
@@ -170,20 +189,43 @@ public class TerminalNode : MonoBehaviour
         _interactable.OnInteracted -= OnInteracted;
         _dialogueController.OnCompleted -= OnDialogueCompleted;
         SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
-        GlyphManager.MajorLeylineNodes.Remove(this);
+        GlyphManager.TerminalsInScene.Remove(this);
+
+        ambientEventInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
 
     void Start()
     {
+     
+        if (SaveSystem.GetTerminalNode(metaName)) ambientEventInstance.start();
         
         var curveLength = _visualSplineContainer.Spline.GetLength();
         _visualSplineMaterial.SetFloat("_SplineLength", curveLength);
         
-        var startingT = (curveLength - CameraSplineDistance) / curveLength;
-        _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(startingT));
-        _cameraFollow.position = _cameraSplineContainer.transform.TransformPoint(_cameraSplineContainer.Spline.EvaluatePosition(0));
+        var startingT = (curveLength - IntakeCameraSplineDistance) / curveLength;
+
         
-        
+        if (intakeCutscene)
+        {
+
+            var found = false;
+            foreach (var terminal in GlyphManager.TerminalsInScene)
+            {
+                if (terminal.metaName == previousNodeMetaName)
+                {
+                    found = true;
+                    _intakeVisualSplineContainer = terminal.GetVisualSplineContainer(out _intakeVisualSplineMaterial);
+                    break;
+                }
+            }
+
+            if (!found) intakeCutscene = false;
+            else
+            {
+                _intakeCameraLookAt.position = _intakeVisualSplineContainer.transform.TransformPoint(_intakeVisualSplineContainer.Spline.EvaluatePosition(startingT));
+                _intakeCameraFollow.position = _intakeCameraSplineContainer.transform.TransformPoint(_intakeCameraSplineContainer.Spline.EvaluatePosition(0));
+            }
+        }
     }
     
     void OnInteracted()
@@ -212,13 +254,14 @@ public class TerminalNode : MonoBehaviour
 
             if (isNew)
             {
-                if (cameraSpline)
+                if (intakeCutscene)
                 {
-                    _cameraSplineActive = true;
-                    StartCoroutine(CameraSplineCoroutine());
+                    _waitingForIntakeCamera = true;
+                    StartCoroutine(IntakeCameraCoroutine());
                 }
-                while (_cameraSplineActive) yield return null;
-                
+                while (_waitingForIntakeCamera) yield return null;
+                yield return new WaitForSeconds(0.5f);
+
                 // _visualSplineMaterial.SetFloat("_FillWeight", 1f);
                 // _arc1Renderer.material.SetFloat("_GlowWeight", 1f);
             }
@@ -226,17 +269,6 @@ public class TerminalNode : MonoBehaviour
             
             t = 0;
             d = 0.5f;
-            while (t < d)
-            {
-                var w = Util.SmoothLerp01(t / d);
-                t += Time.deltaTime;
-                _mainCanvas.transform.localScale = Vector3.Lerp(new Vector3(1f, 0f, 1f), new Vector3(1f, 1f, 1f), w);
-                yield return null;
-            }
-            
-            DialogueCanvas.Singleton.StartDialogue(_dialogueController);
-            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
-            
             var current = metaName;
             while (current != "")
             {
@@ -244,44 +276,61 @@ public class TerminalNode : MonoBehaviour
                 current = GlyphManager.TerminalRegistry[current].previousNode;
             }
             
-            ConfigureDialogueController();
+            if (isNew) ambientEventInstance.start();
+            FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(accessEventPath), _mainCanvas.gameObject);
             
+            ConfigureDialogueController();
+            while (t < d)
+            {
+                var w = Util.SmoothLerp01(t / d);
+                t += Time.deltaTime;
+                _mainCanvas.transform.localScale = Vector3.Lerp(_mainCanvas.transform.localScale, new Vector3(1f, 1f, 1f), Time.deltaTime * 9f);
+                yield return null;
+            }
+            _mainCanvas.transform.localScale = Vector3.one;
+            
+            DialogueCanvas.Singleton.StartDialogue(_dialogueController);
+            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
         }
         
         
-        IEnumerator CameraSplineCoroutine()
+        IEnumerator IntakeCameraCoroutine()
         {
-            _cameraSplineActive = true;
-            yield return new WaitForSeconds(1f);
-            var splineLength = _visualSplineContainer.Spline.GetLength();
-            var startingT = (splineLength - CameraSplineDistance) / splineLength;
+            _waitingForIntakeCamera = true;
+            yield return new WaitForSeconds(0.5f);
+            var splineLength = _intakeVisualSplineContainer.Spline.GetLength();
+            var startingT = (splineLength - IntakeCameraSplineDistance) / splineLength;
             print(startingT);
-            _splineCamera.Priority = 30;
+            _intakeCamera.Priority = 30;
 
+            FMODUnity.RuntimeManager.PlayOneShotAttached(FMODUnity.RuntimeManager.PathToEventReference(intakeEventPath), _intakeCameraLookAt.gameObject);
+            
             var t = 0f;
-            var d = 4f;
+            var d = 2f;
 
             while (t < d)
             {
                 var fillWeight = Mathf.Lerp(startingT, 1f, t / d);
-                _cameraLookAt.position = _visualSplineContainer.transform.TransformPoint(_visualSplineContainer.Spline.EvaluatePosition(fillWeight));
-                _visualSplineMaterial.SetFloat("_FillWeight", fillWeight);
-                _cameraFollow.position = _cameraSplineContainer.transform.TransformPoint(_cameraSplineContainer.Spline.EvaluatePosition(Util.SmoothLerp01(t / d * 0.75f)));
+                _intakeCameraLookAt.position = _intakeVisualSplineContainer.transform.TransformPoint(_intakeVisualSplineContainer.Spline.EvaluatePosition(fillWeight));
+                _intakeVisualSplineMaterial.SetFloat("_FillWeight", fillWeight);
+                _intakeCameraFollow.position = _intakeCameraSplineContainer.transform.TransformPoint(_intakeCameraSplineContainer.Spline.EvaluatePosition(Util.SmoothLerp01(t / d * 0.75f)));
                 t += Time.deltaTime;
                 yield return null;
             }
-
-            yield return new WaitForSeconds(0.5f);
             
-            _splineCamera.Priority = -30;
-            _cameraSplineActive = false;
+            yield return new WaitForSeconds(0.75f);
+            yield return new WaitForSeconds(1f);
+            _waitingForIntakeCamera = false;
+            
+            _intakeCamera.Priority = -30;
         }
     }
     
     
 
-    public SplineContainer GetVisualSplineContaier()
+    public SplineContainer GetVisualSplineContainer(out Material material)
     {
+        material = _visualSplineMaterial;
         return _visualSplineContainer;
     }
 
