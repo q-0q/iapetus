@@ -129,7 +129,7 @@ public partial class PlayerFsm
 
     public const float MaxMomentum = 15f;
     private const float MoveSpeed = 5.65f;
-    private const float MaximumMomentumSpeedMod = 3.5f;
+    private const float MaximumMomentumSpeedMod = 3.8f;
     private const float RotationSpeed = 3.5f;
     private const float CollisionMomentumLossRate = 300f;
     private const float MomentumGainRate = 20f;

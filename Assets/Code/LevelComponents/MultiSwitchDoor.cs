@@ -154,8 +154,9 @@ public class MultiSwitchDoor : MonoBehaviour
     {
         SaveSystem.WritePersistentEvent(persistentEvent);
         _openTrigger.enabled = false;
+        _powerConnector.Source = true;
 
-        StartCoroutine(CameraCoroutine());
+        // StartCoroutine(CameraCoroutine());
         
         IEnumerator CameraCoroutine()
         {

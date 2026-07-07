@@ -358,6 +358,15 @@ public partial class PlayerFsm : GravityFsm
         {
             GroundMoveOnUpdate();
         }
+
+        if (Machine.IsInState(PlayerFsmState.Grounded))
+        {
+            if (parentTransform != null)
+            {
+                parentTransform.TryGetComponent(out PlayerDeathGround deathGround);
+                if (deathGround != null) InvokePlayerDeath();
+            }
+        }
         
         if (Machine.IsInState(PlayerFsmState.StepStart))
         {

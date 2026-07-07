@@ -24,6 +24,7 @@ public class FoliageSystem : MonoBehaviour
 
     [Header("Layers")]
     public LayerMask receiveFoliageMask;
+    
 
     Matrix4x4[] instData;
     RenderParams rp;
@@ -84,7 +85,7 @@ public class FoliageSystem : MonoBehaviour
             Vector3 rayDirection = -transform.up;
 
             if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) ;
-            if (IsNearEdge(worldOrigin, rayDirection)) continue;
+            if (IsNearEdge(worldOrigin, rayDirection, hit.distance)) continue;
 
             Vector3 position = hit.point;
 
@@ -170,7 +171,7 @@ public class FoliageSystem : MonoBehaviour
     }
     
     
-    bool IsNearEdge(Vector3 worldOrigin, Vector3 rayDirection)
+    bool IsNearEdge(Vector3 worldOrigin, Vector3 rayDirection, float originalDistance)
     {
 
         var rayCount = 8;
@@ -182,7 +183,8 @@ public class FoliageSystem : MonoBehaviour
             var origin = worldOrigin + Quaternion.Euler(0, 360f * ((float)i
                 / rayCount), 0) * (Vector3.forward * originRadius);
 
-            if (!Test(origin, rayDirection, out var _)) return true;
+            if (!Test(origin, rayDirection, out var hit)) return true;
+            if (hit.distance >= originalDistance + 2f) return true;
         }
 
         return false;
@@ -206,7 +208,7 @@ public class FoliageSystem : MonoBehaviour
                 rayDirection,
                 out hit,
                 raycastDepth,
-                ~LayerMask.GetMask(),
+                ~LayerMask.GetMask("DeathCollider"),
                 QueryTriggerInteraction.Ignore))
             return false;
 
