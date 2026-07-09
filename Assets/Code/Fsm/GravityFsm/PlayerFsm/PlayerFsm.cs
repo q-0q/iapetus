@@ -359,7 +359,7 @@ public partial class PlayerFsm : GravityFsm
             GroundMoveOnUpdate();
         }
 
-        if (Machine.IsInState(PlayerFsmState.Grounded))
+        if (Machine.IsInState(PlayerFsmState.Grounded) && !Machine.IsInState(PlayerFsmState.Wallrun))
         {
             if (parentTransform != null)
             {

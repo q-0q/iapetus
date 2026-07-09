@@ -798,8 +798,8 @@ MonoBehaviour:
   m_ScreenY: 0.5
   m_DeadZoneWidth: 0
   m_DeadZoneHeight: 0
-  m_SoftZoneWidth: 1
-  m_SoftZoneHeight: 1
+  m_SoftZoneWidth: 0.7
+  m_SoftZoneHeight: 0.7
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -835,10 +835,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4998089845703180938}
   - component: {fileID: 8119626129534999549}
-  - component: {fileID: 6113575106266739817}
   - component: {fileID: 89791832781755611}
   - component: {fileID: 5930138409375986474}
   - component: {fileID: 3931305410192998839}
+  - component: {fileID: 4804975097116531287}
   m_Layer: 31
   m_Name: VisualSpline
   m_TagString: Untagged
@@ -941,18 +941,6 @@ MonoBehaviour:
       m_Data: []
   m_Knots:
     m_KnotsLink: []
---- !u!114 &6113575106266739817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8032709715308409128}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bafd0a247df4e408bb8e9b5c0544b4c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SnapSplineToEnvironment
 --- !u!33 &89791832781755611
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1042,6 +1030,20 @@ MonoBehaviour:
       type: {class: Circle, ns: UnityEngine.Splines.ExtrusionShapes, asm: Unity.Splines}
       data:
         m_Sides: 16
+--- !u!114 &4804975097116531287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8032709715308409128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d0f839d43974b71bdd9cfe0317788c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  pointsParent: {fileID: 0}
+  autoBake: 0
 --- !u!1 &8149428297018107751
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,6 +1102,7 @@ MonoBehaviour:
   cameraSplineFollowDurationMultiplier: 1
   intakeCutscene: 0
   _arc1Renderer: {fileID: 604377639737808951}
+  IntakeCameraSplineDistance: 40
   mapSplineTMultiplier: 1
   _mainCanvas: {fileID: 6888113229386439348}
   _interactableImage: {fileID: 6483326863944944924}
@@ -1400,6 +1403,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 2.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5729339326238119455, guid: 98abda2a43db947a6ad2ec9fed4d39e1,
+        type: 3}
+      propertyPath: receiveFoliageMask.m_Bits
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 5775535890197587764, guid: 98abda2a43db947a6ad2ec9fed4d39e1,
         type: 3}

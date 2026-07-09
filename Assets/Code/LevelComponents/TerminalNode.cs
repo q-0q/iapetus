@@ -38,7 +38,7 @@ public class TerminalNode : MonoBehaviour
 
     private bool _waitingForIntakeCamera;
 
-    private const float IntakeCameraSplineDistance = 40f;
+    public float IntakeCameraSplineDistance = 40f;
 
     public float mapSplineTMultiplier = 1f;
 
@@ -102,7 +102,7 @@ public class TerminalNode : MonoBehaviour
         
         var primaryTexts = new List<string>()
         {
-            "Terminal online. Leyline signal has been extended.", 
+            metaName == "tutorial-0" ? "Terminal online. Leyline signal successfully bootstrapped from source.": "Terminal online. Leyline signal has been extended.", 
             countString + " in the network."
         };
         

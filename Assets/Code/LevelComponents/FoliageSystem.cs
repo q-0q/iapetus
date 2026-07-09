@@ -16,6 +16,7 @@ public class FoliageSystem : MonoBehaviour
     public float raycastDepth = 50f;
     public float raycastOriginYOffset = 1f;
     public float edgeDistance = 1f;
+    public float maxSlope = 60f;
 
     [Header("Randomization")]
     public Vector2 scaleRange = new Vector2(0.8f, 1.2f);
@@ -84,8 +85,10 @@ public class FoliageSystem : MonoBehaviour
             // Ray direction now fully respects GameObject rotation
             Vector3 rayDirection = -transform.up;
 
-            if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) ;
-            if (IsNearEdge(worldOrigin, rayDirection, hit.distance)) continue;
+            if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) continue;
+
+            var edgeDelta = Mathf.Lerp(2f, 20f, Mathf.InverseLerp(Vector3.Angle(hit.normal, Vector3.up), 0f, 30f));
+            if (IsNearEdge(worldOrigin, rayDirection, hit.distance + edgeDelta)) continue;
 
             Vector3 position = hit.point;
 
@@ -171,7 +174,7 @@ public class FoliageSystem : MonoBehaviour
     }
     
     
-    bool IsNearEdge(Vector3 worldOrigin, Vector3 rayDirection, float originalDistance)
+    bool IsNearEdge(Vector3 worldOrigin, Vector3 rayDirection, float maxDistance)
     {
 
         var rayCount = 8;
@@ -184,7 +187,7 @@ public class FoliageSystem : MonoBehaviour
                 / rayCount), 0) * (Vector3.forward * originRadius);
 
             if (!Test(origin, rayDirection, out var hit)) return true;
-            if (hit.distance >= originalDistance + 2f) return true;
+            if (hit.distance >= maxDistance) return true;
         }
 
         return false;
@@ -213,7 +216,7 @@ public class FoliageSystem : MonoBehaviour
             return false;
 
 
-        if (Vector3.Angle(hit.normal, -rayDirection) > 60f) return false;
+        if (Vector3.Angle(hit.normal, -rayDirection) > maxSlope) return false;
 
         if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
             return false;
