@@ -16,7 +16,6 @@ using Util = Code.Misc.Util;
 public class TerminalNode : MonoBehaviour
 {
     public string metaName;
-    public string previousNodeMetaName;
     public float cameraSplineFollowDurationMultiplier = 1.0f;
     [FormerlySerializedAs("cameraSpline")] public bool intakeCutscene = false;
     
@@ -211,7 +210,7 @@ public class TerminalNode : MonoBehaviour
             var found = false;
             foreach (var terminal in GlyphManager.TerminalsInScene)
             {
-                if (terminal.metaName == previousNodeMetaName)
+                if (terminal.metaName == GlyphManager.TerminalRegistry[metaName].previousNode)
                 {
                     found = true;
                     _intakeVisualSplineContainer = terminal.GetVisualSplineContainer(out _intakeVisualSplineMaterial);
