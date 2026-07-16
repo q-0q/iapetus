@@ -17,6 +17,8 @@ public class CustomFogManager : MonoBehaviour
     public static readonly List<CustomFogObserver> CustomFogObserverRegistry = new();
     public const float LerpStrength = 1f;
 
+    private Material _vignetteMaterial;
+
     public void SetCurrentController(CustomFogController controller, bool snap = false)
     {
         _currentController = controller;
@@ -96,6 +98,12 @@ public class CustomFogManager : MonoBehaviour
         LerpVector("_CustomFogNoiseBVelocity", _currentController.NoiseBVelocity, strength);
         
         LerpFloat("_CustomFogSkyboxLift", _currentController.SkyboxLift, strength);
+        
+        LerpFloat("_CustomVignetteLerpMin", _currentController.VignetteLerpMin, strength);
+        LerpFloat("_CustomVignetteLerpMax", _currentController.VignetteLerpMax, strength);
+        LerpFloat("_CustomVignetteAlpha", _currentController.VignetteAlpha, strength);
+        LerpColor("_CustomVignetteColor", _currentController.VignetteColor, strength);
+        LerpFloat("_CustomVignetteLerpPower", _currentController.VignetteLerpPower, strength);
     }
 
     private static void ApplyEditorSettings()

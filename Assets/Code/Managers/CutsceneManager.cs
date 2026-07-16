@@ -77,6 +77,12 @@ public class CutsceneManager : MonoBehaviour
         return _activeCutscene.StateMapConfig.CutsceneJumpDisabled.Get(_activeCutscene);
     }
     
+    public bool IsCutsceneTutorialCanvasHidden()
+    {
+        if (_activeCutscene == null) return false;
+        return _activeCutscene.StateMapConfig.CutsceneHideTutorialCanvas.Get(_activeCutscene);
+    }
+    
     public bool IsCutsceneHardLand()
     {
         if (_pseudoCutsceneActive) return true;

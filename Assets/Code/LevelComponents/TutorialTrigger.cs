@@ -39,7 +39,7 @@ public class TutorialTrigger : MonoBehaviour
         }
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerStay(Collider other)
     {
         if (PlayerFsm.Singleton.Machine.IsInState(playerHideStateInt)) return;
         TutorialCanvas.Singleton.ShowTutorialText(text, action);

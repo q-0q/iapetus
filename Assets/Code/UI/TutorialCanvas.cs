@@ -30,7 +30,7 @@ public class TutorialCanvas : MonoBehaviour
         _canvasGroup = GetComponent<CanvasGroup>();
         _tmpText = transform.Find("LayoutGroup").Find("Text").GetComponent<TextMeshProUGUI>();
         _canvasGroup.alpha = 0;
-        _tapTmp = Image.GetComponentInChildren<TextMeshProUGUI>();
+        _tapTmp = transform.Find("LayoutGroup").Find("TapText").GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -40,7 +40,7 @@ public class TutorialCanvas : MonoBehaviour
         Image.sprite = InputTypeManager.Singleton.GetSpriteForAction(action);
         _tapTmp.gameObject.SetActive(action != "Move" && action != "Look");
         
-        if (_open && !GameMenu.Singleton.IsMenuOpen())
+        if (_open && !GameMenu.Singleton.IsMenuOpen() && !CutsceneManager.Singleton.IsCutsceneTutorialCanvasHidden())
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 10f);
         }

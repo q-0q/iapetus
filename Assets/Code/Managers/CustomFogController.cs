@@ -34,6 +34,12 @@ public class CustomFogController : MonoBehaviour
     
     public float SkyboxLift = 1500f;
 
+    public float VignetteLerpMin;
+    public float VignetteLerpMax;
+    public float VignetteLerpPower = 1f;
+    public float VignetteAlpha;
+    public Color VignetteColor;
+
     public bool force = false;
 
     private Collider _collider;

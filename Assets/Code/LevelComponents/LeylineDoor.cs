@@ -13,7 +13,7 @@ public class LeylineDoor : MonoBehaviour
     {
         _animator = GetComponentInChildren<Animator>();
         TryGetComponent(out Collider _collider);
-        _collider.enabled = false;
+        // _collider.enabled = false;
         
 
         if (SaveSystem.GetPersistentEventCompleted(requiredNode))
@@ -38,7 +38,7 @@ public class LeylineDoor : MonoBehaviour
         if (SaveSystem.GetTerminalNode(requiredNode))
         {
             glowRenderer.material.SetFloat("_GlowWeight", 1f);
-            _collider.enabled = true;
+            // _collider.enabled = true;
         }
     }
 

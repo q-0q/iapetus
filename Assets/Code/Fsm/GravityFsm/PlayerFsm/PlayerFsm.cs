@@ -702,6 +702,7 @@ public partial class PlayerFsm : GravityFsm
         MetaSaveSystem.OnMetaSaveDataUpdated += ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep += OnPlayerFootstep;
         CultTrialBoost.OnCultTrialBoostTrigger += OnCultTrialBoostTrigger;
+        IntroCutsceneFsm.OnIntroCutsceneWarp += OnIntroCutsceneWarp;
         
         activeFmodInstance = FMODUnity.RuntimeManager.CreateInstance(comboActiveFmodEvent);
         slideFmodInstance = FMODUnity.RuntimeManager.CreateInstance(slideFmodEvent);
@@ -725,6 +726,7 @@ public partial class PlayerFsm : GravityFsm
         MetaSaveSystem.OnMetaSaveDataUpdated -= ApplyMetaSaveData;
         PlayerFootTracker.OnPlayerFootstep -= OnPlayerFootstep;
         CultTrialBoost.OnCultTrialBoostTrigger -= OnCultTrialBoostTrigger;
+        IntroCutsceneFsm.OnIntroCutsceneWarp -= OnIntroCutsceneWarp;
         
         activeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
         slideFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);

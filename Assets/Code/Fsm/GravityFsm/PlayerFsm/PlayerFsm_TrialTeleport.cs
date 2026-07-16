@@ -52,7 +52,7 @@ public partial class PlayerFsm
             });
     }
 
-    private void MakeAllRenderersVisible()
+    public void MakeAllRenderersVisible()
     {
         foreach (var r in _renderers)
         {
@@ -60,7 +60,7 @@ public partial class PlayerFsm
         }
     }
 
-    private void MakeAllRenderersInvisible()
+    public void MakeAllRenderersInvisible()
     {
         foreach (var r in _renderers)
         {

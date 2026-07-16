@@ -1243,4 +1243,9 @@ public partial class PlayerFsm
         _safeGroundPosition = transform.position;
 
     }
+
+    private void OnIntroCutsceneWarp(Vector3 obj)
+    {
+        OnPlayerTeleported?.Invoke(obj);
+    }
 }
