@@ -87,7 +87,7 @@ public class FoliageSystem : MonoBehaviour
 
             if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) continue;
 
-            var edgeDelta = Mathf.Lerp(2f, 20f, Mathf.InverseLerp(Vector3.Angle(hit.normal, Vector3.up), 0f, 30f));
+            var edgeDelta = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(Vector3.Angle(hit.normal, Vector3.up), 0f, 30f));
             if (IsNearEdge(worldOrigin, rayDirection, hit.distance + edgeDelta)) continue;
 
             Vector3 position = hit.point;

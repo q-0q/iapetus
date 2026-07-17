@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class LeylineDoor : MonoBehaviour
 {
+    public string metaName;
     public string requiredNode;
     private Animator _animator;
     private Collider _collider;
@@ -12,14 +13,23 @@ public class LeylineDoor : MonoBehaviour
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
-        TryGetComponent(out Collider _collider);
-        // _collider.enabled = false;
+        TryGetComponent(out _collider);
+        _collider.enabled = false;
         
 
-        if (SaveSystem.GetPersistentEventCompleted(requiredNode))
+        if (SaveSystem.GetTerminalNode(requiredNode))
+        {
+            glowRenderer.material.SetFloat("_GlowWeight", 1f);
+            _collider.enabled = !SaveSystem.GetPersistentEventCompleted(metaName);
+        }
+        
+        if (SaveSystem.GetPersistentEventCompleted(metaName))
         {
             Util.ReplaceAnimatorTrigger(_animator, "Open");
-            glowRenderer.material.SetFloat("_GlowWeight", 1f);
+        }
+        else
+        {
+            Util.ReplaceAnimatorTrigger(_animator, "Closed");
         }
     }
 
@@ -38,13 +48,13 @@ public class LeylineDoor : MonoBehaviour
         if (SaveSystem.GetTerminalNode(requiredNode))
         {
             glowRenderer.material.SetFloat("_GlowWeight", 1f);
-            // _collider.enabled = true;
+            if (!SaveSystem.GetPersistentEventCompleted(metaName)) _collider.enabled = true;
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        throw new NotImplementedException();
+        DoOpen();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -56,6 +66,13 @@ public class LeylineDoor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Input.GetKeyDown(KeyCode.P)) DoOpen();
+    }
+
+    private void DoOpen()
+    {
+        SaveSystem.WritePersistentEvent(metaName);
+        _collider.enabled = false;
+        Util.ReplaceAnimatorTrigger(_animator, "Opening");
     }
 }
