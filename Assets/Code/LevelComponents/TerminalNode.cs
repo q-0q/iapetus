@@ -287,6 +287,8 @@ public class TerminalNode : MonoBehaviour
                 yield return null;
             }
             _mainCanvas.transform.localScale = Vector3.one;
+
+            if (isNew) yield return new WaitForSeconds(0.25f);
             
             DialogueCanvas.Singleton.StartDialogue(_dialogueController);
             PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);

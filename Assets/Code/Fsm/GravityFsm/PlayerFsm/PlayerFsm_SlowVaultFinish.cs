@@ -6,7 +6,7 @@ public partial class PlayerFsm
     {
         HandleTurning(VaultTurningMultiplier, true);
         bool setLedgePosition = false;
-        if (!UpdateLedgePosition(FaceHighLedgeHeight))
+        if (!UpdateLedgePosition(FaceHighLedgeHeight, true))
         {
             setLedgePosition = UpdateLedgePosition(0f);
         }

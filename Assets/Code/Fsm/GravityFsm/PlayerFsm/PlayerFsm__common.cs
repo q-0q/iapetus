@@ -165,6 +165,8 @@ public partial class PlayerFsm
     private const float VaultMinimumAnimatorSpeedMod = 0.5f;
     private const float VaultMaximumAnimatorSpeedMod = 1.1f;
     private const float VaultLedgeLerpStrength = 30f;
+    private const float LedgeArrivalDistance = 0.05f;
+    private bool _arrivedAtLedge;
     private const float MediumVaultHangMinimumYVelocity = 12f;
     private const float SlowVaultFinishLedgeLerpStrength = 25f;
     private const float SlowVaultFinishForwardSpeed = 3.5f;
@@ -339,6 +341,8 @@ public partial class PlayerFsm
     private bool UpdateLedgePosition(float ledgeHeight, bool upwardsOnly = false)
     {
 
+        if (_arrivedAtLedge) return false; // or, just return true to allow continued lerping without updating value
+        
         var wallDistance = 0f;
         if (Physics.Raycast(transform.position, transform.forward, out var forwardHit, 5f, GetEnvironmentalLayermask()))
         {
@@ -356,6 +360,8 @@ public partial class PlayerFsm
         // if (slope > 60f) return false;
         if (upwardsOnly && hit.point.y < transform.position.y) return false;
         var slope = Vector3.Angle(hit.normal, Vector3.up);
+        var delta = hit.point.y - transform.position.y;
+        if (delta <= LedgeArrivalDistance) _arrivedAtLedge = true;
         _currentLedgePosition = hit.point;
         return true;
     }

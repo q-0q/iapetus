@@ -2,7 +2,7 @@ public partial class PlayerFsm
 {
     private void VaultHangOnUpdate()
     {
-        if (UpdateLedgePosition(FaceHighLedgeHeight))
+        if (UpdateLedgePosition(FaceHighLedgeHeight, true))
         {
             MoveYOntoLedge(VaultHangLedgeYOffset, VaultHangLedgeLerpStrength);
         }
@@ -25,6 +25,7 @@ public partial class PlayerFsm
             .Permit(FsmTrigger.Timeout, PlayerFsmState.SlowVaultFinish)
             .OnEntry(_ =>
             {
+                _arrivedAtLedge = false;
                 LastUpwardsY = transform.position.y;
                 isSprinting = false;
                 EndSurge();
