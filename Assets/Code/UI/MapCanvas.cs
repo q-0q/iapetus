@@ -106,7 +106,7 @@ public class MapCanvas : MonoBehaviour
         _useConfirmationCanvasGroup.blocksRaycasts = false;
         _useConfirmationCanvasGroup.alpha = 0;
         
-        GlyphManager.Singleton.ComputePlayerMapPosition();
+        // GlyphController.ComputePlayerMapPosition();
 
         var currentNearestMajorLeylineNode = SaveSystem.GetNearestTerminalNode(out var currentMajorLeylineNodeT);
         var splineContainer = _splineContainers[currentNearestMajorLeylineNode];

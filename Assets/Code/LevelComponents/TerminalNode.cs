@@ -39,7 +39,8 @@ public class TerminalNode : MonoBehaviour
 
     public float IntakeCameraSplineDistance = 40f;
 
-    public float mapSplineTMultiplier = 1f;
+    public float mapSplineTMin = 0f;
+    public float mapSplineTMax = 1f;
 
     private bool _isActive;
     public Canvas _mainCanvas;
@@ -81,7 +82,7 @@ public class TerminalNode : MonoBehaviour
         _mainCanvas.transform.localScale = new Vector3(1f, 0f, 1f);
         
         OnSaveDataUpdated(SaveSystem.LoadCachedSaveData());
-        _idTmp.text = GlyphManager.TerminalRegistry[metaName].displayId;
+        _idTmp.text = GlyphController.TerminalRegistry[metaName].displayId;
         
         
         
@@ -96,7 +97,7 @@ public class TerminalNode : MonoBehaviour
         var count = SaveSystem.LoadCachedSaveData().terminalNodes.Count - 1; // -1 to rm bootstrap node
         var countString = count == 1 ? "There is now <color=red>1</color> Terminal" : "There are now <color=red>" + count + "</color> Terminals";
 
-        var lore = GlyphManager.TerminalRegistry[metaName].loreDialogue;
+        var lore = GlyphController.TerminalRegistry[metaName].loreDialogue;
 
         
         var primaryTexts = new List<string>()
@@ -144,7 +145,7 @@ public class TerminalNode : MonoBehaviour
         _interactable.OnInteracted += OnInteracted;
         _dialogueController.OnCompleted += OnDialogueCompleted;
         SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
-        GlyphManager.TerminalsInScene.Add(this);
+        GlyphController.TerminalsInScene.Add(this);
         
         ambientEventInstance = FMODUnity.RuntimeManager.CreateInstance(ambientEventPath);
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(ambientEventInstance, _mainCanvas.gameObject);
@@ -188,7 +189,7 @@ public class TerminalNode : MonoBehaviour
         _interactable.OnInteracted -= OnInteracted;
         _dialogueController.OnCompleted -= OnDialogueCompleted;
         SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
-        GlyphManager.TerminalsInScene.Remove(this);
+        GlyphController.TerminalsInScene.Remove(this);
 
         ambientEventInstance.stop(STOP_MODE.ALLOWFADEOUT);
     }
@@ -208,9 +209,9 @@ public class TerminalNode : MonoBehaviour
         {
 
             var found = false;
-            foreach (var terminal in GlyphManager.TerminalsInScene)
+            foreach (var terminal in GlyphController.TerminalsInScene)
             {
-                if (terminal.metaName == GlyphManager.TerminalRegistry[metaName].previousNode)
+                if (terminal.metaName == GlyphController.TerminalRegistry[metaName].previousNode)
                 {
                     found = true;
                     _intakeVisualSplineContainer = terminal.GetVisualSplineContainer(out _intakeVisualSplineMaterial);
@@ -272,7 +273,7 @@ public class TerminalNode : MonoBehaviour
             while (current != "")
             {
                 SaveSystem.WriteTerminalNode(current);
-                current = GlyphManager.TerminalRegistry[current].previousNode;
+                current = GlyphController.TerminalRegistry[current].previousNode;
             }
             
             if (isNew) ambientEventInstance.start();

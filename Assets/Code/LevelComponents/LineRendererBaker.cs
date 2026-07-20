@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Splines;
 
 [ExecuteAlways]
-public class LinearSplineBaker : MonoBehaviour
+public class LineRendererBaker : MonoBehaviour
 {
-    public Vector3 upVector = Vector3.up;
     public Transform pointsParent;
     public bool autoBake = false;
 
@@ -30,17 +28,14 @@ public class LinearSplineBaker : MonoBehaviour
     private void Bake(List<Transform> points)
     {
         if (points == null || points.Count == 0) return;
-        if (!TryGetComponent(out SplineContainer splineContainer)) return;
+        if (!TryGetComponent(out LineRenderer lineRenderer)) return;
 
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
-            UnityEditor.Undo.RecordObject(splineContainer, "Bake Linear Spline");
+            UnityEditor.Undo.RecordObject(lineRenderer, "Bake Line Renderer");
         }
 #endif
-
-        var spline = splineContainer.Spline;
-        spline.Clear();
 
         Vector3[] localPositions = new Vector3[points.Count];
         for (int i = 0; i < points.Count; i++)
@@ -51,47 +46,15 @@ public class LinearSplineBaker : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < points.Count; i++)
-        {
-            Vector3 forward = Vector3.forward;
-
-            if (points.Count > 1)
-            {
-                if (i < points.Count - 1)
-                {
-                    forward = (localPositions[i + 1] - localPositions[i]).normalized;
-                }
-                else
-                {
-                    forward = (localPositions[i] - localPositions[i - 1]).normalized;
-                }
-            }
-
-            if (forward == Vector3.zero) forward = Vector3.forward;
-
-            Vector3 up = upVector;
-            if (Mathf.Abs(Vector3.Dot(forward, up)) > 0.99f)
-            {
-                up = Vector3.right;
-            }
-
-            Quaternion knotRotation = Quaternion.LookRotation(forward, up);
-
-            var knot = new BezierKnot()
-            {
-                Position = localPositions[i],
-                Rotation = knotRotation,
-                TangentIn = Vector3.zero,
-                TangentOut = Vector3.zero
-            };
-            
-            spline.Add(knot, TangentMode.Linear);
-        }
+        // Configure the LineRenderer to use local space positions
+        lineRenderer.useWorldSpace = false;
+        lineRenderer.positionCount = localPositions.Length;
+        lineRenderer.SetPositions(localPositions);
 
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
-            UnityEditor.EditorUtility.SetDirty(splineContainer);
+            UnityEditor.EditorUtility.SetDirty(lineRenderer);
             UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(gameObject.scene);
         }
 #endif
