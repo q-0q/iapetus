@@ -21,10 +21,10 @@ public partial class ProfessorFsm
                 _dialogueController.currentDialogueIndex = map ? 2 : 1;
                 _dialogueController.DialogueName = "Silicant Diamber";
                 _interactable.text = "Speak";
-                if (!map)
-                {
-                    _halo.SetActive(true);
-                }
+                // if (!map)
+                // {
+                //     _halo.SetActive(true);
+                // }
             });
 
         Machine.Configure(ProfessorFsmState.Shocked)

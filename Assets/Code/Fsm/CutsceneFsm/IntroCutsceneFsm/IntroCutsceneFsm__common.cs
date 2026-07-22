@@ -44,10 +44,9 @@ public partial class IntroCutsceneFsm
     private int _currentTextId;
     private List<string> texts = new List<string>()
     {
-        "With the passing of each age, the world summit's hearth is lulled from flame into smolder and smolder into cold ash.",
-        "As the flames die, dark frost from beneath the world takes hold of the mountain's holiest places.",
-        "The encroaching winter rimes the passage of time itself, freezing deeper until only howling wind moves on the mountain.",
-        "As the braziers of the summit flame lay bare, the world falls dormant, perhaps never to wake again..."
+        "With the passing of each age, the world is lulled from flame into smolder and smolder into cold ash.",
+        "As the land dies, dark frost from beneath takes hold of the Mountain's holiest places.",
+        "As the braziers of the summit flames lay bare, the world falls dormant, perhaps never to wake again..."
     };
 
     private const float CanvasFadeDuration = 7f;

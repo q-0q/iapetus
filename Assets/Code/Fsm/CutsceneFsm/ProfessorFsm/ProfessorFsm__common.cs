@@ -25,7 +25,7 @@ public partial class ProfessorFsm
 
     private void OnSaveDataUpdated(SaveSystem.SaveData saveData)
     {
-        if (!saveData.terminalNodes.Contains("summit-glyph")) return;
+        // if (!saveData.terminalNodes.Contains("summit-glyph")) return;
         Machine.Fire(ProfessorFsmTrigger.OnNodeCompleted);
     }
 }

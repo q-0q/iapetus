@@ -64,7 +64,7 @@ public class Lemon : MonoBehaviour
 
     private void OnCollected()
     {
-        StartCoroutine(TimescaleCoroutine());
+        // StartCoroutine(TimescaleCoroutine());
         Util.ReplaceAnimatorTrigger(_animator, "Collected");
         _readyParticles.Stop();
         _readyParticles.Clear();

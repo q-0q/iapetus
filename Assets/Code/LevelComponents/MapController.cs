@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -45,15 +46,25 @@ public class MapController : MonoBehaviour
 
     private void OnEnable()
     {
-        PlayerFsm.PlayerMapEntered += Open;
+        PlayerFsm.PlayerMapEntered += OpenDelay;
         PlayerFsm.PlayerMapExited += Close;
         GameMenu.OnGameMenuOpened += OnGameMenuOpened;
         GameMenu.OnGameMenuClosed += OnGameMenuClosed;
     }
 
+    private void OpenDelay()
+    {
+        StartCoroutine(Coroutine());
+        IEnumerator Coroutine()
+        {
+            yield return new WaitForSeconds(0.25f);
+            Open();
+        }
+    }
+
     private void OnDisable()
     {
-        PlayerFsm.PlayerMapEntered -= Open;
+        PlayerFsm.PlayerMapEntered -= OpenDelay;
         PlayerFsm.PlayerMapExited -= Close;
         GameMenu.OnGameMenuOpened -= OnGameMenuOpened;
         GameMenu.OnGameMenuClosed -= OnGameMenuClosed;
@@ -102,7 +113,9 @@ public class MapController : MonoBehaviour
         ComputePlayerMapPosition();
         
         _mapObject.transform.DOComplete();
-        _mapObject.transform.DOPunchRotation(Vector3.forward * 2f, 0.15f, 20, 1f);
+        // _mapObject.transform.DOPunchRotation(Vector3.forward * 2f, 0.15f, 20, 1f);
+        _mapObject.transform.DOPunchScale(Vector3.one * -0.1f, 0.4f, 5, 1f);
+        
         if (TutorialCanvas.Singleton.GetCurrentAction() == "Map") TutorialCanvas.Singleton.HideTutorialText();
 
 
