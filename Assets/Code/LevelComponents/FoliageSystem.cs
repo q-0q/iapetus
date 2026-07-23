@@ -17,6 +17,7 @@ public class FoliageSystem : MonoBehaviour
     public float raycastOriginYOffset = 1f;
     public float edgeDistance = 1f;
     public float maxSlope = 60f;
+    public float yOffset = 0f;
 
     [Header("Randomization")]
     public Vector2 scaleRange = new Vector2(0.8f, 1.2f);
@@ -111,6 +112,8 @@ public class FoliageSystem : MonoBehaviour
 
             float scale = Random.Range(scaleRange.x, scaleRange.y);
 
+            position += Vector3.up * yOffset;
+            
             matrices.Add(Matrix4x4.TRS(
                 position,
                 rotation,

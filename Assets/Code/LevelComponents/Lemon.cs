@@ -64,7 +64,7 @@ public class Lemon : MonoBehaviour
 
     private void OnCollected()
     {
-        // StartCoroutine(TimescaleCoroutine());
+        StartCoroutine(TimescaleCoroutine());
         Util.ReplaceAnimatorTrigger(_animator, "Collected");
         _readyParticles.Stop();
         _readyParticles.Clear();
@@ -101,11 +101,11 @@ public class Lemon : MonoBehaviour
     private IEnumerator TimescaleCoroutine()
     {
 
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.1f);
         
-        float timescale = 0.15f;
+        float timescale = 0.25f;
         float t = 0;
-        float duration = 0.1f;
+        float duration = 0.15f;
         while (t < duration)
         {
             Time.timeScale = Mathf.Lerp(1f, timescale, Util.SmoothLerp01(t / duration));

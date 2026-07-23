@@ -143,7 +143,7 @@ public partial class PlayerFsm
     private const float GroundMoveMinimumAnimatorSpeedMod = 1.25f;
     private const float GroundMoveMaximumAnimatorSpeedMod = 2.3f;
     private const float GroundSlopeMaximumMomentumAngle = 120f;
-    private const float GroundSlopeMaximumMomentumModifier = 0.45f;
+    private const float GroundSlopeMaximumMomentumModifier = 0.55f;
     private const float SprintMomentumCutoffMultiplier = 0.65f;
     private const float SprintMomentumGainMultiplier = 3.5f;
     private const float SprintTurnLossMultiplier = 1.5f;
@@ -455,7 +455,7 @@ public partial class PlayerFsm
             var lowMomentumMomentumGainMod = _momentum < LowMomentumThreshhold ? LowMomentumMomentumGainMod : 1f;
             // var superSteepComponent = Mathf.InverseLerp(50f, 55f, Vector3.Angle(GroundNormal, Vector3.up));
             var superSteepComponent = 0f;
-            var weight = (Mathf.Max(Mathf.InverseLerp(100f, 140f, GroundForwardSlope), superSteepComponent));
+            var weight = (Mathf.Max(Mathf.InverseLerp(110f, 140f, GroundForwardSlope), superSteepComponent));
             var slopeMaxMomentumMod = Mathf.Lerp(1f, GroundSlopeMaximumMomentumModifier,
                 weight);
 
@@ -1253,5 +1253,32 @@ public partial class PlayerFsm
     private void OnIntroCutsceneWarp(Vector3 obj)
     {
         OnPlayerTeleported?.Invoke(obj);
+    }
+
+    private void HandleSteepAnimationLayers()
+    {
+        
+        var currentWeight = Animator.GetLayerWeight(3);
+        var currentSteepness = Animator.GetFloat("Steepness");
+        var w = 0f;
+        var steepness = 0f;
+        
+        if (Machine.IsInState(PlayerFsmState.GroundMove))
+        {
+            if (GroundForwardSlope > 100f)
+            {
+                steepness = 1f;
+                w = Mathf.InverseLerp(100f, 145f, GroundForwardSlope);
+            }
+            if (GroundForwardSlope < 80f)
+            {
+                steepness = -1f;
+                w = Mathf.InverseLerp(80f, 35f, GroundForwardSlope) * -1f;
+            }
+        }
+        
+        Animator.SetFloat("Steepness", Mathf.Lerp(currentSteepness, steepness, Time.deltaTime * 15f));
+        Animator.SetLayerWeight(3, Mathf.Lerp(currentWeight, Mathf.Abs(w), Time.deltaTime * 7f));
+        
     }
 }

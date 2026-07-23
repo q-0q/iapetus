@@ -339,6 +339,7 @@ public partial class PlayerFsm : GravityFsm
         UpdateMusicDistanceAttenuation();
         UpdateFmodWindRushAmount();
         HandleSpeedLines();
+        HandleSteepAnimationLayers();
         
         
         // aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)

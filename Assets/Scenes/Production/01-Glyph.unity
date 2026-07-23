@@ -378,6 +378,7 @@ MonoBehaviour:
   raycastOriginYOffset: 1
   edgeDistance: 1
   maxSlope: 85
+  yOffset: 0
   scaleRange: {x: 0.8, y: 1.2}
   rotationYRange: {x: 0, y: 360}
   offsetRange: {x: -1, y: 1}
@@ -1020,6 +1021,7 @@ MonoBehaviour:
   raycastOriginYOffset: 1
   edgeDistance: 1
   maxSlope: 60
+  yOffset: 0
   scaleRange: {x: 0.75, y: 1.5}
   rotationYRange: {x: 0, y: 360}
   offsetRange: {x: -10, y: 10}
@@ -1825,7 +1827,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac02b00ccaea14931b9d31e9043aec81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  count: 12
+  count: 5
   lightHolder: {fileID: 1967046027}
 --- !u!1 &470235106
 GameObject:
@@ -4214,6 +4216,7 @@ MonoBehaviour:
   raycastOriginYOffset: 1
   edgeDistance: 1
   maxSlope: 60
+  yOffset: 0
   scaleRange: {x: 0.75, y: 1.5}
   rotationYRange: {x: 0, y: 360}
   offsetRange: {x: -10, y: 10}
@@ -5202,6 +5205,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1309908393361036338, guid: 781ab390e91b44bdb8e24db9356e23f0,
+        type: 3}
+      propertyPath: receiveFoliageMask.m_Bits
+      value: 384
+      objectReference: {fileID: 0}
     - target: {fileID: 2416477141121348171, guid: 781ab390e91b44bdb8e24db9356e23f0,
         type: 3}
       propertyPath: MetaName
@@ -5337,6 +5345,7 @@ MonoBehaviour:
   raycastOriginYOffset: 1
   edgeDistance: 1
   maxSlope: 85
+  yOffset: 0
   scaleRange: {x: 0.8, y: 1.2}
   rotationYRange: {x: 0, y: 360}
   offsetRange: {x: -1, y: 1}
@@ -6473,6 +6482,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 528690576}
+    - targetCorrespondingSourceObject: {fileID: -9017862820861860193, guid: 304849fbbdeb74a55afac90843511b69,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1229430342}
   m_SourcePrefab: {fileID: 100100000, guid: 304849fbbdeb74a55afac90843511b69, type: 3}
 --- !u!1 &1229430337 stripped
 GameObject:
@@ -6530,6 +6543,34 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -4606097563312463808, guid: 304849fbbdeb74a55afac90843511b69, type: 3}
+--- !u!1 &1229430341 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: -9017862820861860193, guid: 304849fbbdeb74a55afac90843511b69,
+    type: 3}
+  m_PrefabInstance: {fileID: 1229430336}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1229430342
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1229430341}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -4251751868566719704, guid: 304849fbbdeb74a55afac90843511b69, type: 3}
 --- !u!114 &1229430344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7334,7 +7375,7 @@ MonoBehaviour:
     canvasDelayOffset: 0
   - texts:
     - The Glyph and its expansive Mountain network were built by our forebears.
-    - It acted as a relay that synthetically strengthened Amadea's light and staved
+    - It acted as a relay that synthetically strengthened Amadea's light, staving
       off primordial forces of chaos.
     - The system was designed to be robust, though it seems the turning of the age
       makes folly of such attempts to resist nature.
@@ -13707,7 +13748,7 @@ PrefabInstance:
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 131.63
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -15022,22 +15063,22 @@ PrefabInstance:
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9991364
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.041552655
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.000000050562395
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.000000017825602
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6009970680978410363, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -17097,6 +17138,7 @@ MonoBehaviour:
   raycastOriginYOffset: 1
   edgeDistance: 2.5
   maxSlope: 60
+  yOffset: 0
   scaleRange: {x: 3, y: 5}
   rotationYRange: {x: 0, y: 360}
   offsetRange: {x: 0, y: 0}
