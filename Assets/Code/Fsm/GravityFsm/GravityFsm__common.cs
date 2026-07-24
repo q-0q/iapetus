@@ -11,7 +11,7 @@ public abstract partial class GravityFsm
     protected float TimeInAir;
     protected float MinYVelocity = -40f;
     protected float LastUpwardsY;
-    protected float GroundForwardSlope;
+    public float GroundForwardSlope;
     protected Vector3 GroundNormal;
     private Collider _depenetrationCollider;
     private float _depenetrationTimer;

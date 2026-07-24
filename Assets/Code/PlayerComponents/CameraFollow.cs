@@ -145,6 +145,12 @@ public class CameraFollow : MonoBehaviour
             newYOffset = 4f;
         }
         
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.GroundMove))
+        {
+            var slopeOffset = Mathf.Lerp(-1f, 1f, Mathf.InverseLerp(45f, 135f, PlayerFsm.Singleton.GroundForwardSlope)) * 7.5f;
+            newYOffset += slopeOffset;
+        }
+        
         yLerp = Mathf.Lerp(yLerp, yLerp * 3f, Mathf.InverseLerp(-5f, -20f, playerYVelocity));
         _currentYOffset = Mathf.Lerp(_currentYOffset, newYOffset, Time.deltaTime * 2f);
         pos += Vector3.up * _currentYOffset;

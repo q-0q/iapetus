@@ -35,7 +35,7 @@ public partial class PlayerFsm
                 Animator.SetFloat("Flip", flip);
                 UpdateLedgePosition(FaceLedgeHeight);
                 YVelocity = 0;
-
+                Animator.SetLayerWeight(3, 0);
                 _arrivedAtLedge = false;
                 _wallsquattedSinceLeavingGround = false;
                 _dashSinceLeavingGround = false;
