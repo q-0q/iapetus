@@ -9,15 +9,19 @@ public class SceneDarknessIndicator : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        foreach (var customFogObserver in CustomFogManager.CustomFogObserverRegistry)
+        // .ToArray() creates a temporary copy to iterate safely
+        foreach (var customFogObserver in CustomFogManager.CustomFogObserverRegistry.ToArray())
         {
             if (!customFogObserver.isPlayer) continue;
+
             if (SaveSystem.GetAllItems().Contains("Lantern"))
             {
                 OnPlayerLanternActivated?.Invoke();
             }
-            else customFogObserver.enabled = false;
-            
+            else 
+            {
+                customFogObserver.enabled = false; // OnDisable() will safely modify the original list
+            }
         }
     }
 

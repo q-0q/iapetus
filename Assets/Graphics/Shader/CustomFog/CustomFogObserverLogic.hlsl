@@ -23,9 +23,10 @@ float InverseLerp(float minVal, float maxVal, float value)
     return saturate((value - minVal) / (maxVal - minVal));
 }
 
-void CalculateClosestCustomFogObserver_float(float4 WorldPos, float volumeDepthSample, out float OutMask)
+void CalculateClosestCustomFogObserver_float(float4 WorldPos, out float OutMask)
 {
 
+    
     float finalMask = 1.0;
     
     for (int i = 0; i < _CustomFogObserverCount; i++)
@@ -53,7 +54,7 @@ void CalculateClosestCustomFogObserver_float(float4 WorldPos, float volumeDepthS
 
             float depth = length(WorldPos.xz - p.xz);
             float depthFactor = pow(InverseLerp(_CustomFogDepthMin, _CustomFogDepthMax, depth), _CustomFogDepthPower);
-            // depthFactor = min(depthFactor, _CustomFogDepthClamp);
+            depthFactor = min(depthFactor, _CustomFogDepthClamp);
 
 
             float skyboxLiftFactor = pow(InverseLerp(_CustomFogSkyboxLift, _CustomFogSkyboxLift * -0.5, relativeY), 0.75);
