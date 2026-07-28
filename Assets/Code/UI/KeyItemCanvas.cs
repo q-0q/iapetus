@@ -64,12 +64,14 @@ public class KeyItemCanvas : MonoBehaviour
     {
         KeyItem.OnKeyItemCollected += OnItemCollected;
         CultistIncenseFsm.OnIncenseGiven += OnItemCollected;
+        PlayerFsm.OnItemCollected += OnItemCollected;
     }
 
     private void OnDisable()
     {
         KeyItem.OnKeyItemCollected -= OnItemCollected;
         CultistIncenseFsm.OnIncenseGiven -= OnItemCollected;
+        PlayerFsm.OnItemCollected -= OnItemCollected;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created

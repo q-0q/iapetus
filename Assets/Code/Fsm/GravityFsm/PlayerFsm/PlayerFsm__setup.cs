@@ -114,6 +114,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.WalkToTerminalNodePosition, 1.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.TerminalNodeInteract, 2.75f);
         StateMapConfig.Duration.Add(PlayerFsmState.MinorLeylineStartup, 0.75f);
+        StateMapConfig.Duration.Add(PlayerFsmState.ChestInteract, 0.5f);
         
         StateMapConfig.Duration.Add(PlayerFsmState.Tinsica, TinsicaDuration);
         StateMapConfig.Duration.Add(PlayerFsmState.TinsicaJumpsquat, 0.1f);
@@ -139,6 +140,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToSwitchPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToTerminalNodePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToRotationDaisPosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToChestPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");
@@ -185,6 +187,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.UseIncenseBurner, "KeyItemCollect");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TerminalNodeInteract, "DaisInteract");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.RotationDaisInteract, "DaisInteract");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.ChestInteract, "DaisInteract");
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Tinsica, "Tinsica");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TinsicaJumpsquat, "TinsicaJumpsquat");

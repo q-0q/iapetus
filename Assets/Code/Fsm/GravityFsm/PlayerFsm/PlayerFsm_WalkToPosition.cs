@@ -42,9 +42,16 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.WalkToRotationDaisPosition)
             .SubstateOf(PlayerFsmState.WalkToPosition)
             .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.RotationDaisInteract);
+        
+        Machine.Configure(PlayerFsmState.WalkToChestPosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.ChestInteract);
 
         Machine.Configure(PlayerFsmState.RotationDaisInteract)
             .SubstateOf(PlayerFsmState.Interactable);
+
+        Machine.Configure(PlayerFsmState.ChestInteract)
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.IdleLong);
     }
     
     private void WalkToSwitchPositionConfigure()

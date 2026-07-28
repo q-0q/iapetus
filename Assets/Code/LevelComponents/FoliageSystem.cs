@@ -56,14 +56,143 @@ public class FoliageSystem : MonoBehaviour
             localBounds.size.x * lossy.x *
             localBounds.size.z * lossy.z;
 
-        int targetCount = Mathf.Min(
+        int numSlices = Mathf.Min(
             Mathf.RoundToInt(worldArea * density),
             maxInstances
         );
 
-        List<Matrix4x4> matrices = new List<Matrix4x4>(targetCount);
+        int slice = 0;
 
-        for (int i = 0; i < targetCount; i++)
+        List<Matrix4x4> matrices = new List<Matrix4x4>(maxInstances);
+
+        while (slice < numSlices && matrices.Count < maxInstances)
+        {
+            
+            // find base worldspace origin for slice
+            
+            Vector3 localPoint = new Vector3(
+                Random.Range(localBounds.min.x, localBounds.max.x),
+                localBounds.max.y,
+                Random.Range(localBounds.min.z, localBounds.max.z)
+            );
+            
+            Vector3 localOffset = new Vector3(
+                Random.Range(offsetRange.x, offsetRange.y),
+                0f,
+                Random.Range(offsetRange.x, offsetRange.y)
+            );
+
+            Vector3 worldOrigin =
+                transform.TransformPoint(localPoint) + localOffset +
+                transform.up * raycastOriginYOffset;
+
+            Vector3 rayDirection = -transform.up;
+
+            var keepPiercing = true;
+
+            while (keepPiercing && matrices.Count < maxInstances)
+            {
+                TryPlace(matrices, worldOrigin, rayDirection, out keepPiercing, out Vector3 newWorldOrigin);
+                worldOrigin = newWorldOrigin;
+            }
+
+            slice++;
+
+        }
+        
+        Matrix4x4[] finalMatrices = matrices.ToArray();
+        
+        if (transformBake) FoliageChunkManager.Instance.RegisterTransformFoliage(transform, mesh,material, finalMatrices);
+        else FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
+        
+        // NewMethod(numSlices, localBounds, matrices);
+    }
+    
+    private void TryPlace(List<Matrix4x4> matrices, Vector3 worldOrigin, Vector3 rayDirection, out bool keepPiercing, out Vector3 newWorldOrigin)
+    {
+        
+        // if we completely whiff, exit and end piercing
+        newWorldOrigin = worldOrigin;
+        keepPiercing = false;
+        
+        if (!Physics.Raycast(
+                worldOrigin,
+                rayDirection,
+                out var hit,
+                raycastDepth,
+                receiveFoliageMask | LayerMask.GetMask("FoliageMask"),
+                QueryTriggerInteraction.Ignore)) return;
+        
+        // from now on, keep piercing if we fail placement
+        keepPiercing = true;
+        newWorldOrigin = hit.point - (Vector3.up * 0.1f);
+        
+        // if it's too steep, dont place
+        if (Vector3.Angle(hit.normal, -rayDirection) > maxSlope) return;
+        
+        // wrong layer or foliage mask, don't place
+        if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0) return;
+        
+        // try to detect if we are inside geometry.
+        // we reason by saying if there is an upwards facing normal above us
+        // but not a downwards facing normal above us, then skip placement
+        if (RaycastCheckSphere(hit, rayDirection)) return;
+        
+        // edge detection
+        var edgeDelta = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(Vector3.Angle(hit.normal, Vector3.up), 0f, 30f));
+        if (IsNearEdge(worldOrigin, rayDirection, hit.distance + edgeDelta)) return;
+        
+        // done: create matrix and add to list
+        
+        Vector3 foliageUp = -rayDirection;
+        Quaternion alignToRay =
+            Quaternion.FromToRotation(Vector3.up, foliageUp);
+
+        float randomY = Random.Range(rotationYRange.x, rotationYRange.y);
+        Quaternion twist =
+            Quaternion.AngleAxis(randomY, foliageUp);
+
+        Quaternion rotation = twist * alignToRay;
+
+        float scale = Random.Range(scaleRange.x, scaleRange.y);
+        Vector3 position = hit.point;
+        position += Vector3.up * yOffset;
+            
+        matrices.Add(Matrix4x4.TRS(
+            position,
+            rotation,
+            Vector3.one * scale
+        ));
+        
+    }
+    
+    private bool Test(Vector3 worldOrigin, Vector3 rayDirection, out RaycastHit hit)
+    {
+        
+        if (!Physics.Raycast(
+                worldOrigin,
+                rayDirection,
+                out hit,
+                raycastDepth,
+                receiveFoliageMask | LayerMask.GetMask("FoliageMask"),
+                QueryTriggerInteraction.Ignore))
+            return false;
+
+
+        //
+        if (Vector3.Angle(hit.normal, -rayDirection) > maxSlope) return false;
+
+        if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
+            return false;
+
+        if (RaycastCheckSphere(hit, rayDirection)) return false;
+
+        return true;
+    }
+
+    private void NewMethod(int numSlices, Bounds localBounds, List<Matrix4x4> matrices)
+    {
+        for (int i = 0; i < numSlices; i++)
         {
             // Sample in LOCAL space
             Vector3 localPoint = new Vector3(
@@ -78,12 +207,10 @@ public class FoliageSystem : MonoBehaviour
                 Random.Range(offsetRange.x, offsetRange.y)
             );
 
-            // Convert to world
             Vector3 worldOrigin =
                 transform.TransformPoint(localPoint) + localOffset +
                 transform.up * raycastOriginYOffset;
 
-            // Ray direction now fully respects GameObject rotation
             Vector3 rayDirection = -transform.up;
 
             if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) continue;
@@ -125,8 +252,9 @@ public class FoliageSystem : MonoBehaviour
         
         if (transformBake) FoliageChunkManager.Instance.RegisterTransformFoliage(transform, mesh,material, finalMatrices);
         else FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
-        
     }
+
+
 
     private bool RaycastCheckSphere(RaycastHit hitInfo, Vector3 rayDirection)
     {
@@ -137,15 +265,21 @@ public class FoliageSystem : MonoBehaviour
         if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
                 QueryTriggerInteraction.Collide)) return true;
 
-        if (Physics.Raycast(hitInfo.point + Vector3.up * gap, Vector3.up, height - gap, Fsm.GetEnvironmentalLayermask(),
+
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit downwardsHit, height - gap,
+                Fsm.GetEnvironmentalLayermask(),
                 QueryTriggerInteraction.Ignore))
         {
-            return false;
+            if (Physics.Raycast(hitInfo.point + Vector3.up * gap, Vector3.up, out RaycastHit upwardsHit, height - gap, Fsm.GetEnvironmentalLayermask(),
+                    QueryTriggerInteraction.Ignore))
+            {
+                if (upwardsHit.point.y < downwardsHit.point.y) return false;
+            };
+
+            return true;
         };
-        
-        // raycast both up and down to check for overhangs
-        return Physics.Raycast(origin, Vector3.down, height - gap, Fsm.GetEnvironmentalLayermask(),
-            QueryTriggerInteraction.Ignore);
+
+        return false;
     }
 
     Bounds GetLocalColliderBounds(Collider col)
@@ -205,25 +339,5 @@ public class FoliageSystem : MonoBehaviour
     }
 
 
-    private bool Test(Vector3 worldOrigin, Vector3 rayDirection, out RaycastHit hit)
-    {
-        if (!Physics.Raycast(
-                worldOrigin,
-                rayDirection,
-                out hit,
-                raycastDepth,
-                receiveFoliageMask | LayerMask.GetMask("FoliageMask"),
-                QueryTriggerInteraction.Ignore))
-            return false;
 
-
-        if (Vector3.Angle(hit.normal, -rayDirection) > maxSlope) return false;
-
-        if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0)
-            return false;
-
-        if (RaycastCheckSphere(hit, rayDirection)) return false;
-
-        return true;
-    }
 }

@@ -296,6 +296,7 @@ public partial class PlayerFsm
     private float _dialogueEntryMomentum;
     private PlayerTrickParticles _playerTrickParticles;
     private bool _dialogueIdle;
+    public static event Action<String> OnItemCollected;
 
 
     private bool IsHitValidFlank(RaycastHit hit, bool left)
@@ -1280,5 +1281,23 @@ public partial class PlayerFsm
         Animator.SetFloat("Steepness", Mathf.Lerp(currentSteepness, steepness, Time.deltaTime * 15f));
         Animator.SetLayerWeight(3, Mathf.Lerp(currentWeight, Mathf.Abs(w), Time.deltaTime * 7f));
         
+    }
+    
+    public void CollectItem(string id)
+    {
+        SaveSystem.WriteItem(id);
+        
+        if (!SaveSystem.GetPersistentEventCompleted("item-collected"))
+        {
+            StartCoroutine(Coroutine());
+            IEnumerator Coroutine()
+            {
+                yield return new WaitForSeconds(5.75f);
+                TutorialCanvas.Singleton.ShowTutorialText("Open bag", "Inventory");
+            }
+            SaveSystem.WritePersistentEvent("item-collected");
+        }
+        
+        OnItemCollected?.Invoke(KeyItemRegistry.KeyItemRegistrations[id].displayName);
     }
 }
