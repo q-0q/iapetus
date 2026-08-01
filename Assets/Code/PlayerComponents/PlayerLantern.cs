@@ -21,8 +21,9 @@ public class PlayerLantern : MonoBehaviour
         SceneDarknessIndicator.OnPlayerLanternActivated -= OnLanternActivated;
     }
 
-    private void OnLanternActivated()
+    private void OnLanternActivated(float radiusMultiplier)
     {
+        _child.GetComponentInChildren<CustomFogObserver>().radiusMultiplier = radiusMultiplier;
         _child.SetActive(true);
     }
 

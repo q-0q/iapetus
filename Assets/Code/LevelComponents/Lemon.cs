@@ -10,6 +10,7 @@ public class Lemon : MonoBehaviour
 {
 
     public static event Action OnLemonCollected;
+    public static event Action OnNearbyCollected;
     private Animator _animator;
     private ParticleSystem _readyParticles;
     private Material _material;
@@ -19,6 +20,8 @@ public class Lemon : MonoBehaviour
     public string MetaName;
 
     private EventInstance _passiveInstance;
+
+    private TriggerProxy _nearbyTriggerProxy;
     
     // Start is called before the first frame update
     void Start()
@@ -28,6 +31,7 @@ public class Lemon : MonoBehaviour
         _renderer = transform.Find("Mesh").Find("lemon").Find("Lemon").GetComponent<Renderer>();
         _material = _renderer.material;
         _bone = transform.Find("Mesh").Find("lemon").Find("Armature").Find("Bone");
+
         
         if (Physics.Raycast(transform.position + Vector3.up, Vector3.down, out RaycastHit hit, 10f, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
         {
@@ -59,7 +63,7 @@ public class Lemon : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // _readyParticles.transform.position = _bone.position;
+        
     }
 
     private void OnCollected()
@@ -131,14 +135,27 @@ public class Lemon : MonoBehaviour
 
     private void Awake()
     {
+        _nearbyTriggerProxy = GetComponentInChildren<TriggerProxy>();
         _passiveInstance =
             FMODUnity.RuntimeManager.CreateInstance(
                 FMODUnity.RuntimeManager.PathToEventReference("event:/LemonPassive"));
         FMODUnity.RuntimeManager.AttachInstanceToGameObject(_passiveInstance, gameObject);
     }
 
+    private void OnEnable()
+    {
+        _nearbyTriggerProxy.OnTriggerProxyStay += OnNearbyTriggerProxyStay;
+    }
+
+    private void OnNearbyTriggerProxyStay(Collider obj)
+    {
+        if (!SaveSystem.GetLemonCollection(MetaName)) return;
+        OnNearbyCollected?.Invoke();
+    }
+
     private void OnDisable()
     {
         _passiveInstance.stop(STOP_MODE.ALLOWFADEOUT);
+        _nearbyTriggerProxy.OnTriggerProxyStay -= OnNearbyTriggerProxyStay;
     }
 }

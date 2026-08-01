@@ -121,7 +121,17 @@ public class FoliageSystem : MonoBehaviour
                 out var hit,
                 raycastDepth,
                 receiveFoliageMask | LayerMask.GetMask("FoliageMask"),
-                QueryTriggerInteraction.Ignore)) return;
+                QueryTriggerInteraction.Collide)) return;
+        
+        
+
+        
+        // if we hit foliage mask, exit and end piercing
+        if (hit.collider.gameObject.layer == LayerMask.NameToLayer("FoliageMask"))
+        {
+            Debug.DrawRay(hit.point, Vector3.up * 5f, Color.red, 10f);
+            return;
+        }
         
         // from now on, keep piercing if we fail placement
         keepPiercing = true;
@@ -262,8 +272,8 @@ public class FoliageSystem : MonoBehaviour
         var gap = 1f;
         var origin = hitInfo.point + Vector3.up * height;
         
-        if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
-                QueryTriggerInteraction.Collide)) return true;
+        // if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
+        //         QueryTriggerInteraction.Collide)) return true;
 
 
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit downwardsHit, height - gap,

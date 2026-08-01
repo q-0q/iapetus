@@ -294,6 +294,7 @@ public partial class PlayerFsm : GravityFsm
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
         Shader.SetGlobalFloat("_PlayerTintWeight", 0);
+        Shader.SetGlobalFloat("_PlayerEvaporateClip", 0f);
         SaveSystem.UpdateScreenshot(0.3f);
         SnapToGround();
     }
@@ -579,7 +580,9 @@ public partial class PlayerFsm : GravityFsm
         {
             SwimOnUpdate();
         }
-        else if (!Machine.IsInState(PlayerFsmState.Dying1) && !Machine.IsInState(PlayerFsmState.Dead))
+        else if ((!Machine.IsInState(PlayerFsmState.Dying1) && !Machine.IsInState(PlayerFsmState.Dead) &&
+                  !Machine.IsInState(PlayerFsmState.Wallsquat) && Machine.IsInState(GravityFsmState.Grounded) &&
+                  !Machine.IsInState(PlayerFsm.PlayerFsmState.Jumpsquat)) || Machine.IsInState(PlayerFsmState.VaultHang))
         {
             freezeFmodInstance.stop(STOP_MODE.ALLOWFADEOUT);
             _freezeTimer = 0;

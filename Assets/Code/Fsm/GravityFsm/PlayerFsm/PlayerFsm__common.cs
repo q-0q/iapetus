@@ -288,6 +288,7 @@ public partial class PlayerFsm
     private float _freezeTimer;
     public float _timeSinceBoostStarted;
     private const float BoostSpeedMultiplier = 1.75f;
+
     private const float BoostSpeedDuration = 2.75f;
     public static event Action OnPlayerCultTrialDeath;
     public static event Action<Vector3> OnPlayerTeleported;
@@ -311,8 +312,15 @@ public partial class PlayerFsm
         float flipMod = left ? -1f : 1f;
         var distance = DistanceFromPointToPlane(transform.position, hit.point, hit.normal);
         var angle = Vector3.Angle(transform.right * flipMod, hit.normal);
+
+        var forwardAngle = Vector3.Angle(transform.forward, hit.normal);
+        if (forwardAngle < 65f) return false;
         
-        return distance < 2.0f && angle < FlankMaximumAngle;;
+
+        var isHitValidFlank = distance < 2.0f && angle < FlankMaximumAngle;
+        
+        // if (!Machine.IsInState(PlayerFsmState.Wallrun) && isHitValidFlank) print(forwardAngle);
+        return isHitValidFlank;;
     }
 
     private float ComputeDynamicForwardRaycastDistance()
@@ -342,7 +350,7 @@ public partial class PlayerFsm
     private bool UpdateLedgePosition(float ledgeHeight, bool upwardsOnly = false)
     {
 
-        if (_arrivedAtLedge) return false; // or, just return true to allow continued lerping without updating value
+        if (_arrivedAtLedge && !Machine.IsInState(PlayerFsmState.Tinsica)) return false; // or, just return true to allow continued lerping without updating value
         
         var wallDistance = 0f;
         if (Physics.Raycast(transform.position, transform.forward, out var forwardHit, 5f, GetEnvironmentalLayermask()))
@@ -1155,21 +1163,24 @@ public partial class PlayerFsm
         isSprinting = true;
         _timeSinceBoostStarted = 0f;
         
-        PlaySpeedLineParticlesForDuration(BoostSpeedDuration * 0.35f);
+        
         StartCoroutine(TrailCoroutine());
         StartCoroutine(CameraCoroutine());
+        StartCoroutine(TimescaleCoroutine());
+        StartCoroutine(GravityCoroutine());
         
 
         IEnumerator CameraCoroutine()
         {
             var t = 0f;
             var d = 0.125f;
+            yield return new WaitForSecondsRealtime(0.4f);
             var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
             var baseFov = PlayerCinemachineFreeLook.Singleton.GetBaseFov();
             while (t < d)
             {
                 var w = Util.SmoothLerp01(t / d);
-                
+
                 freeLook.m_Lens.FieldOfView = Mathf.Lerp(baseFov, baseFov + 3f, w);
 
                 var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
@@ -1178,22 +1189,67 @@ public partial class PlayerFsm
                 t += Time.deltaTime;
                 yield return null;
             }
-            
+
             
             StartCoroutine(SpeedBoostCameraCleanupCoroutine(0.2f));
+        }
+        
+        IEnumerator TimescaleCoroutine()
+        {
+            var f = 0.3f;
+            
+            
+            var t = 0f;
+            var d = 0.25f;
+            while (t < d)
+            {
+                Time.timeScale = Mathf.Lerp(1f, f, t / d); 
+                t += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            yield return new WaitForSecondsRealtime(0.2f);
+            
+            t = 0f;
+            d = 0.1f;
+            while (t < d)
+            {
+                Time.timeScale = Mathf.Lerp(f, 1f, t / d); 
+                t += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            
+            Time.timeScale = 1f;
+        }
+        
+        IEnumerator GravityCoroutine()
+        {
+            yield return new WaitForSecondsRealtime(0.4f);
+            BonusGravityModifier = 0.75f;
+            var t = 0f;
+            var d = BoostSpeedDuration;
+            while (t < d)
+            {
+                t += Time.deltaTime;
+                yield return null;
+            }
+            
+            BonusGravityModifier = 1f;
         }
         
         IEnumerator TrailCoroutine()
         {
             
-            var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
-            var triggerPosition = _skinnedMeshRenderer.transform.position;
-            yield return new WaitForSeconds(0.05f);
-            var triggerObject = Instantiate(triggerPrefab, triggerPosition,
-                Quaternion.identity, null);
-            triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
-            
-            var d = BoostSpeedDuration * 0.25f;
+            // var triggerPrefab = Resources.Load("Prefab/Fsm/SphereEffect") as GameObject;
+            // var triggerPosition = _skinnedMeshRenderer.transform.position;
+            // yield return new WaitForSeconds(0.05f);
+            // var triggerObject = Instantiate(triggerPrefab, triggerPosition,
+            //     Quaternion.identity, null);
+            // triggerObject.GetComponent<SphereEffect>().SetConfig(Vector3.one * 15f, 1.25f, 0.6f, -4.5f);
+
+            yield return new WaitForSecondsRealtime(0.4f);
+            PlaySpeedLineParticlesForDuration(BoostSpeedDuration);
+            var d = BoostSpeedDuration * 1.15f;
             
             while (_timeSinceBoostStarted < d){
                 if (Machine.IsInState(PlayerFsmState.TrialTeleport)) break;
@@ -1237,13 +1293,14 @@ public partial class PlayerFsm
         var originRadius = 5f;
         var maxDistance = 10f;
         
-
+        // todo: dont set safe ground position on moving platforms?
         for (int i = 0; i < rayCount; i++)
         {
             var origin = transform.position + Vector3.up * originHeight + Quaternion.Euler(0, 360f * ((float)i
                 / rayCount), 0) * (Vector3.forward * originRadius);
             
             if (!Physics.Raycast(origin, Vector3.down, out var hit, maxDistance, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) return;
+            if (hit.transform.TryGetComponent(out PlayerDeathGround _)) return;
             Debug.DrawRay(origin, Vector3.down * maxDistance, Color.red);
         }
 

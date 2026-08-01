@@ -50,6 +50,7 @@ public partial class CultTrialFsm
             .OnEntry(_ =>
             {
                 var controller = SaveSystem.GetAllItems().Contains("IncenseBurner") ? _dialogueItem : _dialogueNoItem;
+                controller.LookAtOverride = _interactable.transform;
                 DialogueCanvas.Singleton.StartDialogue(controller);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
             });
@@ -59,6 +60,7 @@ public partial class CultTrialFsm
             .OnEntry(_ =>
             {
                 var controller = _dialogueFirstTimeUse1;
+                controller.LookAtOverride = _interactable.transform;
                 DialogueCanvas.Singleton.StartDialogue(controller);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
             });
@@ -137,6 +139,7 @@ public partial class CultTrialFsm
             .OnEntry(_ =>
             {
                 var controller = _dialogueFirstTimeUse2;
+                controller.LookAtOverride = _interactable.transform;
                 DialogueCanvas.Singleton.StartDialogue(controller);
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.Dialogue);
             });

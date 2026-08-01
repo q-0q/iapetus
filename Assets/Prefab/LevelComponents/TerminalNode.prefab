@@ -683,7 +683,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7947174582210660474}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6100338, y: 0.3512353, z: -0.34515986, w: -0.6207715}
+  m_LocalRotation: {x: 0.6100332, y: -0.35123643, z: 0.345161, w: 0.62077075}
   m_LocalPosition: {x: 0, y: 8, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1042,6 +1042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2d0f839d43974b71bdd9cfe0317788c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  upVector: {x: 0, y: 1, z: 0}
   pointsParent: {fileID: 0}
   autoBake: 0
 --- !u!1 &8149428297018107751
@@ -1102,7 +1103,8 @@ MonoBehaviour:
   intakeCutscene: 0
   _arc1Renderer: {fileID: 604377639737808951}
   IntakeCameraSplineDistance: 40
-  mapSplineTMultiplier: 1
+  mapSplineTMin: 0
+  mapSplineTMax: 1
   _mainCanvas: {fileID: 6888113229386439348}
   _interactableImage: {fileID: 6483326863944944924}
   _idTmp: {fileID: 4430234593147648873}
@@ -1353,6 +1355,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 15.82
       objectReference: {fileID: 0}
+    - target: {fileID: 4109919134955561049, guid: 98abda2a43db947a6ad2ec9fed4d39e1,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 21.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5454156914664869141, guid: 98abda2a43db947a6ad2ec9fed4d39e1,
         type: 3}
       propertyPath: m_Pivot.y
@@ -1402,6 +1409,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 2.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 5729339326238119455, guid: 98abda2a43db947a6ad2ec9fed4d39e1,
+        type: 3}
+      propertyPath: raycastDepth
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 5729339326238119455, guid: 98abda2a43db947a6ad2ec9fed4d39e1,
         type: 3}

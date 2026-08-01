@@ -63,11 +63,14 @@ public class GlyphController : MonoBehaviour
             } 
         },
         
-        { "icy-canals", new TerminalData()
+        { "icy-canals-0", new TerminalData()
             {
                 displayId = "02",
                 previousNode = "tutorial-1",
-                loreDialogue = new List<string>() {  }
+                loreDialogue = new List<string>() {  },
+                mapSplineId = 0,
+                mapSplineStartT = 0.6f,
+                mapSplineEndT = 0.8f
             } 
         },
         

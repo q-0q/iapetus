@@ -39,6 +39,7 @@ public class InputBuffer
 
     public void OnUpdate(bool cutscenePlayerDisabled)
     {
+        if (AcquisitionCanvas.Singleton.IsOpen()) return;
         if (GameMenu.Singleton.IsMenuOpen()) return;
         if (PhotoManager.Singleton.IsActive()) return;
         

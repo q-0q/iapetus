@@ -11,7 +11,7 @@ public abstract partial class GravityFsm
         
         if (!Machine.IsInState(GravityFsmState.DontLoseYVelocity))
         {
-            YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime * StateMapConfig.GravityStrengthMod.Get(this));
+            YVelocity -= (GravityStrength * GravityStrength * Time.deltaTime * StateMapConfig.GravityStrengthMod.Get(this) * BonusGravityModifier);
         }
         TimeInAir += Time.deltaTime;
         UpdateYVelocityMetadata();

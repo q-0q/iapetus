@@ -55,7 +55,7 @@ public class Barrier : MonoBehaviour
         _indicators = new Dictionary<string, GameObject>();
         for (int i = 0; i < persistentEvents.Count; i++)
         {
-            var position = Vector3.right * i * 0.9f;
+            var position = Vector3.right * i * 0.85f;
             var obj = Instantiate(indicatorPrefab, indicatorHolder);
             obj.transform.SetLocalPositionAndRotation(position, Quaternion.identity);
             _indicators.Add(persistentEvents[i], obj);

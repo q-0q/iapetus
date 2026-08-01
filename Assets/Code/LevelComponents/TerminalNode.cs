@@ -252,6 +252,8 @@ public class TerminalNode : MonoBehaviour
             float t;
             float d;
 
+            SaveSystem.WritePlayerInGamePosition(transform.position, "", transform.rotation.eulerAngles.y);
+            
             if (isNew)
             {
                 if (intakeCutscene)

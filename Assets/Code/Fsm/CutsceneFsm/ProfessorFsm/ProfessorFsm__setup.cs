@@ -79,7 +79,7 @@ public partial class ProfessorFsm
                 
                 IEnumerator TutorialCoroutine()
                 {
-                    yield return new WaitForSeconds(11f);
+                    yield return new WaitForSeconds(9.5f);
                     TutorialCanvas.Singleton.ShowTutorialText("Open map", "Map");
                 }
 

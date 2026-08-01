@@ -23,7 +23,7 @@ public class LemonCanvas : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _showTimer < 3.5f ? 1f : 0, Time.deltaTime * 5f);
+        _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, _showTimer < 0.75f ? 1f : 0, Time.deltaTime * 10f);
         _showTimer += Time.deltaTime;
         UpdateLemonCount();
     }
@@ -41,10 +41,12 @@ public class LemonCanvas : MonoBehaviour
     private void OnEnable()
     {
         Lemon.OnLemonCollected += ResetShowTimer;
+        Lemon.OnNearbyCollected += ResetShowTimer;
     }
 
     private void OnDisable()
     {
         Lemon.OnLemonCollected -= ResetShowTimer;
+        Lemon.OnNearbyCollected -= ResetShowTimer;
     }
 }

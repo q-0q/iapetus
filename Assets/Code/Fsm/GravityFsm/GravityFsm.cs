@@ -28,6 +28,7 @@ public  abstract partial class GravityFsm : Fsm
         base.OnStart();
         YVelocity = 0;
         GravityStrength = 9.8f;
+        BonusGravityModifier = 1f;
         transform.Find("DepenetrationCollider").TryGetComponent(out _depenetrationCollider);
         _timeAtTopOfGust = 0f;
 

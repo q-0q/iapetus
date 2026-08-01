@@ -54,7 +54,7 @@ public class AcquisitionCanvas : MonoBehaviour
 
     IEnumerator MovelistTutorialCoroutine()
     {
-        yield return new WaitForSeconds(11f);
+        yield return new WaitForSeconds(10f);
         TutorialCanvas.Singleton.ShowTutorialText("View movelist", "Movelist");
     }
     
@@ -124,13 +124,14 @@ public class AcquisitionCanvas : MonoBehaviour
         _upperCanvasGroup.alpha = 1f;
         _middleCanvasGroup.alpha = 1f;
         _lowerCanvasGroup.alpha = 1f;
-        
 
 
-        yield return new WaitForSeconds(4f);
+
+        var holdTime = lowerText == "" ? 1.5f : 3f;
+        yield return new WaitForSeconds(holdTime);
         
         t = 0f;
-        d = 2f;
+        d = 1.5f;
 
         while (t < d)
         {
@@ -159,5 +160,10 @@ public class AcquisitionCanvas : MonoBehaviour
         var data = KeyItemRegistry.KeyItemRegistrations["Map"];
         StartCoroutine(Coroutine( "Acquired the", data.displayName, "Map", "Open map", data.GetUseDescription(),
             ""));
+    }
+
+    public bool IsOpen()
+    {
+        return isOpen;
     }
 }

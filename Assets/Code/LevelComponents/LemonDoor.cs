@@ -6,15 +6,18 @@ using UnityEngine;
 public class LemonDoor : MonoBehaviour
 {
     public int count = 3;
+    public string persistentEvent = "-lemon-door";
     private const float lightPlacementRadius = 2.5f;
     private const float lightPlacementSeparationAngle = 25f;
     private Animator _animator;
     public Transform lightHolder;
 
     private List<GameObject> _lights;
+    private TriggerProxy _triggerProxy;
 
     private void Awake()
     {
+        _triggerProxy = GetComponentInChildren<TriggerProxy>();
         _animator = GetComponentInChildren<Animator>();
         var lightPrefab = Resources.Load("Prefab/LemonDoorLight") as GameObject;
         _lights = new List<GameObject>();
@@ -29,6 +32,11 @@ public class LemonDoor : MonoBehaviour
         }
         
         UpdateLightMaterial(SaveSystem.LoadCachedSaveData());
+        if (SaveSystem.GetPersistentEventCompleted(persistentEvent))
+        {
+            Util.ReplaceAnimatorTrigger(_animator, "Open");
+            _triggerProxy.gameObject.SetActive(false);
+        }
         
     }
 
@@ -50,21 +58,28 @@ public class LemonDoor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P)) DoOpen();
+        
     }
 
     private void OnEnable()
     {
         SaveSystem.OnSaveDataUpdated += UpdateLightMaterial;
+        _triggerProxy.OnTriggerProxyStay += OnTriggerProxyStay;
+    }
+
+    private void OnTriggerProxyStay(Collider obj)
+    {
+        var c = SaveSystem.LoadCachedSaveData().lemonCollections.Count;
+        if (c < count) return;
+        SaveSystem.WritePersistentEvent(persistentEvent);
+        Util.ReplaceAnimatorTrigger(_animator, "Opening");
+        _triggerProxy.gameObject.SetActive(false);
     }
 
     private void OnDisable()
     {
         SaveSystem.OnSaveDataUpdated -= UpdateLightMaterial;
+        _triggerProxy.OnTriggerProxyStay -= OnTriggerProxyStay;
     }
 
-    void DoOpen()
-    {
-        Util.ReplaceAnimatorTrigger(_animator, "Opening");
-    }
 }

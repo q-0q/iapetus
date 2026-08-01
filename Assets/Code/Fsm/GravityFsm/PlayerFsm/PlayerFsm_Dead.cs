@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Code.Misc;
 using DG.Tweening;
 using UnityEngine;
 
@@ -70,15 +71,37 @@ public partial class PlayerFsm
                 _momentum = 0;
                 LastUpwardsY = transform.position.y;
                 // _skinnedMeshRenderer.transform.DOComplete();
-                Invoke(nameof(MakeAllRenderersVisible), 0.45f);
+                MakeAllRenderersVisible();
                 Animator.StopPlayback();
                 Animator.enabled = true;
                 Animator.SetLayerWeight(1, 0);
-                Shader.SetGlobalFloat("_PlayerTintWeight", 0);
+                Shader.SetGlobalFloat("_PlayerTintWeight", 1f);
+                Shader.SetGlobalFloat("_PlayerEvaporateClip", 1f);
+
                 var initialPosition = transform.position;
                 transform.position = _safeGroundPosition;
                 OnPlayerTeleported?.Invoke(transform.position - initialPosition);
-                // OnPlayerRespawn?.Invoke();
+                
+                
+                
+                
+                IEnumerator Coroutine()
+                {
+                    yield return new WaitForSeconds(0.1f);
+                    // Util.InvokeSphereEffect(transform.position, Vector3.one * 4f, 1.25f, 0.8f, -0.5f);
+                    yield return new WaitForSeconds(0.1f);
+                    var t = 0f;
+                    var d = 0.5f;
+                    while (t < d)
+                    {
+                        Shader.SetGlobalFloat("_PlayerEvaporateClip", 1f - Util.SmoothLerp01(t / d));
+                        Shader.SetGlobalFloat("_PlayerTintWeight", 1f - Util.SmoothLerp01(t / d));
+                        t += Time.deltaTime;
+                        yield return null;
+                    }
+                }
+                
+                StartCoroutine(Coroutine());
             })
             .OnExit(_ =>
             {

@@ -88,7 +88,7 @@ public static class KeyItemRegistry
             GetCanUse = () => true,
             onUse = () =>
             {
-                PlayerFsm.Singleton.InvokePlayerDeath();
+                SceneLoader.Singleton.ReloadCurrentScene();
             },
             GetUseConfirmation = () => "Return to a previous location?"
         });
@@ -96,7 +96,7 @@ public static class KeyItemRegistry
         KeyItemRegistrations.Add("Map", new KeyItemRegistration()
         {
             displayName = "Glyphstone",
-            description = "A chunk of stone engraved with the sealing Glyph.\n\nAccording to Silicant Diamber, the pattern is a sacred geometric depiction of the Mountain itself.",
+            description = "A Silicant artifact displaying the Glyph's symbology.\n\nAccording to Silicant Diamber, the pattern is a sacred geometric depiction of the Mountain leyline network.",
             MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
             Sprite = null,
             GetUseDescription = () => "Shows your location in the world.",

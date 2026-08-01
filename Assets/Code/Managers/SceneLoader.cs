@@ -42,6 +42,11 @@ public class SceneLoader : MonoBehaviour
         StartCoroutine(LoadYourAsyncScene(scene));
     }
 
+    public void ReloadCurrentScene()
+    {
+        LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     IEnumerator OnStart()
     {
         _rawImageRectTransform.anchorMin = Vector2.zero;

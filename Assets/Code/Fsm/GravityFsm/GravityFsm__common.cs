@@ -8,6 +8,7 @@ public abstract partial class GravityFsm
 {
     protected float YVelocity;
     protected float GravityStrength;
+    protected float BonusGravityModifier;
     protected float TimeInAir;
     protected float MinYVelocity = -40f;
     protected float LastUpwardsY;
