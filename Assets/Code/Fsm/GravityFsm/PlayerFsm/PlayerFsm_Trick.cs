@@ -130,6 +130,7 @@ public partial class PlayerFsm
 
     private IEnumerator TrickTintCoroutine(float delay = 0)
     {
+        if (_isSurgeQueued) yield break;
         yield return new WaitForSeconds(delay);
         var t = 0f;
         var d = 0.15f;

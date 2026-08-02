@@ -113,6 +113,8 @@ public partial class PlayerFsm : GravityFsm
         public static int SurgeStartup;
         public static int SurgeDash;
         public static int SurgeDashStartup;
+        public static int LandsquatAfterSurge;
+        
         public static int Press;
 
         public static int LongFall;
@@ -249,6 +251,7 @@ public partial class PlayerFsm : GravityFsm
         Singleton = this;
         InitState = PlayerFsmState.IdleLongLoop;
         isSprinting = false;
+        _isSurgeQueued = false;
         Time.timeScale = 1f;
         _timeSinceBoostStarted = 100f;
         _movementAnimationMirror = false;
@@ -297,6 +300,7 @@ public partial class PlayerFsm : GravityFsm
         Shader.SetGlobalFloat("_PlayerEvaporateClip", 0f);
         SaveSystem.UpdateScreenshot(0.3f);
         SnapToGround();
+        StartCoroutine(SurgeTrailCoroutine());
     }
     
     protected override void OnStartComplete()
@@ -326,7 +330,7 @@ public partial class PlayerFsm : GravityFsm
         _comboTimer += Time.deltaTime;
         _timeSinceLastFootstep += Time.deltaTime;
         _timeSinceRopeSwing += Time.deltaTime;
-        _timeSinceSurgeStarted += Time.deltaTime;
+
         _timeSinceBoostStarted += Time.deltaTime;
         _timeSinceMinorLeyline += Time.deltaTime;
         _timeSinceMinorLeylineUp += Time.deltaTime;
@@ -343,6 +347,7 @@ public partial class PlayerFsm : GravityFsm
         UpdateFmodWindRushAmount();
         HandleSpeedLines();
         HandleSteepAnimationLayers();
+        HandleSurge();
         
         
         // aerialMomentumOffset = Machine.IsInState(PlayerFsmState.Fall)

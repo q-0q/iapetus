@@ -107,7 +107,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingHoming, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.RopeSwingJumpsquat, 0.15f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeStartup, 1.5f);
-        StateMapConfig.Duration.Add(PlayerFsmState.SurgeDash, 0.35f);
+        StateMapConfig.Duration.Add(PlayerFsmState.SurgeDash, 0.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.SurgeDashStartup, 0.125f);
         StateMapConfig.Duration.Add(PlayerFsmState.KeyItemCollect, 1.25f);
         StateMapConfig.Duration.Add(PlayerFsmState.UseIncenseBurner, 1.25f);
@@ -179,6 +179,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeStartup, "SurgeStartup");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDash, "SurgeDash");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SurgeDashStartup, "SurgeDashStartup");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LandsquatAfterSurge, "LandsquatAfterSurge");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Press, "Press");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.LongFall, "LongFall");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.KeyItemCollect, "KeyItemCollect");
@@ -212,7 +213,7 @@ public partial class PlayerFsm
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.PitonFlip, 0.75f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.Swim, 0.75f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.RopeSwingJump, 0.85f);
-        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SurgeDash, 0.5f);
+        StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.SurgeDash, 0.75f);
         StateMapConfig.GravityStrengthMod.Add(PlayerFsmState.TinsicaJump, 0.55f);
         
         

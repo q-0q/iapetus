@@ -288,6 +288,7 @@ public partial class PlayerFsm
     private float _freezeTimer;
     public float _timeSinceBoostStarted;
     private const float BoostSpeedMultiplier = 1.75f;
+    private const float MaxSurgeDuration = 2.5f;
 
     private const float BoostSpeedDuration = 2.75f;
     public static event Action OnPlayerCultTrialDeath;
@@ -297,6 +298,7 @@ public partial class PlayerFsm
     private float _dialogueEntryMomentum;
     private PlayerTrickParticles _playerTrickParticles;
     private bool _dialogueIdle;
+    private bool _isSurgeQueued;
     public static event Action<String> OnItemCollected;
 
 
@@ -551,7 +553,8 @@ public partial class PlayerFsm
 
     private float GetCurrentSurgeSpeedMultiplier()
     {
-        return _isSurging ? SurgeMoveSpeedModifier : 1f;
+        if (!_isSurging) return 1f;
+        return Mathf.Lerp(SurgeMoveSpeedModifier, 1f, Mathf.InverseLerp(MaxSurgeDuration - 1f, MaxSurgeDuration, _timeSinceSurgeStarted));
     }
 
     private void SetAnimatorMomentum()
@@ -985,7 +988,7 @@ public partial class PlayerFsm
         if (_isSurging)
         {
             FMODUnity.RuntimeManager.PlayOneShotAttached(surgeEndFmodEvent, gameObject);
-            _playerSurgeHalo.StartBreak();
+            // _playerSurgeHalo.StartBreak();
         }
         _speedLinesParticles.Stop();
         _isSurging = false;
@@ -1293,7 +1296,7 @@ public partial class PlayerFsm
         var originRadius = 5f;
         var maxDistance = 10f;
         
-        // todo: dont set safe ground position on moving platforms?
+        // todo: dont set safe ground position on moving platforms?.PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, @params => CanDash(@params) && TimeInCurrentState() > 0.1f); // microfall dash prevention hack
         for (int i = 0; i < rayCount; i++)
         {
             var origin = transform.position + Vector3.up * originHeight + Quaternion.Euler(0, 360f * ((float)i
@@ -1357,4 +1360,68 @@ public partial class PlayerFsm
         
         OnItemCollected?.Invoke(KeyItemRegistry.KeyItemRegistrations[id].displayName);
     }
+
+    public void QueueSurge()
+    {
+        _isSurgeQueued = true;
+        Shader.SetGlobalFloat("_PlayerTintWeight", 1f);
+        Shader.SetGlobalColor("_PlayerTintColor", Color.white);
+    }
+
+    private void HandleSurge()
+    {
+        BonusGravityModifier = _isSurging ? 0.85f : 1f;
+        _timeSinceSurgeStarted += Time.deltaTime;
+        if (!_isSurgeQueued && !_isSurging) return;
+        if (_isSurgeQueued && !Machine.IsInState(PlayerFsmState.Tinsica) &&
+            !(Machine.IsInState(PlayerFsmState.TinsicaJump) && TimeInCurrentState() < 0.5f) && 
+            !(Machine.IsInState(PlayerFsmState.Dashsquat)) && 
+            !(Machine.IsInState(PlayerFsmState.Dash) && TimeInCurrentState() < 0.125f))
+        {
+            _isSurging = true;
+            _isSurgeQueued = false;
+            isSprinting = true;
+            FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
+            _timeSinceSurgeStarted = 0f;
+            _speedLinesParticlesDuration = -1f;
+            _speedLinesParticles.Play();
+
+            Machine.Jump(PlayerFsmState.SurgeDash);
+        } else if (_isSurgeQueued)
+        {
+            Shader.SetGlobalColor("_PlayerTintColor", Color.white);
+            Shader.SetGlobalFloat("_PlayerTintWeight", 1f);
+            return;
+        } else if (_timeSinceSurgeStarted > MaxSurgeDuration)
+        {
+            EndSurge();
+        }
+        
+        Shader.SetGlobalFloat("_PlayerTintWeight", Mathf.Lerp(1f, 0f, Mathf.InverseLerp(0, 0.2f, _timeSinceSurgeStarted)));
+        
+        
+        
+    }
+
+    private IEnumerator SurgeTrailCoroutine()
+    {
+        while (true){
+            yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
+            if (!_isSurging || _timeSinceSurgeStarted > 2f) continue;
+            if (Machine.IsInState(PlayerFsmState.TrialTeleport)) continue;
+            var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
+            var position = _skinnedMeshRenderer.transform.position;
+            var rotation = _skinnedMeshRenderer.transform.rotation;
+            var mesh = new Mesh();
+            _skinnedMeshRenderer.BakeMesh(mesh);
+            var comboMeshObject = Instantiate(comboMeshPrefab, position,
+                rotation, null);
+            comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
+            meshFilter.mesh = mesh;
+        }
+    }
+    
+    
+
+    
 }

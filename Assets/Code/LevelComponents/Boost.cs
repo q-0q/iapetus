@@ -44,24 +44,28 @@ public class Boost : MonoBehaviour
         if (respawnTimer > RespawnDuration)
         {
             respawnTimer = 0f;
-            PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.SurgeDashStartup);
+            
             StartCoroutine(Coroutine());
+
         }
 
         IEnumerator Coroutine()
         {
             var t = 0f;
-            var d = 0.75f;
+            var d = 0.3f;
             while (t < d)
             {
-                _fx.position = Vector3.Lerp(_fx.position, PlayerFsm.Singleton.transform.position +
+                _fx.position = Vector3.Lerp(transform.position, PlayerFsm.Singleton.transform.position +
                                                                     (Vector3.up * 1.5f), t / d);
                 _fx.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t / d);
                 t += Time.unscaledDeltaTime;
                 yield return null;
                 
             }
-
+            
+            
+            PlayerFsm.Singleton.QueueSurge();
+            
             
         }
     }

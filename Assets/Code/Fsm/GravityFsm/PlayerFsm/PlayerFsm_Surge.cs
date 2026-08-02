@@ -47,7 +47,8 @@ public partial class PlayerFsm
     
     private void SurgeDashOnUpdate()
     {
-        var movementMofifier = Mathf.Lerp(1.5f, 1f, Mathf.InverseLerp(0, 0.3f, TimeInCurrentState()));
+        _momentum = MaxMomentum;
+        var movementMofifier = Mathf.Lerp(1.35f, 1f, Mathf.InverseLerp(0, 0.3f, TimeInCurrentState()));
         HandleCollisionMove(movementMofifier);
         HandleTurning(0.65f, false, 0f, true, 1f);
     }
@@ -143,18 +144,24 @@ public partial class PlayerFsm
             })
             .OnEntry(_ =>
             {
-                StartSurge();
+                // StartSurge();
             });
         
         Machine.Configure(PlayerFsmState.SurgeDash)
             .SubstateOf(GravityFsmState.Aerial)
             .Permit(PlayerFsmTrigger.Press, PlayerFsmState.Press)
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .SubstateOf(PlayerFsmState.Landable)
+            // .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
+            .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterSurge, _ => YVelocity < 0, 1)
+            .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, @params => CanDash(@params) && TimeInCurrentState() > 0.3f)
             .OnExit(_ =>
             {
             })
             .OnEntry(_ =>
             {
+                _playerSurgeHalo.StartBreak();
+                _dashSinceLeavingGround = false;
+                YVelocity = Mathf.Max(YVelocity, 15f);
                 _inputBuffer.ConsumeBuffer("Interact");
             });
     }
