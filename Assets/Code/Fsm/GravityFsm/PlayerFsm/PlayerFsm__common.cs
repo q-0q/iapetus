@@ -1421,8 +1421,9 @@ public partial class PlayerFsm
     private IEnumerator SurgeTrailCoroutine()
     {
         while (true){
+            if (_isSurgeQueued) yield return new WaitForSeconds(Random.Range(0.12f, 0.1f));
             yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
-            if (!_isSurging || _timeSinceSurgeStarted > 1.5f) continue;
+            if ((!_isSurging || _timeSinceSurgeStarted > 1.5f) && !_isSurgeQueued) continue;
             if (Machine.IsInState(PlayerFsmState.TrialTeleport)) continue;
             var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
             var position = _skinnedMeshRenderer.transform.position;

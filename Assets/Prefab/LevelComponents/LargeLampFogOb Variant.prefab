@@ -46,6 +46,54 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogObserver
   isPlayer: 0
   radiusMultiplier: 2
+--- !u!1 &7407410121204150760
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5868183770648606336}
+  - component: {fileID: 6878964514517105917}
+  m_Layer: 0
+  m_Name: CustomPointLight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5868183770648606336
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7407410121204150760}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3250249567401042571}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6878964514517105917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7407410121204150760}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6afe0ab094f14d2dacfb803ede6ee220, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CustomPointLight
+  Color: {r: 0.1882353, g: 0.15294118, b: 0.12941177, a: 0}
+  distanceLerpMin: 0
+  distanceLerpMax: 20
+  distanceLerpPower: 1
 --- !u!1001 &3756885344871693289
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -145,12 +193,18 @@ PrefabInstance:
       value: LargeLampFogOb Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1690746384273474586, guid: ac7e93de1899e4f7e9a23c663e864510, type: 3}
+    - {fileID: 123293330044418786, guid: ac7e93de1899e4f7e9a23c663e864510, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 1817228366193678690, guid: ac7e93de1899e4f7e9a23c663e864510,
         type: 3}
       insertIndex: 0
       addedObject: {fileID: 7567095363269071224}
+    - targetCorrespondingSourceObject: {fileID: 1817228366193678690, guid: ac7e93de1899e4f7e9a23c663e864510,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5868183770648606336}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac7e93de1899e4f7e9a23c663e864510, type: 3}
 --- !u!4 &3250249567401042571 stripped

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteAlways]
 public class CustomPointLightManager : MonoBehaviour
 {
     public static CustomPointLightManager Singleton;
@@ -33,9 +32,9 @@ public class CustomPointLightManager : MonoBehaviour
     private static Vector4[] _lightLerps = new Vector4[64];
     private static Vector4[] _lightColors = new Vector4[64];
     
-    private static readonly int CountID = Shader.PropertyToID("_CustomFogObserverCount");
+    private static readonly int CountID = Shader.PropertyToID("_CustomPointLightCount");
     private static readonly int PositionsID = Shader.PropertyToID("_CustomPointLightPositions");
-    private static readonly int LerpsID = Shader.PropertyToID("_CustomPointLightPositions");
+    private static readonly int LerpsID = Shader.PropertyToID("_CustomPointLightLerps");
     private static readonly int ColorsID = Shader.PropertyToID("_CustomPointLightColors");
     
     private void UpdateObserversVectorArray()
@@ -48,9 +47,10 @@ public class CustomPointLightManager : MonoBehaviour
             {
                 var l = CustomPointLightRegistry[i];
                 Vector3 pos = l.transform.position;
-                _lightPositions[i] = new Vector4(pos.x, pos.y, pos.z);
-                _lightLerps[i] = new Vector4(l.distanceLerpMin, l.distanceLerpMax, l.distanceLerpPower);
-                _lightColors[i] = new Vector4(l.Color.r, l.Color.g, l.Color.b);
+                _lightPositions[i] = new Vector4(pos.x, pos.y, pos.z, 0f);
+                _lightLerps[i] = new Vector4(l.distanceLerpMin, l.distanceLerpMax, l.distanceLerpPower, 0f);
+                _lightColors[i] = new Vector4(l.Color.r, l.Color.g, l.Color.b, 0f);
+                print(_lightColors[i]);
             }
             else
             {

@@ -84,14 +84,14 @@ public partial class CultTrialFsm
         for (int i = 0; i < flamesParent.childCount; i++)
         {
             var flame = flamesParent.GetChild(i);
-            var light = flame.GetComponentInChildren<Light>();
+            var light = flame.GetComponentInChildren<CustomPointLight>();
             StartCoroutine(EnableAfterDelay(light,
                 i * 0.2f));
         }
 
         return;
 
-        IEnumerator EnableAfterDelay(Light light, float delay)
+        IEnumerator EnableAfterDelay(CustomPointLight light, float delay)
         {
             yield return new WaitForSeconds(delay);
             light.GetComponent<ParticleSystem>().Play();

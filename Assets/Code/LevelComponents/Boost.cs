@@ -12,6 +12,8 @@ public class Boost : MonoBehaviour
     private Transform _center;
     private Transform _splines;
     private ParticleSystem _particles;
+    private CustomPointLight _light;
+    private Color _baseLightColor;
 
     public bool groundSnap = true;
 
@@ -22,7 +24,9 @@ public class Boost : MonoBehaviour
         _center = transform.Find("Fx").Find("Center");
         _splines = transform.Find("Fx").Find("Splines");
         _particles = GetComponentInChildren<ParticleSystem>();
-        
+        _light = GetComponentInChildren<CustomPointLight>();
+        _baseLightColor = _light.Color;
+
     }
 
     private void Start()
@@ -59,6 +63,8 @@ public class Boost : MonoBehaviour
             _center.position = transform.position;
             _center.localScale = Vector3.one;
             _particles.Play();
+            _light.Color = _baseLightColor;
+
         }
         
         respawnTimer += Time.deltaTime;
@@ -87,8 +93,10 @@ public class Boost : MonoBehaviour
                 _center.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t / d);
                 t += Time.unscaledDeltaTime;
                 yield return null;
-                
+                _light.Color = _baseLightColor * Mathf.Clamp01((1f - ((t * 2f) / d)));
             }
+            
+            _light.Color = Color.black;
             
             _particles.Stop();
             _splines.gameObject.SetActive(false);

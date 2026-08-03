@@ -19,12 +19,12 @@ public class CustomPointLight : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        CustomPointLightManager.CustomPointLightRegistry.Add(this);
     }
 
     private void OnDisable()
     {
-        
+        CustomPointLightManager.CustomPointLightRegistry.Remove(this);
     }
 
     private void Update()
