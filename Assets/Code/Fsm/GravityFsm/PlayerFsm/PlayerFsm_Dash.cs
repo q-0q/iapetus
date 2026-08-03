@@ -6,7 +6,8 @@ public partial class PlayerFsm
     {
         HandleTurning(AirControlTurningMultiplier, true, AirControlTurningMomentumDecayModifier);
         Animator.SetLayerWeight(1, 0);
-        var dashForwardSpeed = Mathf.Lerp(DashForwardSpeed, DashForwardSpeed - 8f, Mathf.InverseLerp(0.4f, 0.65f, TimeInCurrentState())) * GetCurrentSurgeSpeedMultiplier();
+        var dashForwardSpeed = Mathf.Lerp(DashForwardSpeed, DashForwardSpeed - 4f, Mathf.InverseLerp(0.4f, 0.65f, TimeInCurrentState())) * GetCurrentSurgeSpeedMultiplier();
+        
         var collisionMove = ComputeCollisionMove(transform.forward * (dashForwardSpeed * Time.deltaTime));
         transform.position += collisionMove;
     }

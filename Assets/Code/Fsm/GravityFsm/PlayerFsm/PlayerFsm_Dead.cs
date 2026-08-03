@@ -68,6 +68,7 @@ public partial class PlayerFsm
             .SubstateOf(GravityFsmState.Grounded)
             .OnEntry(_ =>
             {
+                _timeSinceRespawn = 0;
                 _momentum = 0;
                 LastUpwardsY = transform.position.y;
                 // _skinnedMeshRenderer.transform.DOComplete();

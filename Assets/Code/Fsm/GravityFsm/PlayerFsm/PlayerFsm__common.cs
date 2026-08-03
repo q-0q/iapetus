@@ -58,6 +58,7 @@ public partial class PlayerFsm
     private PlayerDashParticles _playerDashParticles;
     private ParticleSystem _speedLinesParticles;
     private Transform _speedLinesParticlesTransform;
+    private float _timeSinceRespawn;
     
     private float _timeSinceSpeedLinesParticlesPlayed;
     private float _speedLinesParticlesDuration;
@@ -150,7 +151,7 @@ public partial class PlayerFsm
     private const float IdleMomentumThreshold = 0.5f;
     
     private const float JumpYVelocity = 22f; 
-    private const float CoyoteTime = 0.04f;
+    private const float CoyoteTime = 0.075f;
     private const float AirControlTurningMultiplier = 0.8f;
     private const float AirControlTurningMomentumDecayModifier = 0.25f;
     private const float AirControlMomentumDecayModifier = 0.475f;
@@ -202,7 +203,7 @@ public partial class PlayerFsm
     private const float DashEntryMomentumGain = 5f;
     private const float DashEntryMinimumMomentum = 12f;
     private const float DashsquatTurnMultiplier = 2.25f;
-    private const float DashForwardSpeed = 24f;
+    private const float DashForwardSpeed = 30f; // **** 24
     private const float DashRaycastHeightOffset = 0f;
     private const float SkipWindowDuration = 0.2f;
     private const float SkipForwardBonusSpeed = 3.5f;
@@ -299,6 +300,7 @@ public partial class PlayerFsm
     private PlayerTrickParticles _playerTrickParticles;
     private bool _dialogueIdle;
     private bool _isSurgeQueued;
+    private float _timeSinceSurgeQueued;
     public static event Action<String> OnItemCollected;
 
 
@@ -547,6 +549,7 @@ public partial class PlayerFsm
 
     private float GetCurrentBoostSpeedMultiplier()
     {
+        if (!_isSurging && _isSurgeQueued) return 1.35f;
         return Mathf.Lerp(1f, BoostSpeedMultiplier, Mathf.InverseLerp(BoostSpeedDuration, 0, _timeSinceBoostStarted));
     }
 
@@ -554,7 +557,7 @@ public partial class PlayerFsm
     private float GetCurrentSurgeSpeedMultiplier()
     {
         if (!_isSurging) return 1f;
-        return Mathf.Lerp(SurgeMoveSpeedModifier, 1f, Mathf.InverseLerp(MaxSurgeDuration - 1f, MaxSurgeDuration, _timeSinceSurgeStarted));
+        return Mathf.Lerp(SurgeMoveSpeedModifier, 1f, Mathf.InverseLerp(MaxSurgeDuration - 1.5f, MaxSurgeDuration, _timeSinceSurgeStarted));
     }
 
     private void SetAnimatorMomentum()
@@ -1364,27 +1367,39 @@ public partial class PlayerFsm
     public void QueueSurge()
     {
         _isSurgeQueued = true;
+        _timeSinceSurgeQueued = 0;
         Shader.SetGlobalFloat("_PlayerTintWeight", 1f);
         Shader.SetGlobalColor("_PlayerTintColor", Color.white);
     }
 
     private void HandleSurge()
     {
-        BonusGravityModifier = _isSurging ? 0.85f : 1f;
+        BonusGravityModifier = _isSurging || _isSurgeQueued ? 0.85f : 1f;
         _timeSinceSurgeStarted += Time.deltaTime;
+        _timeSinceSurgeQueued += Time.deltaTime;
         if (!_isSurgeQueued && !_isSurging) return;
-        if (_isSurgeQueued && !Machine.IsInState(PlayerFsmState.Tinsica) &&
+        if (_isSurgeQueued && _timeSinceSurgeQueued > 0.15f && 
+            !Machine.IsInState(PlayerFsmState.Tinsica) &&
             !(Machine.IsInState(PlayerFsmState.TinsicaJump) && TimeInCurrentState() < 0.5f) && 
             !(Machine.IsInState(PlayerFsmState.Dashsquat)) && 
-            !(Machine.IsInState(PlayerFsmState.Dash) && TimeInCurrentState() < 0.125f))
+            !(Machine.IsInState(PlayerFsmState.Dash)) && 
+            !(Machine.IsInState(PlayerFsmState.FallAfterDash) && TimeInCurrentState() < 0.5f) && 
+            !(Machine.IsInState(PlayerFsmState.Skipsquat))&&
+            !(Machine.IsInState(PlayerFsmState.LandsquatAfterDash))&&
+            !(Machine.IsInState(PlayerFsmState.Wallrun) && TimeInCurrentState() < 0.75f) &&
+            !(Machine.IsInState(PlayerFsmState.Jumpsquat)) &&
+            !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
+            !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f)
+            
+           )
+            
         {
             _isSurging = true;
             _isSurgeQueued = false;
             isSprinting = true;
             FMODUnity.RuntimeManager.PlayOneShotAttached(comboTriggerFmodEvent, gameObject);
             _timeSinceSurgeStarted = 0f;
-            _speedLinesParticlesDuration = -1f;
-            _speedLinesParticles.Play();
+            PlaySpeedLineParticlesForDuration(1.5f);
 
             Machine.Jump(PlayerFsmState.SurgeDash);
         } else if (_isSurgeQueued)
@@ -1407,7 +1422,7 @@ public partial class PlayerFsm
     {
         while (true){
             yield return new WaitForSeconds(Random.Range(0.06f, 0.05f));
-            if (!_isSurging || _timeSinceSurgeStarted > 2f) continue;
+            if (!_isSurging || _timeSinceSurgeStarted > 1.5f) continue;
             if (Machine.IsInState(PlayerFsmState.TrialTeleport)) continue;
             var comboMeshPrefab = Resources.Load("Prefab/Fsm/PlayerComboMesh") as GameObject;
             var position = _skinnedMeshRenderer.transform.position;
@@ -1419,6 +1434,11 @@ public partial class PlayerFsm
             comboMeshObject.TryGetComponent(out MeshFilter meshFilter);
             meshFilter.mesh = mesh;
         }
+    }
+
+    public float GetTimeSinceRespawn()
+    {
+        return _timeSinceRespawn;
     }
     
     

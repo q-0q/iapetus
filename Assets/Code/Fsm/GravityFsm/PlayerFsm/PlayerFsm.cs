@@ -334,6 +334,7 @@ public partial class PlayerFsm : GravityFsm
         _timeSinceBoostStarted += Time.deltaTime;
         _timeSinceMinorLeyline += Time.deltaTime;
         _timeSinceMinorLeylineUp += Time.deltaTime;
+        _timeSinceRespawn += Time.deltaTime;
         
         if (_comboTimer > ComboTimeoutDuration)
         {

@@ -31,7 +31,7 @@ public class LookAtCamera : MonoBehaviour
         }
         else
         {
-            transform.LookAt(_camera.transform, Vector3.up);
+            transform.LookAt(_camera.transform, transform.up);
         }
     }
 }

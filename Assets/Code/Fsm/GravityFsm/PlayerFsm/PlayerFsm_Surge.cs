@@ -149,13 +149,14 @@ public partial class PlayerFsm
         
         Machine.Configure(PlayerFsmState.SurgeDash)
             .SubstateOf(GravityFsmState.Aerial)
-            .Permit(PlayerFsmTrigger.Press, PlayerFsmState.Press)
+            .SubstateOf(PlayerFsmState.WallInteractable)
             .SubstateOf(PlayerFsmState.Landable)
             // .Permit(FsmTrigger.Timeout, PlayerFsmState.GroundMove)
             .PermitIf(GravityFsmTrigger.StartFrameGrounded, PlayerFsmState.LandsquatAfterSurge, _ => YVelocity < 0, 1)
             .PermitIf(PlayerFsmTrigger.Dash, PlayerFsmState.Dashsquat, @params => CanDash(@params) && TimeInCurrentState() > 0.3f)
             .OnExit(_ =>
             {
+                Shader.SetGlobalFloat("_PlayerTintWeight", 0);
             })
             .OnEntry(_ =>
             {

@@ -9,13 +9,32 @@ public class Boost : MonoBehaviour
     private TriggerProxy _triggerProxy;
     private float respawnTimer;
     private const float RespawnDuration = 2.5f;
-    private Transform _fx;
+    private Transform _center;
+    private Transform _splines;
+    private ParticleSystem _particles;
+
+    public bool groundSnap = true;
 
     private void Awake()
     {
         _triggerProxy = GetComponentInChildren<TriggerProxy>();
         respawnTimer = RespawnDuration;
-        _fx = transform.Find("Fx");
+        _center = transform.Find("Fx").Find("Center");
+        _splines = transform.Find("Fx").Find("Splines");
+        _particles = GetComponentInChildren<ParticleSystem>();
+        
+    }
+
+    private void Start()
+    {
+        if (groundSnap)
+        {
+            if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 25f,
+                    Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+            {
+                transform.position = hit.point + Vector3.up * 5f;
+            }
+        }
     }
 
     private void OnEnable()
@@ -30,10 +49,16 @@ public class Boost : MonoBehaviour
 
     private void Update()
     {
-        if (RespawnDuration - respawnTimer < Time.deltaTime)
+        
+        _splines.localRotation *= Quaternion.Euler(0f, 0f, Time.deltaTime * 50f);
+
+        var d = RespawnDuration - respawnTimer;
+        if (d < Time.deltaTime && d > 0)
         {
-            _fx.position = transform.position;
-            _fx.localScale = Vector3.one;
+            _splines.gameObject.SetActive(true);
+            _center.position = transform.position;
+            _center.localScale = Vector3.one;
+            _particles.Play();
         }
         
         respawnTimer += Time.deltaTime;
@@ -41,6 +66,8 @@ public class Boost : MonoBehaviour
 
     private void OnTriggerProxyStay(Collider obj)
     {
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Respawn)) return;
+        if (PlayerFsm.Singleton.GetTimeSinceRespawn() < 2f) return;
         if (respawnTimer > RespawnDuration)
         {
             respawnTimer = 0f;
@@ -55,15 +82,16 @@ public class Boost : MonoBehaviour
             var d = 0.3f;
             while (t < d)
             {
-                _fx.position = Vector3.Lerp(transform.position, PlayerFsm.Singleton.transform.position +
+                _center.position = Vector3.Lerp(transform.position, PlayerFsm.Singleton.transform.position +
                                                                     (Vector3.up * 1.5f), t / d);
-                _fx.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t / d);
+                _center.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, t / d);
                 t += Time.unscaledDeltaTime;
                 yield return null;
                 
             }
             
-            
+            _particles.Stop();
+            _splines.gameObject.SetActive(false);
             PlayerFsm.Singleton.QueueSurge();
             
             
