@@ -126,7 +126,7 @@ public class CultTrialManager : MonoBehaviour
         var w = _curseDuration / CurseMaximumDuration;
         _curseHudTextMaterial.SetFloat("_BarAmount", w);
         _activeFogController.LerpStrengthMultiplier = 20f;
-        _activeFogController.Color = Color.Lerp(_activeFogControllerBaseColor, Color.black, (1f - w) * 1.3f);
+        _activeFogController.Color = Color.Lerp(_activeFogControllerBaseColor, Color.black, (1f - w));
 
         var depthOffset = Mathf.Lerp(0, -50f, 1f - w);
         // _activeFogController.DepthMin = _activeFogControllerDepthMin;
@@ -143,19 +143,21 @@ public class CultTrialManager : MonoBehaviour
         PlayerFsm.Singleton.InvokePlayerDeath();
     }
 
-    public void SetCurseEffects(float timeInCurrentState)
+    public void SetCurseEffects(float timeInCurrentState, bool fov = true)
     {
         _curseHalo.position = PlayerFsm.Singleton.transform.position + Vector3.up * 2f;
         _curseCanvasImage.transform.parent.position = _curseHalo.position;
-        
-        var strength = 2f;
-        var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
-        freeLook.m_Lens.FieldOfView =
-            Mathf.Lerp(freeLook.m_Lens.FieldOfView, 55f, Time.deltaTime * strength);
 
-        var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
-        offset.m_Offset = Vector3.Lerp(offset.m_Offset,
-            new Vector3(0, 0, -3f), Time.deltaTime * strength);
+        if (fov) {
+            var strength = 2f;
+            var freeLook = PlayerCinemachineFreeLook.Singleton.GetFreeLook();
+            freeLook.m_Lens.FieldOfView =
+                Mathf.Lerp(freeLook.m_Lens.FieldOfView, 55f, Time.deltaTime * strength);
+
+            var offset = freeLook.transform.GetComponent<CinemachineCameraOffset>();
+            offset.m_Offset = Vector3.Lerp(offset.m_Offset,
+                new Vector3(0, 0, -7f), Time.deltaTime * strength);
+        }
         
         _curseHalo.localScale = Vector3.one * Mathf.Lerp(10f, 2f, Mathf.InverseLerp(0, 2.5f, timeInCurrentState));
         var w = Mathf.InverseLerp(0, 2f, timeInCurrentState);

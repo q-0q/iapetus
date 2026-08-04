@@ -116,7 +116,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.MinorLeylineStartup, 0.75f);
         StateMapConfig.Duration.Add(PlayerFsmState.ChestInteract, 0.5f);
         
-        StateMapConfig.Duration.Add(PlayerFsmState.Tinsica, TinsicaDuration);
+        StateMapConfig.Duration.Add(PlayerFsmState.Tinsica, 0); // timeout exit condition is manually computed in trick.cs
         StateMapConfig.Duration.Add(PlayerFsmState.TinsicaJumpsquat, 0.1f);
         
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Dash, "Dash");
@@ -151,7 +151,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.SlideDown, "SlideDown");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.FallAfterSlideLateral, "FallAfterSlideLateral");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.GroundMoveAfterVault, "GroundMoveAfterVault");
-        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Wary");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneWary, "Idle");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.CutsceneIdle, "IdleLongLoop");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Updraft, "Updraft");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.TrialTeleport, "GroundMove");

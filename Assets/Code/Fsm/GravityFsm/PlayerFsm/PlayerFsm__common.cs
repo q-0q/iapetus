@@ -242,7 +242,7 @@ public partial class PlayerFsm
     private float _timeSinceMinorLeyline = 100f;
     private float _timeSinceMinorLeylineUp = 100f;
 
-    private const float TinsicaDuration = 0.55f;
+    private const float TinsicaDuration = 0.75f;
     private const float TinsicaEntryMomentum = 9.5f;
 
 
@@ -1321,7 +1321,6 @@ public partial class PlayerFsm
 
     private void HandleSteepAnimationLayers()
     {
-        
         var currentWeight = Animator.GetLayerWeight(3);
         var currentSteepness = Animator.GetFloat("Steepness");
         var w = 0f;
@@ -1382,8 +1381,8 @@ public partial class PlayerFsm
             !Machine.IsInState(PlayerFsmState.Tinsica) &&
             !(Machine.IsInState(PlayerFsmState.TinsicaJump) && TimeInCurrentState() < 0.5f) && 
             !(Machine.IsInState(PlayerFsmState.Dashsquat)) && 
-            !(Machine.IsInState(PlayerFsmState.Dash)) && 
-            !(Machine.IsInState(PlayerFsmState.FallAfterDash) && TimeInCurrentState() < 0.5f) && 
+            !(Machine.IsInState(PlayerFsmState.Dash) ) && 
+            !(Machine.IsInState(PlayerFsmState.FallAfterDash) && TimeInCurrentState() < 0.25f) && 
             !(Machine.IsInState(PlayerFsmState.Skipsquat))&&
             !(Machine.IsInState(PlayerFsmState.LandsquatAfterDash))&&
             !(Machine.IsInState(PlayerFsmState.Wallrun) && TimeInCurrentState() < 0.75f) &&

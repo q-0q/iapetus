@@ -109,6 +109,6 @@ public partial class CultTrialFsm
     {
         if (!SaveSystem.GetPersistentEventCompleted(metaName+"-unlocked")) return;
         if (!SaveSystem.GetPersistentEventCompleted(FirstTimeUsePersistentEvent)) return;
-        _interactable.text = CultTrialManager.Singleton.isCurseEnabled ? "Dispel mark" : "Accept mark";
+        _interactable.text = CultTrialManager.Singleton.isCurseEnabled ? "Dispel" : "Accept";
     }
 }

@@ -59,7 +59,7 @@ public partial class PlayerFsm
             }, 2)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jump, _ =>
             {
-                return TimeInCurrentState() > 0.5 * ComputeTiniscaDurationMod()  && PlayerManaManager.Singleton.GetCurrentAvailableMana() < 1;
+                return TimeInCurrentState() > 0.85 * ComputeTiniscaDurationMod()  && PlayerManaManager.Singleton.GetCurrentAvailableMana() < 1;
             })
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.GroundMove, _ =>
             {
@@ -125,7 +125,8 @@ public partial class PlayerFsm
         var boostMultiplier = GetCurrentBoostSpeedMultiplier();
         var miscMultiplier = GetCurrentMiscSpeedMultiplier();
         
-        return Mathf.Lerp(1.3f, 1f, Mathf.InverseLerp(TinsicaEntryMomentum, MaxMomentum, _momentum));
+        return Mathf.Lerp(1.3f, 1f, Mathf.InverseLerp(TinsicaEntryMomentum, MaxMomentum, _momentum)) *
+               (1f / SurgeMoveSpeedModifier);
     }
 
     private IEnumerator TrickTintCoroutine(float delay = 0)

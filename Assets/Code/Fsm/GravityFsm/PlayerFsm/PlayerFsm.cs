@@ -705,7 +705,13 @@ public partial class PlayerFsm : GravityFsm
     private void OnStateChangedCompleted(TriggerParams obj)
     {
         print(InheritableEnum.GetFieldNameByValue(Machine.State(), typeof(PlayerFsmState)));
-        ReplaceAnimatorTrigger(StateMapConfig.AnimationTrigger.GetStrict(this));
+        var trigger = StateMapConfig.AnimationTrigger.GetStrict(this);
+        ReplaceAnimatorTrigger(trigger);
+        if (trigger == "GroundMove") Animator.SetTrigger("GroundMoveSteep");
+        // this is a workaround for what i believe is a bug inside unity animator controllers where
+        // two different layers reacting to the same trigger can mess eachother up
+        // so i have broken ground move into a second distinct trigger for the steepness layer
+        // to prevent this from happening
     }
 
     private void OnEnable()

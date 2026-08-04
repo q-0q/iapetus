@@ -126,7 +126,7 @@ public partial class CultTrialFsm
                 SaveSystem.WritePlayerInGamePosition(_interactable.transform.position, "", _startingLine.rotation.eulerAngles.y);
                 CultTrialManager.Singleton.DisableActiveFog();
                 CultTrialManager.Singleton.DisableCurse();
-                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneIdle);
+                PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.CutsceneWary);
             })
             .OnExit(_ =>
             {

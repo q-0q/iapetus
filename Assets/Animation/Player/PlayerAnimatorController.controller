@@ -1616,7 +1616,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -1789399870782626151}
-    m_Position: {x: 310, y: 930, z: 0}
+    m_Position: {x: 340, y: 930, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4451607933850686369}
     m_Position: {x: 540, y: 930, z: 0}
@@ -2540,7 +2540,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: GroundMove
+    m_ConditionEvent: GroundMoveSteep
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6830417073445248634}
@@ -2548,12 +2548,12 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.061638586
+  m_TransitionDuration: 0
   m_TransitionOffset: 0
   m_ExitTime: 0
   m_HasExitTime: 0
-  m_HasFixedDuration: 1
-  m_InterruptionSource: 2
+  m_HasFixedDuration: 0
+  m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 --- !u!206 &-958406550796321816
@@ -2812,7 +2812,7 @@ AnimatorStateTransition:
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
-  m_OrderedInterruption: 1
+  m_OrderedInterruption: 0
   m_CanTransitionToSelf: 1
 --- !u!1101 &-466139244258542953
 AnimatorStateTransition:
@@ -3511,6 +3511,12 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
+  - m_Name: GroundMoveSteep
+    m_Type: 9
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -4171,9 +4177,9 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.30843163
+  m_TransitionDuration: 0.07998791
   m_TransitionOffset: 0
-  m_ExitTime: 0
+  m_ExitTime: 3.6455433e-10
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -4838,7 +4844,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New State
+  m_Name: Steep
   m_Speed: 2
   m_CycleOffset: 0
   m_Transitions: []
