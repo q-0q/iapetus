@@ -294,7 +294,7 @@ public partial class PlayerFsm
     private const float BoostSpeedDuration = 2.75f;
     public static event Action OnPlayerCultTrialDeath;
     public static event Action<Vector3> OnPlayerTeleported;
-    private const float SwimFreezeDuration = 3f;
+    private const float SwimFreezeDuration = 2.5f;
 
     private float _dialogueEntryMomentum;
     private PlayerTrickParticles _playerTrickParticles;
@@ -1388,7 +1388,9 @@ public partial class PlayerFsm
             !(Machine.IsInState(PlayerFsmState.Wallrun) && TimeInCurrentState() < 0.75f) &&
             !(Machine.IsInState(PlayerFsmState.Jumpsquat)) &&
             !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
-            !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f)
+            !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f) &&
+            !(Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.Respawn))
+            
             
            )
             

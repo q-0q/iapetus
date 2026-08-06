@@ -59,7 +59,7 @@ public partial class PlayerFsm
             }, 2)
             .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jump, _ =>
             {
-                return TimeInCurrentState() > 0.85 * ComputeTiniscaDurationMod()  && PlayerManaManager.Singleton.GetCurrentAvailableMana() < 1;
+                return TimeInCurrentState() > 0.4 * ComputeTiniscaDurationMod()  && PlayerManaManager.Singleton.GetCurrentAvailableMana() < 1;
             })
             .PermitIf(FsmTrigger.Timeout, PlayerFsmState.GroundMove, _ =>
             {

@@ -26,6 +26,9 @@ public class Barrier : MonoBehaviour
 
     private Collider _openTrigger;
 
+    private CustomPointLight _light;
+    private Color _baseLightColor;
+
 
     private void Awake()
     {
@@ -33,6 +36,8 @@ public class Barrier : MonoBehaviour
         _curtainRenderer = curtain.GetComponent<Renderer>();
         _curtainMaterial = _curtainRenderer.material;
         _curtainMaterial.SetVector("_WorldspaceOrigin", transform.position);
+        _light = GetComponentInChildren<CustomPointLight>();
+        _baseLightColor = _light.Color;
         
         _cameraFollow = transform.Find("Camera").Find("CameraFollow");
         _cameraStart = transform.Find("Camera").Find("CameraFollowStart");
@@ -45,6 +50,7 @@ public class Barrier : MonoBehaviour
         {
             Util.ReplaceAnimatorTrigger(_animator, "Open");
             curtainCollider.enabled = false;
+            _light.enabled = false;
             return;
         }
         
@@ -103,7 +109,23 @@ public class Barrier : MonoBehaviour
         
         Util.ReplaceAnimatorTrigger(_animator, "Opening");
         StartCoroutine(Coroutine());
+        StartCoroutine(LightCoroutine());
 
+        IEnumerator LightCoroutine()
+        {
+            yield return new WaitForSeconds(2f);
+            var t = 0f;
+            var d = 2f;
+            while (t < d)
+            {
+                _light.Color = Color.Lerp(_baseLightColor, Color.black, t / d);
+                t += Time.deltaTime;
+                yield return null;
+            }
+
+            _light.enabled = false;
+        }
+        
         IEnumerator Coroutine()
         {
             

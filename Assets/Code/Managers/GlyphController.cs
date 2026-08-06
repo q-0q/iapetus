@@ -67,7 +67,7 @@ public class GlyphController : MonoBehaviour
             {
                 displayId = "02",
                 previousNode = "tutorial-1",
-                loreDialogue = new List<string>() {  },
+                loreDialogue = new List<string>() { "The Steppe's natural aquifers feed the coolant systems of the relay hub and its inner chambers.", "Additionally, the unusual mineral content of the water has been found to actually increase signal conductivity.", "The line to Ouro Station thus uses relatively low power, despite the distance and altitude gain." },
                 mapSplineId = 0,
                 mapSplineStartT = 0.6f,
                 mapSplineEndT = 0.8f

@@ -82,6 +82,7 @@ Transform:
   - {fileID: 8211010874697133280}
   - {fileID: 140996472226534215}
   - {fileID: 93072886325106070}
+  - {fileID: 4419141549462369546}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -40.093, z: 0}
 --- !u!114 &3926645954213928583
@@ -101,6 +102,54 @@ MonoBehaviour:
   vibratorA: {fileID: 6106610835758836502}
   vibratorB: {fileID: 7148911408077073323}
   vibratorC: {fileID: 2225547052648698911}
+--- !u!1 &4666039836296202482
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4419141549462369546}
+  - component: {fileID: 1805995734722243265}
+  m_Layer: 0
+  m_Name: CustomPointLight
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4419141549462369546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4666039836296202482}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4.17, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2783427539314750383}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1805995734722243265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4666039836296202482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6afe0ab094f14d2dacfb803ede6ee220, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CustomPointLight
+  Color: {r: 0.4433962, g: 0, b: 0, a: 0}
+  distanceLerpMin: 0
+  distanceLerpMax: 25
+  distanceLerpPower: 0.6
 --- !u!1 &6638758910055793574
 GameObject:
   m_ObjectHideFlags: 0

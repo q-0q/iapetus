@@ -16,6 +16,7 @@ public class BarrierSwitch : MonoBehaviour
     public GameObject vibratorA;
     public GameObject vibratorB;
     public GameObject vibratorC;
+    private CustomPointLight _light;
 
     public static event Action<string> OnBarrierSwitch;
 
@@ -24,6 +25,7 @@ public class BarrierSwitch : MonoBehaviour
         _interactable = GetComponentInChildren<Interactable>();
         _particleSystem = GetComponentInChildren<ParticleSystem>();
         _animator = GetComponentInChildren<Animator>();
+        _light = GetComponentInChildren<CustomPointLight>();
         Util.ReplaceAnimatorTrigger(_animator, "Down");
 
         
@@ -50,6 +52,7 @@ public class BarrierSwitch : MonoBehaviour
             OnBarrierSwitch?.Invoke(metaName);
             _particleSystem.Play();
             SaveSystem.WritePersistentEvent(metaName);
+            _light.enabled = false;
             vibratorA.transform.DOShakePosition(0.4f, 0.2f, 20);
             vibratorB.transform.DOShakePosition(0.4f, 0.2f, 20);
             vibratorC.transform.DOShakePosition(0.4f, 0.2f, 20);
@@ -79,6 +82,7 @@ public class BarrierSwitch : MonoBehaviour
         {
             _interactable.SetEnabled(false);
             Util.ReplaceAnimatorTrigger(_animator, "Up");
+            _light.enabled = false;
             Curtain.SetActive(false);
         }
     }

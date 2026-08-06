@@ -97,7 +97,8 @@ public partial class PlayerFsm
             .OnEntry(_ =>
             {
                 _momentum = 5f;
-                YVelocity = 36f;
+                YVelocity = 32f; // 36;
+                _currentPitonTransform.DOComplete();
                 _currentPitonTransform.DOShakeRotation(1f, 0.4f, 20);
                 _currentPitonTransform.DOShakePosition(1f, 0.4f, 20);
                 _currentPitonTransform.GetComponent<PitonController>().PlayFlipEvent();

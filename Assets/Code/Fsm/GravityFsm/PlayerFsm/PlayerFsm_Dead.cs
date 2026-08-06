@@ -41,6 +41,7 @@ public partial class PlayerFsm
                 Animator.StartPlayback();
                 Animator.enabled = false;
                 isSprinting = false;
+                _isSurgeQueued = false;
                 _deathParticles.PlayDeath();
                 EndSurge();
             });

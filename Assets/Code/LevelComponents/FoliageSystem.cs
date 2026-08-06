@@ -269,7 +269,7 @@ public class FoliageSystem : MonoBehaviour
     private bool RaycastCheckSphere(RaycastHit hitInfo, Vector3 rayDirection)
     {
         var height = 300f;
-        var gap = 1f;
+        var gap = 0.01f;
         var origin = hitInfo.point + Vector3.up * height;
         
         // if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
