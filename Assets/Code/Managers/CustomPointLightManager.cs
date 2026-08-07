@@ -50,7 +50,6 @@ public class CustomPointLightManager : MonoBehaviour
                 _lightPositions[i] = new Vector4(pos.x, pos.y, pos.z, 0f);
                 _lightLerps[i] = new Vector4(l.distanceLerpMin, l.distanceLerpMax, l.distanceLerpPower, 0f);
                 _lightColors[i] = new Vector4(l.Color.r, l.Color.g, l.Color.b, 0f);
-                print(_lightColors[i]);
             }
             else
             {

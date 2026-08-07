@@ -1,6 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.Rendering;
 using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 [RequireComponent(typeof(Collider))]
 public class FoliageSystem : MonoBehaviour
@@ -28,24 +30,19 @@ public class FoliageSystem : MonoBehaviour
     public LayerMask receiveFoliageMask;
     
 
-    Matrix4x4[] instData;
-    RenderParams rp;
-
     [Tooltip("If true, binds the foliage to the transform of the foliage system, for use in moving/rotating platforms. not performant, use sparingly")]
     public bool transformBake = false;
-
-    void Start()
+    
+    
+    
+    [Serializable]
+    public class FoliageSystemData
     {
-        rp = new RenderParams(material)
-        {
-            shadowCastingMode = ShadowCastingMode.Off,
-            receiveShadows = false
-        };
-
-        BuildInstances();
+        public string name;
+        public Matrix4x4[] Matrices;
     }
 
-    void BuildInstances()
+    Matrix4x4[] BuildInstances()
     {
         Collider col = GetComponent<Collider>();
         Bounds localBounds = GetLocalColliderBounds(col);
@@ -100,10 +97,10 @@ public class FoliageSystem : MonoBehaviour
 
         }
         
-        Matrix4x4[] finalMatrices = matrices.ToArray();
+        return matrices.ToArray();
         
-        if (transformBake) FoliageChunkManager.Instance.RegisterTransformFoliage(transform, mesh,material, finalMatrices);
-        else FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
+        // if (transformBake) FoliageChunkManager.Instance.RegisterTransformFoliage(transform, mesh,material, finalMatrices);
+        // else FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
         
         // NewMethod(numSlices, localBounds, matrices);
     }
@@ -129,7 +126,6 @@ public class FoliageSystem : MonoBehaviour
         // if we hit foliage mask, exit and end piercing
         if (hit.collider.gameObject.layer == LayerMask.NameToLayer("FoliageMask"))
         {
-            Debug.DrawRay(hit.point, Vector3.up * 5f, Color.red, 10f);
             return;
         }
         
@@ -200,71 +196,7 @@ public class FoliageSystem : MonoBehaviour
         return true;
     }
 
-    private void NewMethod(int numSlices, Bounds localBounds, List<Matrix4x4> matrices)
-    {
-        for (int i = 0; i < numSlices; i++)
-        {
-            // Sample in LOCAL space
-            Vector3 localPoint = new Vector3(
-                Random.Range(localBounds.min.x, localBounds.max.x),
-                localBounds.max.y,
-                Random.Range(localBounds.min.z, localBounds.max.z)
-            );
-            
-            Vector3 localOffset = new Vector3(
-                Random.Range(offsetRange.x, offsetRange.y),
-                0f,
-                Random.Range(offsetRange.x, offsetRange.y)
-            );
-
-            Vector3 worldOrigin =
-                transform.TransformPoint(localPoint) + localOffset +
-                transform.up * raycastOriginYOffset;
-
-            Vector3 rayDirection = -transform.up;
-
-            if (!Test(worldOrigin, rayDirection, out RaycastHit hit)) continue;
-
-            var edgeDelta = Mathf.Lerp(2f, 10f, Mathf.InverseLerp(Vector3.Angle(hit.normal, Vector3.up), 0f, 30f));
-            if (IsNearEdge(worldOrigin, rayDirection, hit.distance + edgeDelta)) continue;
-
-            Vector3 position = hit.point;
-
-            // --------------------------------------------------
-            // ROTATION: Align mesh opposite ray direction
-            // --------------------------------------------------
-
-            Vector3 foliageUp = -rayDirection;
-
-            // Align mesh's +Y with foliageUp
-            Quaternion alignToRay =
-                Quaternion.FromToRotation(Vector3.up, foliageUp);
-
-            // Random twist around ray axis
-            float randomY = Random.Range(rotationYRange.x, rotationYRange.y);
-            Quaternion twist =
-                Quaternion.AngleAxis(randomY, foliageUp);
-
-            Quaternion rotation = twist * alignToRay;
-
-            float scale = Random.Range(scaleRange.x, scaleRange.y);
-
-            position += Vector3.up * yOffset;
-            
-            matrices.Add(Matrix4x4.TRS(
-                position,
-                rotation,
-                Vector3.one * scale
-            ));
-        }
-        
-        Matrix4x4[] finalMatrices = matrices.ToArray();
-        
-        if (transformBake) FoliageChunkManager.Instance.RegisterTransformFoliage(transform, mesh,material, finalMatrices);
-        else FoliageChunkManager.Instance.RegisterFoliage(mesh, material, finalMatrices);
-    }
-
-
+    
 
     private bool RaycastCheckSphere(RaycastHit hitInfo, Vector3 rayDirection)
     {
@@ -338,16 +270,13 @@ public class FoliageSystem : MonoBehaviour
         return false;
     }
 
-    private static bool CheckAllMasks(Vector3 position)
+    
+    public FoliageSystemData GenerateFoliageSystemData()
     {
-        foreach (var mask in FoliageChunkManager.MaskSplines)
+        return new FoliageSystemData()
         {
-            if (mask.MaskFoliageInstance(position)) return true;
-        }
-
-        return false;
+            name = name,
+            Matrices = BuildInstances()
+        };
     }
-
-
-
 }

@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class FoliageChunkManager : MonoBehaviour
@@ -23,17 +24,29 @@ public class FoliageChunkManager : MonoBehaviour
     private static int FoliageLayer;
 
     private Camera _camera;
-    private void Awake() => Instance = this;
 
-    private void Start()
+    private void Awake()
     {
+        Instance = this;
+        
+        var foliageSceneData = FoliageSerializer.LoadFoliageSceneData(SceneManager.GetActiveScene().name);
+        foreach (var foliageSystemData in foliageSceneData.FoliageSystemDatas)
+        {
+            print("registering foliage system data from file: " + foliageSystemData.name);
+            var foliageSystem = FindFoliageSystemByName(foliageSystemData.name);
+            if (foliageSystem.transformBake) RegisterTransformFoliageSystem(foliageSystem.transform, foliageSystem.mesh, foliageSystem.material, foliageSystemData.Matrices);
+            else RegisterFoliageSystem(foliageSystem.mesh, foliageSystem.material, foliageSystemData.Matrices);
+        }
+        
+        ChunkRegisteredFoliage();
+        
         _camera = Camera.main;
         _renderDistance = ComputeWorldspaceRenderDistance(MetaSaveSystem.LoadCachedMetaSaveData().foliageRenderDistanceLevel);
-        Invoke(nameof(BakeAll), 0.1f);
+        
         FoliageLayer = LayerMask.NameToLayer("Foliage");
     }
 
-    public void RegisterFoliage(Mesh mesh, Material mat, Matrix4x4[] instances)
+    public void RegisterFoliageSystem(Mesh mesh, Material mat, Matrix4x4[] instances)
     {
         var key = (mesh, mat);
         if (!_masterRegistry.ContainsKey(key)) _masterRegistry[key] = new Dictionary<Vector3Int, List<Matrix4x4>>();
@@ -48,7 +61,7 @@ public class FoliageChunkManager : MonoBehaviour
         }
     }
     
-    public void RegisterTransformFoliage(Transform t, Mesh mesh, Material mat, Matrix4x4[] instances)
+    public void RegisterTransformFoliageSystem(Transform t, Mesh mesh, Material mat, Matrix4x4[] instances)
     {
         var key = (mesh, mat);
         if (!_transformRegistry.ContainsKey(key)) 
@@ -77,7 +90,7 @@ public class FoliageChunkManager : MonoBehaviour
     }
 
 
-    public void BakeAll()
+    public void ChunkRegisteredFoliage()
     {
         _bakedChunks.Clear();
         foreach (var entry in _masterRegistry)
@@ -161,7 +174,7 @@ public class FoliageChunkManager : MonoBehaviour
             }
         }
         
-        RenderTransformFoliage();
+        // RenderTransformFoliage();
     }
     
     private void Shuffle(List<Matrix4x4> list)
@@ -217,5 +230,15 @@ public class FoliageChunkManager : MonoBehaviour
                 Graphics.RenderMeshInstanced(rp, mesh, 0, _transformRenderBatch, _transformRenderBatch.Count);
             }
         }
+    }
+
+    private FoliageSystem FindFoliageSystemByName(string name)
+    {
+        foreach (var foliageSystem in FindObjectsByType<FoliageSystem>())
+        {
+            if (foliageSystem.name == name) return foliageSystem;
+        }
+
+        return null;
     }
 }

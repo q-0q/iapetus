@@ -18,7 +18,7 @@ public class SceneLoader : MonoBehaviour
     private RectTransform _rawImageRectTransform;
 
     private const float InDuration = 0.5f;
-    private const float HoldDuration = 0.2f;
+    private const float HoldDuration = 1f;
     private const float OutDuration = 0.3f;
 
     private bool _mutex;
