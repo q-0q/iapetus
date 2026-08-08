@@ -1,32 +1,32 @@
 using System;
 using System.IO;
-using UnityEditor;
+using System.IO.Compression;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
-using Object = UnityEngine.Object;
+using CompressionLevel = System.IO.Compression.CompressionLevel;
 
 public class FoliageSerializer
 {
-    
-
-    
     [Serializable]
     public class FoliageSceneData
     {
         public FoliageSystem.FoliageSystemData[] FoliageSystemDatas;
     }
-    
+
     public static void WriteFoliageSceneData(string sceneName, FoliageSystem.FoliageSystemData[] foliageSystemDatas)
     {
         try
         {
             FoliageSceneData foliageSceneData = new FoliageSceneData { FoliageSystemDatas = foliageSystemDatas };
-            string json = JsonUtility.ToJson(foliageSceneData, true);
+            string json = JsonUtility.ToJson(foliageSceneData, false);
+            byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
             var filePath = GetFilepathForScene(sceneName);
-            File.WriteAllText(filePath, json);
+            using (FileStream fileStream = File.Create(filePath))
+            using (GZipStream gzipStream = new GZipStream(fileStream, CompressionLevel.Optimal))
+            {
+                gzipStream.Write(jsonBytes, 0, jsonBytes.Length);
+            }
 
-            Debug.Log($"Saved FoliageSceneData array to: {filePath}");
+            Debug.Log($"Saved compressed FoliageSceneData to: {filePath}");
         }
         catch (Exception e)
         {
@@ -36,22 +36,20 @@ public class FoliageSerializer
 
     public static FoliageSceneData LoadFoliageSceneData(string sceneName)
     {
-        // var filePath = GetFilepathForScene(sceneName);
-        // if (!File.Exists(filePath))
-        // {
-        //     Debug.LogError($"File does not exist at path: {filePath}");
-        //     return null;
-        // }
-
         try
         {
             var textAsset = Resources.Load<TextAsset>("FoliageSceneData/" + sceneName);
-            FoliageSceneData foliageSceneData = JsonUtility.FromJson<FoliageSceneData>(textAsset.text);
-            return foliageSceneData;
+            if (textAsset == null) return null;
+
+            using var memoryStream = new MemoryStream(textAsset.bytes);
+            using var gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress);
+            using var reader = new StreamReader(gzipStream);
+            var json = reader.ReadToEnd();
+            return JsonUtility.FromJson<FoliageSceneData>(json);
         }
         catch (Exception e)
         {
-            Debug.LogError($"Failed to load matrix array: {e.Message}");
+            Debug.LogError($"Failed to load FoliageSceneData: {e.Message}");
             return null;
         }
     }
@@ -59,6 +57,7 @@ public class FoliageSerializer
     private static string GetFilepathForScene(string sceneName)
     {
         string dirPath = Path.Combine(Application.dataPath, "Resources", "FoliageSceneData");
-        return Path.Combine(dirPath, sceneName + ".json");
+        Directory.CreateDirectory(dirPath);
+        return Path.Combine(dirPath, sceneName + ".bytes");
     }
 }

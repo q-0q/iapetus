@@ -209,8 +209,10 @@ public partial class PlayerFsm : GravityFsm
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         QualitySettings.vSyncCount = 0; // Set vSyncCount to 0 so that using .targetFrameRate is enabled.
-        Application.targetFrameRate = 240;
+        Application.targetFrameRate = MetaSaveSystem.LoadCachedMetaSaveData().fpsCap;
         
+        Shader.SetGlobalFloat("_PlayerTintWeight", 0);
+        Shader.SetGlobalFloat("_PlayerEvaporateClip", 0f);
         
     }
 
@@ -296,8 +298,7 @@ public partial class PlayerFsm : GravityFsm
         _renderers = GetComponentsInChildren<Renderer>().ToList();
         _skinnedMeshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         _material = GetComponentInChildren<SkinnedMeshRenderer>().material;
-        Shader.SetGlobalFloat("_PlayerTintWeight", 0);
-        Shader.SetGlobalFloat("_PlayerEvaporateClip", 0f);
+
         SaveSystem.UpdateScreenshot(0.3f);
         SnapToGround();
         StartCoroutine(SurgeTrailCoroutine());

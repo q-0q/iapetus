@@ -24,6 +24,7 @@ public class RippleEffect : MonoBehaviour
     public Shader rippleShader;
     public Shader wakeFadeShader; // New Shader for simple fading
     public Material rippleStampMaterial;
+    public Shader offsetShader; // Add this!
     
     [Header("Movement Settings")]
     public Transform playerTransform;
@@ -53,7 +54,7 @@ public class RippleEffect : MonoBehaviour
 
         rippleMat = new Material(rippleShader);
         wakeMat = new Material(wakeFadeShader);
-        offsetMat = new Material(Shader.Find("Hidden/RippleOffset"));
+        offsetMat = new Material(offsetShader);
 
         ClearRT(currRT);
         ClearRT(prevRT);

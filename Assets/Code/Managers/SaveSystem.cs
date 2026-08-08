@@ -607,6 +607,8 @@ public class MetaSaveSystem : MonoBehaviour
         public bool enableFpsDisplay;
         public bool autoCamEnabled;
         public int foliageRenderDistanceLevel;
+        public string cameraUpdateMode;
+        public int fpsCap;
 
         public MetaSaveData()
         {
@@ -616,6 +618,8 @@ public class MetaSaveSystem : MonoBehaviour
             this.enableFpsDisplay = true;
             this.autoCamEnabled = false;
             this.foliageRenderDistanceLevel = 1;
+            this.cameraUpdateMode = "SmartUpdate";
+            this.fpsCap = 120;
         }
     }
     
@@ -624,7 +628,7 @@ public class MetaSaveSystem : MonoBehaviour
         return Path.Combine(Application.persistentDataPath);
     }
 
-    private static string GetPath()
+    public static string GetPath()
     {
         return Path.Combine(GetDirectory(), "meta.json");
     }

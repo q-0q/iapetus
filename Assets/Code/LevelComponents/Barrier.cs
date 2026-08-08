@@ -29,6 +29,8 @@ public class Barrier : MonoBehaviour
     private CustomPointLight _light;
     private Color _baseLightColor;
 
+    private Renderer _auraRenderer;
+
 
     private void Awake()
     {
@@ -42,6 +44,8 @@ public class Barrier : MonoBehaviour
         _cameraFollow = transform.Find("Camera").Find("CameraFollow");
         _cameraStart = transform.Find("Camera").Find("CameraFollowStart");
         _cameraEnd = transform.Find("Camera").Find("CameraFollowEnd");
+
+        _auraRenderer = transform.Find("PlayerAuraRenderer").GetComponent<Renderer>();
         
         TryGetComponent(out _openTrigger);
         _openTrigger.enabled = false;
@@ -51,6 +55,7 @@ public class Barrier : MonoBehaviour
             Util.ReplaceAnimatorTrigger(_animator, "Open");
             curtainCollider.enabled = false;
             _light.enabled = false;
+            _auraRenderer.enabled = false;
             return;
         }
         
@@ -208,6 +213,7 @@ public class Barrier : MonoBehaviour
             if (IsAllSwitchesEnabled())
             {
                 _openTrigger.enabled = true;
+                _auraRenderer.enabled = false;
             }
             
             yield return null;

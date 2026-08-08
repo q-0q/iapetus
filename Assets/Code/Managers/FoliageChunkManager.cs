@@ -127,7 +127,7 @@ public class FoliageChunkManager : MonoBehaviour
 
     private static float ComputeWorldspaceRenderDistance(int level)
     {
-        return level * 12f + 130f;
+        return level * 12f + 200f;
     }
 
     void Update()
@@ -174,7 +174,7 @@ public class FoliageChunkManager : MonoBehaviour
             }
         }
         
-        // RenderTransformFoliage();
+        RenderTransformFoliage();
     }
     
     private void Shuffle(List<Matrix4x4> list)

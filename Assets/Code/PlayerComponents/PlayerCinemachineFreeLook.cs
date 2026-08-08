@@ -93,7 +93,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         
         HandleCameraBehaviorZone();
         
-        var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * Time.deltaTime;
+        var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * (0.01f * Time.timeScale);
         _timeSincePlayerLookInput += Time.deltaTime;
 
         if (_timeSincePlayerLookInput >= 2.5f && !_preventYRecenter && DialogueCanvas.Singleton.TimeSinceDialogueClosed > 2.5f)
@@ -140,6 +140,27 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _isAutocamEnabled = metaSaveData.autoCamEnabled;
         _freeLook.m_XAxis.m_MaxSpeed = _baseXSpeed * metaSaveData.cameraSensitivityModifier * 0.1f;
         _freeLook.m_YAxis.m_MaxSpeed = _baseYSpeed * metaSaveData.cameraSensitivityModifier * 0.1f;
+
+        switch (metaSaveData.cameraUpdateMode)
+        {
+            case "SmartUpdate":
+            {
+                _brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.SmartUpdate;
+                break;
+            }
+            
+            case "FixedUpdate":
+            {
+                _brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.FixedUpdate;
+                break;
+            }
+            
+            case "LateUpdate":
+            {
+                _brain.m_UpdateMethod = CinemachineBrain.UpdateMethod.LateUpdate;
+                break;
+            }
+        }
     }
 
     private void OnWarp(Vector3 delta)
