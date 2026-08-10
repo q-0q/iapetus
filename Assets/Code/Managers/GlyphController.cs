@@ -20,7 +20,8 @@ public class GlyphController : MonoBehaviour
         public int mapSplineId;
         public float mapSplineStartT;
         public float mapSplineEndT;
-
+        public string writeAdditionalKey = "";
+        public bool contributeToCount = true;
     }
 
     public static readonly Dictionary<string, TerminalData> TerminalRegistry = new()
@@ -34,7 +35,8 @@ public class GlyphController : MonoBehaviour
                 
                 mapSplineId = 0,
                 mapSplineStartT = 0f,
-                mapSplineEndT = 0.2f
+                mapSplineEndT = 0.1f,
+                contributeToCount = false
             } 
         },
         
@@ -46,8 +48,8 @@ public class GlyphController : MonoBehaviour
                 loreDialogue = new List<string>() { "Signal here is drawn directly from source, making this the inception of the entire system.", "...As such, this node is a potential point of failure for entire network. Uptime is critical.", "Hardware health of this station should be monitored especially closely." },
                 
                 mapSplineId = 0,
-                mapSplineStartT = 0.2f,
-                mapSplineEndT = 0.4f
+                mapSplineStartT = 0.1f,
+                mapSplineEndT = 0.2f
             } 
         },
         
@@ -58,8 +60,8 @@ public class GlyphController : MonoBehaviour
                 loreDialogue = new List<string>() { "01 propagates signal into and through the master chambers.", "Signal density has to be within a very specific range to avoid hardware interference where the line passes indoors.", "That increased workload means this machine may require more regular defrags." },
                 
                 mapSplineId = 0,
-                mapSplineStartT = 0.4f,
-                mapSplineEndT = 0.6f
+                mapSplineStartT = 0.2f,
+                mapSplineEndT = 0.3f
             } 
         },
         
@@ -67,10 +69,23 @@ public class GlyphController : MonoBehaviour
             {
                 displayId = "02",
                 previousNode = "tutorial-1",
+                writeAdditionalKey = "icy-canals-0-split",
                 loreDialogue = new List<string>() { "The Steppe's natural aquifers feed the coolant systems of the relay hub and its inner chambers.", "Additionally, the unusual mineral content of the water has been found to actually increase signal conductivity.", "The line to Ouro Station thus uses relatively low power, despite the distance and altitude gain." },
                 mapSplineId = 0,
-                mapSplineStartT = 0.6f,
-                mapSplineEndT = 0.8f
+                mapSplineStartT = 0.4f,
+                mapSplineEndT = 0.9f
+            } 
+        },
+        
+        { "icy-canals-0-split", new TerminalData()
+            {
+                displayId = "02",
+                previousNode = "tutorial-1",
+                loreDialogue = new List<string>() {  },
+                mapSplineId = 3,
+                mapSplineStartT = 0f,
+                mapSplineEndT = 0.1f,
+                contributeToCount = false
             } 
         },
         
@@ -85,13 +100,15 @@ public class GlyphController : MonoBehaviour
 
     private void Awake()
     {
-        OnSaveDataUpdated(SaveSystem.LoadCachedSaveData());
         var find = transform.Find("Canvas");
         
         var s = find.Find("Splines");
         _splines = new List<GameObject>();
         _splines.Add(s.Find("0").gameObject);
-        // _splines.Add(s.Find("1").gameObject);
+        _splines.Add(s.Find("1").gameObject);
+        _splines.Add(s.Find("2").gameObject);
+        _splines.Add(s.Find("3").gameObject);
+        _splines.Add(s.Find("4").gameObject);
         // ...
 
         
@@ -140,6 +157,7 @@ public class GlyphController : MonoBehaviour
     private void OnSaveDataUpdated(SaveSystem.SaveData saveData)
     {
         if (saveData.terminalNodes == null) return;
+        UpdateSplineRenderers();
     }
     
 

@@ -94,7 +94,12 @@ public class TerminalNode : MonoBehaviour
 
     private void ConfigureDialogueController()
     {
-        var count = SaveSystem.LoadCachedSaveData().terminalNodes.Count - 1; // -1 to rm bootstrap node
+        var count = 0;
+        foreach (var terminal in SaveSystem.LoadCachedSaveData().terminalNodes)
+        {
+            var data = GlyphController.TerminalRegistry[terminal];
+            if (data.contributeToCount) count++;
+        }
         var countString = count == 1 ? "There is now <color=red>1</color> Terminal" : "There are now <color=red>" + count + "</color> Terminals";
 
         var lore = GlyphController.TerminalRegistry[metaName].loreDialogue;
@@ -275,6 +280,8 @@ public class TerminalNode : MonoBehaviour
             while (current != "")
             {
                 SaveSystem.WriteTerminalNode(current);
+                var writeAdditionalKey = GlyphController.TerminalRegistry[current].writeAdditionalKey;
+                if (writeAdditionalKey != "") SaveSystem.WriteTerminalNode(writeAdditionalKey);
                 current = GlyphController.TerminalRegistry[current].previousNode;
             }
             

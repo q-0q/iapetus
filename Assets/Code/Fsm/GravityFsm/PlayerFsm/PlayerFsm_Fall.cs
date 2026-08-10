@@ -10,7 +10,7 @@ public partial class PlayerFsm
             .SubstateOf(PlayerFsmState.PitonInteractable)
             .SubstateOf(PlayerFsmState.RopeSwingInteractable)
             .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
-            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() < CoyoteTime && !Machine.IsInState(PlayerFsmState.FallAfterDash))
+            .PermitIf(PlayerFsmTrigger.Jump, PlayerFsmState.Jumpsquat, _ => TimeInCurrentState() < CoyoteTime && !Machine.IsInState(PlayerFsmState.FallAfterDash) && !_wallsquattedSinceLeavingGround)
             .Permit(PlayerFsmTrigger.StartUpdraft, PlayerFsmState.Updraft)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.ImpaleAir, CanImpale)
             .PermitIf(PlayerFsmTrigger.Attack, PlayerFsmState.GrappleStartup, CanGrapple, 1)

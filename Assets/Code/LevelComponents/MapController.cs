@@ -122,7 +122,9 @@ public class MapController : MonoBehaviour
         var currentNearestMajorLeylineNode = SaveSystem.GetNearestTerminalNode(out var currentMajorLeylineNodeT);
         var terminalData = GlyphController.TerminalRegistry[currentNearestMajorLeylineNode];
         if (terminalData == null) return;
-        var splineContainer = _mapObject.GetComponentInChildren<GlyphController>().GetSplines()[terminalData.mapSplineId];
+        var splines = _mapObject.GetComponentInChildren<GlyphController>().GetSplines();
+        if (splines == null) return;
+        var splineContainer = splines[terminalData.mapSplineId];
         if (splineContainer == null) return;
         var clampedLocalT = Mathf.Clamp01(currentMajorLeylineNodeT);
         var t = Mathf.Lerp(terminalData.mapSplineStartT, terminalData.mapSplineEndT, clampedLocalT);

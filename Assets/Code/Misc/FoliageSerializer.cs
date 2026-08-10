@@ -27,6 +27,11 @@ public class FoliageSerializer
             }
 
             Debug.Log($"Saved compressed FoliageSceneData to: {filePath}");
+            
+#if UNITY_EDITOR
+            UnityEditor.AssetDatabase.Refresh();
+#endif
+            
         }
         catch (Exception e)
         {
