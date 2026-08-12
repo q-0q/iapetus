@@ -20,6 +20,8 @@ public class RotationDais : MonoBehaviour
 
     private bool _setupComplete;
 
+    public Transform _childToRotator;
+
     private void Awake()
     {
         _interactable = GetComponentInChildren<Interactable>();
@@ -29,6 +31,7 @@ public class RotationDais : MonoBehaviour
         _baseInteractableText = _interactable.text;
         _baseBallWorldPosition = _ball.position;
         _baseRotatorBobWorldPosition = _rotator.position;
+        if (_childToRotator != null)_childToRotator.SetParent(_rotator);
         _setupComplete = false;
     }
 

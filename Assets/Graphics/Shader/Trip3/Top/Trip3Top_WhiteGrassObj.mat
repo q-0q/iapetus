@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-3649246371717386658
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
-  version: 10
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -20,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Trip3Top_GreenGrass
+  m_Name: Trip3Top_WhiteGrassObj
   m_Shader: {fileID: -6465566751694194690, guid: 272247f0e3c064328b7a9e2ac3f8d0f8,
     type: 3}
   m_Parent: {fileID: 0}
@@ -69,28 +56,42 @@ Material:
     m_Ints: []
     m_Floats:
     - _Dot: 0.1
-    - _ObjectSpace: 0
+    - _ObjectSpace: 1
     - _PlayerCameraFlatDistance: 16
     - _QueueControl: 0
     - _QueueOffset: 0
     - _SidesContrast: 1
     - _SidesHueOffset: 0
     - _SidesMetallic: 0.2
-    - _SidesNormalIntensity: 1
+    - _SidesNormalIntensity: 0
     - _SidesSaturation: 1
     - _SidesScale: 0.1
     - _SidesSmoothness: 0
     - _TopContrast: 1
     - _TopHueOffset: 0
     - _TopMetallic: 0
-    - _TopNormalIntensity: 0.75
-    - _TopSaturation: 1
+    - _TopNormalIntensity: 0
+    - _TopSaturation: 0
     - _TopScale: 0.05
     - _TopSmoothness: 0.2
     m_Colors:
+    - _DotVector: {r: 0, g: 0, b: 1, a: 0}
     - _SidesAdd: {r: 0, g: 0, b: 0, a: 1}
     - _SidesMultiply: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
-    - _TopAdd: {r: 0.7924528, g: 0.7924528, b: 0.7924528, a: 1}
-    - _TopMultiply: {r: 0.5882353, g: 0.78431374, b: 0.650652, a: 1}
+    - _TopAdd: {r: 0.735849, g: 0.735849, b: 0.735849, a: 1}
+    - _TopMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
+--- !u!114 &2963574742238766803
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Editor::UnityEditor.Rendering.Universal.AssetVersion
+  version: 10
