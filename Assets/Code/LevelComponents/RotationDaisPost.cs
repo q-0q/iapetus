@@ -5,13 +5,17 @@ public class RotationDaisPost : MonoBehaviour
 {
     
     private Material _material;
-    private Light _light;
+    private CustomPointLight _light;
     private bool _active;
+
+    private Color _baseLightColor;
 
     private void Awake()
     {
         _material = GetComponent<Renderer>().material;
-        _light = GetComponentInChildren<Light>();
+        _light = GetComponentInChildren<CustomPointLight>();
+        _baseLightColor = _light.Color;
+        _light.Color = Color.black;
         Deactivate();
     }
 
@@ -34,12 +38,12 @@ public class RotationDaisPost : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var c = _material.GetColor("_ColorC");
-        var i = _light.intensity;
+        var glow = _material.GetFloat("_GlowWeight");
+        var color = _light.Color;
 
         var speed = 10f;
-        _material.SetColor("_ColorC", Color.Lerp(c, _active ? new Color(0.5254902f, 0.6274511f, 1f) : new Color(0.2f, 0.2f, 0.2f), Time.deltaTime * speed));
-        _light.intensity = Mathf.Lerp(i, _active ? 1.5f : 0, Time.deltaTime * speed);
+        _material.SetFloat("_GlowWeight", Mathf.Lerp(glow, _active ? 1f : 0f, Time.deltaTime * speed));
+        _light.Color = Color.Lerp(color, _active ? _baseLightColor : Color.black, Time.deltaTime * speed);
 
     }
 }

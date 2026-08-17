@@ -103,9 +103,9 @@ public class RotationDais : MonoBehaviour
             _setupComplete = true;
         }
         
-        Vector3 right = transform.right;
-        Vector3 up = -transform.up; 
-        Vector3 targetAxis = (up * input.x) + (right * -input.y);
+        Vector3 right = Camera.main.transform.right;
+        Vector3 up = transform.up; 
+        Vector3 targetAxis = (-up * input.x) + (right * input.y);
         
         float acceleration = 1.5f;
         float maxSpeed = 100f;

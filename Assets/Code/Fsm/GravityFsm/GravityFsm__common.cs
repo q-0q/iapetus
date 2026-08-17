@@ -10,7 +10,7 @@ public abstract partial class GravityFsm
     protected float GravityStrength;
     protected float BonusGravityModifier;
     protected float TimeInAir;
-    protected float MinYVelocity = -40f;
+    protected float MinYVelocity = -50f;
     protected float LastUpwardsY;
     public float GroundForwardSlope;
     protected Vector3 GroundNormal;

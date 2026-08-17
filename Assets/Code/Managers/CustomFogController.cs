@@ -15,6 +15,11 @@ public class CustomFogController : MonoBehaviour
     public float YPower = 2f;
     public float MinimumYFactor = 0f;
     
+    public float AltYMin = 200f;
+    public float AltYMax = 100f;
+    public float AltYPower = 2f;
+    public float MaximumAltYFactor = 0f;
+    
     public float YAddMin = -100f;
     public float YAddMax = -40f;
     public float YAddPower = 2f;

@@ -28,8 +28,12 @@ public class FoliageChunkManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        _camera = Camera.main;
+        _renderDistance = ComputeWorldspaceRenderDistance(MetaSaveSystem.LoadCachedMetaSaveData().foliageRenderDistanceLevel);
+        FoliageLayer = LayerMask.NameToLayer("Foliage");
         
         var foliageSceneData = FoliageSerializer.LoadFoliageSceneData(SceneManager.GetActiveScene().name);
+        if (foliageSceneData == null) return;
         foreach (var foliageSystemData in foliageSceneData.FoliageSystemDatas)
         {
             print("registering foliage system data from file: " + foliageSystemData.name);
@@ -40,10 +44,7 @@ public class FoliageChunkManager : MonoBehaviour
         
         ChunkRegisteredFoliage();
         
-        _camera = Camera.main;
-        _renderDistance = ComputeWorldspaceRenderDistance(MetaSaveSystem.LoadCachedMetaSaveData().foliageRenderDistanceLevel);
-        
-        FoliageLayer = LayerMask.NameToLayer("Foliage");
+
     }
 
     public void RegisterFoliageSystem(Mesh mesh, Material mat, Matrix4x4[] instances)

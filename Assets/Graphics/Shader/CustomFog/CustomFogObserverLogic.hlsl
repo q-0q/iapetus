@@ -6,6 +6,11 @@ uniform float _CustomFogYMax;
 uniform float _CustomFogYPower;
 uniform float _CustomFogMinimumYFactor;
 
+uniform float _CustomFogAltYMin;
+uniform float _CustomFogAltYMax;
+uniform float _CustomFogAltYPower;
+uniform float _CustomFogMaximumAltYFactor;
+
 uniform float _CustomFogYAddMin;
 uniform float _CustomFogYAddMax;
 uniform float _CustomFogYAddPower;
@@ -48,6 +53,9 @@ void CalculateClosestCustomFogObserver_float(float4 WorldPos, out float OutMask)
         {
             float yFactor = 1.0 - pow(InverseLerp(_CustomFogYMin, _CustomFogYMax, relativeY), _CustomFogYPower);
             yFactor = max(yFactor, _CustomFogMinimumYFactor);
+
+            float altYFactor = pow(InverseLerp(_CustomFogAltYMin, _CustomFogAltYMax, relativeY), _CustomFogAltYPower);
+            altYFactor = min(altYFactor, _CustomFogMaximumAltYFactor);
             
             float yAddFactor = 1.0 - pow(InverseLerp(_CustomFogYAddMin, _CustomFogYAddMax, relativeY), _CustomFogYAddPower);
             yAddFactor = min(yAddFactor, _CustomFogYAddClamp);
@@ -60,7 +68,7 @@ void CalculateClosestCustomFogObserver_float(float4 WorldPos, out float OutMask)
             float skyboxLiftFactor = pow(InverseLerp(_CustomFogSkyboxLift, _CustomFogSkyboxLift * -0.5, relativeY), 0.75);
             skyboxLiftFactor = max(skyboxLiftFactor, _CustomFogMinimumYFactor);
             
-            mask = saturate(lerp(lerp(yAddFactor, yFactor, depthFactor), skyboxLiftFactor, InverseLerp(1000.0, 1100.0, depth)));
+            mask = saturate(lerp(lerp(yAddFactor, yFactor + altYFactor, depthFactor), skyboxLiftFactor, InverseLerp(1000.0, 1100.0, depth)));
             // mask = yFactor;
         }
         

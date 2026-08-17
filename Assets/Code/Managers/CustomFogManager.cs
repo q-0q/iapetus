@@ -79,6 +79,11 @@ public class CustomFogManager : MonoBehaviour
         LerpFloat("_CustomFogYPower", _currentController.YPower, strength);
         LerpFloat("_CustomFogMinimumYFactor", _currentController.MinimumYFactor, strength);
         
+        LerpFloat("_CustomFogAltYMin", _currentController.AltYMin, strength);
+        LerpFloat("_CustomFogAltYMax", _currentController.AltYMax, strength);
+        LerpFloat("_CustomFogAltYPower", _currentController.AltYPower, strength);
+        LerpFloat("_CustomFogMaximumAltYFactor", _currentController.MaximumAltYFactor, strength);
+        
         LerpFloat("_CustomFogYAddMin", _currentController.YAddMin, strength);
         LerpFloat("_CustomFogYAddMax", _currentController.YAddMax, strength);
         LerpFloat("_CustomFogYAddPower", _currentController.YAddPower, strength);
