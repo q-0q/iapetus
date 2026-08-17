@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 public class SentryProjectile : MonoBehaviour
 {
 
-    private const float Speed = 200f;
+    private const float Speed = 220f;
     private Vector3 _direction;
     private float _lifetime;
 
@@ -52,7 +52,7 @@ public class SentryProjectile : MonoBehaviour
         _lifetime += Time.deltaTime;
 
         var toPlayer = PlayerFsm.Singleton.transform.position - transform.position;
-        _direction = Vector3.RotateTowards(_direction, toPlayer, 1.5f * Time.deltaTime, 1000f).normalized;
+        // _direction = Vector3.RotateTowards(_direction, toPlayer, 1f * Time.deltaTime, 1000f).normalized;
         
         var positionDelta = _direction.normalized * (Speed * Time.deltaTime);
 
@@ -86,7 +86,10 @@ public class SentryProjectile : MonoBehaviour
         if (Physics.CheckSphere(transform.position, 3f, LayerMask.GetMask("Player"),
                 QueryTriggerInteraction.Collide))
         {
-            PlayerFsm.Singleton.InvokePlayerDeath();
+
+            var toPlayer = PlayerFsm.Singleton.transform.position - transform.position;
+            
+            if (!Physics.Raycast(transform.position, toPlayer, 3f, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) PlayerFsm.Singleton.InvokePlayerDeath();
         }
         
         Util.InvokeSphereEffect(transform.position - Vector3.up, Vector3.one * 8f, 1.5f, 0.8f, -1f);

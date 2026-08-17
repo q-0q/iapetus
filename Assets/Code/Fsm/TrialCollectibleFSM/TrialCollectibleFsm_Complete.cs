@@ -6,7 +6,7 @@ public partial class TrialCollectibleFsm
 
     private void CompleteOnUpdate()
     {
-        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying1) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead)) return;
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dying) || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Dead)) return;
         Time.timeScale = Mathf.Lerp(1f, 0.15f, Mathf.InverseLerp(0, 0.2f, TimeInCurrentState()));
     }
     private void CompleteConfigure()

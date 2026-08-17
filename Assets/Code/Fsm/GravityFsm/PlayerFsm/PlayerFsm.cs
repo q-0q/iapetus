@@ -89,7 +89,7 @@ public partial class PlayerFsm : GravityFsm
         public static int Updraft;
 
         public static int TrialTeleport;
-        public static int Dying1;
+        public static int Dying;
         public static int Dying2;
         public static int Dead;
         public static int Respawn;
@@ -144,6 +144,7 @@ public partial class PlayerFsm : GravityFsm
         public static int DisplaceFoliage;
         public static int WalkToChestPosition;
         public static int ChestInteract;
+        public static int SentryImmune;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger
@@ -573,7 +574,7 @@ public partial class PlayerFsm : GravityFsm
             PitonsquatOnUpdate();
         }
         
-        if (Machine.IsInState(PlayerFsmState.Dying1))
+        if (Machine.IsInState(PlayerFsmState.Dying))
         {
             DyingOnUpdate();
         }
@@ -587,7 +588,7 @@ public partial class PlayerFsm : GravityFsm
         {
             SwimOnUpdate();
         }
-        else if ((!Machine.IsInState(PlayerFsmState.Dying1) && !Machine.IsInState(PlayerFsmState.Dead) &&
+        else if ((!Machine.IsInState(PlayerFsmState.Dying) && !Machine.IsInState(PlayerFsmState.Dead) &&
                   !Machine.IsInState(PlayerFsmState.Wallsquat) && Machine.IsInState(GravityFsmState.Grounded) &&
                   !Machine.IsInState(PlayerFsm.PlayerFsmState.Jumpsquat)) || Machine.IsInState(PlayerFsmState.VaultHang))
         {

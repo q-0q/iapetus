@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.Identifiers;
 using Wasp;
 
 public partial class SentryFsm : Fsm
@@ -12,8 +13,8 @@ public partial class SentryFsm : Fsm
         public static int Idle;
         public static int Wake;
         public static int Tracking;
-        public static int Extrapolating;
-        public static int Searching;
+        // public static int Extrapolating;
+        // public static int Searching;
         public static int Firing;
     }
 
@@ -27,8 +28,6 @@ public partial class SentryFsm : Fsm
     protected override void OnAwake()
     {
         base.OnAwake();
-        // TryGetComponent(out Animator);
-        _triggerProxy = GetComponentInChildren<TriggerProxy>();
         _lineRenderer = GetComponentInChildren<LineRenderer>();
         _lineRenderer.SetPosition(0, eye.position);
         _lineRenderer.SetPosition(1, eye.position);
@@ -79,32 +78,34 @@ public partial class SentryFsm : Fsm
                 _blinking = true;
                 _blinkTimer = 0f;
             };
-
-
-        }
-        
-        if (Machine.IsInState(SentryFsmState.Extrapolating))
-        {
-            DampenTrackingVelocity();
-            RotateWithTrackingVelocity();
-            UpdateLineRenderer();
-        }
-        
-        if (Machine.IsInState(SentryFsmState.Searching))
-        {
-            var f = 1f;
-            if (TimeInCurrentState() < f)
-            {
-                currentAngularVelocity = Vector3.Lerp(_searchEnterSpeed, -_searchEnterSpeed * 1.5f, Mathf.InverseLerp(0, f, TimeInCurrentState()));
-            }
-            else
-            {
-                currentAngularVelocity = Vector3.Lerp(-_searchEnterSpeed * 1.5f, Vector3.zero, Mathf.InverseLerp(f, 2f, TimeInCurrentState()));
-            }
             
-            RotateWithTrackingVelocity();
-            UpdateLineRenderer();
+            if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SentryImmune) && (!_blinking || (_blinking && _blinkTimer < 0.5f))) Machine.Jump(SentryFsmState.Idle);
+
+
         }
+        
+        // if (Machine.IsInState(SentryFsmState.Extrapolating))
+        // {
+        //     DampenTrackingVelocity();
+        //     RotateWithTrackingVelocity();
+        //     UpdateLineRenderer();
+        // }
+        //
+        // if (Machine.IsInState(SentryFsmState.Searching))
+        // {
+        //     var f = 1f;
+        //     if (TimeInCurrentState() < f)
+        //     {
+        //         currentAngularVelocity = Vector3.Lerp(_searchEnterSpeed, -_searchEnterSpeed * 1.5f, Mathf.InverseLerp(0, f, TimeInCurrentState()));
+        //     }
+        //     else
+        //     {
+        //         currentAngularVelocity = Vector3.Lerp(-_searchEnterSpeed * 1.5f, Vector3.zero, Mathf.InverseLerp(f, 2f, TimeInCurrentState()));
+        //     }
+        //     
+        //     RotateWithTrackingVelocity();
+        //     UpdateLineRenderer();
+        // }
         
         if (Machine.IsInState(SentryFsmState.Firing))
         {
@@ -129,14 +130,10 @@ public partial class SentryFsm : Fsm
 
     private void OnEnable()
     {
-        _triggerProxy.OnTriggerProxyStay += OnTriggerProxyStay;
-        _triggerProxy.OnTriggerProxyExit += OnTriggerProxyExit;
     }
 
     private void OnDisable()
     {
-        _triggerProxy.OnTriggerProxyStay -= OnTriggerProxyStay;
-        _triggerProxy.OnTriggerProxyExit -= OnTriggerProxyExit;
     }
     
 }

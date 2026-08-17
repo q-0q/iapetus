@@ -162,7 +162,7 @@ public partial class PlayerFsm
             {
                 EndSurge();
             })
-            .Permit(FsmTrigger.Timeout, PlayerFsmState.Dying1);
+            .Permit(FsmTrigger.Timeout, PlayerFsmState.Dying);
     }
 
 

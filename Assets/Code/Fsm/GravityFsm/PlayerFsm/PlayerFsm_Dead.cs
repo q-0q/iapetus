@@ -28,9 +28,10 @@ public partial class PlayerFsm
     
     private void DeathConfigure()
     {
-        Machine.Configure(PlayerFsmState.Dying1)
+        Machine.Configure(PlayerFsmState.Dying)
             .Permit(PlayerFsmTrigger.Timeout, PlayerFsmState.Dead)
             .SubstateOf(PlayerFsmState.DisplaceFoliage)
+            .SubstateOf(PlayerFsmState.SentryImmune)
             .OnEntry(_ =>
             {
                 FMODUnity.RuntimeManager.PlayOneShot(deathFmodEvent);
@@ -46,15 +47,9 @@ public partial class PlayerFsm
                 EndSurge();
             });
         
-        Machine.Configure(PlayerFsmState.Dying2)
-            .Permit(PlayerFsmTrigger.Timeout, PlayerFsmState.Dead)
-            .OnEntry(_ =>
-            {
-
-            });
-
         Machine.Configure(PlayerFsmState.Dead)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Respawn)
+            .SubstateOf(PlayerFsmState.SentryImmune)
             .OnEntry(_ =>
             {
                 YVelocity = 0;
@@ -67,6 +62,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.Respawn)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.Idle)
             .SubstateOf(GravityFsmState.Grounded)
+            .SubstateOf(PlayerFsmState.SentryImmune)
             .OnEntry(_ =>
             {
                 _timeSinceRespawn = 0;

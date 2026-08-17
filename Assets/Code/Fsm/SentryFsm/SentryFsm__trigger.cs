@@ -8,28 +8,44 @@ public partial class SentryFsm
     {
         base.OnFireTriggers();
         
+        if (_blinking && _blinkTimer > 0.75f)
+        {
+            Machine.Fire(SentryFsmTrigger.Shoot);
+        }
+
+
+        if (IsPlayerInView())
+        {
+            _obstructionTimer = 0f;
+            Machine.Fire(SentryFsmTrigger.PlayerInView);
+        }
+        else
+        {
+            Machine.Fire(SentryFsmTrigger.PlayerOutOfView);
+        }
+        
+
+    }
+
+    private bool IsPlayerInView()
+    {
+
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SentryImmune)) return false;
         
         var toPlayer = GetPlayerPosition() - eye.position;
+        // if (Vector3.Angle(toPlayer, -transform.up) < DownwardsBlindspotAngle) return false;
         if (Physics.Raycast(eye.position, toPlayer, out var hit, toPlayer.magnitude, GetEnvironmentalLayermask(),
                 QueryTriggerInteraction.Ignore))
         {
-            Machine.Fire(SentryFsmTrigger.PlayerOutOfView);
-            return;
+            return false;
         }
-        
-        if (toPlayer.magnitude > 50f) 
+        else if (toPlayer.magnitude > 80f)
         {
-            Machine.Fire(SentryFsmTrigger.PlayerOutOfView);
-            return;
+            return false;
         }
-
-        _obstructionTimer = 0f;
-        Machine.Fire(SentryFsmTrigger.PlayerInView);
-        
-        
-        if (_blinking && _blinkTimer > 1.5f)
+        else
         {
-            Machine.Fire(SentryFsmTrigger.Shoot);
+            return true;
         }
     }
     

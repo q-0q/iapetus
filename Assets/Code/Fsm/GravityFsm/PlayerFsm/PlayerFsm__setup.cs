@@ -95,7 +95,7 @@ public partial class PlayerFsm
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlipsquat, 0.1f);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonFlip, 0.9f);
         StateMapConfig.Duration.Add(PlayerFsmState.PitonHoming, 1f);
-        StateMapConfig.Duration.Add(PlayerFsmState.Dying1, 0.45f);
+        StateMapConfig.Duration.Add(PlayerFsmState.Dying, 0.45f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dying2, 0.5f);
         StateMapConfig.Duration.Add(PlayerFsmState.Dead, 0.7f);
         StateMapConfig.Duration.Add(PlayerFsmState.Respawn, 0.85f);

@@ -1017,7 +1017,7 @@ public partial class PlayerFsm
 
     public void InvokePlayerDeath()
     {
-        if (Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
+        if (Machine.IsInState(PlayerFsmState.Dying) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
         if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
         if (CultTrialManager.Singleton.isCurseEnabled)
         {
@@ -1029,7 +1029,7 @@ public partial class PlayerFsm
             return;
         }
         
-        Machine.Jump(PlayerFsmState.Dying1);
+        Machine.Jump(PlayerFsmState.Dying);
     }
 
     private void SnapToGround()
@@ -1389,7 +1389,7 @@ public partial class PlayerFsm
             !(Machine.IsInState(PlayerFsmState.Jumpsquat)) &&
             !(Machine.IsInState(PlayerFsmState.Jump) && TimeInCurrentState() < 0.25f) &&
             !(Machine.IsInState(PlayerFsmState.Skip) && TimeInCurrentState() < 0.3f) &&
-            !(Machine.IsInState(PlayerFsmState.Dying1) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.Respawn))
+            !(Machine.IsInState(PlayerFsmState.Dying) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.Respawn))
             
             
            )

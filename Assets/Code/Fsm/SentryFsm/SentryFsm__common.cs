@@ -8,9 +8,6 @@ using UnityEngine.Serialization;
 
 public partial class SentryFsm
 {
-    private TriggerProxy _triggerProxy;
-    
-
     private Vector3 _trackingRotationalVelocity;
     private Vector3 _lastTrackedPlayerPosition;
     
@@ -32,6 +29,8 @@ public partial class SentryFsm
 
     private bool _blinking;
     private float _blinkTimer;
+
+    private const float DownwardsBlindspotAngle = 30f;
     
     private void OnTriggerProxyStay(Collider obj)
     {
@@ -71,8 +70,32 @@ public partial class SentryFsm
         float currentSpeed = currentAngularVelocity.magnitude;
         if (currentSpeed > 0.01f)
         {
+            // 1. Calculate the proposed rotation for this frame
             Quaternion step = Quaternion.AngleAxis(currentSpeed * Time.deltaTime, currentAngularVelocity.normalized);
-            eye.rotation = step * eye.rotation;
+            Quaternion proposedRotation = step * eye.rotation;
+
+            // 2. Measure angle between proposed forward vector and -transform.up
+            Vector3 proposedForward = proposedRotation * Vector3.forward;
+            Vector3 straightDown = -transform.up;
+            float angleToDown = Vector3.Angle(proposedForward, straightDown);
+
+            // 3. Clamp direction if inside the deadzone
+            if (angleToDown < DownwardsBlindspotAngle)
+            {
+                Vector3 axis = Vector3.Cross(straightDown, proposedForward);
+                if (axis.sqrMagnitude < 0.0001f)
+                {
+                    axis = transform.right; // Fallback axis if perfectly aligned
+                }
+
+                // Push forward vector back to the edge of the deadzone boundary
+                Vector3 clampedForward = Quaternion.AngleAxis(DownwardsBlindspotAngle, axis.normalized) * straightDown;
+                Vector3 proposedUp = proposedRotation * Vector3.up;
+            
+                proposedRotation = Quaternion.LookRotation(clampedForward, proposedUp);
+            }
+
+            eye.rotation = proposedRotation;
         }
     }
 

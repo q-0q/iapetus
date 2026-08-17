@@ -25,35 +25,36 @@ public partial class SentryFsm
             });;
 
         Machine.Configure(SentryFsmState.Tracking)
-            .Permit(SentryFsmTrigger.PlayerOutOfView, SentryFsmState.Extrapolating)
+            // .PermitIf(SentryFsmTrigger.PlayerOutOfView, SentryFsmState.Idle, _=> _obstructionTimer > MaxObstructionDuration)
             .Permit(SentryFsmTrigger.Shoot, SentryFsmState.Firing)
             .OnEntry(_ =>
             {
                 _laserEnd.SetActive(true);
             });
         
-        Machine.Configure(SentryFsmState.Extrapolating)
-            .PermitIf(SentryFsmTrigger.PlayerOutOfView, SentryFsmState.Searching, _ => _obstructionTimer >= MaxObstructionDuration)
-            .Permit(FsmTrigger.Timeout, SentryFsmState.Searching)
-            .Permit(SentryFsmTrigger.Shoot, SentryFsmState.Firing)
-            .Permit(SentryFsmTrigger.PlayerInView, SentryFsmState.Tracking)
-            .OnEntry(_ =>
-            {
-
-                _obstructionTimer = 0f;
-            });
-        
-        Machine.Configure(SentryFsmState.Searching)
-            .Permit(SentryFsmTrigger.PlayerInView, SentryFsmState.Tracking)
-            .Permit(SentryFsmTrigger.Shoot, SentryFsmState.Firing)
-            .Permit(FsmTrigger.Timeout, SentryFsmState.Idle)
-            .OnEntry(_ =>
-            {
-                _searchEnterSpeed = currentAngularVelocity;
-            });
+        // Machine.Configure(SentryFsmState.Extrapolating)
+        //     .PermitIf(SentryFsmTrigger.PlayerOutOfView, SentryFsmState.Searching, _ => _obstructionTimer >= MaxObstructionDuration)
+        //     .Permit(FsmTrigger.Timeout, SentryFsmState.Searching)
+        //     .Permit(SentryFsmTrigger.Shoot, SentryFsmState.Firing)
+        //     .Permit(SentryFsmTrigger.PlayerInView, SentryFsmState.Tracking)
+        //     .OnEntry(_ =>
+        //     {
+        //
+        //         _obstructionTimer = 0f;
+        //     });
+        //
+        // Machine.Configure(SentryFsmState.Searching)
+        //     .Permit(SentryFsmTrigger.PlayerInView, SentryFsmState.Tracking)
+        //     .Permit(SentryFsmTrigger.Shoot, SentryFsmState.Firing)
+        //     .Permit(FsmTrigger.Timeout, SentryFsmState.Idle)
+        //     .OnEntry(_ =>
+        //     {
+        //         _searchEnterSpeed = currentAngularVelocity;
+        //     });
         
         Machine.Configure(SentryFsmState.Firing)
-            .Permit(FsmTrigger.Timeout, SentryFsmState.Tracking)
+            .PermitIf(FsmTrigger.Timeout, SentryFsmState.Tracking, _ => IsPlayerInView())
+            .PermitIf(FsmTrigger.Timeout, SentryFsmState.Idle, _ => !IsPlayerInView() || PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.SentryImmune), 1)
             .OnEntry(_ =>
             {
                 _laserEnd.SetActive(false);
@@ -84,9 +85,9 @@ public partial class SentryFsm
         base.SetupStateMaps();
         
         StateMapConfig.Duration.Add(SentryFsmState.Wake, 0.5f);
-        StateMapConfig.Duration.Add(SentryFsmState.Searching, 2.75f);
+        // StateMapConfig.Duration.Add(SentryFsmState.Searching, 2.75f);
         StateMapConfig.Duration.Add(SentryFsmState.Tracking, 2f);
-        StateMapConfig.Duration.Add(SentryFsmState.Extrapolating, 1f);
+        // StateMapConfig.Duration.Add(SentryFsmState.Extrapolating, 1f);
         
     }
 }
