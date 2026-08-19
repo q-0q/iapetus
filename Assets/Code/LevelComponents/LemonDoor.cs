@@ -42,7 +42,7 @@ public class LemonDoor : MonoBehaviour
 
     private void UpdateLightMaterial(SaveSystem.SaveData _)
     {
-        var c = SaveSystem.LoadCachedSaveData().lemonCollections.Count;
+        var c = Math.Min(SaveSystem.LoadCachedSaveData().lemonCollections.Count, _lights.Count);
         for (int i = 0; i < c; i++)
         {
             _lights[i].GetComponentInChildren<Renderer>().material.SetFloat("_Weight", 1f);

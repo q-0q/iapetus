@@ -1017,6 +1017,7 @@ public partial class PlayerFsm
 
     public void InvokePlayerDeath()
     {
+        print("death invoked");
         if (Machine.IsInState(PlayerFsmState.Dying) || Machine.IsInState(PlayerFsmState.Dead) || Machine.IsInState(PlayerFsmState.TrialTeleport)) return;
         if (Physics.CheckSphere(transform.position, 1f, LayerMask.GetMask("DeathColliderMask"), QueryTriggerInteraction.Collide)) return;
         if (CultTrialManager.Singleton.isCurseEnabled)

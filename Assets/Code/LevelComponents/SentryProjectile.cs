@@ -37,6 +37,7 @@ public class SentryProjectile : MonoBehaviour
         _impactParticles = transform.Find("Fx").Find("ImpactParticles").GetComponent<ParticleSystem>();
         _impulse = GetComponentInChildren<CinemachineImpulseSource>();
         _deathCollider = GetComponentInChildren<PlayerDeathCollider>().gameObject;
+        _deathCollider.SetActive(false);
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -64,11 +65,14 @@ public class SentryProjectile : MonoBehaviour
         }
         
         transform.position += positionDelta;
-        // if (Physics.CheckSphere(transform.position, 1f, Fsm.GetEnvironmentalLayermask(),
-        //         QueryTriggerInteraction.Ignore))
-        // {
-        //     StartCoroutine(ImpactCoroutine());
-        // }
+        
+        
+        if (toPlayer.magnitude < 2f)
+        {
+            StartCoroutine(ImpactCoroutine());
+            PlayerFsm.Singleton.InvokePlayerDeath();
+
+        }
 
         if (_lifetime >= 5f)
         {
@@ -81,15 +85,18 @@ public class SentryProjectile : MonoBehaviour
         _impacted = true;
         _impactParticles.Play();
         _impulse.GenerateImpulse();
-        _deathCollider.SetActive(false);
-        
-        if (Physics.CheckSphere(transform.position, 3f, LayerMask.GetMask("Player"),
-                QueryTriggerInteraction.Collide))
-        {
 
-            var toPlayer = PlayerFsm.Singleton.transform.position - transform.position;
-            
-            if (!Physics.Raycast(transform.position, toPlayer, 3f, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore)) PlayerFsm.Singleton.InvokePlayerDeath();
+
+        var radius = 5f;
+        var toPlayer = PlayerFsm.Singleton.transform.position - transform.position;
+        print(toPlayer.magnitude);
+        if (toPlayer.magnitude < radius)
+        {
+            var origin = transform.position;
+            // PlayerFsm.Singleton.InvokePlayerDeath();
+            if (!Physics.Raycast(origin, toPlayer, out var hit, Mathf.Min(radius, toPlayer.magnitude),
+                    Fsm.GetEnvironmentalLayermask(),
+                    QueryTriggerInteraction.Ignore)) PlayerFsm.Singleton.InvokePlayerDeath();
         }
         
         Util.InvokeSphereEffect(transform.position - Vector3.up, Vector3.one * 8f, 1.5f, 0.8f, -1f);

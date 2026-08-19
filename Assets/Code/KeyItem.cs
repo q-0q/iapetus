@@ -151,7 +151,22 @@ public static class KeyItemRegistry
                 PhotoManager.Singleton.MakeActive();
                 PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.IdleLong);
             },
-            GetUseConfirmation = () => "Open the Photo mode?"
+            GetUseConfirmation = () => "Open Photo mode?"
+        });
+        
+        KeyItemRegistrations.Add("Mana0", new KeyItemRegistration()
+        {
+            displayName = "Wooden Lotus Charm",
+            description = "A tiny wooden square engraved with a floral pattern.",
+            MeshGameObject = Resources.Load("Prefab/KeyItems/UrnFragment") as GameObject,
+            Sprite = null,
+            GetUseDescription = () => "Increases Ki reserves.",
+            GetCanUse = () => false,
+            onUse = () =>
+            {
+
+            },
+            GetUseConfirmation = () => ""
         });
     }
 }

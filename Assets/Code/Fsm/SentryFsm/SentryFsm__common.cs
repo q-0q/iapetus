@@ -31,7 +31,8 @@ public partial class SentryFsm
     private float _blinkTimer;
 
     private const float DownwardsBlindspotAngle = 30f;
-    
+    public float Range = 80f;
+
     private void OnTriggerProxyStay(Collider obj)
     {
 

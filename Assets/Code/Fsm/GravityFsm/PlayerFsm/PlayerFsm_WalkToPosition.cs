@@ -48,9 +48,11 @@ public partial class PlayerFsm
             .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.ChestInteract);
 
         Machine.Configure(PlayerFsmState.RotationDaisInteract)
+            .SubstateOf(PlayerFsmState.DisplaceFoliage)
             .SubstateOf(PlayerFsmState.Interactable);
 
         Machine.Configure(PlayerFsmState.ChestInteract)
+            .SubstateOf(PlayerFsmState.DisplaceFoliage)
             .Permit(FsmTrigger.Timeout, PlayerFsmState.IdleLong);
     }
     

@@ -39,14 +39,16 @@ public partial class SentryFsm
         {
             return false;
         }
-        else if (toPlayer.magnitude > 80f)
+
+        // reduce range when player is above
+        // todo: probably should convert to local space
+        var rangeMod = Mathf.Lerp(1f, 0.5f, Mathf.InverseLerp(10, 20f, toPlayer.y));
+        if (toPlayer.magnitude > Range * rangeMod)
         {
             return false;
         }
-        else
-        {
-            return true;
-        }
+
+        return true;
     }
     
 }

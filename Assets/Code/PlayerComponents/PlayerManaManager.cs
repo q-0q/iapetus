@@ -32,19 +32,19 @@ public class PlayerManaManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _maxMana = 2;
+        SetUpIndicators();
         _currentMana = _maxMana;
-        SetUpIndicators(_maxMana);
         transform.SetParent(null);
     }
 
-    private void SetUpIndicators(int count)
+    private void SetUpIndicators()
     {
+        var count = 2 + GetBonusManaFromItems();
         _maxMana = count;
         var manaPrefab = Resources.Load("Prefab/PlayerManaIndicator") as GameObject;
         for (int i = _flipHolder.childCount - 1; i >= 0; i--)
         {
-            Destroy(_flipHolder.GetChild(i));
+            Destroy(_flipHolder.GetChild(i).gameObject);
         }
 
         _manaIndicators = new List<PlayerManaIndicator>();
@@ -91,5 +91,32 @@ public class PlayerManaManager : MonoBehaviour
         _manaIndicators[_currentMana - 1].Consume();
         _replenishTimer = 0.25f;
         _currentMana--;
+    }
+    
+    private void OnEnable()
+    {
+        SaveSystem.OnSaveDataUpdated += OnSaveDataUpdated;
+    }
+    
+    private void OnDisable()
+    {
+        SaveSystem.OnSaveDataUpdated -= OnSaveDataUpdated;
+    }
+
+    private void OnSaveDataUpdated(SaveSystem.SaveData obj)
+    {
+        SetUpIndicators();
+    }
+
+    private int GetBonusManaFromItems()
+    {
+        var items = SaveSystem.LoadCachedSaveData().items;
+        int count = 0;
+        foreach (var item in items)
+        {
+            if (item.Contains("Mana")) count++;
+        }
+
+        return count;
     }
 }

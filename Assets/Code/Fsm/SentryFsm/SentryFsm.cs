@@ -111,6 +111,7 @@ public partial class SentryFsm : Fsm
         {
             UpdateTrackingVelocity();
             RotateWithTrackingVelocity();
+            
             _lineRenderer.SetPosition(1, eye.position);
         }
 
