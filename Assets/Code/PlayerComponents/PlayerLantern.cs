@@ -1,4 +1,5 @@
 using System;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class PlayerLantern : MonoBehaviour
@@ -10,23 +11,7 @@ public class PlayerLantern : MonoBehaviour
         _child = transform.Find("Child").gameObject;
         _child.SetActive(false);
     }
-
-    private void OnEnable()
-    {
-        SceneDarknessIndicator.OnPlayerLanternActivated += OnLanternActivated;
-    }
-
-    private void OnDisable()
-    {
-        SceneDarknessIndicator.OnPlayerLanternActivated -= OnLanternActivated;
-    }
-
-    private void OnLanternActivated(float radiusMultiplier)
-    {
-        _child.GetComponentInChildren<CustomFogObserver>().radiusMultiplier = radiusMultiplier;
-        _child.SetActive(true);
-    }
-
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -40,5 +25,9 @@ public class PlayerLantern : MonoBehaviour
         float posLerpSpeed = 3f;
         transform.position = Vector3.Lerp(transform.position, PlayerFsm.Singleton.transform.position, posLerpSpeed * Time.deltaTime);
         // transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
+        
+        _child.SetActive(Shader.GetGlobalFloat("_CustomDarknessWeight") > 0.75f);
+        
+        
     }
 }
