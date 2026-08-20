@@ -69,6 +69,7 @@ public class CustomDarknessManager : MonoBehaviour
     private void LerpAllValues(float strength)
     {
         LerpFloat("_CustomDarknessWeight", _currentController == null ? 0f : 1f, strength);
+        if (_currentController != null) LerpColor("_CustomDarknessColor", _currentController.Color, strength);
     }
 
     private static void ApplyEditorSettings()
@@ -84,6 +85,16 @@ public class CustomDarknessManager : MonoBehaviour
             return;
         }
         Shader.SetGlobalFloat(name, Mathf.Lerp(Shader.GetGlobalFloat(name), value, Time.deltaTime * strength));
+    }
+    
+    private static void LerpColor(string name, Color value, float strength)
+    {
+        if (strength < 0)
+        {
+            Shader.SetGlobalColor(name, value);
+            return;
+        }
+        Shader.SetGlobalColor(name, Color.Lerp(Shader.GetGlobalColor(name), value, Time.deltaTime * strength));
     }
     
     private static Vector4[] _observerPositions = new Vector4[64];

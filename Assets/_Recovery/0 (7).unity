@@ -2300,88 +2300,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -45, z: 0}
---- !u!1 &1530176265
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1530176268}
-  - component: {fileID: 1530176267}
-  - component: {fileID: 1530176266}
-  m_Layer: 22
-  m_Name: FoliageSystem_DrabGrass
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1530176266
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530176265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94528e0c65af444db523f606f2e5ca5f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FoliageSystem
-  material: {fileID: 2100000, guid: f260319a638f84c829b7063f6bfe941a, type: 2}
-  mesh: {fileID: 8321410579540934406, guid: 950e974b286b84fbe8429419309de620, type: 3}
-  density: 0.25
-  maxInstances: 1000000
-  raycastDepth: 500
-  raycastOriginYOffset: 1
-  edgeDistance: 1
-  maxSlope: 85
-  yOffset: 0
-  scaleRange: {x: 0.75, y: 2.5}
-  rotationYRange: {x: 0, y: 360}
-  offsetRange: {x: -1, y: 1}
-  receiveFoliageMask:
-    serializedVersion: 2
-    m_Bits: 512
-  transformBake: 0
---- !u!65 &1530176267
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530176265}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &1530176268
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1530176265}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -238, y: 157.1, z: -129}
-  m_LocalScale: {x: 1000, y: 1, z: 1000}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1605032781
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2564,7 +2482,7 @@ PrefabInstance:
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 131.63
       objectReference: {fileID: 0}
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -5506,7 +5424,6 @@ SceneRoots:
   - {fileID: 1975711701}
   - {fileID: 1605032781}
   - {fileID: 41048177}
-  - {fileID: 1530176268}
   - {fileID: 1864767523}
   - {fileID: 1481020831}
   - {fileID: 2020570491}
