@@ -40,16 +40,19 @@ public class CustomDarknessManager : MonoBehaviour
         
         var colliders = Physics.OverlapSphere(PlayerFsm.Singleton.transform.position, 5f,
             LayerMask.GetMask("CustomFogController"), QueryTriggerInteraction.Collide);
+        CustomDarknessController _currentHighestPriorityController = null;
+
         foreach (var collider in colliders)
         {
             if (collider == null) continue;
             collider.TryGetComponent(out CustomDarknessController controller);
             if (controller == null) continue;
+            if (_currentHighestPriorityController != null && _currentHighestPriorityController.Priority >= controller.Priority) continue;
+            _currentHighestPriorityController = controller;
             SetCurrentController(controller, snap);
-            return;
         }
         
-        SetCurrentController(null, snap);
+        if(_currentHighestPriorityController == null) SetCurrentController(null, snap);
     }
 
     // Update is called once per frame

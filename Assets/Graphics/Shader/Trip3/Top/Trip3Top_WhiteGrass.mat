@@ -42,6 +42,14 @@ Material:
         m_Texture: {fileID: 2800000, guid: 1c1831f39955548d594cd80eb37d8c88, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SidesNoiseColorSampleTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SidesNoiseNormalSampleTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SidesNormalSampleTexture:
         m_Texture: {fileID: 2800000, guid: deeb4ea5e2cd24b6baa25befcd59042f, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -76,6 +84,16 @@ Material:
     - _SidesContrast: 1
     - _SidesHueOffset: 0
     - _SidesMetallic: 0.2
+    - _SidesNoiseContrast: 1
+    - _SidesNoiseHueOffset: 0
+    - _SidesNoiseLerpMax: -1
+    - _SidesNoiseLerpMin: -0.5
+    - _SidesNoiseMetallic: 0
+    - _SidesNoiseNoiseScale: 0.1
+    - _SidesNoiseNormalIntensity: 1
+    - _SidesNoiseSaturation: 0
+    - _SidesNoiseScale: 0.1
+    - _SidesNoiseSmoothness: 0
     - _SidesNormalIntensity: 1
     - _SidesSaturation: 1
     - _SidesScale: 0.1
@@ -88,8 +106,11 @@ Material:
     - _TopScale: 0.05
     - _TopSmoothness: 0.2
     m_Colors:
+    - _DotVector: {r: 0, g: 1, b: 0, a: 0}
     - _SidesAdd: {r: 0, g: 0, b: 0, a: 1}
     - _SidesMultiply: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
+    - _SidesNoiseAdd: {r: 0, g: 0, b: 0, a: 1}
+    - _SidesNoiseMultiply: {r: 1, g: 1, b: 1, a: 1}
     - _TopAdd: {r: 0.735849, g: 0.735849, b: 0.735849, a: 1}
     - _TopMultiply: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

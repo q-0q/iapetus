@@ -140,8 +140,6 @@ public class FoliageSystem : MonoBehaviour
         if (((1 << hit.collider.gameObject.layer) & receiveFoliageMask) == 0) return;
         
         // try to detect if we are inside geometry.
-        // we reason by saying if there is an upwards facing normal above us
-        // but not a downwards facing normal above us, then skip placement
         if (RaycastCheckSphere(hit, rayDirection)) return;
         
         // edge detection
@@ -200,28 +198,63 @@ public class FoliageSystem : MonoBehaviour
 
     private bool RaycastCheckSphere(RaycastHit hitInfo, Vector3 rayDirection)
     {
-        var height = 300f;
-        var gap = 0.01f;
-        var origin = hitInfo.point + Vector3.up * height;
+        // zig zag up and down raycast to find whether
+        // the lowest upwards normal has a downwards
+        // normal lower than it.
         
-        // if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
-        //         QueryTriggerInteraction.Collide)) return true;
+        var maxDistance = 300f;
+        var origin = hitInfo.point + (-rayDirection.normalized * maxDistance);
 
-
-        if (Physics.Raycast(origin, Vector3.down, out RaycastHit downwardsHit, height - gap,
-                Fsm.GetEnvironmentalLayermask(),
-                QueryTriggerInteraction.Ignore))
+        var maxIterations = 50;
+        var i = 0;
+        while (i < maxIterations)
         {
-            if (Physics.Raycast(hitInfo.point + Vector3.up * gap, Vector3.up, out RaycastHit upwardsHit, height - gap, Fsm.GetEnvironmentalLayermask(),
+            if (Physics.Raycast(origin, rayDirection, out var topFaceHit, maxDistance - 1f, Fsm.GetEnvironmentalLayermask(),
                     QueryTriggerInteraction.Ignore))
             {
-                if (upwardsHit.point.y < downwardsHit.point.y) return false;
-            };
+                if (Physics.Raycast(hitInfo.point, -rayDirection, out var bottomFaceHit, topFaceHit.distance,
+                        Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+                {
+                    origin = bottomFaceHit.point;
+                    maxDistance = bottomFaceHit.distance;
+                    i++;
+                    continue;
+                }
 
-            return true;
-        };
+                return true;
+            }
 
-        return false;
+            // ->
+            return false;
+
+
+        }
+
+        return true;
+
+
+        // var height = 300f;
+        // var gap = 0.01f;
+        // var origin = hitInfo.point + Vector3.up * height;
+        //
+        // // if (Physics.Raycast(origin, Vector3.down, height - gap, LayerMask.GetMask("FoliageMask"),
+        // //         QueryTriggerInteraction.Collide)) return true;
+        //
+        //
+        // if (Physics.Raycast(origin, Vector3.down, out RaycastHit downwardsHit, height - gap,
+        //         Fsm.GetEnvironmentalLayermask(),
+        //         QueryTriggerInteraction.Ignore))
+        // {
+        //     if (Physics.Raycast(hitInfo.point + Vector3.up * gap, Vector3.up, out RaycastHit upwardsHit, height - gap, Fsm.GetEnvironmentalLayermask(),
+        //             QueryTriggerInteraction.Ignore))
+        //     {
+        //         if (upwardsHit.point.y < downwardsHit.point.y) return false;
+        //     };
+        //
+        //     return true;
+        // };
+        //
+        // return false;
     }
 
     Bounds GetLocalColliderBounds(Collider col)

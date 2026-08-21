@@ -354,7 +354,7 @@ public partial class PlayerFsm
     private bool UpdateLedgePosition(float ledgeHeight, bool upwardsOnly = false)
     {
 
-        if (_arrivedAtLedge && !Machine.IsInState(PlayerFsmState.Tinsica)) return false; // or, just return true to allow continued lerping without updating value
+        if (_arrivedAtLedge && !Machine.IsInState(PlayerFsmState.Tinsica)) return true; // or, just return true to allow continued lerping without updating value
         
         var wallDistance = 0f;
         if (Physics.Raycast(transform.position, transform.forward, out var forwardHit, 5f, GetEnvironmentalLayermask()))
@@ -362,7 +362,7 @@ public partial class PlayerFsm
             wallDistance = forwardHit.distance;
         }
         
-        var forwardOffset = (0.5f * GetRaycastTimeModifier()) + wallDistance;
+        var forwardOffset = (1f * GetRaycastTimeModifier()) + wallDistance;
         var downwardRaycastOrigin = transform.position + (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)) + transform.forward *
             (forwardOffset);
         Debug.DrawLine(downwardRaycastOrigin, downwardRaycastOrigin - (Vector3.up * (ledgeHeight + UpdateLedgePositionEpsilon)), Color.green);
