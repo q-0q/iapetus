@@ -46,6 +46,14 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.WalkToChestPosition)
             .SubstateOf(PlayerFsmState.WalkToPosition)
             .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.ChestInteract);
+        
+        Machine.Configure(PlayerFsmState.WalkToTravelPosition)
+            .SubstateOf(PlayerFsmState.WalkToPosition)
+            .Permit(PlayerFsmTrigger.ArriveAtWalkToPositionTarget, PlayerFsmState.Travel);
+
+        Machine.Configure(PlayerFsmState.Travel)
+            .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(GravityFsmState.IgnoreDepenetration);
 
         Machine.Configure(PlayerFsmState.RotationDaisInteract)
             .SubstateOf(PlayerFsmState.DisplaceFoliage)

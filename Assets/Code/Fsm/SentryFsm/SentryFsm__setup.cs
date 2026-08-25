@@ -25,7 +25,8 @@ public partial class SentryFsm
             });;
 
         Machine.Configure(SentryFsmState.Tracking)
-            // .PermitIf(SentryFsmTrigger.PlayerOutOfView, SentryFsmState.Idle, _=> _obstructionTimer > MaxObstructionDuration)
+            .PermitIf(SentryFsmTrigger.PlayerOutOfView, SentryFsmState.Idle, _=>
+                (_obstructionTimer > MaxObstructionDuration && passive))
             .Permit(SentryFsmTrigger.Shoot, SentryFsmState.Firing)
             .OnEntry(_ =>
             {

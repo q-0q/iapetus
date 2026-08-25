@@ -8,6 +8,9 @@ using UnityEngine.Serialization;
 
 public partial class SentryFsm
 {
+
+    public bool passive = false;
+    
     private Vector3 _trackingRotationalVelocity;
     private Vector3 _lastTrackedPlayerPosition;
     

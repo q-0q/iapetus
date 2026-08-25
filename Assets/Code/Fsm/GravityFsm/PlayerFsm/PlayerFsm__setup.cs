@@ -141,6 +141,7 @@ public partial class PlayerFsm
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToTerminalNodePosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToRotationDaisPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToChestPosition, "GroundMove");
+        StateMapConfig.AnimationTrigger.Add(PlayerFsmState.WalkToTravelPosition, "GroundMove");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallsquat, "Wallsquat");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Wallstep, "Wallstep");
         StateMapConfig.AnimationTrigger.Add(PlayerFsmState.Skipsquat, "Skipsquat");

@@ -8,7 +8,7 @@ public partial class SentryFsm
     {
         base.OnFireTriggers();
         
-        if (_blinking && _blinkTimer > 0.75f)
+        if (_blinking && _blinkTimer > 0.75f && !passive)
         {
             Machine.Fire(SentryFsmTrigger.Shoot);
         }

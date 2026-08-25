@@ -122,6 +122,8 @@ protected Vector3 ComputeCollisionMove(Vector3 desiredMove, float yModifier = 1f
     if (GameMenu.Singleton.IsMenuOpen()) return Vector3.zero;
     var output = desiredMove;
 
+    if (Machine.IsInState(GravityFsm.GravityFsmState.IgnoreDepenetration)) return output; //....?
+
     // Radius of your character (adjust as needed)
     var backwardsPadding = 0.45f;
     float radius = CollisionMoveSphereCastRadius;
@@ -268,5 +270,13 @@ protected Vector3 ComputeCollisionMove(Vector3 desiredMove, float yModifier = 1f
     public float GetYVelocity()
     {
         return YVelocity;
+    }
+
+    public void SetParentTransform(Transform t)
+    {
+        parentTransform = t;
+        _previousParentTransformPosition = parentTransform.position;
+        _previousParentRotation = parentTransform.rotation;
+        OnParentTransformChanged(parentTransform);
     }
 }

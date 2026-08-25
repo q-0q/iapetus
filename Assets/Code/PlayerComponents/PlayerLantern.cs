@@ -6,8 +6,7 @@ public class PlayerLantern : MonoBehaviour
 {
     private GameObject _child;
     private bool _playerHasLantern;
-    private Vector3 _previousPlayerPosition;
-    private Vector3 _currentSpeed;
+    public Transform parentMotion;
 
     private void Awake()
     {
@@ -19,13 +18,11 @@ public class PlayerLantern : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        _previousPlayerPosition = PlayerFsm.Singleton.transform.position;
-        _currentSpeed = Vector3.zero;
         transform.position = PlayerFsm.Singleton.transform.position;
     }
 
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (!_playerHasLantern) return;
         // float rotationSpeed = 100f;
@@ -35,14 +32,13 @@ public class PlayerLantern : MonoBehaviour
         
         // _currentSpeed = Vector3.Lerp(_currentSpeed, playerPositionDelta, Time.deltaTime * 4f);
         
-        float posLerpSpeed = 5f;
-        transform.position = Vector3.Lerp(transform.position, playerPosition, posLerpSpeed * Time.deltaTime);
+        transform.position = parentMotion.transform.position;
+        transform.rotation = parentMotion.transform.rotation;
         // transform.Rotate(Vector3.up, rotationSpeed * Time.deltaTime);
 
         // transform.position += _currentSpeed;
         
         _child.SetActive(Shader.GetGlobalFloat("_CustomDarknessWeight") > 0.75f);
-        _previousPlayerPosition = playerPosition;
 
 
     }

@@ -145,6 +145,8 @@ public partial class PlayerFsm : GravityFsm
         public static int WalkToChestPosition;
         public static int ChestInteract;
         public static int SentryImmune;
+        public static int WalkToTravelPosition;
+        public static int Travel;
     }
 
     public class PlayerFsmTrigger : GravityFsmTrigger

@@ -73,7 +73,7 @@ public partial class SentryFsm : Fsm
             RotateWithTrackingVelocity();
             UpdateLineRenderer();
 
-            if (TimeInCurrentState() > 1f && !_blinking)
+            if (TimeInCurrentState() > 1f && !_blinking && !passive)
             {
                 _blinking = true;
                 _blinkTimer = 0f;

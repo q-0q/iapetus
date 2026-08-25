@@ -47,7 +47,7 @@ public class CutoutFocus : MonoBehaviour
         Debug.DrawRay(_camera.transform.position, toPlayer);
         var blocked = Physics.Raycast(_camera.transform.position, toPlayer, toPlayer.magnitude - 5f, Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore);
         _timeSpentTriggered = blocked ? _timeSpentTriggered + Time.deltaTime : 0f;
-        var triggered = (_timeSpentTriggered >= TimeToTrigger) && (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport)) && !CutsceneManager.Singleton.IsCutsceneActive();
+        var triggered = (_timeSpentTriggered >= TimeToTrigger) && (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.TrialTeleport)) && !CutsceneManager.Singleton.IsCutsceneActive() && (!PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Travel));
         Shader.SetGlobalFloat("_CutoutRadius", Mathf.Lerp(currentRadius, triggered ? MaxRadius : 0f, Time.deltaTime *
             (triggered ? RadiusGrowLerpStrength : RadiusShrinkLerpStrength)));
         

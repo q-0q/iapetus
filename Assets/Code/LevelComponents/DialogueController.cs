@@ -26,7 +26,7 @@ public class DialogueController : MonoBehaviour
     public event Action<int> OnProgressed;
     public Transform LookAtOverride;
 
-    public float CameraY = 0.7f;
+    public float CameraY = 0.55f;
 
     public float canvasDelay = 0f;
     public float cameraFollowOffsetLerp = 0f;
