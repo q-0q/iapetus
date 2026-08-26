@@ -15,8 +15,7 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private float _baseXSpeed;
     private float _baseYSpeed;
     private float _timeSincePlayerLookInput;
-
-    private CameraBehaviorZone _currentCameraBehaviorZone;
+    
     private float _rampUpTime;
     
     
@@ -34,6 +33,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
 
     private float _baseFov;
     private bool _preventYRecenter;
+    private Vector3 _desiredOffset;
+    private CinemachineCameraOffset _cinemachineOffset;
 
     void Awake()
     {
@@ -49,6 +50,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _freeLook.m_YAxis.m_InputAxisValue = 0f;
         _freeLook.m_XAxis.m_InputAxisValue = 0f;
         _preventYRecenter = false;
+        _cinemachineOffset = GetComponent<CinemachineCameraOffset>();
+        _desiredOffset = Vector3.zero;
         
         OnMetaSaveDataUpdated(MetaSaveSystem.LoadCachedMetaSaveData());
     }
@@ -85,13 +88,8 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
             _freeLook.m_YAxis.Reset();
             return;
         }
-
-        if (_currentCameraBehaviorZone != null)
-        {
-            if (!_currentCameraBehaviorZone.gameObject.activeInHierarchy) OnCameraFollowTriggerStay(null);
-        }
         
-        HandleCameraBehaviorZone();
+        HandleCollision();
         
         var lookVector2 = _playerInput.actions["Look"].ReadValue<Vector2>() * (0.01f * Time.timeScale);
         _timeSincePlayerLookInput += Time.deltaTime;
@@ -117,12 +115,13 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         if (InputTypeManager.Singleton.GetCurrentInputType() == InputTypeManager.InputType.Pad) lookVector2 *= 5f;
         _freeLook.m_XAxis.m_InputAxisValue = lookVector2.x;
         _freeLook.m_YAxis.m_InputAxisValue = lookVector2.y;
+        
+
     }
 
     private void OnEnable()
     {
         MetaSaveSystem.OnMetaSaveDataUpdated += OnMetaSaveDataUpdated;
-        CameraFollow.OnCameraFollowTriggerStay += OnCameraFollowTriggerStay;
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported += OnWarp;
         PlayerFsm.OnPlayerTeleported += OnWarp;
     }
@@ -130,7 +129,6 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     private void OnDisable()
     {
         MetaSaveSystem.OnMetaSaveDataUpdated -= OnMetaSaveDataUpdated;
-        CameraFollow.OnCameraFollowTriggerStay -= OnCameraFollowTriggerStay;
         TestCutsceneFsm.OnIntroCutsceneGondolaTeleported -= OnWarp;
         PlayerFsm.OnPlayerTeleported -= OnWarp;
     }
@@ -186,53 +184,14 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
     //     _settingsMenuOpen = false;
     // }
     //
-    private void OnCameraFollowTriggerStay(CameraBehaviorZone cameraBehaviorZone)
-    {
-        if (cameraBehaviorZone == null || _currentCameraBehaviorZone == null)
-        {
-            _currentCameraBehaviorZone = cameraBehaviorZone;
-            return;
-        }
-        
-        if (cameraBehaviorZone.priority > _currentCameraBehaviorZone.priority)
-        {
-            _currentCameraBehaviorZone = cameraBehaviorZone;
-            
-        };
-    }
+
     
     
     public void AddXAxisOffset(float value)
     {
         _freeLook.m_XAxis.Value += value;
     }
-
-    private void HandleCameraBehaviorZone()
-    {
-        
-        if(!_isAutocamEnabled) return;
-        if (_currentCameraBehaviorZone == null) return;
-        var newForward = _currentCameraBehaviorZone.GetCameraForward(PlayerFsm.Singleton.transform.position, out var y);
-
-        var oldXQuat = Quaternion.Euler(0, _freeLook.m_XAxis.Value, 0);
-        
-        // if the player is facing away from the newForward and the camera is also pointed
-        // roughly in that direction then we assume the player "knows what theyre doing" and we dont autocam
-        // var playerDesiredAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, newForward);
-        // var playerCurrentAngleDelta = Vector3.Angle(PlayerFsm.Singleton.transform.forward, oldXQuat * Vector3.forward);
-        // if (playerDesiredAngleDelta > 100f && playerCurrentAngleDelta < 45f && PlayerFsm.Singleton.GetMomentum() > 2f) return;
-        
-        var xAngle = Vector3.SignedAngle(Vector3.forward, newForward, transform.up);
-        
-        // converting to quats prevents wraparound issues
-        var newXQuat = Quaternion.Euler(0, xAngle, 0);
-        
-    }
-
-    private void ForceRecenter()
-    {
-        // _timeSinceRecenter = _recenterTime + _rampUpTime;
-    }
+    
 
     public void OnPlayerCinemachineFreeLookScript(Vector3 direction, float duration, float y = 0.7f, float linger = 0f)
     {
@@ -287,6 +246,42 @@ public class PlayerCinemachineFreeLook : MonoBehaviour
         _preventYRecenter = true;
         yield return new WaitForSeconds(duration);
         _preventYRecenter = false;
+    }
+
+    public void SetDesiredOffset(Vector3 offset)
+    {
+        _desiredOffset = offset;
+    }
+    private void HandleCollision()
+    {
+
+        if (PlayerFsm.Singleton.Machine.IsInState(PlayerFsm.PlayerFsmState.Travel))
+        {
+            _cinemachineOffset.m_Offset = _desiredOffset;
+            return;
+        }
+        
+        var padding = 2f;
+        var desiredPosition = transform.position + _desiredOffset;
+        var toCamera = desiredPosition - PlayerFsm.Singleton.transform.position;
+        if (Physics.Raycast(PlayerFsm.Singleton.transform.position, toCamera, out var toCameraHit, toCamera.magnitude + padding,
+                Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+        {
+
+            if (Physics.Raycast(desiredPosition, -toCamera, out var toPlayerHit, toCamera.magnitude - toCameraHit.distance,
+                    Fsm.GetEnvironmentalLayermask(), QueryTriggerInteraction.Ignore))
+            {
+                _cinemachineOffset.m_Offset = _desiredOffset;
+            }
+            else
+            {
+                _cinemachineOffset.m_Offset = new Vector3(_desiredOffset.x, _desiredOffset.y, toCamera.magnitude - toCameraHit.distance + padding);
+            }
+        }
+        else
+        {
+            _cinemachineOffset.m_Offset = _desiredOffset;
+        }
     }
 
     

@@ -122,7 +122,7 @@ protected Vector3 ComputeCollisionMove(Vector3 desiredMove, float yModifier = 1f
     if (GameMenu.Singleton.IsMenuOpen()) return Vector3.zero;
     var output = desiredMove;
 
-    if (Machine.IsInState(GravityFsm.GravityFsmState.IgnoreDepenetration)) return output; //....?
+    if (Machine.IsInState(GravityFsm.GravityFsmState.IgnoreCollisionMoveClipping)) return output; //....?
 
     // Radius of your character (adjust as needed)
     var backwardsPadding = 0.45f;

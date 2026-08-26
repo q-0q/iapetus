@@ -40,7 +40,7 @@ public class TutorialCanvas : MonoBehaviour
         Image.sprite = InputTypeManager.Singleton.GetSpriteForAction(action);
         _tapTmp.gameObject.SetActive(action != "Move" && action != "Look");
         
-        if (_open && !GameMenu.Singleton.IsMenuOpen() && !CutsceneManager.Singleton.IsCutsceneTutorialCanvasHidden())
+        if (_open && !GameMenu.Singleton.IsMenuOpen() && !CutsceneManager.Singleton.IsCutsceneTutorialCanvasHidden() && !PhotoManager.Singleton.IsActive())
         {
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, 1, Time.unscaledDeltaTime * 10f);
         }

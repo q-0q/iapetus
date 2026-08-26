@@ -53,6 +53,7 @@ public partial class PlayerFsm
 
         Machine.Configure(PlayerFsmState.Travel)
             .SubstateOf(GravityFsmState.RespectParentTransform)
+            .SubstateOf(GravityFsmState.IgnoreCollisionMoveClipping)
             .SubstateOf(GravityFsmState.IgnoreDepenetration);
 
         Machine.Configure(PlayerFsmState.RotationDaisInteract)

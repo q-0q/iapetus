@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using FMOD.Studio;
 using UnityEngine;
 using Code.Misc;
+using UnityEditor.Rendering;
 using UnityEngine.Serialization;
 using Util = Code.Misc.Util;
 
@@ -34,7 +35,25 @@ public class TravelController : MonoBehaviour
 
     private void OnMainInteracted()
     {
+        IEnumerator CameraOffsetCoroutine()
+        {
+            var t = 0f;
+            var d = 2.5f;
+            var freelook = PlayerCinemachineFreeLook.Singleton;
+            var offset = Vector3.zero;
 
+            yield return new WaitForSeconds(0.5f);
+            
+            while (t < d)
+            {
+                var speed = Mathf.Lerp(0.1f, 2f, Mathf.InverseLerp(0f, 0.5f, t));
+                offset = Vector3.Lerp(offset, new Vector3(0, 0, -12f), Time.deltaTime * speed);
+                freelook.SetDesiredOffset(offset);
+                t += Time.deltaTime;
+                yield return null;
+            }
+        }
+        
         IEnumerator Coroutine()
         {
             PlayerFsm.Singleton.Machine.Jump(PlayerFsm.PlayerFsmState.WalkToTravelPosition);
@@ -54,14 +73,17 @@ public class TravelController : MonoBehaviour
             PlayerFsm.Singleton.SetParentTransform(parentTransform);
             Util.ReplaceAnimatorTrigger(_animator, "MainChannel");
 
-            yield return new WaitForSeconds(1.75f);
+            StartCoroutine(CameraOffsetCoroutine());
+            
+            yield return new WaitForSeconds(2.15f);
+
 
             t = 0;
-            d = 0.5f;
+            d = 0.25f;
 
             while (t < d)
             {
-                var speed = Mathf.Lerp(0f, 75f, Mathf.InverseLerp(0, 0.25f, t));
+                var speed = Mathf.Lerp(0f, 100f, Mathf.InverseLerp(0, 0.25f, t));
                 parentTransform.position += -transform.right * (Time.deltaTime * speed);
                 t += Time.deltaTime;
                 yield return null;
@@ -76,8 +98,7 @@ public class TravelController : MonoBehaviour
 
             while (t < d)
             {
-                var speed = Mathf.Lerp(0f, 75f, Mathf.InverseLerp(0, 0.25f, t));
-                parentTransform.position += -transform.right * (Time.deltaTime * speed);
+                parentTransform.position += -transform.right * (Time.deltaTime * 100f);
                 t += Time.deltaTime;
                 yield return null;
             }

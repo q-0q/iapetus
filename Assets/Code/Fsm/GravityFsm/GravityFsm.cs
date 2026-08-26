@@ -11,6 +11,7 @@ public  abstract partial class GravityFsm : Fsm
         public static int DontLoseYVelocity;
         public static int RespectParentTransform;
         public static int IgnoreDepenetration;
+        public static int IgnoreCollisionMoveClipping;
         public static int IgnoreVerticalDepenetration;
         public static int DontApplyGustYVelocity;
     }
