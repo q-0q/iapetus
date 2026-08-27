@@ -22,6 +22,7 @@ public class GlyphController : MonoBehaviour
         public float mapSplineEndT;
         public string writeAdditionalKey = "";
         public bool contributeToCount = true;
+        public bool isEndCap = false;
     }
 
     public static readonly Dictionary<string, TerminalData> TerminalRegistry = new()
@@ -89,12 +90,58 @@ public class GlyphController : MonoBehaviour
             } 
         },
         
-        { "piton-climb", new TerminalData()
+        { "ouro", new TerminalData()
             {
                 displayId = "03",
-                previousNode = "icy-canals",
-                loreDialogue = new List<string>() { }
+                previousNode = "icy-canals-0",
+                loreDialogue = new List<string>() { "Ouro Station is the only solar intake for the Mountain's lower regions.", "Light captured by Ouro Station feeds hardlight systems via the leyline network.", "In case of hardlight failures, Ouro Station's leyline connection and its internal core stability should both be monitored." },
+                mapSplineId = 0,
+                mapSplineStartT = 0.9f,
+                mapSplineEndT = 1f,
+                contributeToCount = true,
+                isEndCap = true
+                
             } 
+        }
+    };
+    
+    
+    public class AreaData
+    {
+        public string subtitle;
+        public string title;
+        public string coords;
+        public string elevation;
+    }
+
+    public static readonly Dictionary<string, AreaData> AreaRegistry = new()
+    {
+        { "glyph", new AreaData()
+            {
+                subtitle = "The",
+                title = "Glyph",
+                coords = "76\u00b047S 64\u00b08W",
+                elevation = "810 m"
+                
+            }
+        },
+        
+        { "steppe", new AreaData()
+            {
+                subtitle = "The",
+                title = "Steppe",
+                coords = "77\u00b023S 72\u00b047W",
+                elevation = "935 m",
+            }
+        },
+        
+        { "ouro", new AreaData()
+            {
+                subtitle = "",
+                title = "Ouro Station",
+                coords = "88\u00b072S 59\u00b012W",
+                elevation = "1240 m"
+            }
         }
     };
 

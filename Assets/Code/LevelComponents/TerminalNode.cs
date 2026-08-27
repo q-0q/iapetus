@@ -111,6 +111,8 @@ public class TerminalNode : MonoBehaviour
             countString + " in the network."
         };
         
+        if (GlyphController.TerminalRegistry[metaName].isEndCap) primaryTexts.Add("This leyline branch is saturated.");
+        
         primaryTexts.Add(lore.Count == 0 ? "No additional data has been logged at this station." : "There are additional logs available on this station.");
         
         

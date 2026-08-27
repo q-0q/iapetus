@@ -77,7 +77,8 @@ public class SaveSystem : MonoBehaviour
         public int incenseAmount;
         public int cultLocationCampId;
         public List<string> bitDeposits;
-        [FormerlySerializedAs("TerminalNodes")] public List<string> terminalNodes;
+        public List<string> terminalNodes;
+        public List<string> areas;
         public string currentNearestTerminalNode;
         public float currentNeatestTerminalNodeT;
         public string checkpointPath;
@@ -99,6 +100,7 @@ public class SaveSystem : MonoBehaviour
             lemonCollections = new List<string>();
             bells = new List<string>();
             terminalNodes = new List<string>();
+            areas = new List<string>();
             currentNearestTerminalNode = "";
             currentNeatestTerminalNodeT = 0;
             checkpointPath = "";
@@ -386,6 +388,28 @@ public class SaveSystem : MonoBehaviour
         data.terminalNodes.Add(metaName);
         Singleton._cachedSaveData = data;
         WriteSaveData(data);
+    }
+    
+    public static void WriteArea(string metaName)
+    {
+        if (metaName == "") 
+        {
+            Debug.LogError("Tried to write empty area");
+            return;
+        };
+        
+        SaveData data = LoadCachedSaveData();
+        if (data.areas.Contains(metaName)) return;
+        data.areas.Add(metaName);
+        Singleton._cachedSaveData = data;
+        WriteSaveData(data);
+    }
+    
+    public static bool GetArea(string metaName)
+    {
+        SaveData data = LoadCachedSaveData();
+        if (data.areas == null) return false;
+        return data.areas.Contains(metaName);
     }
 
     public static bool GetTerminalNode(string metaName)

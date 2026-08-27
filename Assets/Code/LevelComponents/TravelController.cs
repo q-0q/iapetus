@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using FMOD.Studio;
 using UnityEngine;
 using Code.Misc;
-using UnityEditor.Rendering;
 using UnityEngine.Serialization;
 using Util = Code.Misc.Util;
 
@@ -19,12 +18,18 @@ public class TravelController : MonoBehaviour
     private const string gateEventSuffix = "-travel-gate";
     public Interactable GateInteractable;
     public Interactable MainInteractable;
+    private DialogueController _dialogueController;
     public Transform parentTransform;
     public Transform walkToPositionTransform;
+    
 
     private void Awake()
     {
         _animator = GetComponentInChildren<Animator>();
+        _dialogueController = GetComponentInChildren<DialogueController>();
+
+        var destinationDisplayName = TravelRegistry[destinationId].DisplayName;
+        _dialogueController.dialogues[0].texts[1] = "Configured destination: " + destinationDisplayName + ".";
     }
 
     private void OnEnable()

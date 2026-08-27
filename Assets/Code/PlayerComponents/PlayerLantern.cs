@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.Rendering;
 using UnityEngine;
 
 public class PlayerLantern : MonoBehaviour

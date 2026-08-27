@@ -115,6 +115,12 @@ public partial class SentryFsm
     
     private void UpdateLineRenderer()
     {
+
+        if (passive)
+        {
+            _lineRenderer.SetPosition(1, eye.position);
+            return;
+        }
         
         var maxDistance = 1000f;
         var didPlayerCollide = false;
