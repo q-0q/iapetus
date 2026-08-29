@@ -68,7 +68,7 @@ void CalculateClosestCustomFogObserver_float(float4 WorldPos, out float OutMask)
             float skyboxLiftFactor = pow(InverseLerp(_CustomFogSkyboxLift, _CustomFogSkyboxLift * -0.5, relativeY), 0.75);
             skyboxLiftFactor = max(skyboxLiftFactor, _CustomFogMinimumYFactor);
             
-            mask = saturate(lerp(lerp(yAddFactor, yFactor + altYFactor, depthFactor), skyboxLiftFactor, InverseLerp(1000.0, 1100.0, depth)));
+            mask = saturate(lerp(depthFactor + yFactor + altYFactor + yAddFactor, skyboxLiftFactor, InverseLerp(1000.0, 1100.0, depth)));
             // mask = yFactor;
         }
         
