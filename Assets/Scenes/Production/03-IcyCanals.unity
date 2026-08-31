@@ -11736,37 +11736,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317611c1deb924353ae736d05cb6a944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
-  Priority: 3
-  LerpStrengthMultiplier: 1
-  Color: {r: 0.5613208, g: 0.73000574, b: 1, a: 1}
-  YMin: -100
-  YMax: 150
-  YPower: 2
-  MinimumYFactor: 0.6
-  AltYMin: 0
-  AltYMax: 250
-  AltYPower: 1
-  MaximumAltYFactor: 1
-  YAddMin: -50
-  YAddMax: -20
-  YAddPower: 1
-  YAddDepthInversion: 1
-  YAddClamp: 0.5
-  DepthMin: 30
-  DepthMax: 120
+  Priority: 1
+  Color: {r: 0.6462264, g: 0.7946669, b: 1, a: 1}
+  DepthMin: 20
+  DepthMax: 1500
   DepthPower: 1
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
+  MaxDepthFactor: 1
+  NearLowerBlanketMin: -60
+  NearLowerBlanketMax: -5
+  NearLowerBlanketPower: 0.5
+  MaxNearLowerBlanketFactor: 0.5
+  FarLowerBlanketMin: -100
+  FarLowerBlanketMax: 150
+  FarLowerBlanketPower: 1
+  MaxFarLowerBlanketFactor: 1
+  LowerBlanketDistanceMin: 20
+  LowerBlanketDistanceMax: 110
+  LowerBlanketDistancePower: 1
+  UpperBlanketMin: 0
+  UpperBlanketMax: 500
+  UpperBlanketPower: 2
+  MaxUpperBlanketFactor: 0.25
   SkyboxLift: 1500
   VignetteLerpMin: 0
-  VignetteLerpMax: 0.075
+  VignetteLerpMax: 0
   VignetteLerpPower: 1
-  VignetteAlpha: 0.05
-  VignetteColor: {r: 0.9009434, g: 0.9957752, b: 1, a: 0}
+  VignetteAlpha: 0
+  VignetteColor: {r: 0, g: 0, b: 0, a: 0}
+  LerpStrengthMultiplier: 1
   force: 0
 --- !u!4 &1481020831
 Transform:

@@ -24512,36 +24512,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: -10
-  LerpStrengthMultiplier: 1.25
   Color: {r: 0, g: 0.6784314, b: 0.25882354, a: 1}
-  YMin: -75
-  YMax: 150
-  YPower: 1
-  MinimumYFactor: 1
-  AltYMin: 200
-  AltYMax: 100
-  AltYPower: 2
-  MaximumAltYFactor: 0
-  YAddMin: -45
-  YAddMax: -17
-  YAddPower: 1.5
-  YAddDepthInversion: 0.8
-  YAddClamp: 0.5
   DepthMin: 20
   DepthMax: 120
   DepthPower: 1.5
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
+  MaxDepthFactor: 1
+  NearLowerBlanketMin: -50
+  NearLowerBlanketMax: -5
+  NearLowerBlanketPower: 2
+  MaxNearLowerBlanketFactor: 0.5
+  FarLowerBlanketMin: -50
+  FarLowerBlanketMax: 150
+  FarLowerBlanketPower: 2
+  MaxFarLowerBlanketFactor: 0.5
+  LowerBlanketDistanceMin: 20
+  LowerBlanketDistanceMax: 100
+  LowerBlanketDistancePower: 2
+  UpperBlanketMin: 0
+  UpperBlanketMax: 500
+  UpperBlanketPower: 2
+  MaxUpperBlanketFactor: 0.25
   SkyboxLift: 1500
   VignetteLerpMin: 0
   VignetteLerpMax: 0
   VignetteLerpPower: 1
   VignetteAlpha: 0
   VignetteColor: {r: 0, g: 0, b: 0, a: 0}
+  LerpStrengthMultiplier: 1.25
   force: 0
 --- !u!1 &1888742292929990821
 GameObject:
@@ -28208,36 +28205,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: -10
-  LerpStrengthMultiplier: 1
   Color: {r: 0, g: 0, b: 0, a: 1}
-  YMin: -75
-  YMax: 150
-  YPower: 1
-  MinimumYFactor: 1
-  AltYMin: 200
-  AltYMax: 100
-  AltYPower: 2
-  MaximumAltYFactor: 0
-  YAddMin: -45
-  YAddMax: -17
-  YAddPower: 1.5
-  YAddDepthInversion: 0.8
-  YAddClamp: 0.5
   DepthMin: 30
   DepthMax: 70
   DepthPower: 3
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
+  MaxDepthFactor: 1
+  NearLowerBlanketMin: -50
+  NearLowerBlanketMax: -5
+  NearLowerBlanketPower: 2
+  MaxNearLowerBlanketFactor: 0.5
+  FarLowerBlanketMin: -50
+  FarLowerBlanketMax: 150
+  FarLowerBlanketPower: 2
+  MaxFarLowerBlanketFactor: 0.5
+  LowerBlanketDistanceMin: 20
+  LowerBlanketDistanceMax: 100
+  LowerBlanketDistancePower: 2
+  UpperBlanketMin: 0
+  UpperBlanketMax: 500
+  UpperBlanketPower: 2
+  MaxUpperBlanketFactor: 0.25
   SkyboxLift: 1500
   VignetteLerpMin: 0
   VignetteLerpMax: 0
   VignetteLerpPower: 1
   VignetteAlpha: 0
   VignetteColor: {r: 0, g: 0, b: 0, a: 0}
+  LerpStrengthMultiplier: 1
   force: 0
 --- !u!1 &3713683675169003727
 GameObject:
@@ -71829,22 +71823,22 @@ PrefabInstance:
     - target: {fileID: 4760718831431249647, guid: 8394bc3bc5a9c4614b4127f027f41f95,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9991364
       objectReference: {fileID: 0}
     - target: {fileID: 4760718831431249647, guid: 8394bc3bc5a9c4614b4127f027f41f95,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.041552655
       objectReference: {fileID: 0}
     - target: {fileID: 4760718831431249647, guid: 8394bc3bc5a9c4614b4127f027f41f95,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.000000050562395
       objectReference: {fileID: 0}
     - target: {fileID: 4760718831431249647, guid: 8394bc3bc5a9c4614b4127f027f41f95,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.000000017825602
       objectReference: {fileID: 0}
     - target: {fileID: 6254481311082692381, guid: 8394bc3bc5a9c4614b4127f027f41f95,
         type: 3}

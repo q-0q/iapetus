@@ -6,45 +6,51 @@ public class CustomFogController : MonoBehaviour
 {
 
     public int Priority = 1;
-    public float LerpStrengthMultiplier = 1f;
+
     
     public Color Color = Color.white;
     
-    public float YMin = -100f;
-    public float YMax = 100f;
-    public float YPower = 2f;
-    public float MinimumYFactor = 0f;
-    
-    public float AltYMin = 200f;
-    public float AltYMax = 100f;
-    public float AltYPower = 2f;
-    public float MaximumAltYFactor = 0f;
-    
-    public float YAddMin = -100f;
-    public float YAddMax = -40f;
-    public float YAddPower = 2f;
-    public float YAddDepthInversion = 0.5f;
-    public float YAddClamp = 0.5f;
-    
+    [Header("Depth")]
     public float DepthMin = 20f;
-    public float DepthMax = 100f;
+    public float DepthMax = 600f;
     public float DepthPower = 2f;
-    public float DepthClamp = 1.0f;
+    public float MaxDepthFactor = 1.0f;
     
-    public float NoiseSubtractionAmount = 50f;
-    public float NoiseAScale = 0.02f;
-    public Vector3 NoiseAVelocity = new Vector3(2, 2, 2);
-    public float NoiseBScale = 0.01f;
-    public Vector3 NoiseBVelocity = new Vector3(-1, -1, -1);
+    [Header("Lower Blankets")]
+    public float NearLowerBlanketMin = -50f;
+    public float NearLowerBlanketMax = -5f;
+    public float NearLowerBlanketPower = 2f;
+    public float MaxNearLowerBlanketFactor = 0.5f;
+    
+    public float FarLowerBlanketMin = -50;
+    public float FarLowerBlanketMax = 150f;
+    public float FarLowerBlanketPower = 2f;
+    public float MaxFarLowerBlanketFactor = 0.5f;
+    
+    public float LowerBlanketDistanceMin = 20f;
+    public float LowerBlanketDistanceMax = 100f;
+    public float LowerBlanketDistancePower = 2f;
+    
+    [Header("Upper Blanket")]
+    public float UpperBlanketMin = 0f;
+    public float UpperBlanketMax = 500f;
+    public float UpperBlanketPower = 2f;
+    public float MaxUpperBlanketFactor = 0.25f;
+    
+
     
     public float SkyboxLift = 1500f;
 
+    [Header("Vignette")]
     public float VignetteLerpMin;
     public float VignetteLerpMax;
     public float VignetteLerpPower = 1f;
     public float VignetteAlpha;
     public Color VignetteColor;
 
+    
+    public float LerpStrengthMultiplier = 1f;
+    
     public bool force = false;
 
     private Collider _collider;

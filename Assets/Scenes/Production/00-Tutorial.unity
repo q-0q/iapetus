@@ -15166,37 +15166,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 317611c1deb924353ae736d05cb6a944, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
-  Priority: 3
-  LerpStrengthMultiplier: 1
-  Color: {r: 1, g: 0.759434, b: 0.9867529, a: 1}
-  YMin: -5
-  YMax: 100
-  YPower: 2
-  MinimumYFactor: 1
-  AltYMin: 200
-  AltYMax: 100
-  AltYPower: 2
-  MaximumAltYFactor: 0
-  YAddMin: -50
-  YAddMax: -20
-  YAddPower: 1
-  YAddDepthInversion: 1
-  YAddClamp: 0.5
-  DepthMin: 25
-  DepthMax: 100
-  DepthPower: 1
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
+  Priority: 1
+  Color: {r: 1, g: 0.75, b: 0.9318182, a: 1}
+  DepthMin: 20
+  DepthMax: 400
+  DepthPower: 2
+  MaxDepthFactor: 1
+  NearLowerBlanketMin: -60
+  NearLowerBlanketMax: -5
+  NearLowerBlanketPower: 0.5
+  MaxNearLowerBlanketFactor: 0.5
+  FarLowerBlanketMin: 25
+  FarLowerBlanketMax: 150
+  FarLowerBlanketPower: 1
+  MaxFarLowerBlanketFactor: 1
+  LowerBlanketDistanceMin: 20
+  LowerBlanketDistanceMax: 100
+  LowerBlanketDistancePower: 2
+  UpperBlanketMin: 0
+  UpperBlanketMax: 400
+  UpperBlanketPower: 2
+  MaxUpperBlanketFactor: 1
   SkyboxLift: 1500
   VignetteLerpMin: 0
-  VignetteLerpMax: 0.075
+  VignetteLerpMax: 0
   VignetteLerpPower: 1
-  VignetteAlpha: 0.05
-  VignetteColor: {r: 0.9009434, g: 0.9957752, b: 1, a: 0}
+  VignetteAlpha: 0
+  VignetteColor: {r: 0, g: 0, b: 0, a: 0}
+  LerpStrengthMultiplier: 1
   force: 0
 --- !u!4 &1481020831
 Transform:
@@ -16309,7 +16306,7 @@ PrefabInstance:
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 131.63
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1582768944829749915, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
@@ -17449,22 +17446,22 @@ PrefabInstance:
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.9991364
       objectReference: {fileID: 0}
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: 0.041552655
       objectReference: {fileID: 0}
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.000000050562395
       objectReference: {fileID: 0}
     - target: {fileID: 5942774065748655197, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.000000017825602
       objectReference: {fileID: 0}
     - target: {fileID: 6009970680978410363, guid: 7ca548f80e0954fd7b1e7beda817b941,
         type: 3}

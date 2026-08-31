@@ -36962,104 +36962,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 2.25
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &834857769
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 834857772}
-  - component: {fileID: 834857771}
-  - component: {fileID: 834857770}
-  m_Layer: 25
-  m_Name: CustomFogController_Green (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &834857770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834857769}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 317611c1deb924353ae736d05cb6a944, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
-  Priority: 2
-  LerpStrengthMultiplier: 1
-  Color: {r: 0.123015, g: 0.177, b: 0.12564841, a: 1}
-  YMin: -5
-  YMax: 100
-  YPower: 2
-  MinimumYFactor: 0.5
-  AltYMin: 200
-  AltYMax: 100
-  AltYPower: 2
-  MaximumAltYFactor: 0
-  YAddMin: -50
-  YAddMax: -5
-  YAddPower: 0.5
-  YAddDepthInversion: 0.8
-  YAddClamp: 0.5
-  DepthMin: 5
-  DepthMax: 150
-  DepthPower: 1
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
-  SkyboxLift: 1500
-  VignetteLerpMin: 0
-  VignetteLerpMax: 0.1
-  VignetteLerpPower: 1
-  VignetteAlpha: 0.4
-  VignetteColor: {r: 0, g: 0, b: 0, a: 0}
-  force: 0
---- !u!65 &834857771
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834857769}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 33554423
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &834857772
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 834857769}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.39627606, z: -0, w: 0.9181315}
-  m_LocalPosition: {x: 167, y: 0, z: 335}
-  m_LocalScale: {x: 285.78998, y: 189.80324, z: 283.47043}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 46.691, z: 0}
 --- !u!1 &855092120
 GameObject:
   m_ObjectHideFlags: 0
@@ -51847,74 +51749,6 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1 &902688534
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 902688537}
-  - component: {fileID: 902688536}
-  - component: {fileID: 902688535}
-  m_Layer: 25
-  m_Name: CustomDarknessController (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &902688535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 902688534}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f3b8484594ff4518b809d8ff572d2ff1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CustomDarknessController
-  Color: {r: 0, g: 0.03, b: 0.019816086, a: 1}
-  Priority: 2
---- !u!65 &902688536
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 902688534}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 33554423
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 25, y: 20.67, z: 25}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &902688537
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 902688534}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 23, y: 0, z: 335}
-  m_LocalScale: {x: 28, y: 55.62, z: 20}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &924359122
 GameObject:
   m_ObjectHideFlags: 0
@@ -58222,104 +58056,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &1326413424
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1326413427}
-  - component: {fileID: 1326413426}
-  - component: {fileID: 1326413425}
-  m_Layer: 25
-  m_Name: CustomFogController_Green
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1326413425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1326413424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 317611c1deb924353ae736d05cb6a944, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
-  Priority: 1
-  LerpStrengthMultiplier: 1
-  Color: {r: 0.029999996, g: 0.1, b: 0.03500136, a: 1}
-  YMin: -5
-  YMax: 100
-  YPower: 2
-  MinimumYFactor: 0.5
-  AltYMin: 200
-  AltYMax: 100
-  AltYPower: 2
-  MaximumAltYFactor: 0
-  YAddMin: -50
-  YAddMax: -5
-  YAddPower: 0.5
-  YAddDepthInversion: 0.8
-  YAddClamp: 0.5
-  DepthMin: 5
-  DepthMax: 20
-  DepthPower: 1
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
-  SkyboxLift: 1500
-  VignetteLerpMin: 0
-  VignetteLerpMax: 0.1
-  VignetteLerpPower: 1
-  VignetteAlpha: 0.4
-  VignetteColor: {r: 0, g: 0, b: 0, a: 0}
-  force: 0
---- !u!65 &1326413426
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1326413424}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 8
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 33554423
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!4 &1326413427
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1326413424}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -60, y: 0, z: 163.9}
-  m_LocalScale: {x: 285.78998, y: 189.80324, z: 168.18001}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1335742524
 GameObject:
   m_ObjectHideFlags: 0
@@ -73593,36 +73329,33 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CustomFogController
   Priority: 1
-  LerpStrengthMultiplier: 1
-  Color: {r: 0.024335999, g: 0.057876002, b: 0.078, a: 1}
-  YMin: -5
-  YMax: 100
-  YPower: 2
-  MinimumYFactor: 0.5
-  AltYMin: 200
-  AltYMax: 100
-  AltYPower: 2
-  MaximumAltYFactor: 0
-  YAddMin: -50
-  YAddMax: -5
-  YAddPower: 0.5
-  YAddDepthInversion: 0.8
-  YAddClamp: 0.5
-  DepthMin: 5
-  DepthMax: 20
-  DepthPower: 1
-  DepthClamp: 1
-  NoiseSubtractionAmount: 0
-  NoiseAScale: 0.02
-  NoiseAVelocity: {x: 2, y: 2, z: 2}
-  NoiseBScale: 0.02
-  NoiseBVelocity: {x: -1, y: -1, z: -1}
+  Color: {r: 0.023529412, g: 0.05882353, b: 0.078431375, a: 1}
+  DepthMin: 20
+  DepthMax: 200
+  DepthPower: 2
+  MaxDepthFactor: 1
+  NearLowerBlanketMin: -30
+  NearLowerBlanketMax: 0
+  NearLowerBlanketPower: 0.5
+  MaxNearLowerBlanketFactor: 0.5
+  FarLowerBlanketMin: 25
+  FarLowerBlanketMax: 150
+  FarLowerBlanketPower: 1
+  MaxFarLowerBlanketFactor: 1
+  LowerBlanketDistanceMin: 0
+  LowerBlanketDistanceMax: 30
+  LowerBlanketDistancePower: 2
+  UpperBlanketMin: 0
+  UpperBlanketMax: 400
+  UpperBlanketPower: 2
+  MaxUpperBlanketFactor: 1
   SkyboxLift: 1500
   VignetteLerpMin: 0
-  VignetteLerpMax: 0.1
+  VignetteLerpMax: 0
   VignetteLerpPower: 1
-  VignetteAlpha: 0.4
+  VignetteAlpha: 0
   VignetteColor: {r: 0, g: 0, b: 0, a: 0}
+  LerpStrengthMultiplier: 1
   force: 0
 --- !u!4 &1481020831
 Transform:
@@ -97171,10 +96904,7 @@ SceneRoots:
   - {fileID: 1530176268}
   - {fileID: 1864767523}
   - {fileID: 2020570491}
-  - {fileID: 902688537}
   - {fileID: 1481020831}
-  - {fileID: 1326413427}
-  - {fileID: 834857772}
   - {fileID: 1161163748}
   - {fileID: 713796948}
   - {fileID: 1224756293}

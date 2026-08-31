@@ -75,33 +75,29 @@ public class CustomFogManager : MonoBehaviour
             
         LerpColor("_CustomFogColor", _currentController.Color, strength);
             
-        LerpFloat("_CustomFogYMin", _currentController.YMin, strength);
-        LerpFloat("_CustomFogYMax", _currentController.YMax, strength);
-        LerpFloat("_CustomFogYPower", _currentController.YPower, strength);
-        LerpFloat("_CustomFogMinimumYFactor", _currentController.MinimumYFactor, strength);
+        LerpFloat("_CustomFogNearLowerBlanketMin", _currentController.NearLowerBlanketMin, strength);
+        LerpFloat("_CustomFogNearLowerBlanketMax", _currentController.NearLowerBlanketMax, strength);
+        LerpFloat("_CustomFogNearLowerBlanketPower", _currentController.NearLowerBlanketPower, strength);
+        LerpFloat("_CustomFogMaxNearLowerBlanketFactor", _currentController.MaxNearLowerBlanketFactor, strength);
         
-        LerpFloat("_CustomFogAltYMin", _currentController.AltYMin, strength);
-        LerpFloat("_CustomFogAltYMax", _currentController.AltYMax, strength);
-        LerpFloat("_CustomFogAltYPower", _currentController.AltYPower, strength);
-        LerpFloat("_CustomFogMaximumAltYFactor", _currentController.MaximumAltYFactor, strength);
+        LerpFloat("_CustomFogFarLowerBlanketMin", _currentController.FarLowerBlanketMin, strength);
+        LerpFloat("_CustomFogFarLowerBlanketMax", _currentController.FarLowerBlanketMax, strength);
+        LerpFloat("_CustomFogFarLowerBlanketPower", _currentController.FarLowerBlanketPower, strength);
+        LerpFloat("_CustomFogMaxFarLowerBlanketFactor", _currentController.MaxFarLowerBlanketFactor, strength);
         
-        LerpFloat("_CustomFogYAddMin", _currentController.YAddMin, strength);
-        LerpFloat("_CustomFogYAddMax", _currentController.YAddMax, strength);
-        LerpFloat("_CustomFogYAddPower", _currentController.YAddPower, strength);
-        LerpFloat("_CustomFogYAddDepthInversion", _currentController.YAddDepthInversion, strength);
-        LerpFloat("_CustomFogYAddClamp", _currentController.YAddClamp, strength);
+        LerpFloat("_CustomFogLowerBlanketDistanceMin", _currentController.LowerBlanketDistanceMin, strength);
+        LerpFloat("_CustomFogLowerBlanketDistanceMax", _currentController.LowerBlanketDistanceMax, strength);
+        LerpFloat("_CustomFogLowerBlanketDistancePower", _currentController.LowerBlanketDistancePower, strength);
+        
+        LerpFloat("_CustomFogUpperBlanketMin", _currentController.UpperBlanketMin, strength);
+        LerpFloat("_CustomFogUpperBlanketMax", _currentController.UpperBlanketMax, strength);
+        LerpFloat("_CustomFogUpperBlanketPower", _currentController.UpperBlanketPower, strength);
+        LerpFloat("_CustomFogMaxUpperBlanketFactor", _currentController.MaxUpperBlanketFactor, strength);
             
         LerpFloat("_CustomFogDepthMin", _currentController.DepthMin, strength);
         LerpFloat("_CustomFogDepthMax", _currentController.DepthMax, strength);
         LerpFloat("_CustomFogDepthPower", _currentController.DepthPower, strength);
-        LerpFloat("_CustomFogDepthClamp", _currentController.DepthClamp, strength);
-            
-        LerpFloat("_CustomFogNoiseSubtractionAmount", _currentController.NoiseSubtractionAmount, strength);
-        LerpFloat("_CustomFogNoiseAScale", _currentController.NoiseAScale, strength);
-        LerpFloat("_CustomFogNoiseBScale", _currentController.NoiseBScale, strength);
-            
-        LerpVector("_CustomFogNoiseAVelocity", _currentController.NoiseAVelocity, strength);
-        LerpVector("_CustomFogNoiseBVelocity", _currentController.NoiseBVelocity, strength);
+        LerpFloat("_CustomFogMaxDepthFactor", _currentController.MaxDepthFactor, strength);
         
         LerpFloat("_CustomFogSkyboxLift", _currentController.SkyboxLift, strength);
         
@@ -115,19 +111,14 @@ public class CustomFogManager : MonoBehaviour
     private static void ApplyEditorSettings()
     {
         
-        _observerPositions[1] = new Vector4(0,0,0, 0);
+        _observerPositions[0] = new Vector4(0,0,0, 0);
         Shader.SetGlobalInt(CountID, 1);
         
         Shader.SetGlobalColor("_CustomFogColor", Color.darkGray);
-        Shader.SetGlobalFloat("_CustomFogYMin", -10001f);
-        Shader.SetGlobalFloat("_CustomFogYMax", -10000f);
-        Shader.SetGlobalFloat("_CustomFogMinimumYFactor", 0);
-        
-        Shader.SetGlobalFloat("_CustomFogYAddMin", -10001f);
-        Shader.SetGlobalFloat("_CustomFogYAddMax", -10000f);
-        
-        Shader.SetGlobalFloat("_CustomFogDepthMin", 10000f);
-        Shader.SetGlobalFloat("_CustomFogDepthMax", 10001f);
+        Shader.SetGlobalFloat("_CustomFogMaxNearLowerBlanketFactor", 0);
+        Shader.SetGlobalFloat("_CustomFogMaxFarLowerBlanketFactor", 0);
+        Shader.SetGlobalFloat("_CustomFogMaxUpperBlanketFactor", 0);
+        Shader.SetGlobalFloat("_CustomFogMaxDepthFactor", 0);
     }
 
     private static void LerpFloat(string name, float value, float strength)
