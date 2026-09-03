@@ -10,7 +10,7 @@ public partial class PlayerFsm
         Animator.SetFloat("SpeedMod",
             Mathf.Lerp(VaultMinimumAnimatorSpeedMod, VaultMaximumAnimatorSpeedMod, momentumWeight));
         var dashVault = Machine.IsInState(PlayerFsmState.DashVault);
-        if (UpdateLedgePosition(FaceLedgeHeight))
+        if (UpdateLedgePosition(FaceHighLedgeHeight))
         {
             MoveYOntoLedge(0f, dashVault? VaultLedgeLerpStrength : VaultLedgeLerpStrength);
         }

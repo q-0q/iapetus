@@ -8,6 +8,7 @@ public class CustomPointLight : MonoBehaviour
 {
 
 
+
     public Color Color;
     public float distanceLerpMin = 5;
     public float distanceLerpMax = 15f;

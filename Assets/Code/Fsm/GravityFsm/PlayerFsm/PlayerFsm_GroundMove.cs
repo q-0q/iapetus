@@ -39,6 +39,7 @@ public partial class PlayerFsm
         Machine.Configure(PlayerFsmState.GroundMove)
             .SubstateOf(GravityFsmState.Grounded)
             .SubstateOf(PlayerFsmState.Interactable)
+            .PermitIf(PlayerFsmTrigger.FaceLedge, PlayerFsmState.Vault, CanVault, 1)
             .SubstateOf(PlayerFsmState.MinorLeylineInteractable)
             .SubstateOf(PlayerFsmState.TinsicaUsable)
             .Permit(PlayerFsmTrigger.Press, PlayerFsmState.Press)

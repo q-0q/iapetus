@@ -44,7 +44,7 @@ public class GameMenu : MonoBehaviour
         {
             if (PhotoManager.Singleton.IsActive())
             {
-                PhotoManager.Singleton.MakeInactive();
+                // PhotoManager.Singleton.MakeInactive();
                 return;
             }
             
